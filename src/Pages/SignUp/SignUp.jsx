@@ -1,6 +1,7 @@
 import styles from './SignUp.module.css'
 import { useRef, useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 import { auth } from '../../firebaseConfig'; 
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
@@ -85,8 +86,18 @@ const SignUp = () => {
                     password
                     
                 );
-
+                
                 const user = userCredential.user;
+                // function to update display information
+
+                await updateProfile(user, {
+                    displayName: `${formData.firstname} ${formData.lastname} ${formData.middlename}`
+                });
+
+                await auth.currentUser.reload();
+                const updatedUser = auth.currentUser;
+                console.log(updatedUser.displayName, 'has been updated!');
+
                 navigate("/");   
                 console.log(user, 'has been enrolled to Hogwarts! WHOO!');
                 setFormData({
