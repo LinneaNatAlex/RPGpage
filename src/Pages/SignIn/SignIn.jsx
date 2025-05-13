@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebaseConfig';
 import Train from '../../assets/VideoBackgrounds/Train.mp4';
-import Button from '../../Components/Button/Button';
 
 const SignIn = () => {
     //declare the state variables.
@@ -43,7 +42,7 @@ const SignIn = () => {
             <source src={Train} type='video/mp4'/>
             </video>
 
-        <form className={styles.signInForm} onSubmit={handleSignIn}>
+        <form className={styles.signInForm}>
             <h2 className={styles.signInTitle}>Enter the Castle</h2>
             <div className={styles.inputGroup}>
                 <label htmlFor='email'>Email</label>
@@ -53,7 +52,7 @@ const SignIn = () => {
                 <label htmlFor='password'>Password</label>
                 <input type='password' id='password' name='password'onChange={handleChange}/>
             </div>
-            <Button type='submit' className={styles.signInBtn}> Enter Castle</Button>
+            <button className={styles.signInBtn} onClick={handleSignIn}> Enter Castle</button>
             <p>
                 Dont have an account? Create one {''}
                 <NavLink to='/sign-up' className={styles.signUpLink}>here</NavLink>
