@@ -6,6 +6,7 @@ import EditProfile from "../Pages/EditProfile/EditProfile.jsx";
 import SignIn from "../Pages/SignIn/SignIn.jsx";
 import SignUp from "../Pages/SignUp/SignUp.jsx";
 import MainPage from "../Pages/MainPage/MainPage.jsx";
+import VerifyEmail from "../Pages/VerifyEmail/VerifyEmail.jsx";
 
 export const router = createBrowserRouter(createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -14,6 +15,8 @@ export const router = createBrowserRouter(createRoutesFromElements(
         <Route path="edit-profile" element={<EditProfile />} />
         <Route path="sign-in" element={<SignIn />} />
         <Route path="sign-up" element={<SignUp />} />
+        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="*" element={<MainPage />} />
     </Route>
     )
 );
