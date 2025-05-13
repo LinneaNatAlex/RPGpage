@@ -1,0 +1,36 @@
+.signUpContainer{
+    display:flex;
+    justify-content: center;
+    background-image: url('https://i.pinimg.com/originals/42/15/16/4215160cd86906dd063387dd26937f21.gif');
+    padding: 40px;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    
+}
+
+.signUpForm{
+    display: flex;
+    background-color: transparent;
+    backdrop-filter: blur(10px) brightness(2.5) ;
+    border-radius: 10px;
+    flex-direction: column;
+    min-width: 450px;
+    max-height: 600px;
+ 
+   
+    padding: 1rem;
+    justify-content: center;
+    gap: 1rem;
+    color: goldenrod;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.inputGroup{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+
