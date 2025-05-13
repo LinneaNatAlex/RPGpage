@@ -20,25 +20,29 @@
 }
 
 .signInForm{
+    /* FORM OVER ALL LOOK */
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     background-color: transparent;
     backdrop-filter: blur(10px) brightness(2.5);
+    border: 2px solid wheat;
     border-radius: 10px;
-    flex-direction: column;
     min-width: 450px;
     max-height: 300px;
     padding: 1rem;
-    justify-content: center;
     gap: 1rem;
+    /* FORM TEXT */
     color: wheat;
     text-transform: uppercase;
-    border: 2px solid wheat;
 }
 
 .inputGroup{
+    /* INPUT GROUP OVER ALL LOOK */
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    /* INPUT TEXT */
     color: wheat;
     font-size: 1.2rem;
     font-weight: 600;
@@ -46,6 +50,7 @@
 }
 
 .signInBtn{
+/* BUTTON OVER ALL LOOK */
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -54,9 +59,10 @@
     opacity: 0.8;
     border-radius: 10px;
     padding: 0.5rem;
-    color: black;
+/* BUTTON TEXT */
     font-size: medium;
     font-weight: 600;
+    color: black;
 }
 
 .signInBtn:hover{
