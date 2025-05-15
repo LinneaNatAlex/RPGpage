@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 const MainPage = () => {
     const [user, setUser] = useState(null);
+    const [authChecked, setAuthChecked] = useState(false);
 
 useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -17,9 +18,14 @@ useEffect(() => {
         } else {
             setUser(null);
         }
+
+        setAuthChecked(true);
     });
     return () => unsubscribe();
 }, []);
+    if (!authChecked) {
+        return null;
+    }
 
     
     return <section className={styles.introductionPage}>
