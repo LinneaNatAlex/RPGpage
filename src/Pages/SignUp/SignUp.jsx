@@ -45,28 +45,43 @@ const SignUp = () => {
 
         const handleImageChange = (e) => {
             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setFormData((prevData) => ({
-                        ...prevData,
-                        profilePicture: file,
-                        previewUrl: reader.result,
-                    }));
-                };
-                reader.readAsDataURL(file);
+            if (file && file.type.startsWith('image/')) {
+                const previewUrl = URL.createObjectURL(file);
+               setFormData((prevData) => ({
+                   ...prevData,
+                   profilePicture: file,
+                   previewUrl: previewUrl,
+               }));
+               console.log('file selected:', file)
+            } else { 
+                setFormData((prevData) => ({
+                    ...prevData,
+                    profilePicture: null,
+                    previewUrl: '',
+                }));
             }
-        }
+        };
 
-        // Handelig the checkbox changes. If the user checks the box it wil turn ture, and the opposite if the user unchecks it.
+        // remove the image preview when the user clicks the remove button.
+        const handleRemoveImage = () => {
+            setFormData((prevData) => ({
+                ...prevData,
+                profilePicture: null,
+                previewUrl: '',
+            }));
+            // resets name of the file input field.
+            fileInputRef.current.value = null; 
+        };
+
+        // Handeling the checkbox changes. If the user checks the box it wil turn true, and the opposite if the user unchecks it.
         const handleCheckboxChange = (e) => {
             const { name, checked } = e.target;
             setFormData((prevData) => ({
                 ...prevData,
                 [name]: checked,
             }));
-        }
-        
+        };
+
 
         const handleSignUp = async (e, email, password) => {
             // prevent the page from reloading.
@@ -141,7 +156,15 @@ const SignUp = () => {
             </div>
             <div className={styles.inputGroup}>
                 <label htmlFor='profilePicture'>Profile Picture</label>
-                <input type='file' id='profilePicture' name='profilePicture' accept='.jpg, .jpg, .png' onChange={handleImageChange} value={formData.ImageChange}/>
+                <input type='file' id='profilePicture' name='profilePicture' accept='.jpg, .jpg, .png' onChange={handleImageChange} ref={fileInputRef} value={formData.ImageChange}/>
+                
+                {/* showing preview url, so you can display it before submitting */}
+                {formData.previewUrl && <div className={styles.imagePreview}>
+                    <img src={formData.previewUrl} alt='Preview' className={styles.styleImagePreview} />
+                    <button type='button' className={styles.removeImageBtn} onClick={handleRemoveImage}>
+                        Remove Image
+                    </button>
+                </div>}
             </div>
             </fieldset>
             {/* INFORMATION THAT IS NOT DISPLAYED */}
