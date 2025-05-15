@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import{ getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
 // Using this method to be able to use the netlify. This way I can use the env variables in the netlify.
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,3 +15,4 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);

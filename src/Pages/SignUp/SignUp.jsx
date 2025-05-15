@@ -6,6 +6,9 @@ import { auth } from '../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import  Button  from '../../Components/Button/Button';
+import useSignUpValidation from '../../hooks/useSignUpValidation';
+import {db} from '../../firebaseConfig';
+import { setDoc, doc } from 'firebase/firestore';
 
         //function to handle the input values in the form, and is uppdated whenever the user types in to the input fields.
 
@@ -20,9 +23,15 @@ const SignUp = () => {
         profilePicture:null,
         previewUrl:'',
         terms: false,
+        house:'Gryffindor',
+        class:'1st year',
+
     });
     //input type file
     const fileInputRef = useRef(null);
+
+    // vakudate functions 
+    const { validate, errors } = useSignUpValidation();
 
     // This is the function for redirecting the user to their profile page after they have signed up.
     const navigate = useNavigate();
@@ -83,25 +92,22 @@ const SignUp = () => {
         };
 
 
-        const handleSignUp = async (e, email, password) => {
-            // prevent the page from reloading.
+        const handleSignUp = async (e) => {
             e.preventDefault();
             // this resets the error message if they try to sign up again.
-            setError(null);  
-            if (formData.password !== formData.confirmPassword) {
-                setError('Not the same passord, try again!');
+            if (!validate(formData)) {
+                console.log('form not valid');
                 return;
             }
 
-            // Needs coments
+            // this checks if the password and confirm password are the same.
             try {
                 const userCredential = await createUserWithEmailAndPassword(
                     auth,
-                    email, 
-                    password
-                    
+                    formData.email,
+                    formData.password
                 );
-                
+
                 const user = userCredential.user;
                 // function to update display information
 
@@ -109,11 +115,24 @@ const SignUp = () => {
                     displayName: `${formData.firstname} ${formData.lastname} ${formData.middlename}`
                 });
 
+                // Adding datat to the firestore
+                await setDoc(doc(db, 'users', user.uid), {
+                    displayName: `${formData.firstname} ${formData.lastname} ${formData.middlename}`,
+                    email: user.email,
+                    profileImageUrl:'',
+                    Age: 11,
+                    house: formData.house,
+                    class: formData.class,
+                });
+            
+
                 await auth.currentUser.reload();
                 const updatedUser = auth.currentUser;
                 console.log(updatedUser.displayName, 'has been updated!');
 
+                console.log('navigate now');
                 navigate("/");   
+
                 console.log(user, 'has been enrolled to Hogwarts! WHOO!');
                 setFormData({
                     firstname: '',
@@ -134,7 +153,7 @@ const SignUp = () => {
     return (
 
         <div className={styles.signUpContainer}>
-            <form className={styles.signUpForm} onSubmit={(e) => handleSignUp(e, formData.email, formData.password)}>
+            <form className={styles.signUpForm} onSubmit={handleSignUp}>
                 <h1>Sign up</h1>
             {/* ------------------------------------- */}
             <fieldset className={styles.formGroup}>
