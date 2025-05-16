@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Link } from 'react-router-dom';
+import Chat from '../../Components/Chat/Chat';
+
 
 
 
@@ -31,7 +33,7 @@ useEffect(() => {
     
     return <section className={styles.introductionPage}>
         <header className={styles.introductionHeader}>
-            <h1 className={styles.introductionTitle}> Welcome {user || 'Guest'} </h1>
+            <h1 className={styles.introductionTitle}> Welcome {user || 'Witch/Wizard'} </h1>
             <p className={styles.introductionText}>
                 Your magical journey continues. Check the notice board for updates, attend classes and quests, and keep an eye on your house points. Remember: magic is shaped by the choices you make.
 
@@ -48,7 +50,14 @@ useEffect(() => {
                 </>
             )}
         </header>
+        <main className={styles.mainContentHome}>
+            <div className={styles.chatContainer}>
+                <Chat />
+            </div>
+        </main>
+
     </section>
+    
 };
 
 export default MainPage;
