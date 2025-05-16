@@ -23,6 +23,7 @@ useEffect(() => {
     });
     return () => unsubscribe();
 }, []);
+
     if (!authChecked) {
         return null;
     }
@@ -31,8 +32,14 @@ useEffect(() => {
     return <section className={styles.introductionPage}>
         <header className={styles.introductionHeader}>
             <h1 className={styles.introductionTitle}> Welcome {user || 'Guest'} </h1>
-            <p className={styles.introductionText}>Welcome to the world of magic and wonder! Join us on an enchanting journey where you can explore the mysteries of the universe, learn powerful spells, and discover the secrets of the magical realm. Whether you're a seasoned wizard or a curious newcomer, there's something for everyone in this magical adventure. So grab your wand and get ready to embark on an unforgettable quest!</p>
-       
+            <p className={styles.introductionText}>
+                Your magical journey continues. Check the notice board for updates, attend classes and quests, and keep an eye on your house points. Remember: magic is shaped by the choices you make.
+
+                {!user && (
+                    <>Are you ready to begin your journey as a witch or wizard? Here you can be sorted into a house, attend magical classes like Potions and Defense Against the Dark Arts, and write your own Hogwarts story. Join a thriving community and experience the magic like never before.</>
+                )}
+            </p>
+
         {/* to make sure the only see the links if they are not logged in */}
             {!user && (
                 <>
