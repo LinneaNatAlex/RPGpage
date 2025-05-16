@@ -4,9 +4,9 @@
     justify-content: center;
     padding: 2rem 2rem;
     color:black;
-    gap: 2rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgb(62, 62, 143);
+    gap: 2rem;  
+    background-color: rgb(92, 83, 55);
+    border: 2px solid goldenrod;
 }
 
 .navbar a {
