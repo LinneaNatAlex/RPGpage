@@ -9,7 +9,7 @@ import  Button  from '../../Components/Button/Button';
 import useSignUpValidation from '../../hooks/useSignUpValidation';
 import {db} from '../../firebaseConfig';
 import { setDoc, doc } from 'firebase/firestore';
-
+import Train from '../../assets/VideoBackgrounds/Train.mp4';
         //function to handle the input values in the form, and is uppdated whenever the user types in to the input fields.
 
 const SignUp = () => {
@@ -153,6 +153,10 @@ const SignUp = () => {
     return (
 
         <div className={styles.signUpContainer}>
+            <video autoPlay loop muted className={styles.backgroundVideo}>
+                        <source src={Train} type='video/mp4'/>
+                        </video>
+            
             <form className={styles.signUpForm} onSubmit={handleSignUp}>
                 <h1>Sign up</h1>
             {/* ------------------------------------- */}
