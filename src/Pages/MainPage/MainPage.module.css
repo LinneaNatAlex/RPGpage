@@ -1,9 +1,16 @@
 .ctaBtn {
-    background-color: #4CAF50;
+    background-color: goldenrod;
     color: white;
     padding: 12px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin: 2px;
+}
+
+.introductionHeader
+{
+   background-color: rgb(108, 89, 66);
+   padding: 10%;
+    color: white;
 }
