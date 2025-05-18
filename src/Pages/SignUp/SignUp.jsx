@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom';
 import  Button  from '../../Components/Button/Button';
 import useSignUpValidation from '../../hooks/useSignUpValidation';
 import {db} from '../../firebaseConfig';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import Train from '../../assets/VideoBackgrounds/Train.mp4';
         //function to handle the input values in the form, and is uppdated whenever the user types in to the input fields.
 
@@ -115,14 +115,18 @@ const SignUp = () => {
                     displayName: `${formData.firstname} ${formData.lastname} ${formData.middlename}`
                 });
 
-                // Adding datat to the firestore
+                // Adding datat to the firestore this is what will be displayed in firestore.
                 await setDoc(doc(db, 'users', user.uid), {
+                    uid: user.uid,
                     displayName: `${formData.firstname} ${formData.lastname} ${formData.middlename}`,
+                    // Nb; user can also get admin role, therfor it is placed in an array. Is directly in the database.
+                    rols: ['user'],
                     email: user.email,
-                    profileImageUrl:'',
+                    profileImageUrl: '' || null,
                     Age: 11,
                     house: formData.house,
                     class: formData.class,
+                    createdAt: serverTimestamp(),
                 });
             
 
@@ -133,7 +137,6 @@ const SignUp = () => {
                 console.log('navigate now');
                 navigate("/");   
 
-                console.log(user, 'has been enrolled to Hogwarts! WHOO!');
                 setFormData({
                     firstname: '',
                     lastname: '',
