@@ -14,3 +14,8 @@
    padding: 10%;
     color: white;
 }
+
+.mainContentHome{
+    display:grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}

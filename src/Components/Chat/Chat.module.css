@@ -1,10 +1,10 @@
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 50vh;
+  height: 80vh;
   border: 2px solid goldenrod;
-  width: 50%;
-  margin: 2rem auto;
+  width: 100%;
+  margin: 0;
   border-radius: 10px;
 }
 .chatMessages {
