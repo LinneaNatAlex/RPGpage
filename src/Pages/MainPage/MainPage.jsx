@@ -52,11 +52,14 @@ useEffect(() => {
             )}
         </header>
         <main className={styles.mainContentHome}>
+            <div className={styles.introductionImageContainer}>
+
+            </div>
             <div className={styles.newsFeedContainer}>
-                <NewsFeed />
+               {(user) ? (<NewsFeed /> ) : (<p>Something else will be displayed here</p>)}
             </div>
             <div className={styles.chatContainer}>
-                <Chat />
+                {user && <Chat />}
             </div>
         </main>
 

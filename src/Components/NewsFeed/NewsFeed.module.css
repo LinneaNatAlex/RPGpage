@@ -1,9 +1,10 @@
 
-.newsThreadContainer {
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.newsThreadContainer{
+    border: 1px solid #635454;
+
     padding: 16px;
     margin-bottom: 16px;
+    background-color: #807878;
 }
 
 .newsThreadTitle {
