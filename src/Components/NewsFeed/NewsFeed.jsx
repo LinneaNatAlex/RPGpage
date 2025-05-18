@@ -33,7 +33,7 @@ const NewsFeed = () => {
               setTitle('');
               setContent('');
               setShowForm(false);
-              await refetchNews();
+             await refetchNews();
          } catch (error) {
               console.error("Error posting news: ", error);
          }
@@ -41,8 +41,8 @@ const NewsFeed = () => {
 
    const handleDeleteNews = async (id) => {
          try {
-            await deleteDoc(doc(db, 'news', id));
-            await refetchNews();
+              await deleteDoc(doc(db, 'news', id));
+                await refetchNews();
          } catch (error) {
               console.error("Error deleting news: ", error);
          }
