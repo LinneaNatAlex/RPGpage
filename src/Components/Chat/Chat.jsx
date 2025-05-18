@@ -4,6 +4,8 @@ import { db, auth } from "../../firebaseConfig";
 import styles from './Chat.module.css';
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
+
+
 const Chat = () => {
     const messages = useChatMessages();
     const [newMess, setNewMess] = useState('');

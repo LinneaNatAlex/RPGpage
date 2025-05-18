@@ -4,7 +4,6 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 
 // making this hook so the messages from the db can be used in any part of the app. ^^
 
-
 const useChatMessages = () => {
     const [messages, setMessages] = useState([]);
 

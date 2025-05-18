@@ -4,6 +4,7 @@ import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Link } from 'react-router-dom';
 import Chat from '../../Components/Chat/Chat';
+import NewsFeed from '../../Components/NewsFeed/NewsFeed';
 
 
 
@@ -51,6 +52,9 @@ useEffect(() => {
             )}
         </header>
         <main className={styles.mainContentHome}>
+            <div className={styles.newsFeedContainer}>
+                <NewsFeed />
+            </div>
             <div className={styles.chatContainer}>
                 <Chat />
             </div>

@@ -1,0 +1,34 @@
+
+.newsThreadContainer {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.newsThreadTitle {
+    font-size: 1.5em;
+    margin-bottom: 8px;
+}
+
+.newsThreadContent {
+    font-size: 1em;
+    margin-bottom: 8px;
+}
+
+.newsAuthor {
+    font-size: 0.9em;
+    color: #555;
+}
+
+.deleteBtn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.deleteBtn:hover {
+    background-color: darkred;
+}
