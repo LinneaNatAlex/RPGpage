@@ -57,10 +57,10 @@ return (
                 {showForm ? 'Cancel' : 'Post News'}
             </Button>
             {showForm && (
-                <div className={styles.popupForm}>
+                <div className={styles.FormWrapper}>
                     <div className={styles.formContainer}>
                         <h3>Post News</h3>
-                        <form onSubmit={handlePostNews}>
+                        <form onSubmit={handlePostNews} className={styles.newsForm}>
                             <input
                                 type="text"
                                 placeholder="Title"
@@ -73,7 +73,9 @@ return (
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
                                 required
-                            />
+                                className={styles.textArea}
+                            ></textarea>
+                            
                             <Button type="submit">Post</Button>
                         </form>
                     </div>
