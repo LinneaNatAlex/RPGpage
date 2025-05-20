@@ -1,6 +1,6 @@
 import styles from './SignUp.module.css'
 import { useRef, useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { updateProfile } from 'firebase/auth';
 import { auth } from '../../firebaseConfig'; 
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,8 @@ import useSignUpValidation from '../../hooks/useSignUpValidation';
 import {db} from '../../firebaseConfig';
 import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import Train from '../../assets/VideoBackgrounds/Train.mp4';
-        //function to handle the input values in the form, and is uppdated whenever the user types in to the input fields.
+import VerifyEmail from '../VerifyEmail/VerifyEmail';
+// import  useAuth from '../../hooks/useAuth';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -27,15 +28,18 @@ const SignUp = () => {
         class:'1st year',
 
     });
+
     //input type file
     const fileInputRef = useRef(null);
 
     // vakudate functions 
     const { validate, errors } = useSignUpValidation();
 
+    // this is the function that will be used to sign up the user.
+    // const {signUp, signUpError, user} = useAuth();
+
     // This is the function for redirecting the user to their profile page after they have signed up.
     const navigate = useNavigate();
-    
     
     //error handling. If there is an error, it will show a message.
     
@@ -100,6 +104,15 @@ const SignUp = () => {
                 return;
             }
 
+            // try {
+            //     const userCredential = await signUp(signUpFormData.email, signUpFormData.password);
+            //     log(userCredential.user, 'has been signed up!');
+            // } catch (error) {
+            //     console.error('Error signing up:', error);
+            // }
+
+            // ------------------------------------------------
+
             // this checks if the password and confirm password are the same.
             try {
                 const userCredential = await createUserWithEmailAndPassword(
@@ -109,6 +122,12 @@ const SignUp = () => {
                 );
 
                 const user = userCredential.user;
+                await sendEmailVerification(user);
+                console.log('Verification email sent to:', user.email);
+
+
+
+            // -------------------------------------------------
                 // function to update display information
 
                 await updateProfile(user, {
@@ -123,19 +142,19 @@ const SignUp = () => {
                     rols: ['user'],
                     email: user.email,
                     profileImageUrl: '' || null,
-                    Age: 11,
+                    age: 11,
                     house: formData.house,
                     class: formData.class,
                     createdAt: serverTimestamp(),
                 });
             
-
+          
                 await auth.currentUser.reload();
                 const updatedUser = auth.currentUser;
                 console.log(updatedUser.displayName, 'has been updated!');
 
                 console.log('navigate now');
-                navigate("/");   
+                navigate("/verify-email");   
 
                 setFormData({
                     firstname: '',
@@ -232,6 +251,6 @@ const SignUp = () => {
             </form>
         </div>
     );
-}
+};
 
 export default SignUp;
