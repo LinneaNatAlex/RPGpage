@@ -1,6 +1,6 @@
 import styles from './NewsFeed.module.css';
 import useNewsFeed from '../../hooks/useNewsFeed';
-import { auth, db } from '../../firebaseConfig';
+import { useAuth } from '../../context/authContext';
 import Button from '../Button/Button';
 import { useState } from 'react';
 import useUserRoles from '../../hooks/useUserRoles';
@@ -11,7 +11,7 @@ const NewsFeed = () => {
    const {news, refetchNews} = useNewsFeed();
    const roles = useUserRoles();
    const isAdmin = roles.includes('admin');
-   const user = auth.currentUser;
+   const { user } = useAuth();
 
    const [title, setTitle] = useState('');
    const [content, setContent] = useState('');
