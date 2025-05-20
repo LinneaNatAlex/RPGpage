@@ -9,6 +9,7 @@
     border: 2px solid goldenrod;
     background-color: rgb(51, 49, 49);
     color: goldenrod;
+    overflow-y: auto;
 }
 
 .onlineUsersList {

@@ -20,21 +20,24 @@ const Chat = () => {
             timestamp: serverTimestamp(),
             sender: auth.currentUser.displayName 
         });
-
+        // this clears the input field after pressing enter!
         setNewMess('');
     }
 
+// Chatbox container.
 
 return <div className={styles.chatContainer}>
     <div className={styles.chatMessages}>
         {messages.map((message) => (
             <div key={message.id} className={styles.message}>
+                {/* This is where the message will be displayed! Sender with caracter name followed by the text */}
                 <strong>{message.sender}</strong>: {message.text}
             </div>
         ))}
     </div>
 
     <form className={styles.chatForm} onSubmit={sendtMessage}>
+        {/* Input field for new messages */}
         <input
             value={newMess}
             onChange={(e) => setNewMess(e.target.value)}
