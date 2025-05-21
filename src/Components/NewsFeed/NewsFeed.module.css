@@ -5,9 +5,49 @@
   justify-content: center;
   background-color: rgb(225, 219, 219);
   border: 3px solid goldenrod;
-  padding: 5px;
+  margin: 10px;
+  gap: 10px;
 }
 .newsAdminContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   border: 2px solid goldenrod;
   width: 100%;
+  background-color: white;
+  gap: 10px;
+}
+
+.newsContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 2rem;
+}
+
+.textArea {
+  width: 50%;
+  height: 100px;
+  border: 2px solid goldenrod;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.handlePostSubmit {
+  width: 50%;
+  padding: 10px;
+  margin: 1rem;
+}
+
+.deleteButton {
+  background-color: rgb(181, 166, 166);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.deleteButton:hover {
+  background-color: rgb(255, 0, 0);
 }
