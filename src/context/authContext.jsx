@@ -8,11 +8,14 @@ const authContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            
             setUser(currentUser);
-
+            
+            
         if (currentUser) {
             // online is added true
             await setDoc(doc(db, 'users', currentUser.uid), {
@@ -26,18 +29,18 @@ export const AuthProvider = ({ children }) => {
                     online: false
                 }, { merge: true });
             };
-            window.addEventListener('beforeunload', handleUnload); 
-
-            return () => {
-                window.removeEventListener('beforeunload', handleUnload);
-            };
-        } 
+            window.addEventListener('beforeunload', handleUnload);             
+        }     
+        // Set loading to false after checking the user state
+        setLoading(false);
+        
+        
     });
         return () => unsubscribe();
     }, []);
 
     return (
-        <authContext.Provider value={{ user }}>
+        <authContext.Provider value={{ user, loading }}>
             {children}
         </authContext.Provider>
     );
