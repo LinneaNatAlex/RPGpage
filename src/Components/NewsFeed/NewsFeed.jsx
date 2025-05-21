@@ -18,6 +18,7 @@ const NewsFeed = () => {
   const { roles: userRoles, rolesLoading: loadingRoles } = useUserRoles();
   const [newsList, setNewsList] = useState([]);
   const [newPost, setNewPost] = useState("");
+  const [titles, setTitles] = useState("");
 
   const isAdmin =
     !loadingRoles && Array.isArray(userRoles) && userRoles.includes("admin");
@@ -42,10 +43,12 @@ const NewsFeed = () => {
     if (!newPost.trim()) return;
 
     await addDoc(collection(db, "news"), {
+      title: titles,
       content: newPost,
       createdAt: serverTimestamp(),
       author: user.displayName,
     });
+    setTitles("");
     setNewPost("");
   };
 
@@ -58,11 +61,17 @@ const NewsFeed = () => {
   }
 
   return (
-    <div>
-      <div className={styles.newsFeedContainer}>
+    <div className={styles.newsFeedWrapper}>
+      <div className={styles.newsAdminContainer}>
         <h2>News Feed</h2>
         {isAdmin && (
           <>
+            <input
+              type="text"
+              value={titles}
+              onChange={(e) => setTitles(e.target.value)}
+              placeholder="Title"
+            />
             <textarea
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
@@ -74,12 +83,14 @@ const NewsFeed = () => {
       </div>
 
       <ul>
-        {newsList.map((item) => (
-          <li key={item.id}>
-            <h3>{item.title}</h3>
-            <strong>{item.displayName}</strong>: {item.content} <br />
-          </li>
-        ))}
+        <div className={styles.newsContainer}>
+          {newsList.map((item) => (
+            <li key={item.id}>
+              <h3>{item.title}</h3>
+              <strong>{item.displayName}</strong>: {item.content} <br />
+            </li>
+          ))}
+        </div>
       </ul>
     </div>
   );

@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   height: 105vh;
-  border: 2px solid goldenrod;
+  border: 3px solid goldenrod;
   width: 100%;
-  margin: 0;
- 
-  background-color: rgb(51, 49, 49);
+  border-radius: 20px 0 0 20px;
+  background-color: rgb(225, 219, 219);
 }
+
 .chatMessages {
   flex: 1;
   overflow-y: auto;
@@ -16,6 +16,10 @@
   word-wrap: break-word;
   scrollbar-width: thin;
   scrollbar-color: goldenrod transparent;
+  color: rgb(129, 127, 124);
+}
+.messageSender {
+  font-weight: bold;
   color: goldenrod;
 }
 
@@ -24,28 +28,27 @@
   justify-content: center;
   gap: 1rem;
   padding: 1rem;
-  border: 2px solid goldenrod;
+  border-radius: 0 0 0 20px;
 }
 
 .chatInput {
-  flex: 1;
-  padding: 0.5rem;
   border: 2px solid goldenrod;
   border-radius: 10px;
-  background-color: transparent;
+  background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
+  width: 100%;
 }
 
 .chatBtn {
-    background-color: goldenrod;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
+  background-color: goldenrod;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
 }
 
 .chatBtn:hover {
-    background-color: rgb(119, 113, 106);
-    color: black;
+  background-color: rgb(119, 113, 106);
+  color: black;
 }
