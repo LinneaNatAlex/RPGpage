@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 import { db } from "../../firebaseConfig";
+import { doc, deleteDoc } from "firebase/firestore";
 import {
   collection,
   query,
@@ -52,6 +53,11 @@ const NewsFeed = () => {
     setNewPost("");
   };
 
+  const handleDeletePost = async (id) => {
+    const docRef = doc(db, "news", id);
+    await deleteDoc(docRef);
+  };
+
   if (loading || loadingRoles) {
     return (
       <div className={styles.loadingContainer}>
@@ -71,27 +77,42 @@ const NewsFeed = () => {
               value={titles}
               onChange={(e) => setTitles(e.target.value)}
               placeholder="Title"
+              required
             />
             <textarea
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
               placeholder="news here"
+              className={styles.textArea}
+              required
             />
-            <Button onClick={handlePostSubmit}>Post</Button>
+            <Button
+              onClick={handlePostSubmit}
+              className={styles.handlePostSubmit}
+            >
+              Post
+            </Button>
           </>
         )}
       </div>
 
-      <ul>
-        <div className={styles.newsContainer}>
-          {newsList.map((item) => (
-            <li key={item.id}>
-              <h3>{item.title}</h3>
-              <strong>{item.displayName}</strong>: {item.content} <br />
-            </li>
-          ))}
-        </div>
-      </ul>
+      <div className={styles.newsContainer}>
+        {newsList.map((item) => (
+          <div key={item.id}>
+            <h3>{item.title}</h3>
+            <strong>{item.displayName}</strong>: {item.content} <br />
+            <br />
+            {isAdmin && (
+              <Button
+                onClick={() => handleDeletePost(item.id)}
+                className={styles.deleteButton}
+              >
+                Delete
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
