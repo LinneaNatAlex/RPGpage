@@ -1,110 +1,70 @@
-import styles from './NewsFeed.module.css';
-import useNewsFeed from '../../hooks/useNewsFeed';
-import { useAuth } from '../../context/authContext';
-import Button from '../Button/Button';
-import { useState } from 'react';
-import useUserRoles from '../../hooks/useUserRoles';
-import { addDoc, collection, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/authContext"
+import useUserRoles from "../../hooks/useUserRoles";
+import { db } from "../../firebaseConfig";  
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
 
 const NewsFeed = () => {
-    // State to hold the news articles
-   const {news, refetchNews} = useNewsFeed();
-   const roles = useUserRoles();
-   const isAdmin = roles.includes('admin');
-   const { user } = useAuth();
-
-   const [title, setTitle] = useState('');
-   const [content, setContent] = useState('');
-   const [showForm, setShowForm] = useState(false);
-
-   const handlePostNews = async (e) => {
-         e.preventDefault();
-         if (!user) return {
-              error: "User not authenticated"
-         }
     
-         try {
-              await addDoc(collection(db, 'news'), {
-                title,
-                content,
-                displayName: user.displayName,
-                timestamp: serverTimestamp(),
-              });
-              setTitle('');
-              setContent('');
-              setShowForm(false);
-             await refetchNews();
-         } catch (error) {
-              console.error("Error posting news: ", error);
-         }
-   };
 
-   const handleDeleteNews = async (id) => {
-         try {
-              await deleteDoc(doc(db, 'news', id));
-                await refetchNews();
-         } catch (error) {
-              console.error("Error deleting news: ", error);
-         }
-   };
+    const { user } = useAuth();
+    const { userRoles, loading } = useUserRoles();
+    const [newsList, setNewsList] = useState([]);
+    const [newPost, setNewPost] = useState("");
+    const isAdmin = Array.isArray(userRoles) && userRoles.includes("admin");
 
-return (
-    <section className={styles.newsThreadContainer}>
-        <h2 className={styles.newsThreadTitle}>Latest News</h2>
-        {isAdmin && (
-            <>
-            <Button className={styles.postNewsBtn} onClick={() => setShowForm(!showForm)}>
-                {showForm ? 'Cancel' : 'Post News'}
-            </Button>
-            {showForm && (
-                <div className={styles.FormWrapper}>
-                    <div className={styles.formContainer}>
-                        <h3>Post News</h3>
-                        <form onSubmit={handlePostNews} className={styles.newsForm}>
-                            <input
-                                type="text"
-                                placeholder="Title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
-                            />
-                            <textarea
-                                placeholder="Content"
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                required
-                                className={styles.textArea}
-                            ></textarea>
-                            
-                            <Button type="submit">Post</Button>
-                        </form>
-                    </div>
-                </div>
 
+    useEffect(() => {
+        const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
+        const unsubscribe = onSnapshot(q, (Snapshot) => {
+            const newData = Snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            console.log("Fetched news data:", newData);
+            
+            setNewsList(newData);
+        });
+        return () => unsubscribe();
+        
+    }, []);
+
+    const handlePostSubmit = async (e) => {
+        e.preventDefault();
+        if (!newPost.trim()) return;
+
+        await addDoc(collection(db, "news"), {
+            content: newPost,
+            createdAt: serverTimestamp(),
+            author: user.displayName,
+        });
+        setNewPost('');
+
+        if (loading || !userRoles) return <p>Loading...</p>;
+
+    return (
+        
+        <div className={styles.newsFeedContainer}>
+            <h2>News Feed</h2>
+            {isAdmin && (
+                <>
+                    <textarea value={newPost} onChange={(e) => setNewPost(e.target.value)} placeholder="newws here" />
+                    <Button onClick={handlePostSubmit}>Post</Button>
+                </>
             )}
-        </>
-    )}
-
-    {news.length === 0 ? (
-        <p className={styles.noneNews}>No news available</p>
-    ) : (
-        <div className={styles.newsContainer}>
-            {news.map((thread) => (
-               <div key={thread.id} className={styles.newsThread}>
-                    <h3 className={styles.newsThreadTitle}>{thread.title}</h3>
-                    <p className={styles.newsThreadContent}>{thread.content}</p>
-                    {thread.displayName && <strong> Written by: {thread.displayName}</strong>} 
-                    {isAdmin && (
-                        <Button onClick={() => handleDeleteNews(thread.id)} className={styles.deleteBtn}>
-                            Delete
-                        </Button>
-                    )}
-                </div>
-            ))}
         </div>
-        )}
-    </section>
-    );
-};
-export default NewsFeed;
+    )};
+    <ul>
+        {newsList.map((item) => (
+            <li key={item.id}>
+                <h3>{item.title}</h3>
+                <strong>{item.displayName}</strong>: {item.content} <br />
+            </li>
+        ))}
+    </ul> 
+    console.log("Roller for bruker:", userRoles);
+console.log("Er admin?", isAdmin);
 
+};
+
+export default NewsFeed;

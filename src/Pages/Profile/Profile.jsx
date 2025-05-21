@@ -7,10 +7,13 @@ import { useAuth } from '../../context/authContext';
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+    
 
     useEffect(() => {
+        if (loading || !user) return;
         const fetchUserData = async () => {
+            
            try {
                const userDocRef = doc(db, 'users', user.uid);
                const userDoc = await getDoc(userDocRef);
@@ -25,13 +28,13 @@ const Profile = () => {
         };
 
         fetchUserData();
-    }, [user]);
+    }, [user, loading]);
 
-    if (!userData) {
-        return <div className={styles.loadingContainer}>
-            <h2>Loading...</h2>
-        </div>;
-    }
+   if (loading || !userData) {
+       return <div className={styles.loadingContainer}>
+           <h2>Loading...</h2>
+       </div>;
+   }
 
     return <div className={styles.profileWrapper}>
         <div className={styles.profileContainer}>
@@ -46,13 +49,14 @@ const Profile = () => {
             <h2>Character Details</h2>
             <p><strong>Full Name:</strong></p> {user.displayName}
             <p><strong>Class:</strong></p> {userData.class}
-            <p><strong>Age:</strong></p> {userData.Age}
+            <p><strong>Age:</strong></p> {userData.age}
             <p><strong>House:</strong></p> {userData.house}
             <p><strong>Account Created:</strong></p> {userData.createdAt?.toDate().toLocaleDateString()}
             <p><strong>Last Login:</strong></p> {userData.lastLogin?.toDate().toLocaleDateString()}
-            <p><strong>Role:</strong></p> {userData.rols.join(', ')}
+            <p><strong>Roles</strong></p> {userData.roles?.join(', ')}
         </div>
     </div>;
+
 };
 
 export default Profile;

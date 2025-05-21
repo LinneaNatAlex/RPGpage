@@ -1,33 +1,40 @@
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig';
 import { useEffect, useState } from 'react';
-
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { useAuth } from '../context/authContext';
 
 const useUserRoles = () => {
-    const [roles, setRoles] = useState([]);
-    const user = auth.currentUser;
+    const { user } = useAuth();
+    const [userRoles, setUserRoles] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchRoles = async () => {
-            if (!user) return;
-
+    useEffect(()=> {
+        const fetchUserRoles = async () => {
+            if (!user) {
+                setUserRoles(null);
+                setLoading(false);
+                return;
+            }
             try {
+                console.log('user', user.uid);
+                
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    setRoles(data.rols || []);
-                }
 
+                if (userDoc.exists()) {
+                    setUserRoles(userDoc.data().roles || ['admin']);
+                } else {
+                    setUserRoles([]);
+                }
             } catch (error) {
-                console.error("Error fetching user roles: ", error);
-                setRoles([]);
+                console.error('Error fetching user roles:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchRoles();
+        fetchUserRoles();
     }, [user]);
-
-    return roles;
+    return { userRoles, loading };
 };
 
 export default useUserRoles;
