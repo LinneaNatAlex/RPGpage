@@ -14,6 +14,8 @@ import { db } from "../../firebaseConfig";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import Train from "../../assets/VideoBackgrounds/Train.mp4";
 import VerifyEmail from "../VerifyEmail/VerifyEmail";
+import { useImageUpload } from "../../hooks/useImageUpload";
+
 // import  useAuth from '../../hooks/useAuth';
 
 const SignUp = () => {
@@ -42,6 +44,7 @@ const SignUp = () => {
 
   // This is the function for redirecting the user to their profile page after they have signed up.
   const navigate = useNavigate();
+  const { uploadImage } = useImageUpload();
 
   //error handling. If there is an error, it will show a message.
 
@@ -132,6 +135,11 @@ const SignUp = () => {
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
       });
 
+      //making sure image is uploaded to cloudinary
+      const uploadedImageUrl = formData.profilePicture
+        ? await uploadImage(formData.profilePicture)
+        : "";
+
       // Adding datat to the firestore this is what will be displayed in firestore.
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
@@ -139,7 +147,7 @@ const SignUp = () => {
         // Nb; user can also get admin role, therfor it is placed in an array. Is directly in the database.
         roles: ["user"],
         email: user.email,
-        profileImageUrl: "" || null,
+        profileImageUrl: uploadedImageUrl,
         age: 11,
         house: formData.house,
         class: formData.class,
