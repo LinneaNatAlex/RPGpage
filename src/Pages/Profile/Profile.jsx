@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useAuth } from "../../context/authContext";
+import { auth } from "../../firebaseConfig";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -41,43 +42,51 @@ const Profile = () => {
         {/* --------------------------- */}
         <div className={styles.imageContainer}>
           <img
-            src={userData.profileImageUrl || "/default-profile.png"}
+            src={userData?.profileImageUrl || "/icons/avatar.svg"}
             alt="Image"
             className={styles.profileImage}
           />
         </div>
-      </div>
-      {/* --------------------------- */}
-      <div className={styles.characterDetailsContainer}>
-        <h2>Character Details</h2>
-        <p>
-          <strong>Full Name:</strong>
-        </p>{" "}
-        {user.displayName}
-        <p>
-          <strong>Class:</strong>
-        </p>{" "}
-        {userData.class}
-        <p>
-          <strong>Age:</strong>
-        </p>{" "}
-        {userData.age}
-        <p>
-          <strong>House:</strong>
-        </p>{" "}
-        {userData.house}
-        <p>
-          <strong>Account Created:</strong>
-        </p>{" "}
-        {userData.createdAt?.toDate().toLocaleDateString()}
-        <p>
-          <strong>Last Login:</strong>
-        </p>{" "}
-        {userData.lastLogin?.toDate().toLocaleDateString()}
-        <p>
-          <strong>Roles</strong>
-        </p>{" "}
-        {userData.roles?.join(", ")}
+        {/* --------------------------- */}
+        <div className={styles.characterDetailsContainer}>
+          <div className={styles.charactinfo}>
+            <h2>Character Details</h2>
+            <p>
+              <strong>Full Name:</strong>
+            </p>{" "}
+            {user.displayName}
+            <p>
+              <strong>Class:</strong>
+            </p>{" "}
+            {userData.class}
+            <p>
+              <strong>Age:</strong>
+            </p>{" "}
+            {userData.age}
+            <p>
+              <strong>House:</strong>
+            </p>{" "}
+            {userData.house}
+          </div>
+          <div className={styles.charactinfo}>
+            <p>
+              <strong>Account Created:</strong>
+            </p>{" "}
+            {userData.createdAt?.toDate().toLocaleDateString()}
+            <p>
+              <strong>Last Login:</strong>
+            </p>{" "}
+            {auth.currentUser.metadata.lastLoginAt
+              ? new Date(
+                  Number(auth.currentUser.metadata.lastLoginAt)
+                ).toLocaleDateString()
+              : "N/A"}
+            <p>
+              <strong>Roles</strong>
+            </p>{" "}
+            {userData.roles?.join(", ")}
+          </div>
+        </div>
       </div>
     </div>
   );
