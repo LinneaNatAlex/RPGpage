@@ -86,6 +86,25 @@ const NewsFeed = () => {
               className={styles.textArea}
               required
             />
+
+            {newPost.startsWith("{{code}}") && (
+              // starts with {{code}} will make it show up a live prewiew window of the code. If not it wont show up.
+              <div className={styles.prewiewContainer}>
+                <h2>Here you can se Live prewiev off your codes</h2>
+                <iframe
+                  // Using iframe to show live preview of code, this is so its easier to know how the code will looklike before it is posted on the wall!
+                  srcDoc={newPost
+                    .replace("{{code}}", "")
+                    .replace("{{/code}}", "")}
+                  sandbox="allow-same-origin"
+                  title="code-preview"
+                  frameBorder="0"
+                  width="100%"
+                  height="300px"
+                  style={{ border: "1px solid #ccc" }}
+                />
+              </div>
+            )}
             <Button
               onClick={handlePostSubmit}
               className={styles.handlePostSubmit}
@@ -100,7 +119,24 @@ const NewsFeed = () => {
         {newsList.map((item) => (
           <div key={item.id}>
             <h3>{item.title}</h3>
-            <strong>{item.displayName}</strong>: {item.content} <br />
+            <strong>{item.author}</strong>:{" "}
+            {item.content.startsWith("{{code}}") ? (
+              <iframe
+                // SrcDoc is used to show the html/css styling inside the Iframe.
+                srcDoc={item.content
+                  .replace("{{code}}", "")
+                  .replace("{{/code}}", "")}
+                sandbox="allow-same-origin"
+                title="code-preview"
+                frameBorder="0"
+                // Size is defined so that the iframe can be shown correctly. So the reason is because, even if '' srcDoc '' can show the visual html/css styling it can not change the Iframe size.
+                width="100%"
+                height="300px"
+              />
+            ) : (
+              <p>{item.content}</p>
+            )}{" "}
+            <br />
             <br />
             {isAdmin && (
               <Button
