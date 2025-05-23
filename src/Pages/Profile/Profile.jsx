@@ -4,6 +4,7 @@ import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useAuth } from "../../context/authContext";
 import { auth } from "../../firebaseConfig";
+import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -86,6 +87,12 @@ const Profile = () => {
             </p>{" "}
             {userData.roles?.join(", ")}
           </div>
+        </div>
+      </div>
+      <div className={styles.profileTextContainer}>
+        <div className={styles.profileText}>
+          <h2>Profile Text</h2>
+          <ProfileTextEditor />
         </div>
       </div>
     </div>
