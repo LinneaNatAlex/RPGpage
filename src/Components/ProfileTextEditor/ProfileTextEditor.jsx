@@ -3,8 +3,12 @@ import Button from "../Button/Button";
 import useProfileText from "../../hooks/useProfileText";
 import Editor from "@monaco-editor/react";
 import styles from "./ProfileTextEditor.module.css";
+import Chat from "../../Components/Chat/Chat";
+import { useAuth } from "../../context/authContext";
 
 const ProfileTextEditor = () => {
+  const { user } = useAuth();
+
   const { text, storeText, loading, html, css, mode } = useProfileText();
   const [editing, setEditing] = useState(false);
   const [tempHtml, setTempHtml] = useState(html);
@@ -83,26 +87,36 @@ const ProfileTextEditor = () => {
   }
 
   return (
-    <div>
+    <div className={styles.profileContainer}>
       {mode === "text" ? (
         <p>{text}</p>
       ) : (
-        <iframe
-          srcDoc={srcDoc}
-          title="html-live-preview"
-          sandbox=""
-          width="100%"
-          height="100%"
-        />
+        <div className={styles.profilePreview}>
+          <div className={styles.profileText}>
+            <iframe
+              className={styles.profileFrame}
+              srcDoc={srcDoc}
+              title="html-live-preview"
+              sandbox=""
+              width="100%"
+              height="100%"
+            />
+            <Button
+              className={styles.editButton}
+              onClick={() => {
+                setEditing(true);
+                setEditMode(mode);
+              }}
+            >
+              Edit Profile Text
+            </Button>
+          </div>
+          {/* ----------------------------------------------- */}
+          <div className={styles.chatBar}>
+            <div className={styles.chatContainer}>{user && <Chat />}</div>
+          </div>
+        </div>
       )}
-      <Button
-        onClick={() => {
-          setEditing(true);
-          setEditMode(mode);
-        }}
-      >
-        Edit Profile Text
-      </Button>
     </div>
   );
 };
