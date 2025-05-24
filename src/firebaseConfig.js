@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import{ getAuth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 // Using this method to be able to use the netlify. This way I can use the env variables in the netlify.
 const firebaseConfig = {
@@ -16,3 +17,10 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+console.log("DB:", db);
+
+export const getUserTerms = async () => {
+  const querySnapshot = await getDocs(collection(db, "users"));
+  return querySnapshot.docs.map((doc) => doc.data());
+};
