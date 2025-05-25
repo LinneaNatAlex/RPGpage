@@ -1,13 +1,11 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
-import styles from "./UserProfile.module.css"; // Assuming you have a CSS module for styling
+import styles from "./UserProfile.module.css";
 
 const UserProfile = () => {
   const { uid } = useParams();
-  console.log("UID from params:", uid);
-
   const [userData, setUserData] = useState(null);
   const [notFound, setNotFound] = useState(false);
 
@@ -15,14 +13,13 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         const q = query(collection(db, "users"), where("uid", "==", uid));
-        // gets the user document based on the uid from the URL
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          const userDoc = querySnapshot.docs[0];
-          const userDocData = userDoc.data();
-          setUserData(userDocData);
-          console.log("Fetched user:", userDocData);
+          const docSnap = querySnapshot.docs[0];
+          const data = docSnap.data();
+          setUserData(data);
+          console.log("Fetched user:", data);
         } else {
           setNotFound(true);
         }
@@ -32,15 +29,15 @@ const UserProfile = () => {
       }
     };
 
-    fetchUserData();
+    if (uid) fetchUserData();
   }, [uid]);
+
   if (notFound) return <div>User not found</div>;
   if (!userData) return <div>Loading...</div>;
 
   return (
     <div className={styles.profileWrapper}>
       <div className={styles.profileContainer}>
-        {/* --------------------------- */}
         <div className={styles.imageContainer}>
           <img
             src={userData?.profileImageUrl || "/icons/avatar.svg"}
@@ -48,67 +45,67 @@ const UserProfile = () => {
             className={styles.profileImage}
           />
         </div>
-        {/* --------------------------- */}
+
         <div className={styles.characterDetailsContainer}>
           <div className={styles.charactinfo}>
             <h2>Character Details</h2>
             <p>
-              <strong>Full Name:</strong>
-            </p>{" "}
-            {userData.displayName}
+              <strong>Full Name:</strong> {userData.displayName}
+            </p>
             <p>
-              <strong>Class:</strong>
-            </p>{" "}
-            {userData.class}
+              <strong>Class:</strong> {userData.class}
+            </p>
             <p>
-              <strong>Age:</strong>
-            </p>{" "}
-            {userData.age}
+              <strong>Age:</strong> {userData.age}
+            </p>
             <p>
-              <strong>House:</strong>
-            </p>{" "}
-            {userData.house}
+              <strong>House:</strong> {userData.house}
+            </p>
           </div>
+
           <div className={styles.charactinfo}>
             <p>
               <strong>Account Created:</strong>
-            </p>{" "}
-            {userData.createdAt?.toDate().toLocaleDateString()}
-            {/*When the accont was mad */}
+              {userData.createdAt && userData.createdAt.toDate
+                ? userData.createdAt.toDate().toLocaleDateString()
+                : "N/A"}
+            </p>
             <p>
               <strong>Last Login:</strong>
-            </p>{" "}
-            {auth.currentUser.metadata.lastLoginAt
-              ? new Date(
-                  Number(auth.currentUser.metadata.lastLoginAt)
-                ).toLocaleDateString()
-              : "N/A"}
+              {auth.currentUser?.metadata?.lastLoginAt
+                ? new Date(
+                    Number(auth.currentUser.metadata.lastLoginAt)
+                  ).toLocaleDateString()
+                : "N/A"}
+            </p>
             <p>
-              <strong>Roles</strong>
-            </p>{" "}
-            {userData.roles?.join(", ")}
+              <strong>Roles:</strong> {userData.roles?.join(", ")}
+            </p>
           </div>
         </div>
       </div>
-      {userData.profileMode && userData.profileHtml && userData.profileCss ? (
+
+      {/* BIO: HTML eller tekst */}
+      {userData.profileMode === "html" &&
+      userData.profileHtml &&
+      userData.profileCss ? (
         <iframe
           className={styles.profileIframe}
-          srcDoc={`<style> ${userData.profileCss} </style>${userData.profileHtml}`}
+          srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
           sandbox=""
-          height={"100vh"}
-          width={"100%"}
+          height="100vh"
+          width="100%"
         />
       ) : userData.profileMode === "text" && userData.profileText ? (
         <div className={styles.profileTextContainer}>
-          <div className={styles.profileText}>
-            <h2>Profile Text</h2>
-            <p>{userData.profileText}</p>
-          </div>
+          <h2>Profile Text</h2>
+          <p>{userData.profileText}</p>
         </div>
       ) : (
-        <div>No profile available</div>
+        <div>No profile bio available</div>
       )}
     </div>
   );
 };
+
 export default UserProfile;

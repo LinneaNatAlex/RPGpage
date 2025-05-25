@@ -12,6 +12,7 @@ import SignUp from "../Pages/SignUp/SignUp.jsx";
 import MainPage from "../Pages/MainPage/MainPage.jsx";
 import VerifyEmail from "../Pages/VerifyEmail/VerifyEmail.jsx";
 import UserProfile from "../Pages/UserProfile/UserProfile.jsx";
+import UserMap from "../Pages/UserMap/UserMap.jsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,8 @@ export const router = createBrowserRouter(
       <Route path="sign-up" element={<SignUp />} />
       <Route path="verify-email" element={<VerifyEmail />} />
       <Route path="user/:uid" element={<UserProfile />} />
+      <Route path="userMap" element={<UserMap />} />
+
       <Route path="*" element={<MainPage />} />
     </Route>
   )
