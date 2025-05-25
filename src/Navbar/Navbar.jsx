@@ -37,7 +37,7 @@ const Navbar = () => {
     <nav className={styles.navbar}>
       <NavLink to="/">Hogwart Castel</NavLink>
       <NavLink to="/Profile">Profile</NavLink>
-      <NavLink to="/edit-profile">Edit Profile</NavLink>
+      <NavLink to="/userMap">User Map</NavLink>
 
       {/* Makes the butten only avalible when logged in */}
       {isLoggedIn && (
