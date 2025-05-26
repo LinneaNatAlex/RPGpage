@@ -1,45 +1,36 @@
 import Button from "../Button/Button";
 import styles from "./SearchBar.module.css";
 import { useState } from "react";
-import { getUserTerms } from "../../firebaseConfig";
 
-const SearchBar = ({ searchUserTerm, setSearchUserTerm }) => {
+const SearchBar = ({ setUserQuery }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searching, setSearching] = useState(false);
 
-  const searchDatabase = async (search) => {
-    try {
-      const data = await searchUserTerm();
-      const filteredUsers = data.filter((user) => {
-        return user.displayName?.toLowerCase().includes(search.toLowerCase());
-      });
-      setSearchUserTerm(filteredUsers);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const searchDatabase = async (search) => {
+  //   try {
+  //     const data = await searchUserTerm();
+  //     const filteredUsers = data.filter((user) => {
+  //       return user.displayName?.toLowerCase().includes(search.toLowerCase());
+  //     });
+  //     setSearchUserTerm(filteredUsers);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    setSearching(value.length > 0);
+    setUserQuery(value);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    searchDatabase(searchQuery);
-    setSearching(true);
-  };
+  // const handleSearch = (e) => {
+  //   e.preventDefault();
+  //   searchDatabase(searchQuery);
+  // };
 
   const handleReset = async () => {
-    setSearching(false);
     setSearchQuery("");
-    try {
-      const data = await getUserTerms();
-      setSearchUserTerm(data);
-    } catch (error) {
-      console.log(error);
-    }
+    setUserQuery("");
   };
 
   return (
@@ -52,23 +43,15 @@ const SearchBar = ({ searchUserTerm, setSearchUserTerm }) => {
         onChange={handleChange}
       />
       <div className={styles.searchButtonContainer}>
-        <Button
-          className={styles.searchButton}
-          onClick={handleSearch}
-          disabled={!searching}
-          buttonType="search"
-          label="Search"
-        ></Button>
-
-        {searching && (
-          <Button
-            className={styles.resetButton}
-            onClick={handleReset}
-            label="Reset Search"
-            buttonType="reset"
-          >
-            x
-          </Button>
+        {searchQuery && (
+          <>
+            <Button
+              className={styles.searchButton}
+              onClick={handleReset}
+              buttonType="search"
+              label="Search"
+            ></Button>
+          </>
         )}
       </div>
     </div>

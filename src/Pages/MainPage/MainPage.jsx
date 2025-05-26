@@ -71,7 +71,7 @@ const MainPage = () => {
           {user && (isMobile ? activeTab === "chat" && <Chat /> : <Chat />)}
         </div>
       </main>
-
+      {/* Responsive navigation for the MainPage */}
       {user && (
         <nav className={styles.mobileNavigation}>
           <Button onClick={() => setActiveTab("newsFeed")}>News</Button>

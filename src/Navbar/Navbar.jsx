@@ -3,12 +3,10 @@ import styles from "./Navbar.module.css";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig"; // Import the auth object from your firebaseConfig file
 import { useEffect, useState } from "react";
-import SearchBar from "../Components/SearchBar/SearchBar";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -45,10 +43,6 @@ const Navbar = () => {
           Leave Castle
         </button>
       )}
-      <SearchBar
-        setSearchUserTerm={setSearchQuery}
-        searchUserTerm={searchQuery}
-      />
     </nav>
   );
 };
