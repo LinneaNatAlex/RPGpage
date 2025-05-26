@@ -9,6 +9,7 @@ import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEdi
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { user, loading } = useAuth();
+  // This uses the auth context to get the current user! teck loding state!
 
   useEffect(() => {
     if (loading || !user) return;

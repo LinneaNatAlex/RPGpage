@@ -61,8 +61,14 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 500px;
+  height: 600px;
   border-radius: 10px;
   border: 2px solid goldenrod;
   background: linear-gradient(to right, #f0e68c, #f9f9f9);
+}
+
+.profileTextContainer {
+  justify-content: center;
+  width: 100%;
+  height: 300vh;
 }
