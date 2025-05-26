@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useParams } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
+import Chat from "../../Components/Chat/Chat";
+import { useAuth } from "../../context/authContext";
 
 const UserProfile = () => {
+  const { user } = useAuth();
   const { uid } = useParams();
   const [userData, setUserData] = useState(null);
   const [notFound, setNotFound] = useState(false);
@@ -89,13 +92,18 @@ const UserProfile = () => {
       {userData.profileMode === "html" &&
       userData.profileHtml &&
       userData.profileCss ? (
-        <iframe
-          className={styles.profileIframe}
-          srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
-          sandbox=""
-          height="100vh"
-          width="100%"
-        />
+        <div className={styles.profileHtmlContainer}>
+          <iframe
+            className={styles.profileIframe}
+            srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
+            sandbox=""
+            height="100vh"
+            width="100%"
+          />
+          <div className={styles.chatBar}>
+            <div className={styles.chatContainer}>{user && <Chat />}</div>
+          </div>
+        </div>
       ) : userData.profileMode === "text" && userData.profileText ? (
         <div className={styles.profileTextContainer}>
           <h2>Profile Text</h2>
