@@ -52,3 +52,23 @@
   background-color: rgb(119, 113, 106);
   color: black;
 }
+
+@media screen and (max-width: 768px) {
+  .chatContainer {
+    height: 100vh;
+    width: 100%;
+    border-radius: 0;
+    border: 5px solid goldenrod;
+    background-color: rgb(85, 81, 78);
+  }
+  .chatMessages {
+    padding: 0.5rem;
+    color: rgb(255, 255, 255);
+  }
+  .chatForm {
+    padding: 0.5rem;
+  }
+  .chatBtn .chatInput {
+    width: calc(100% - 2rem);
+  }
+}
