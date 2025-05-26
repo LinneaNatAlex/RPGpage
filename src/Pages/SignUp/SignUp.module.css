@@ -9,7 +9,6 @@
   display: flex;
   position: relative;
   border-radius: 10px;
-
   flex-direction: column;
   max-height: 2000px;
   background-color: transparent;
