@@ -8,8 +8,10 @@ import OnlineUsers from "../../Components/OnlineUsers/OnlineUsers";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useAuth } from "../../context/authContext";
+import Button from "../../Components/Button/Button";
 
 const MainPage = () => {
+  const [activeTab, setActiveTab] = useState("newsFeed");
   const { user } = useAuth();
   const displayName = user?.displayName || user?.email;
 
@@ -48,14 +50,30 @@ const MainPage = () => {
         )}
       </header>
       <main className={styles.mainContentHome}>
-        <div className={styles.introductionImageContainer}>
-          {user && <OnlineUsers />}
-        </div>
-        <div className={styles.newsFeedContainer}>
-          {user ? <NewsFeed /> : <p>Something else will be displayed here</p>}
-        </div>
-        <div className={styles.chatContainer}>{user && <Chat />}</div>
+        {activeTab === "users" && user && (
+          <div className={styles.introductionImageContainer}>
+            {user && <OnlineUsers />}
+          </div>
+        )}
+        {activeTab === "newsFeed" && (
+          <div className={styles.newsFeedContainer}>
+            {user ? <NewsFeed /> : <p>Something else will be displayed here</p>}
+          </div>
+        )}
+        {activeTab === "chat" && (
+          <div className={styles.chatContainer}>
+            {user ? <Chat /> : <p>Something else will be displayed here</p>}
+          </div>
+        )}
       </main>
+
+      {user && (
+        <nav className={styles.mobileNavigation}>
+          <Button onClick={() => setActiveTab("newsFeed")}>News</Button>
+          <Button onClick={() => setActiveTab("chat")}>Chat</Button>
+          <Button onClick={() => setActiveTab("users")}>Online</Button>
+        </nav>
+      )}
     </section>
   );
 };
