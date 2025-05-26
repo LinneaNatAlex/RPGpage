@@ -32,29 +32,32 @@ const UserList = ({ userQuery }) => {
   }, [userQuery, users]);
 
   return (
-    <table className={styles.userListContainer}>
-      <thead>
-        <tr className={styles.tableHeader}>
-          <th scope="col">Witch/Wizard</th>
-          <th scope="col">House</th>
-          <th scope="col">Class</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filteredUsers.map((user) => (
-          <tr key={user.uid}>
-            <td>{user.displayName}</td>
-            <td>{user.house}</td>
-            <td>{user.class}</td>
-            <td>
-              <Link to={`/user/${user.uid}`} className={styles.profileLink}>
-                View Profile
-              </Link>
-            </td>
+    <div className={styles.userListWrapper}>
+      <table className={styles.userListContainer}>
+        <thead>
+          <tr className={styles.tableHeader}>
+            <th scope="col">Witch/Wizard</th>
+            <th scope="col">House</th>
+            <th scope="col">Class</th>
+            <th scope="col">Profile</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {filteredUsers.map((user) => (
+            <tr key={user.uid}>
+              <td>{user.displayName}</td>
+              <td>{user.house}</td>
+              <td>{user.class}</td>
+              <td>
+                <Link to={`/user/${user.uid}`} className={styles.profileLink}>
+                  View Profile
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 export default UserList;
