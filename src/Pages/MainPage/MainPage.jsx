@@ -12,6 +12,7 @@ import Button from "../../Components/Button/Button";
 
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState("newsFeed");
+  const isMobile = window.innerWidth <= 768;
   const { user } = useAuth();
   const displayName = user?.displayName || user?.email;
 
@@ -50,21 +51,25 @@ const MainPage = () => {
         )}
       </header>
       <main className={styles.mainContentHome}>
-        {activeTab === "users" && user && (
-          <div className={styles.introductionImageContainer}>
-            {user && <OnlineUsers />}
-          </div>
-        )}
-        {activeTab === "newsFeed" && (
-          <div className={styles.newsFeedContainer}>
-            {user ? <NewsFeed /> : <p>Something else will be displayed here</p>}
-          </div>
-        )}
-        {activeTab === "chat" && (
-          <div className={styles.chatContainer}>
-            {user ? <Chat /> : <p>Something else will be displayed here</p>}
-          </div>
-        )}
+        <div className={styles.introductionImageContainer}>
+          {user &&
+            (isMobile ? (
+              activeTab === "users" && <OnlineUsers />
+            ) : (
+              <OnlineUsers />
+            ))}
+        </div>
+        <div className={styles.newsFeedContainer}>
+          {user &&
+            (isMobile ? (
+              activeTab === "newsFeed" && <NewsFeed />
+            ) : (
+              <NewsFeed />
+            ))}
+        </div>
+        <div className={styles.chatContainer}>
+          {user && (isMobile ? activeTab === "chat" && <Chat /> : <Chat />)}
+        </div>
       </main>
 
       {user && (
