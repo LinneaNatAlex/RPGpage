@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig"; // Import the auth object from your firebaseConfig file
@@ -7,6 +7,11 @@ import { useEffect, useState } from "react";
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  if (location.pathname === "/verify-email") {
+    return null;
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -33,19 +38,25 @@ const Navbar = () => {
 
   return (
     <nav className={styles.navbar}>
-      <NavLink to="/">Hogwart Castel</NavLink>
-      <NavLink to="/Profile">Profile</NavLink>
-      <NavLink to="/userMap">User Map</NavLink>
+      {isLoggedIn ? (
+        <>
+          <NavLink to="/">Hogwart Castel</NavLink>
+          <NavLink to="/Profile">Profile</NavLink>
+          <NavLink to="/userMap">User Map</NavLink>
 
-      {/* Makes the butten only avalible when logged in */}
-      {isLoggedIn && (
-        <button onClick={handleSignOut} className={styles.signOutBtn}>
-          Leave Castle
-        </button>
+          {/* Makes the butten only avalible when logged in */}
+
+          <button onClick={handleSignOut} className={styles.signOutBtn}>
+            Leave Castle
+          </button>
+        </>
+      ) : (
+        <>
+          <span>Welcome new student!</span>
+        </>
       )}
     </nav>
   );
 };
 
-console.log("Navbar component loaded");
 export default Navbar;
