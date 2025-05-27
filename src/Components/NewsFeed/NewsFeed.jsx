@@ -1,3 +1,4 @@
+// Imorting necessary libraries and components
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
@@ -15,18 +16,22 @@ import styles from "./NewsFeed.module.css";
 import Button from "../Button/Button";
 
 const NewsFeed = () => {
+  // All the state variables andd hooks.
   const { user, loading } = useAuth();
   const { roles: userRoles, rolesLoading: loadingRoles } = useUserRoles();
   const [newsList, setNewsList] = useState([]);
   const [newPost, setNewPost] = useState("");
   const [titles, setTitles] = useState("");
 
+  // This CHECKS if the user has the role of admin. If the user is admin then this gives the user the ability to post news, and delete posts.
   const isAdmin =
     !loadingRoles && Array.isArray(userRoles) && userRoles.includes("admin");
 
+  // USEEFFECT gathering / fetching the neews from the database
   useEffect(() => {
     if (loading || loadingRoles || !user) return;
 
+    // To get the news form the db and makes sure its ordered the createdAt field in /descending/ order.
     const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (Snapshot) => {
       const newData = Snapshot.docs.map((doc) => ({
@@ -39,6 +44,7 @@ const NewsFeed = () => {
     return () => unsubscribe();
   }, [user, loading, loadingRoles]);
 
+  // HANDLE POST SUBMIT is the function that handles the submission of the news post.
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (!newPost.trim()) return;
@@ -52,12 +58,12 @@ const NewsFeed = () => {
     setTitles("");
     setNewPost("");
   };
-
+  //  HANDLE DELETE POST is function handeling the deliton of the post.
   const handleDeletePost = async (id) => {
     const docRef = doc(db, "news", id);
     await deleteDoc(docRef);
   };
-
+  // Shows the loading screen while the data form the db is loading
   if (loading || loadingRoles) {
     return (
       <div className={styles.loadingContainer}>
@@ -65,7 +71,7 @@ const NewsFeed = () => {
       </div>
     );
   }
-
+  // This is where what the admin will be seing when they are logged in.
   return (
     <div className={styles.newsFeedWrapper}>
       <div className={styles.newsAdminContainer}>
@@ -87,6 +93,7 @@ const NewsFeed = () => {
               required
             />
 
+            {/* This is where the live preview will be shown, IF ONLY IF the post contains code that starts with {{code}} and ends with {{/code}} */}
             {newPost.startsWith("{{code}}") && (
               // starts with {{code}} will make it show up a live prewiew window of the code. If not it wont show up.
               <div className={styles.prewiewContainer}>
@@ -98,6 +105,7 @@ const NewsFeed = () => {
                     .replace("{{/code}}", "")}
                   sandbox="allow-same-origin"
                   title="code-preview"
+                  // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
                   frameBorder="0"
                   width="100%"
                   height="300px"
@@ -116,6 +124,7 @@ const NewsFeed = () => {
       </div>
 
       <div className={styles.newsContainer}>
+        {/* Display for the news post */}
         {newsList.map((item) => (
           <div key={item.id}>
             <h3>{item.title}</h3>
@@ -128,6 +137,7 @@ const NewsFeed = () => {
                   .replace("{{/code}}", "")}
                 sandbox="allow-same-origin"
                 title="code-preview"
+                // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
                 frameBorder="0"
                 // Size is defined so that the iframe can be shown correctly. So the reason is because, even if '' srcDoc '' can show the visual html/css styling it can not change the Iframe size.
                 width="100%"
@@ -138,6 +148,7 @@ const NewsFeed = () => {
             )}{" "}
             <br />
             <br />
+            {/* Theese buttons is only displayed for the admin role */}
             {isAdmin && (
               <Button
                 onClick={() => handleDeletePost(item.id)}

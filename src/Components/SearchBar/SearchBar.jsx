@@ -11,7 +11,7 @@ const SearchBar = ({ setUserQuery }) => {
     setSearchQuery(value);
     setUserQuery(value);
   };
-
+  // INNPUT FIELD FOR SEARCHBAR
   return (
     <div className={styles.searchBarContainer}>
       <input
