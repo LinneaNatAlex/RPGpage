@@ -18,7 +18,7 @@ const useUsers = () => {
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchUsers(); // calls the fetch user function to fetch users from the db
   }, []);
 
   return { users, loading };
