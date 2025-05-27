@@ -6,14 +6,17 @@ import useUsers from "../../hooks/useUser"; // Importing the custom hook to fetc
 const UserList = ({ userQuery }) => {
   const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook
 
+  // FILTERING users based on the userQuery!
   const filteredUsers = userQuery
     ? users.filter((user) =>
         user.displayName
+          // Checks the displayName of the user, to see if the user is in db
           ?.toLowerCase()
           .trim()
           .startsWith(userQuery.toLowerCase().trim())
       )
-    : users;
+    : // if the userQuery is not null or defined, it will filter the users based on the displayName
+      users;
 
   if (loading) return <p>Loading users </p>; // displays a message loding if the users are still loading
 
@@ -37,6 +40,7 @@ const UserList = ({ userQuery }) => {
                 <td>{user.displayName}</td>
                 <td>{user.house}</td>
                 <td>{user.class}</td>
+                {/* When clicking on the View Profile Link the user get send to the route that contains the specific /user/uid */}
                 <td>
                   <Link to={`/user/${user.uid}`} className={styles.profileLink}>
                     View Profile
