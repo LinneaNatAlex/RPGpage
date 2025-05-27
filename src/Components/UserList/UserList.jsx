@@ -1,35 +1,21 @@
-import { getUserTerms } from "../../firebaseConfig";
-import { useEffect, useState } from "react";
+// Imorting the function needed to fetch the users and the logic.
 import { Link } from "react-router-dom";
 import styles from "./UserList.module.css";
+import useUsers from "../../hooks/useUser"; // Importing the custom hook to fetch users
 
 const UserList = ({ userQuery }) => {
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const allUsers = await getUserTerms();
-        setUsers(allUsers);
-        setFilteredUsers(allUsers);
-      } catch (error) {
-        console.error("Faild to fetch witch or wizard users:", error.message);
-      }
-    };
-    fetchUsers();
-  }, []);
+  const filteredUsers = userQuery
+    ? users.filter((user) =>
+        user.displayName
+          ?.toLowerCase()
+          .trim()
+          .startsWith(userQuery.toLowerCase().trim())
+      )
+    : users;
 
-  useEffect(() => {
-    if (userQuery) {
-      const filtered = users.filter((user) =>
-        user.displayName?.toLowerCase().includes(userQuery.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers(users);
-    }
-  }, [userQuery, users]);
+  if (loading) return <p>Loading users </p>; // displays a message loding if the users are still loading
 
   return (
     <div className={styles.userListWrapper}>
@@ -43,18 +29,22 @@ const UserList = ({ userQuery }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user.uid}>
-              <td>{user.displayName}</td>
-              <td>{user.house}</td>
-              <td>{user.class}</td>
-              <td>
-                <Link to={`/user/${user.uid}`} className={styles.profileLink}>
-                  View Profile
-                </Link>
-              </td>
-            </tr>
-          ))}
+          {filteredUsers.map(
+            (
+              user // Mapping the users to display them in tbody
+            ) => (
+              <tr key={user.uid}>
+                <td>{user.displayName}</td>
+                <td>{user.house}</td>
+                <td>{user.class}</td>
+                <td>
+                  <Link to={`/user/${user.uid}`} className={styles.profileLink}>
+                    View Profile
+                  </Link>
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
     </div>

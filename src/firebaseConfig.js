@@ -22,5 +22,8 @@ console.log("DB:", db);
 
 export const getUserTerms = async () => {
   const querySnapshot = await getDocs(collection(db, "users"));
-  return querySnapshot.docs.map((doc) => doc.data());
+  return querySnapshot.docs.map((doc) => ({
+    uid: doc.id,
+    ...doc.data(),
+  }));
 };
