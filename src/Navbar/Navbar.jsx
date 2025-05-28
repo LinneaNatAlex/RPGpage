@@ -44,6 +44,13 @@ const Navbar = () => {
           <NavLink to="/Profile">Profile</NavLink>
           <NavLink to="/userMap">User Map</NavLink>
 
+          <div className={styles.classroomsDropdown}>
+            <NavLink to="/ClassRooms">Class Rooms</NavLink>
+            <div className={styles.dropdown}>
+              <NavLink to="/ClassRooms/Potions">Potions</NavLink>
+            </div>
+          </div>
+
           {/* Makes the butten only avalible when logged in */}
 
           <button onClick={handleSignOut} className={styles.signOutBtn}>
