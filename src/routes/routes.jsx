@@ -13,6 +13,8 @@ import MainPage from "../Pages/MainPage/MainPage.jsx";
 import VerifyEmail from "../Pages/VerifyEmail/VerifyEmail.jsx";
 import UserProfile from "../Pages/UserProfile/UserProfile.jsx";
 import UserMap from "../Pages/UserMap/UserMap.jsx";
+import ClassRooms from "../Pages/ClassRooms/ClassRooms.jsx";
+import Potions from "../Pages/ClassRooms/Potions/Potions.jsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,8 +27,9 @@ export const router = createBrowserRouter(
       <Route path="verify-email" element={<VerifyEmail />} />
       <Route path="user/:uid" element={<UserProfile />} />
       <Route path="userMap" element={<UserMap />} />
-
+      <Route path="ClassRooms" element={<ClassRooms />} />
       <Route path="*" element={<MainPage />} />
+      <Route path="ClassRooms/Potions" element={<Potions />} />
     </Route>
   )
 );

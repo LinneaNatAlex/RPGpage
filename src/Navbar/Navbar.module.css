@@ -1,40 +1,67 @@
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 2rem;
-    color:black;
-    gap: 2rem;  
-    background-color: rgb(63, 62, 60);
-    border: 2px solid goldenrod;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem;
+  color: black;
+  gap: 2rem;
+  background-color: rgb(63, 62, 60);
+  border: 2px solid goldenrod;
+  width: auto;
 }
 
 .navbar a {
-    text-decoration: none;
-    color: black;
-    font-size: 1.2rem;
-    font-weight: bold;
-    transition: color 0.3s ease;
+  text-decoration: none;
+  color: black;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 .navbar a:hover {
-    color: #007bff;
+  color: #007bff;
 }
 
 .signOutBtn {
-    background-color: #dc3545;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+  background-color: #dc3545;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .signOutBtn:hover {
-    background-color: #c82333;
+  background-color: #c82333;
 }
 .signOutBtn:active {
-    background-color: #bd2130;
+  background-color: #bd2130;
+}
+
+/* CLASSROMS DAMON DROPDOWN MENUE */
+.classroomsDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  padding: 5px;
+}
+
+.classroomsDropdown:hover .dropdown {
+  display: block;
+}
+
+@media (max-width: 412px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    width: 120%;
+  }
 }
