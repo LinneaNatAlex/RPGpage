@@ -1,6 +1,7 @@
 import styles from "./Button.module.css";
 
 const Button = ({
+  type = "button",
   children = "Click",
   // This ^ shows the the "click" text if nothing else is spessified
   onClick,
@@ -14,6 +15,7 @@ const Button = ({
 }) => {
   return (
     <button
+      type={type}
       className={`${className} ${styles.button}`}
       //  combinding the css clases with the className prop. Making sure it is possible to use the styles globaly
       onClick={onClick}
