@@ -1,14 +1,11 @@
 import styles from "./MainPage.module.css";
-import { useEffect, useState } from "react";
-import { auth } from "../../firebaseConfig";
 import { Link } from "react-router-dom";
 import Chat from "../../Components/Chat/Chat";
 import NewsFeed from "../../Components/NewsFeed/NewsFeed";
 import OnlineUsers from "../../Components/OnlineUsers/OnlineUsers";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
 import { useAuth } from "../../context/authContext";
 import Button from "../../Components/Button/Button";
+import { useState, useEffect } from "react";
 
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState("newsFeed");
@@ -51,7 +48,7 @@ const MainPage = () => {
         )}
       </header>
       <main className={styles.mainContentHome}>
-        <div className={styles.introductionImageContainer}>
+        <div className={styles.onlineUsersContainer}>
           {user &&
             (isMobile ? (
               activeTab === "users" && <OnlineUsers />
