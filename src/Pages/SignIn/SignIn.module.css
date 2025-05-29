@@ -65,6 +65,3 @@
 .signInBtn:hover {
   background-color: ghostwhite;
 }
-/* Responsive design for samsung s20 ultra */
-@media (max-width: 912px) {
-}

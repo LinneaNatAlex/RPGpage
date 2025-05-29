@@ -107,13 +107,6 @@ const SignUp = () => {
       return;
     }
 
-    // try {
-    //     const userCredential = await signUp(signUpFormData.email, signUpFormData.password);
-    //     log(userCredential.user, 'has been signed up!');
-    // } catch (error) {
-    //     console.error('Error signing up:', error);
-    // }
-
     // ------------------------------------------------
 
     // this checks if the password and confirm password are the same.
@@ -255,13 +248,13 @@ const SignUp = () => {
                   alt="Preview"
                   className={styles.styleImagePreview}
                 />
-                <button
+                <Button
                   type="button"
                   className={styles.removeImageBtn}
                   onClick={handleRemoveImage}
                 >
                   Remove Image
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -324,7 +317,9 @@ const SignUp = () => {
           {/* Sends an error back if there is issues */}
           {error && <p> {error} </p>}
 
-          <Button className={styles.signUpBtn}>Sign up</Button>
+          <Button type="submit" className={styles.signUpBtn}>
+            Sign up
+          </Button>
 
           <p>
             Already have an account? Log in {""}
