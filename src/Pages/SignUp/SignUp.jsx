@@ -1,3 +1,4 @@
+// imports the necessesary components and hooks
 import styles from "./SignUp.module.css";
 import { useRef, useState } from "react";
 import {
@@ -13,11 +14,13 @@ import useSignUpValidation from "../../hooks/useSignUpValidation";
 import { db } from "../../firebaseConfig";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import Train from "../../assets/VideoBackgrounds/Train.mp4";
-import VerifyEmail from "../VerifyEmail/VerifyEmail";
+// import VerifyEmail from "../VerifyEmail/VerifyEmail";
 import { useImageUpload } from "../../hooks/useImageUpload";
 
 // import  useAuth from '../../hooks/useAuth';
+// ------------------------------------------ SIGN UP ----------------------------------------------------
 
+// ---------------------SIGN UP STATE VARIABLES -----------------
 const SignUp = () => {
   const [formData, setFormData] = useState({
     firstname: "",
@@ -32,24 +35,17 @@ const SignUp = () => {
     house: "Gryffindor",
     class: "1st year",
   });
-
-  //input type file
+  //input type file reference
   const fileInputRef = useRef(null);
-
-  // vakudate functions
+  // validate functions
   const { validate, errors } = useSignUpValidation();
-
-  // this is the function that will be used to sign up the user.
-  // const {signUp, signUpError, user} = useAuth();
-
-  // This is the function for redirecting the user to their profile page after they have signed up.
+  // This is the function that will be used to sign up the user. The the function for redirecting the user to their profile page after they have signed up.
   const navigate = useNavigate();
   const { uploadImage } = useImageUpload();
-
   //error handling. If there is an error, it will show a message.
-
   const [error, setError] = useState(null);
 
+  // ---------------------INPUT CHANGE HANDLER---------------------
   // handeling the changes in the input fields.
   const handleInputChange = (e) => {
     if (e.target.type === "file") return;
@@ -60,6 +56,8 @@ const SignUp = () => {
     }));
   };
 
+  // ----------------------HANDEL IMAGE CHANGE----------------------
+  // To change the image preview when, after user clicks on the file
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -78,7 +76,7 @@ const SignUp = () => {
       }));
     }
   };
-
+  // -------------------HANDLE REMOVE IMAGE------------------------------
   // remove the image preview when the user clicks the remove button.
   const handleRemoveImage = () => {
     setFormData((prevData) => ({
@@ -89,7 +87,7 @@ const SignUp = () => {
     // resets name of the file input field.
     fileInputRef.current.value = null;
   };
-
+  // --------------------HANDLE CHECKBOX CHANGE-------------------
   // Handeling the checkbox changes. If the user checks the box it wil turn true, and the opposite if the user unchecks it.
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -99,23 +97,14 @@ const SignUp = () => {
     }));
   };
 
+  // ---------------------HANDLE SIGN UP---------------------
   const handleSignUp = async (e) => {
     e.preventDefault();
     // this resets the error message if they try to sign up again.
     if (!validate(formData)) {
-      console.log("form not valid");
+      setError("Pleace try againg, check all fields and try again.");
       return;
     }
-
-    // try {
-    //     const userCredential = await signUp(signUpFormData.email, signUpFormData.password);
-    //     log(userCredential.user, 'has been signed up!');
-    // } catch (error) {
-    //     console.error('Error signing up:', error);
-    // }
-
-    // ------------------------------------------------
-
     // this checks if the password and confirm password are the same.
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -127,8 +116,6 @@ const SignUp = () => {
       const user = userCredential.user;
       await sendEmailVerification(user);
       console.log("Verification email sent to:", user.email);
-
-      // -------------------------------------------------
       // function to update display information
 
       await updateProfile(user, {
@@ -153,15 +140,15 @@ const SignUp = () => {
         class: formData.class,
         createdAt: serverTimestamp(),
         lastLogin: serverTimestamp(),
+        online: true, // shows if the user is online and active
       });
 
       await auth.currentUser.reload();
       const updatedUser = auth.currentUser;
       console.log(updatedUser.displayName, "has been updated!");
 
-      console.log("navigate now");
+      // console.log("navigate now");
       navigate("/verify-email");
-
       setFormData({
         firstname: "",
         middlename: "",
@@ -172,14 +159,14 @@ const SignUp = () => {
         terms: false,
       });
     } catch (error) {
-      setError(error.message);
-      console.error(
-        "The owl couldnt deliver your hogwart letter, try again!:",
-        error
-      );
+      setError("There is an error in the enrollment process");
+      // console.error(
+      //   "The owl couldnt deliver your hogwart letter, try again!:",
+      //   error
+      // );
     }
   };
-
+  //-----------------------------------------------------------Form and Fieldsets------------------------------------------------------------------
   return (
     <div className={styles.signUpContainer}>
       <video autoPlay loop muted className={styles.backgroundVideo}>
@@ -188,7 +175,7 @@ const SignUp = () => {
 
       <form className={styles.signUpForm} onSubmit={handleSignUp}>
         <h1>Sign up</h1>
-        {/* ------------------------------------- */}
+        {/* ----------------CARACTER INFORMATION--------------------- */}
         <fieldset className={styles.formGroup}>
           <legend className={styles.formGroupTitle}>
             Caracter information
@@ -207,7 +194,7 @@ const SignUp = () => {
               required
             />
           </div>
-          {/* ------------------------------------- */}
+          {/* -----------------MIDDLE NAME-------------------- */}
           <div className={styles.inputGroup}>
             <label htmlFor="caracter-middlename">Caracter Middle name</label>
             <input
@@ -220,7 +207,7 @@ const SignUp = () => {
               value={formData.middlename}
             />
           </div>
-          {/* ------------------------------------- */}
+          {/* -------------------LAST NAME------------------ */}
           <div className={styles.inputGroup}>
             <label htmlFor="caracter-lastname">Caracter Last name</label>
             <input
@@ -234,7 +221,7 @@ const SignUp = () => {
               required
             />
           </div>
-          {/* ------------------------------------- */}
+          {/* -------------------PROFILE PICTURE------------------ */}
           <div className={styles.inputGroup}>
             <label htmlFor="profilePicture">Profile Picture</label>
             <input
@@ -246,7 +233,6 @@ const SignUp = () => {
               ref={fileInputRef}
               value={formData.ImageChange}
             />
-
             {/* showing preview url, so you can display it before submitting */}
             {formData.previewUrl && (
               <div className={styles.imagePreview}>
@@ -255,13 +241,13 @@ const SignUp = () => {
                   alt="Preview"
                   className={styles.styleImagePreview}
                 />
-                <button
+                <Button
                   type="button"
                   className={styles.removeImageBtn}
                   onClick={handleRemoveImage}
                 >
                   Remove Image
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -271,7 +257,7 @@ const SignUp = () => {
         <fieldset className={styles.formGroup}>
           <legend className={styles.formGroupTitle}>Login Information</legend>
 
-          {/* ------------------------------------- */}
+          {/* -------------------EMAIL------------------ */}
           <div className={styles.inputGroup}>
             <label htmlFor="email">Email</label>
             <input
@@ -286,7 +272,7 @@ const SignUp = () => {
               required
             />
           </div>
-          {/* ------------------------------------- */}
+          {/* -------------------PASSWORD--------------------- */}
           <div className={styles.inputGroup}>
             <label htmlFor="password">Password</label>
             <input
@@ -298,8 +284,9 @@ const SignUp = () => {
               required
             />
           </div>
+          {/* -----------------CONFIRM PASSWORD-------------------- */}
           <div className={styles.inputGroup}>
-            <label htmlFor="password">Confirm Password</label>
+            <label htmlFor="confirm-password">Confirm Password</label>
             <input
               type="password"
               id="confirm-password"
@@ -309,7 +296,7 @@ const SignUp = () => {
               required
             />
           </div>
-          {/* ------------------------------------- */}
+          {/* -----------------TERMS AND CONDITIONS-------------------- */}
           <div className={styles.terms}>
             <input
               type="checkbox"
@@ -324,8 +311,10 @@ const SignUp = () => {
           {/* Sends an error back if there is issues */}
           {error && <p> {error} </p>}
 
-          <Button className={styles.signUpBtn}>Sign up</Button>
-
+          <Button type="submit" className={styles.signUpBtn}>
+            Sign up
+          </Button>
+          {error && <ErrorMessage message={error} />}
           <p>
             Already have an account? Log in {""}
             <NavLink to="/sign-in" className={styles.signInLink}>

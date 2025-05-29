@@ -34,19 +34,27 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    padding-bottom: 6rem;
   }
   .mobileNavigation {
+    display: flex;
+    position: fixed;
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 5rem;
-    background-color: transparent;
+    bottom: 0;
+    background-color: black;
     font-size: 1.2rem;
     padding: 2rem;
     border: none;
   }
-  .mobileNavigation:hover {
-    background-color: transparent;
+  .chatContainer {
+    display: flex;
+  }
+
+  .onlineUsersContainer {
+    display: flex;
   }
 }

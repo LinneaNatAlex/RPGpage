@@ -4,13 +4,17 @@ import useChatMessages from "../../hooks/useChatMessages";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./Chat.module.css";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import Button from "../Button/Button";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 // costume hooks usestate to hold the new message input value
 // useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
 const Chat = () => {
   const messages = useChatMessages();
   const [newMess, setNewMess] = useState("");
+  const [error, setError] = useState(null);
 
+  // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {
     e.preventDefault(); // preventing the form from refresing the page when form is submited
 
@@ -18,7 +22,7 @@ const Chat = () => {
 
     await addDoc(collection(db, "messages"), {
       text: newMess,
-      timestamp: serverTimestamp(), // adds the timestam for the mesage
+      timestamp: serverTimestamp(), // adds the timestam for the message
 
       sender: auth.currentUser.displayName,
       // gets the user name from firebase auth
@@ -27,8 +31,7 @@ const Chat = () => {
     setNewMess(""); // this clears the input field after pressing enter! Makes sure the input field is empty after sending a message
   };
 
-  // Chatbox container.
-
+  // --------------------CHAT FORM AND MESSAGE COMONENT / RENDERING-------------------
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatMessages}>
@@ -56,9 +59,10 @@ const Chat = () => {
           className={`${styles.chatInput} ${styles.textArea}`}
         />
         {/* ^ form input field for new messages */}
-        <button type="submit" className={styles.chatBtn}>
+        <Button type="submit" className={styles.chatBtn}>
           Send
-        </button>
+        </Button>
+        {error && <ErrorMessage message={error} />}
       </form>
     </div>
   );
