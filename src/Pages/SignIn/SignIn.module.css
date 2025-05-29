@@ -15,8 +15,6 @@
   padding: 40px;
   background-size: cover;
   background-position: center;
-  height: 100%;
-  width: 100%;
   padding-top: 100px;
 }
 
@@ -29,8 +27,6 @@
   backdrop-filter: blur(10px);
   border-radius: 10px;
   border: 2px solid goldenrod;
-  min-width: 450px;
-  max-height: 300px;
   padding: 1rem;
   gap: 10px;
   /* FORM TEXT */
@@ -71,18 +67,4 @@
 }
 /* Responsive design for samsung s20 ultra */
 @media (max-width: 912px) {
-  .signInContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  .signInForm {
-    min-width: 90%;
-    max-height: 100%;
-    padding: 1rem;
-  }
 }
