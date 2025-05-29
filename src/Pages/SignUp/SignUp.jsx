@@ -16,6 +16,8 @@ import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import Train from "../../assets/VideoBackgrounds/Train.mp4";
 // import VerifyEmail from "../VerifyEmail/VerifyEmail";
 import { useImageUpload } from "../../hooks/useImageUpload";
+import ErrorMessage from "../../Components/ErrorMessage/ErrorMessage";
+import SortingQuiz from "../../Components/SortingQuiz/SortingQuiz";
 
 // import  useAuth from '../../hooks/useAuth';
 // ------------------------------------------ SIGN UP ----------------------------------------------------
@@ -42,6 +44,9 @@ const SignUp = () => {
   // This is the function that will be used to sign up the user. The the function for redirecting the user to their profile page after they have signed up.
   const navigate = useNavigate();
   const { uploadImage } = useImageUpload();
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [selectedHouse, setSelectedHouse] = useState("");
+
   //error handling. If there is an error, it will show a message.
   const [error, setError] = useState(null);
 
@@ -172,158 +177,182 @@ const SignUp = () => {
       <video autoPlay loop muted className={styles.backgroundVideo}>
         <source src={Train} type="video/mp4" />
       </video>
+      <div>
+        {showQuiz && (
+          <SortingQuiz
+            onClose={() => setShowQuiz(false)}
+            onResult={(house) => {
+              setSelectedHouse(house);
+              setFormData((prevData) => ({
+                ...prevData,
+                house: house,
+              }));
+            }}
+          />
+        )}
+        <form className={styles.signUpForm} onSubmit={handleSignUp}>
+          <h1>Sign up</h1>
+          {/* ----------------CARACTER INFORMATION--------------------- */}
+          <fieldset className={styles.formGroup}>
+            <legend className={styles.formGroupTitle}>
+              Caracter information
+            </legend>
 
-      <form className={styles.signUpForm} onSubmit={handleSignUp}>
-        <h1>Sign up</h1>
-        {/* ----------------CARACTER INFORMATION--------------------- */}
-        <fieldset className={styles.formGroup}>
-          <legend className={styles.formGroupTitle}>
-            Caracter information
-          </legend>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="caracter-firstname">Caracter First name</label>
-            <input
-              type="text"
-              id="firstname"
-              name="firstname"
-              placeholder="Your caracter firstname"
-              maxLength={10}
-              onChange={handleInputChange}
-              value={formData.firstname}
-              required
-            />
-          </div>
-          {/* -----------------MIDDLE NAME-------------------- */}
-          <div className={styles.inputGroup}>
-            <label htmlFor="caracter-middlename">Caracter Middle name</label>
-            <input
-              type="text"
-              id="middlename"
-              name="middlename"
-              placeholder="Your caracter middlename"
-              maxLength={10}
-              onChange={handleInputChange}
-              value={formData.middlename}
-            />
-          </div>
-          {/* -------------------LAST NAME------------------ */}
-          <div className={styles.inputGroup}>
-            <label htmlFor="caracter-lastname">Caracter Last name</label>
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
-              placeholder="Your caracter lastname"
-              maxLength={10}
-              onChange={handleInputChange}
-              value={formData.lastname}
-              required
-            />
-          </div>
-          {/* -------------------PROFILE PICTURE------------------ */}
-          <div className={styles.inputGroup}>
-            <label htmlFor="profilePicture">Profile Picture</label>
-            <input
-              type="file"
-              id="profilePicture"
-              name="profilePicture"
-              accept=".jpg, .jpg, .png"
-              onChange={handleImageChange}
-              ref={fileInputRef}
-              value={formData.ImageChange}
-            />
-            {/* showing preview url, so you can display it before submitting */}
-            {formData.previewUrl && (
-              <div className={styles.imagePreview}>
-                <img
-                  src={formData.previewUrl}
-                  alt="Preview"
-                  className={styles.styleImagePreview}
-                />
-                <Button
-                  type="button"
-                  className={styles.removeImageBtn}
-                  onClick={handleRemoveImage}
-                >
-                  Remove Image
+            <div className={styles.inputGroup}>
+              <label htmlFor="caracter-firstname">Caracter First name</label>
+              <input
+                type="text"
+                id="firstname"
+                name="firstname"
+                placeholder="Your caracter firstname"
+                maxLength={10}
+                onChange={handleInputChange}
+                value={formData.firstname}
+                required
+              />
+            </div>
+            {/* -----------------MIDDLE NAME-------------------- */}
+            <div className={styles.inputGroup}>
+              <label htmlFor="caracter-middlename">Caracter Middle name</label>
+              <input
+                type="text"
+                id="middlename"
+                name="middlename"
+                placeholder="Your caracter middlename"
+                maxLength={10}
+                onChange={handleInputChange}
+                value={formData.middlename}
+              />
+            </div>
+            {/* -------------------LAST NAME------------------ */}
+            <div className={styles.inputGroup}>
+              <label htmlFor="caracter-lastname">Caracter Last name</label>
+              <input
+                type="text"
+                id="lastname"
+                name="lastname"
+                placeholder="Your caracter lastname"
+                maxLength={10}
+                onChange={handleInputChange}
+                value={formData.lastname}
+                required
+              />
+            </div>
+            {/* -------------------PROFILE PICTURE------------------ */}
+            <div className={styles.inputGroup}>
+              <label htmlFor="profilePicture">Profile Picture</label>
+              <input
+                type="file"
+                id="profilePicture"
+                name="profilePicture"
+                accept=".jpg, .jpg, .png"
+                onChange={handleImageChange}
+                ref={fileInputRef}
+                value={formData.ImageChange}
+              />
+              {/* -------------------HOUSE------------------ */}
+              <div className={styles.houseSelection}>
+                <Button type="button" onClick={() => setShowQuiz(true)}>
+                  Take the sorting quiz
                 </Button>
+                {selectedHouse && (
+                  <p className={styles.selectedHouse}>
+                    Your house is: {selectedHouse}
+                  </p>
+                )}
               </div>
-            )}
-          </div>
-        </fieldset>
-        {/* INFORMATION THAT IS NOT DISPLAYED */}
+              {/* showing preview url, so you can display it before submitting */}
+              {formData.previewUrl && (
+                <div className={styles.imagePreview}>
+                  <img
+                    src={formData.previewUrl}
+                    alt="Preview"
+                    className={styles.styleImagePreview}
+                  />
+                  <Button
+                    type="button"
+                    className={styles.removeImageBtn}
+                    onClick={handleRemoveImage}
+                  >
+                    Remove Image
+                  </Button>
+                </div>
+              )}
+            </div>
+          </fieldset>
+          {/* INFORMATION THAT IS NOT DISPLAYED */}
 
-        <fieldset className={styles.formGroup}>
-          <legend className={styles.formGroupTitle}>Login Information</legend>
+          <fieldset className={styles.formGroup}>
+            <legend className={styles.formGroupTitle}>Login Information</legend>
 
-          {/* -------------------EMAIL------------------ */}
-          <div className={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Jon.w@exemple.com"
-              maxLength={50}
-              minLength={8}
-              onChange={handleInputChange}
-              value={formData.email}
-              required
-            />
-          </div>
-          {/* -------------------PASSWORD--------------------- */}
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={handleInputChange}
-              value={formData.password}
-              required
-            />
-          </div>
-          {/* -----------------CONFIRM PASSWORD-------------------- */}
-          <div className={styles.inputGroup}>
-            <label htmlFor="confirm-password">Confirm Password</label>
-            <input
-              type="password"
-              id="confirm-password"
-              name="confirmPassword"
-              onChange={handleInputChange}
-              value={formData.confirmPassword}
-              required
-            />
-          </div>
-          {/* -----------------TERMS AND CONDITIONS-------------------- */}
-          <div className={styles.terms}>
-            <input
-              type="checkbox"
-              id="terms"
-              name="terms"
-              onChange={handleCheckboxChange}
-              checked={formData.terms}
-              required
-            />
-            <label htmlFor="terms">Agree with terms and conditions</label>
-          </div>
-          {/* Sends an error back if there is issues */}
-          {error && <p> {error} </p>}
+            {/* -------------------EMAIL------------------ */}
+            <div className={styles.inputGroup}>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Jon.w@exemple.com"
+                maxLength={50}
+                minLength={8}
+                onChange={handleInputChange}
+                value={formData.email}
+                required
+              />
+            </div>
+            {/* -------------------PASSWORD--------------------- */}
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                onChange={handleInputChange}
+                value={formData.password}
+                required
+              />
+            </div>
+            {/* -----------------CONFIRM PASSWORD-------------------- */}
+            <div className={styles.inputGroup}>
+              <label htmlFor="confirm-password">Confirm Password</label>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirmPassword"
+                onChange={handleInputChange}
+                value={formData.confirmPassword}
+                required
+              />
+            </div>
+            {/* -----------------TERMS AND CONDITIONS-------------------- */}
+            <div className={styles.terms}>
+              <input
+                type="checkbox"
+                id="terms"
+                name="terms"
+                onChange={handleCheckboxChange}
+                checked={formData.terms}
+                required
+              />
+              <label htmlFor="terms">Agree with terms and conditions</label>
+            </div>
+            {/* Sends an error back if there is issues */}
+            {error && <p> {error} </p>}
 
-          <Button type="submit" className={styles.signUpBtn}>
-            Sign up
-          </Button>
-          {error && <ErrorMessage message={error} />}
-          <p>
-            Already have an account? Log in {""}
-            <NavLink to="/sign-in" className={styles.signInLink}>
-              here
-            </NavLink>
-          </p>
-        </fieldset>
-        {/* ------------------------------------- */}
-      </form>
+            <Button type="submit" className={styles.signUpBtn}>
+              Sign up
+            </Button>
+            {error && <ErrorMessage message={error} />}
+            <p>
+              Already have an account? Log in {""}
+              <NavLink to="/sign-in" className={styles.signInLink}>
+                here
+              </NavLink>
+            </p>
+          </fieldset>
+          {/* ------------------------------------- */}
+        </form>
+      </div>
     </div>
   );
 };
