@@ -1,34 +1,52 @@
+.ctaBtnContainer {
+  display: flex;
+  justify-content: left;
+  gap: 5.5rem;
+  width: 40%;
+  height: 3rem;
+  margin-top: 3rem;
+}
+/* --------------------BUTTON -------------------- */
 .ctaBtn {
-  background-color: goldenrod;
-  color: white;
+  background-color: rgb(207, 170, 78);
+  color: rgb(255, 255, 255);
   padding: 12px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin: 2px;
+  text-decoration: none;
 }
-
+.ctaBtn:hover {
+  background-color: gray;
+}
+/* --------------------INTRODUCTION HEADER -------------------- */
 .introductionHeader {
-  background-color: rgb(26, 25, 25);
+  background-color: rgb(41, 38, 53);
   padding: 10%;
-  color: white;
+  color: rgb(197, 170, 99);
+  margin-bottom: var(--main-margin);
+  border-bottom: var(--border-size) solid rgb(207, 170, 78);
 }
 
 .mainContentHome {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
-  background-color: rgb(26, 25, 25);
+  background-color: var(--background-color);
 }
+
+/* ---------------------------MOBILE--------------------------- */
 
 .mobileNavigation {
   display: none;
-  background-color: rgb(26, 25, 25);
+  position: fixed;
+  background-color: var(--background-color);
   color: white;
   font-size: 1.5rem;
   border: none;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1000px) {
   .mainContentHome {
     display: flex;
     flex-direction: column;
@@ -37,9 +55,8 @@
     padding-bottom: 6rem;
   }
   .mobileNavigation {
-    display: flex;
-    position: fixed;
     flex: 1;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,8 +64,7 @@
     bottom: 0;
     background-color: black;
     font-size: 1.2rem;
-    padding: 2rem;
-    border: none;
+    height: 5rem;
   }
   .chatContainer {
     display: flex;
@@ -56,5 +72,19 @@
 
   .onlineUsersContainer {
     display: flex;
+  }
+
+  .ctaBtnContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .ctaBtn {
+    width: 50%;
+    font-size: small;
   }
 }
