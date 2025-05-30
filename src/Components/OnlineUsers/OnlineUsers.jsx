@@ -1,5 +1,6 @@
 import style from "./OnlineUsers.module.css";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
+import React, { useContext } from "react";
 
 const OnlineUsers = () => {
   const users = useOnlineUsers();
@@ -13,6 +14,11 @@ const OnlineUsers = () => {
       <ul className={style.onlineUsersList}>
         {users.map((user) => (
           <li key={user.id} className={style.onlineUserItem}>
+            <img
+              src={user.profileImageUrl || "/icons/avatar.svg"}
+              alt="User Avatar"
+              className={style.userAvatar}
+            />
             {user.displayName}
           </li>
         ))}

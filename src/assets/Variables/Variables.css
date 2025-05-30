@@ -1,0 +1,25 @@
+:root {
+  --primary-color: rgb(41, 38, 53);
+  --secondary-color: rgb(207, 170, 78);
+  --background-color: rgb(61, 61, 68);
+  --text-color: rgb(197, 170, 99);
+  /* -----------------NAVBARCOLOR PALLET--------------------------- */
+  --navbar-background: rgb(41, 38, 53);
+  --navbar-text-color: rgb(197, 170, 99);
+  --navbar-rolldown-background: rgb(79, 75, 75);
+  /* -----------------BUTTON--------------------------- */
+  --button-background: rgb(207, 170, 78);
+  --button-text-color: rgb(255, 255, 255);
+
+  /* ------------------------MAINSIZING---------------------- */
+  --border-size: 1px;
+  --main-padding: 6px;
+  --main-margin: 1rem;
+  --border-radius: 10px;
+  /* -----------------NAVBAR SIZING */
+  --navbar-height: 60px;
+  --navbar-width: 100%;
+  /* -------------------NAVBARMOBILE TEXTSIZING --------------------------- */
+  /* -----------------FONT SIZING --------------------------- */
+  --navbar-mobile-text-size: 0.5rem;
+}
