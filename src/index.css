@@ -8,7 +8,5 @@ body {
   min-width: 0;
   font-family: sans-serif;
   overflow-x: hidden;
-  background-color: var(--background-color);
-  padding: var(--main-padding);
-  border: var(--secondary-color) 1px solid;
+  background-color: transparent;
 }
