@@ -1,4 +1,4 @@
-@import "./variables.css";
+@import "../src/assets/Variables/Variables.css";
 html,
 body {
   box-sizing: border-box;
