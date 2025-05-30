@@ -25,8 +25,6 @@
   background-color: rgb(41, 38, 53);
   padding: 10%;
   color: rgb(197, 170, 99);
-  margin-bottom: var(--main-margin);
-  border-bottom: var(--border-size) solid rgb(207, 170, 78);
 }
 
 .mainContentHome {
