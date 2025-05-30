@@ -38,12 +38,14 @@ const MainPage = () => {
         {/* to make sure the only see the links if they are not logged in */}
         {!user && (
           <>
-            <Link to="/sign-in" className={styles.ctaBtn}>
-              Enter the Castle
-            </Link>
-            <Link to="/sign-up" className={styles.ctaBtn}>
-              Create an Account
-            </Link>
+            <div className={styles.ctaBtnContainer}>
+              <Link to="/sign-in" className={styles.ctaBtn}>
+                Enter the Castle
+              </Link>
+              <Link to="/sign-up" className={styles.ctaBtn}>
+                Create an Account
+              </Link>
+            </div>
           </>
         )}
       </header>
