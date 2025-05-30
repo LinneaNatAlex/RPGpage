@@ -2,15 +2,15 @@
 import { useState } from "react";
 import useChatMessages from "../../hooks/useChatMessages";
 import { db, auth } from "../../firebaseConfig";
-import styles from "./Chat.module.css";
+import styles from "./LiveRP.module.css"; // importing the css module for styling
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 // costume hooks usestate to hold the new message input value
 // useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
-const Chat = () => {
-  const { messages } = useChatMessages();
+const LiveRP = () => {
+  const { rpgGrateHall } = useChatMessages(); // destructuring the messages to get the rpgGrateHall messages
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
 
@@ -20,7 +20,7 @@ const Chat = () => {
 
     if (!newMess.trim()) return;
 
-    await addDoc(collection(db, "messages"), {
+    await addDoc(collection(db, "rpgGrateHall"), {
       text: newMess,
       timestamp: serverTimestamp(), // adds the timestam for the message
 
@@ -36,7 +36,7 @@ const Chat = () => {
     <div className={styles.chatContainer}>
       <div className={styles.chatMessages}>
         {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
-        {messages.map(
+        {rpgGrateHall.map(
           (
             message //  this scans throug the messages then return a div for each message.
           ) => (
@@ -49,7 +49,7 @@ const Chat = () => {
           )
         )}
       </div>
-      <form className={styles.chatForm} onSubmit={sendtMessage}>
+      <form className={styles.RrchatForm} onSubmit={sendtMessage}>
         <input
           value={newMess}
           onChange={(e) => setNewMess(e.target.value)}
@@ -59,7 +59,7 @@ const Chat = () => {
           className={`${styles.chatInput} ${styles.textArea}`}
         />
         {/* ^ form input field for new messages */}
-        <Button type="submit" className={styles.chatBtn}>
+        <Button type="submit" className={styles.RpchatBtn}>
           Send
         </Button>
         {error && <ErrorMessage message={error} />}
@@ -68,4 +68,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default LiveRP;

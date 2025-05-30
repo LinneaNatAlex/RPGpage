@@ -61,9 +61,16 @@ const Navbar = () => {
             <NavLink to="/Profile">Profile</NavLink>
             <NavLink to="/userMap">User Map</NavLink>
 
-            <div className={styles.classroomsDropdown}>
+            <div className={styles.dropdown}>
+              <NavLink to="/Rpg">RPG</NavLink>
+              <div className={styles.dropdownContent}>
+                <NavLink to="/Rpg/GreatHall">Great Hall</NavLink>
+              </div>
+            </div>
+
+            <div className={styles.dropdown}>
               <NavLink to="/ClassRooms">Class Rooms</NavLink>
-              <div className={styles.dropdown}>
+              <div className={styles.dropdownContent}>
                 <NavLink to="/ClassRooms/Potions">Potions</NavLink>
               </div>
             </div>
