@@ -3,7 +3,6 @@
   flex-direction: column;
   height: 105vh;
   border: 3px solid goldenrod;
-
   border-radius: 20px 0 0 20px;
   background-color: rgb(225, 219, 219);
 }
@@ -14,7 +13,6 @@
   padding: 1rem;
   overflow-y: auto;
   word-wrap: break-word;
-
   scrollbar-width: thin;
   scrollbar-color: goldenrod transparent;
   color: rgb(129, 127, 124);
