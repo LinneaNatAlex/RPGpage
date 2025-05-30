@@ -39,8 +39,6 @@ const Navbar = () => {
       const user = auth.currentUser;
       if (user) {
         await updateDoc(doc(db, "users", user.uid), { online: false });
-        await signOut(auth);
-        return;
       }
       await signOut(auth);
       navigate("/sign-in");
