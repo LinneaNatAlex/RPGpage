@@ -10,6 +10,7 @@
   overflow-y: auto;
   border-radius: var(--border-radius);
   border: var(--primary-color) solid 3px;
+  color: var(--contrast-text-color);
 }
 
 .onlineUsersList {
