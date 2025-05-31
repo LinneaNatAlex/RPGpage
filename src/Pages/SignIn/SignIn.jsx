@@ -24,10 +24,28 @@ const SignIn = () => {
       [name]: value,
     }));
   };
+  // --------------FORM VALIDATION, MAKING SURE USER FILLS AND WRITES CORRECT E-MAIL AND PASSWORD---------------------------
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      setError("Please fill in all fields.");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+    return true;
+  };
+
   // Signing users in
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError(null);
+    if (!validateForm()) return;
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,

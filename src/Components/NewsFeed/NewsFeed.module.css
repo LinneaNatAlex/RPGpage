@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgb(225, 219, 219);
+  background-color: var(--contrast-background-color);
   border: 3px solid goldenrod;
   margin: 10px;
   gap: 10px;
@@ -15,14 +15,13 @@
   justify-content: center;
   border: 2px solid goldenrod;
   width: 100%;
-  background-color: white;
   gap: 10px;
 }
 
 .newsContainer {
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--contrast-background-color);
   padding: 2rem;
 }
 

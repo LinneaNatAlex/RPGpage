@@ -3,6 +3,11 @@
   --secondary-color: rgb(207, 170, 78);
   --background-color: rgb(61, 61, 68);
   --text-color: rgb(197, 170, 99);
+  --border-color: #c7a008;
+  --contrast-text-color: #1b1425;
+  --contrast-background-color: #fdf6e3;
+  --background-color: #1b1425;
+
   /* -----------------NAVBARCOLOR PALLET--------------------------- */
   --navbar-background: rgb(41, 38, 53);
   --navbar-text-color: rgb(197, 170, 99);
