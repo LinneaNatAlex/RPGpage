@@ -1,10 +1,12 @@
+@import "../../assets/Variables/Variables.css";
+
 .chatContainer {
   display: flex;
   flex-direction: column;
   height: 105vh;
   border: 3px solid goldenrod;
   border-radius: 20px 0 0 20px;
-  background-color: rgb(225, 219, 219);
+  background-color: var(--background-color);
 }
 
 .chatMessages {
@@ -15,7 +17,7 @@
   word-wrap: break-word;
   scrollbar-width: thin;
   scrollbar-color: goldenrod transparent;
-  color: rgb(129, 127, 124);
+  color: var(--text-color);
 }
 .messageSender {
   font-weight: bold;
