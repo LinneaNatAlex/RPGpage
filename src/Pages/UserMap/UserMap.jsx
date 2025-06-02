@@ -1,7 +1,6 @@
 import style from "./UserMap.module.css";
 import { useState } from "react";
 import UserList from "../../Components/UserList/UserList.jsx";
-import styles from "../../Components/UserList/UserList.module.css";
 import SearchBar from "../../Components/SearchBar/SearchBar.jsx";
 
 // This is the UserMap page where users will be displayed

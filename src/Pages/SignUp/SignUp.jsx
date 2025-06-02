@@ -34,7 +34,7 @@ const SignUp = () => {
     profilePicture: null,
     previewUrl: "",
     terms: false,
-    house: "Gryffindor",
+    house: "",
     class: "1st year",
   });
   //input type file reference
@@ -106,7 +106,8 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     // this resets the error message if they try to sign up again.
-    if (!validate(formData)) {
+    const validationErrors = validate(formData);
+    if (validationErrors.length > 0) {
       setError("Pleace try againg, check all fields and try again.");
       return;
     }
@@ -150,7 +151,6 @@ const SignUp = () => {
 
       await auth.currentUser.reload();
       const updatedUser = auth.currentUser;
-      console.log(updatedUser.displayName, "has been updated!");
 
       // console.log("navigate now");
       navigate("/verify-email");
@@ -164,11 +164,7 @@ const SignUp = () => {
         terms: false,
       });
     } catch (error) {
-      setError("There is an error in the enrollment process");
-      // console.error(
-      //   "The owl couldnt deliver your hogwart letter, try again!:",
-      //   error
-      // );
+      setError("email already in use, please try again with another email.");
     }
   };
   //-----------------------------------------------------------Form and Fieldsets------------------------------------------------------------------
@@ -180,6 +176,7 @@ const SignUp = () => {
       <div>
         {showQuiz && (
           <SortingQuiz
+            required
             onClose={() => setShowQuiz(false)}
             onResult={(house) => {
               setSelectedHouse(house);
@@ -208,8 +205,8 @@ const SignUp = () => {
                 maxLength={10}
                 onChange={handleInputChange}
                 value={formData.firstname}
-                required
               />
+              {errors.firstname && <ErrorMessage message={errors.firstname} />}
             </div>
             {/* -----------------MIDDLE NAME-------------------- */}
             <div className={styles.inputGroup}>
@@ -223,6 +220,9 @@ const SignUp = () => {
                 onChange={handleInputChange}
                 value={formData.middlename}
               />
+              {errors.middlename && (
+                <ErrorMessage message={errors.middlename} />
+              )}
             </div>
             {/* -------------------LAST NAME------------------ */}
             <div className={styles.inputGroup}>
@@ -237,6 +237,7 @@ const SignUp = () => {
                 value={formData.lastname}
                 required
               />
+              {errors.lastname && <ErrorMessage message={errors.lastname} />}
             </div>
             {/* -------------------PROFILE PICTURE------------------ */}
             <div className={styles.inputGroup}>
@@ -250,6 +251,7 @@ const SignUp = () => {
                 ref={fileInputRef}
                 value={formData.ImageChange}
               />
+
               {/* -------------------HOUSE------------------ */}
               <div className={styles.houseSelection}>
                 <Button type="button" onClick={() => setShowQuiz(true)}>
@@ -261,6 +263,7 @@ const SignUp = () => {
                   </p>
                 )}
               </div>
+              {errors.house && <ErrorMessage message={errors.house} />}
               {/* showing preview url, so you can display it before submitting */}
               {formData.previewUrl && (
                 <div className={styles.imagePreview}>
@@ -299,6 +302,7 @@ const SignUp = () => {
                 value={formData.email}
                 required
               />
+              {errors.email && <ErrorMessage message={errors.email} />}
             </div>
             {/* -------------------PASSWORD--------------------- */}
             <div className={styles.inputGroup}>
@@ -311,6 +315,7 @@ const SignUp = () => {
                 value={formData.password}
                 required
               />
+              {errors.password && <ErrorMessage message={errors.password} />}
             </div>
             {/* -----------------CONFIRM PASSWORD-------------------- */}
             <div className={styles.inputGroup}>
@@ -323,6 +328,9 @@ const SignUp = () => {
                 value={formData.confirmPassword}
                 required
               />
+              {errors.confirmPassword && (
+                <ErrorMessage message={errors.confirmPassword} />
+              )}
             </div>
             {/* -----------------TERMS AND CONDITIONS-------------------- */}
             <div className={styles.terms}>
@@ -337,12 +345,10 @@ const SignUp = () => {
               <label htmlFor="terms">Agree with terms and conditions</label>
             </div>
             {/* Sends an error back if there is issues */}
-            {error && <p> {error} </p>}
 
             <Button type="submit" className={styles.signUpBtn}>
               Sign up
             </Button>
-            {error && <ErrorMessage message={error} />}
             <p>
               Already have an account? Log in {""}
               <NavLink to="/sign-in" className={styles.signInLink}>

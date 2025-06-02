@@ -4,22 +4,23 @@
   align-items: center;
   padding: 50px;
   border: 1;
-  background-color: rgb(243, 218, 186);
-  height: 100vh;
+  background-color: var(--light-background-color);
+  height: 200vh;
 }
 
 .userListContainer {
   border-collapse: collapse;
   width: 100%;
-  border: 2px solid black;
-  background-color: antiquewhite;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .tableHeader {
-  background-color: rgb(172, 124, 61);
+  background-color: var(--secondary-color);
   font-weight: bold;
   text-align: left;
   width: 100%;
+  color: var(--contrast-text-color);
 }
 
 .tableHeader th {
