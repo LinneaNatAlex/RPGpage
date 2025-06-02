@@ -1,7 +1,7 @@
 :root {
   --primary-color: rgb(41, 38, 53);
   --secondary-color: rgb(207, 170, 78);
-  --background-color: rgb(61, 61, 68);
+  --light-background-color: rgb(57, 48, 75);
   --text-color: rgb(197, 170, 99);
   --border-color: #c7a008;
   --contrast-text-color: #1b1425;
@@ -20,7 +20,7 @@
   --border-size: 1px;
   --main-padding: 6px;
   --main-margin: 1rem;
-  --border-radius: 10px;
+  --main-border-radius: 10px;
   /* -----------------NAVBAR SIZING */
   --navbar-height: 60px;
   --navbar-width: 100%;
