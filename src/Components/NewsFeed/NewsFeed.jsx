@@ -125,27 +125,33 @@ const NewsFeed = () => {
 
       <div className={styles.newsContainer}>
         {/* Display for the news post */}
+
         {newsList.map((item) => (
           <div key={item.id}>
-            <h3>{item.title}</h3>
-            <strong>{item.author}</strong>:{" "}
-            {item.content.startsWith("{{code}}") ? (
-              <iframe
-                // SrcDoc is used to show the html/css styling inside the Iframe.
-                srcDoc={item.content
-                  .replace("{{code}}", "")
-                  .replace("{{/code}}", "")}
-                sandbox="allow-same-origin"
-                title="code-preview"
-                // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
-                frameBorder="0"
-                // Size is defined so that the iframe can be shown correctly. So the reason is because, even if '' srcDoc '' can show the visual html/css styling it can not change the Iframe size.
-                width="100%"
-                height="300px"
-              />
-            ) : (
-              <p>{item.content}</p>
-            )}{" "}
+            <div className={styles.newsContent}>
+              <div className={styles.newsInfo}>
+                {" "}
+                <h3>{item.title}</h3>
+                <strong>{item.author}</strong>:{" "}
+              </div>
+              {item.content.startsWith("{{code}}") ? (
+                <iframe
+                  // SrcDoc is used to show the html/css styling inside the Iframe.
+                  srcDoc={item.content
+                    .replace("{{code}}", "")
+                    .replace("{{/code}}", "")}
+                  sandbox="allow-same-origin"
+                  title="code-preview"
+                  // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
+                  frameBorder="0"
+                  // Size is defined so that the iframe can be shown correctly. So the reason is because, even if '' srcDoc '' can show the visual html/css styling it can not change the Iframe size.
+                />
+              ) : (
+                <div className={styles.textBlock}>
+                  <p>{item.content}</p>
+                </div>
+              )}{" "}
+            </div>
             <br />
             <br />
             {/* Theese buttons is only displayed for the admin role */}
