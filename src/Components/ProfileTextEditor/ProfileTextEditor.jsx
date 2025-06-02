@@ -32,7 +32,7 @@ const ProfileTextEditor = () => {
 
   if (editing || (!text && !html)) {
     return (
-      <div>
+      <div className={styles.profileEditor}>
         <div>
           <label>
             <input
@@ -81,7 +81,10 @@ const ProfileTextEditor = () => {
             </div>
           </>
         )}
-        <Button onClick={handleStoreText}>Save Profile</Button>
+        <br />
+        <Button onClick={handleStoreText} className={styles.saveButton}>
+          Save Profile
+        </Button>
       </div>
     );
   }

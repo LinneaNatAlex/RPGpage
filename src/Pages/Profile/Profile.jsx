@@ -53,40 +53,54 @@ const Profile = () => {
         <div className={styles.characterDetailsContainer}>
           <div className={styles.charactinfo}>
             <h2>Character Details</h2>
-            <p>
-              <strong>Full Name:</strong>
-            </p>{" "}
-            {user.displayName}
-            <p>
-              <strong>Class:</strong>
-            </p>{" "}
-            {userData.class}
-            <p>
-              <strong>Age:</strong>
-            </p>{" "}
-            {userData.age}
-            <p>
-              <strong>House:</strong>
-            </p>{" "}
-            {userData.house}
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>Full Name:</strong>
+              </p>{" "}
+              {user.displayName}
+            </div>
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>Class:</strong>
+              </p>{" "}
+              {userData.class}
+            </div>
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>Age:</strong>
+              </p>{" "}
+              {userData.age}
+            </div>
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>House:</strong>
+              </p>{" "}
+              {userData.house}
+            </div>
           </div>
           <div className={styles.charactinfo}>
-            <p>
-              <strong>Account Created:</strong>
-            </p>{" "}
-            {userData.createdAt?.toDate().toLocaleDateString()}
-            <p>
-              <strong>Last Login:</strong>
-            </p>{" "}
-            {auth.currentUser.metadata.lastLoginAt
-              ? new Date(
-                  Number(auth.currentUser.metadata.lastLoginAt)
-                ).toLocaleDateString()
-              : "N/A"}
-            <p>
-              <strong>Roles</strong>
-            </p>{" "}
-            {userData.roles?.join(", ")}
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>Account Created:</strong>
+              </p>{" "}
+              {userData.createdAt?.toDate().toLocaleDateString()}
+            </div>
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>Last Login:</strong>
+              </p>{" "}
+              {auth.currentUser.metadata.lastLoginAt
+                ? new Date(
+                    Number(auth.currentUser.metadata.lastLoginAt)
+                  ).toLocaleDateString()
+                : "N/A"}
+            </div>
+            <div className={styles.caracterDetails}>
+              <p>
+                <strong>Roles</strong>
+              </p>{" "}
+              {userData.roles?.join(", ")}
+            </div>
           </div>
         </div>
       </div>
