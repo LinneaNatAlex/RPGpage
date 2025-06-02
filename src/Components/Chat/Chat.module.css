@@ -62,8 +62,8 @@
     height: 100vh;
     width: 100%;
     border-radius: 0;
-    border: 5px solid goldenrod;
-    background-color: rgb(85, 81, 78);
+    border: none;
+    overflow-y: auto;
   }
   .chatMessages {
     padding: 0.5rem;
