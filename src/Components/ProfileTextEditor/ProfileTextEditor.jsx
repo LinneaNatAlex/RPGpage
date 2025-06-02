@@ -115,9 +115,6 @@ const ProfileTextEditor = () => {
             </Button>
           </div>
           {/* ----------------------------------------------- */}
-          <div className={styles.chatBar}>
-            <div className={styles.chatContainer}>{user && <Chat />}</div>
-          </div>
         </div>
       )}
     </div>

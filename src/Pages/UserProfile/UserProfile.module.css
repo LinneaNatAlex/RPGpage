@@ -65,3 +65,26 @@
 .profileTextContainer {
   color: var(--text-color);
 }
+
+@media screen and (max-width: 1000px) {
+  .profileWrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+  .profileContainer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .characterDetailsContainer {
+    width: 70%;
+    margin: 10px auto;
+  }
+  .profileHtmlContainer {
+    display: flex;
+  }
+  .chatContainer {
+    display: none;
+  }
+}

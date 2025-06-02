@@ -3,16 +3,69 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: black;
+  min-height: 100vh;
+  position: relative;
   color: white;
-  height: 100vh;
 }
 
-/* /* ----------------BUTTONG STYLES--------------------- * */
+.backgroundVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.5);
+}
+
+.verifyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  border: 2px solid goldenrod;
+  max-width: 600px;
+  margin: 2rem;
+}
+
+.verifyContent h1 {
+  color: goldenrod;
+  margin-bottom: 1rem;
+}
+
+.verifyContent p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
 .verifyBtn {
   background-color: transparent;
-  color: white;
-  padding: 1rem;
-  border: 2px solid white;
+  color: goldenrod;
+  padding: 1rem 2rem;
+  border: 2px solid goldenrod;
+  border-radius: 5px;
   cursor: pointer;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.verifyBtn:hover {
+  background-color: goldenrod;
+  color: black;
+}
+
+.successMessage {
+  color: #4CAF50;
+  margin-top: 1rem;
+}
+
+.errorMessage {
+  color: #f44336;
+  margin-top: 1rem;
 }
