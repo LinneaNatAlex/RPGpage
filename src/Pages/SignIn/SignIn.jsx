@@ -53,6 +53,12 @@ const SignIn = () => {
         formData.password
       );
       const user = userCredential.user;
+      await user.reload();
+      console.log(user.emailVerified);
+      if (!user.emailVerified) {
+        setError("Please verify your email before signing in.");
+        return;
+      }
       navigate("/");
     } catch (error) {
       setError("Witch and Wizard, something went wrong! Please try again.");

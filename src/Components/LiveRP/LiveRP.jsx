@@ -41,7 +41,9 @@ const LiveRP = () => {
             message //  this scans throug the messages then return a div for each message.
           ) => (
             <div key={message.id} className={styles.message}>
-              <strong className={styles.messageSender}>{message.sender}</strong>
+              <strong>
+                <p className={styles.messageSender}>{message.sender}</p>
+              </strong>
               :{" "}
               {/* This is where the message will be displayed! Sender with caracter name followed by the text */}
               {message.text} {/* the message shows the author/user/messanger */}
@@ -55,7 +57,7 @@ const LiveRP = () => {
           onChange={(e) => setNewMess(e.target.value)}
           type="text"
           placeholder="your messages..."
-          maxLength={200}
+          maxLength={2000}
           className={`${styles.chatInput} ${styles.textArea}`}
         />
         {/* ^ form input field for new messages */}

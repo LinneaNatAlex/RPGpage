@@ -1,8 +1,3 @@
-html,
-body {
-  height: 500vh;
-}
-
 .profileWrapper {
   background-color: var(--light-background-color);
 }
@@ -16,6 +11,10 @@ body {
   max-height: 100vh;
   border: var(--border-size) solid var(--border-color);
   background: var(--background-color);
+}
+.profileTextContainer {
+  display: grid;
+  grid-template-columns: 4fr 1fr;
 }
 
 .profileText {
@@ -71,4 +70,35 @@ body {
 .profileTextContainer {
   justify-content: center;
   width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+  .profileWrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  .profileContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .profileTextContainer {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  .profileText {
+    display: flex;
+    flex-direction: column;
+  }
+  .characterDetailsContainer {
+    width: 60%;
+    margin: 10px auto;
+  }
+
+  .chatContainer {
+    display: none;
+  }
 }

@@ -5,10 +5,12 @@ import { db } from "../../firebaseConfig";
 import { useAuth } from "../../context/authContext";
 import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
+import Chat from "../../Components/Chat/Chat";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { user, loading } = useAuth();
+
   // This uses the auth context to get the current user! teck loding state!
 
   useEffect(() => {
@@ -26,7 +28,7 @@ const Profile = () => {
         console.error("Error fetching user data:", error);
       }
     };
-
+    // fetching user date, to display on the profile page
     fetchUserData();
   }, [user, loading]);
 
@@ -108,6 +110,9 @@ const Profile = () => {
         <div className={styles.profileText}>
           <h2>Profile Text</h2>
           <ProfileTextEditor />
+        </div>
+        <div className={styles.chatBar}>
+          <div className={styles.chatContainer}>{user && <Chat />}</div>
         </div>
       </div>
     </div>
