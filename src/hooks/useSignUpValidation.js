@@ -17,6 +17,9 @@ const useSignUpValidation = () => {
     if (!value.lastname.trim()) {
       newErrors.lastname = "Character lastname is required";
     }
+    if (!value.house.trim()) {
+      newErrors.house = "Character house is required";
+    }
     if (!value.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!emailRegex.test(value.email)) {
@@ -26,7 +29,7 @@ const useSignUpValidation = () => {
       newErrors.password = "Password is required";
     } else if (value.password.trim().length < 8) {
       newErrors.password = "Password must be at least 8 characters long";
-    } else if (passwordRegex.test(value.password.trim())) {
+    } else if (!passwordRegex.test(value.password.trim())) {
       newErrors.password =
         "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
     }
