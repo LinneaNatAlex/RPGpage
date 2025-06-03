@@ -120,6 +120,7 @@ const SignUp = () => {
       );
 
       const user = userCredential.user;
+
       await sendEmailVerification(user);
       console.log("Verification email sent to:", user.email);
       // function to update display information
@@ -173,7 +174,7 @@ const SignUp = () => {
       <video autoPlay loop muted className={styles.backgroundVideo}>
         <source src={Train} type="video/mp4" />
       </video>
-      <div>
+      <div className={styles.houseSorting}>
         {showQuiz && (
           <SortingQuiz
             required
@@ -254,7 +255,11 @@ const SignUp = () => {
 
               {/* -------------------HOUSE------------------ */}
               <div className={styles.houseSelection}>
-                <Button type="button" onClick={() => setShowQuiz(true)}>
+                <Button
+                  type="button"
+                  className={styles.sortingQuizButton}
+                  onClick={() => setShowQuiz(true)}
+                >
                   Take the sorting quiz
                 </Button>
                 {selectedHouse && (

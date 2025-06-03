@@ -60,3 +60,9 @@
   padding: 1rem;
   background-color: var(--secondary-color);
 }
+
+@media screen and (max-width: 768px) {
+  .editorWrapper {
+    width: 40vh;
+  }
+}

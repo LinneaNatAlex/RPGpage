@@ -121,15 +121,16 @@ const SortingQuiz = ({ onClose, onResult }) => {
         <div>
           {questions[currentQuestion].answers.map((answer) => (
             <Button
+              className={styles.answerButton}
               key={answer.text}
               onClick={() => handleAnswers(answer.house)}
             >
-              {answer.text}
+              <div className={styles.answerText}>{answer.text}</div>
             </Button>
           ))}
         </div>
         <Button onClick={onClose} className={styles.ExitButton}>
-          Exit question
+          <strong>✕</strong>
         </Button>
       </div>
     </div>
