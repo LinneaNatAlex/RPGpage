@@ -41,10 +41,11 @@ const LiveRP = () => {
             message //  this scans throug the messages then return a div for each message.
           ) => (
             <div key={message.id} className={styles.message}>
-              <strong>
-                <p className={styles.messageSender}>{message.sender}</p>
-              </strong>
-              :{" "}
+              <div className={styles.messageNamecontainer}>
+                <strong>
+                  <p className={styles.messageSender}>{message.sender}:</p>
+                </strong>{" "}
+              </div>
               {/* This is where the message will be displayed! Sender with caracter name followed by the text */}
               {message.text} {/* the message shows the author/user/messanger */}
             </div>

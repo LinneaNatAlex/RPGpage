@@ -1,13 +1,17 @@
 import { useState } from "react";
 
+// costum hook calidate signup form input.
 const useSignUpValidation = () => {
   const [errors, setErrors] = useState({});
+  // Expressions to regulate and to validate how standard email should look
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Regex strengthen the pasword (min 8 caracters, 1upper and lover case atleast and one special symbol/char)
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{8,}$/;
 
+  // returning the errors in the validation form fields.
   const validate = (value) => {
     let newErrors = {};
-
+    // if else to check the imput fields, if and if not '!' then they will display the different errors.
     if (!value.firstname.trim()) {
       newErrors.firstname = "Character firstname is required";
     }
@@ -35,8 +39,9 @@ const useSignUpValidation = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors);
+    return Object.keys(newErrors); //this teturns an arry
   };
+  //returns and validate functions and the errors
   return { validate, errors };
 };
 

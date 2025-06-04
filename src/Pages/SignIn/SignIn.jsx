@@ -40,8 +40,9 @@ const SignIn = () => {
     }
     return true;
   };
-
+  // -----------------------------SIGN IN HANDLER-----------------------------
   // Signing users in
+
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError(null);
@@ -53,12 +54,14 @@ const SignIn = () => {
         formData.password
       );
       const user = userCredential.user;
+      //  Check if the user's email is verified BEFORE allowing them to navigate to the home page.
       await user.reload();
       console.log(user.emailVerified);
       if (!user.emailVerified) {
         setError("Please verify your email before signing in.");
         return;
       }
+      // navigate to the home page after successful sign-in
       navigate("/");
     } catch (error) {
       setError("Witch and Wizard, something went wrong! Please try again.");
@@ -66,6 +69,7 @@ const SignIn = () => {
   };
 
   return (
+    // -----------------------------SIGN IN PAGE-----------------------------
     <div className={styles.signInContainer}>
       <video autoPlay loop muted className={styles.backgroundVideo}>
         <source src={Train} type="video/mp4" />
@@ -91,6 +95,7 @@ const SignIn = () => {
           {" "}
           Enter Castle
         </button>
+        {/* import error message from the ErrorMessage component */}
         {error && <ErrorMessage message={error} />}
         <p>
           Dont have an account? Create one {""}

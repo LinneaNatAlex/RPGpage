@@ -10,5 +10,4 @@ body {
   scroll-behavior: smooth;
   scrollbar-color: var(--primary-color) var(--secondary-color);
   scrollbar-width: thin;
-  background-color: transparent;
 }

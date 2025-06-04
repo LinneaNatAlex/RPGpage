@@ -1,3 +1,4 @@
+// IMPORTS THE NECESSARY LIBRARIES AND COMPONENTS
 import { useEffect } from "react";
 import style from "./VerifyEmail.module.css";
 import { sendEmailVerification } from "firebase/auth";
@@ -37,7 +38,7 @@ const VerifyEmail = () => {
       setError("Failed to send verification email. Please try again.");
     }
   };
-
+  // ---------------------------VERIFY CONTAINER--------------------------
   return (
     <div className={style.verifyWrapper}>
       {emailVerified ? (

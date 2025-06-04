@@ -1,8 +1,11 @@
+// importing necessary libraries and components
 import style from "./HtmlCssExternal.module.css";
 
 export default function HtmlCssExternal() {
   const [htmlCode, setHtmlCode] = useState("");
   const [cssCode, setCssCode] = useState("");
+  // --------------------------IMPORTS--------------------------
+  // Inline html and css editors, bad practice, but good for a learning experience, and it is in this cased use mainly for the role of 'admin'.
 
   const srcDoc = `
      <html>
@@ -10,7 +13,7 @@ export default function HtmlCssExternal() {
         <body>${htmlCode}</body>
     </html>
     `;
-
+  // --------------------------HTML EDITOR--------------------------
   return (
     <div className={style.wrapper}>
       <div className={style.editorContainer}>

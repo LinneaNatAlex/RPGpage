@@ -3,11 +3,9 @@
   justify-content: center;
   align-items: center;
   padding: 5rem;
-  background-color: var(--background-color);
 }
 
 .classromRulesContainer {
-  background-color: var(--contrast-background-color);
   padding: 1rem;
   border-radius: 10px;
 }
