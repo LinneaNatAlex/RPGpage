@@ -39,7 +39,6 @@ const SignUp = () => {
   });
   //input type file reference
   const fileInputRef = useRef(null);
-  // validate functions
   const { validate, errors } = useSignUpValidation();
   // This is the function that will be used to sign up the user. The the function for redirecting the user to their profile page after they have signed up.
   const navigate = useNavigate();

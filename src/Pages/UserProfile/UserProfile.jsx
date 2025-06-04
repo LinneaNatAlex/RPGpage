@@ -1,3 +1,4 @@
+// import the necessary libraries and components
 import { useState, useEffect, use } from "react";
 import { useParams } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -6,13 +7,15 @@ import styles from "./UserProfile.module.css";
 import Chat from "../../Components/Chat/Chat";
 import { useAuth } from "../../context/authContext";
 
+// state variables and hooks to manage user profile data
 const UserProfile = () => {
   const { user } = useAuth();
   const { uid } = useParams();
   const [userData, setUserData] = useState(null);
   const [notFound, setNotFound] = useState(false);
-
+  //  ----------------------------------useEffect----------------------------------
   useEffect(() => {
+    // function to fetch user data based on rout parameter 'uid'
     const fetchUserData = async () => {
       try {
         const q = query(collection(db, "users"), where("uid", "==", uid));
@@ -31,24 +34,26 @@ const UserProfile = () => {
         setNotFound(true);
       }
     };
+    // fetching the user data if it is avalible
 
     if (uid) fetchUserData();
   }, [uid]);
 
   if (notFound) return <div>User not found</div>;
   if (!userData) return <div>Loading...</div>;
-
+  // ----------------------------------PROFILE CONTENT----------------------------------
   return (
     <div className={styles.profileWrapper}>
       <div className={styles.profileContainer}>
         <div className={styles.imageContainer}>
+          {/* image container */}
           <img
             src={userData?.profileImageUrl || "/icons/avatar.svg"}
             alt="Image"
             className={styles.profileImage}
           />
         </div>
-
+        {/* --------------------------------CHARACTER DETAILS-------------------------------- */}
         <div className={styles.characterDetailsContainer}>
           <div className={styles.charactinfo}>
             <h2>Character Details</h2>
@@ -87,7 +92,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-
+      {/* -----------------------------PROFILE BIO----------------------------- */}
       {/* BIO: HTML eller tekst */}
       {userData.profileMode === "html" &&
       userData.profileHtml &&
@@ -110,6 +115,7 @@ const UserProfile = () => {
           <p>{userData.profileText}</p>
         </div>
       ) : (
+        // IF USER HASN NO BIO
         <div>No profile bio available</div>
       )}
     </div>

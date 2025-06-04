@@ -1,3 +1,4 @@
+// import the necessary libraries and functions
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
@@ -7,6 +8,7 @@ const useNewsFeed = () => {
 
   // fetches the documnet from the NEWS collectins, and stores all the data in the news state variable
   const fetchNews = async () => {
+    // Try catch to handle any errors. Showing if there is any issues with Async function to fetch the news data.
     try {
       // This fetched all of the documents form the news collection in the firestore db.
       const snapshot = await getDocs(collection(db, "news"));

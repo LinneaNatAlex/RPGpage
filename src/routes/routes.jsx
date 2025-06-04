@@ -1,3 +1,4 @@
+// Import the nesessary modules
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -17,12 +18,12 @@ import Potions from "../Pages/ClassRooms/Potions/Potions.jsx";
 import Rpg from "../Pages/Rpg/Rpg.jsx";
 import GreatHall from "../Pages/Rpg/GreateHall/GreatHall.jsx";
 import { useAuth } from "../context/authContext.jsx";
-
 import { Navigate } from "react-router-dom";
 
 const RouteGuard = ({ children }) => {
   // Checks if user is sign in or not
   const { user, loading } = useAuth();
+  //  waits until gathering the user data before entering pages.
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -37,12 +38,13 @@ const RouteGuard = ({ children }) => {
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      {/* Public routes */}
+      {/*----------------------------- Public routes -----------------------------*/}
       <Route index element={<MainPage />} />
       <Route path="sign-in" element={<SignIn />} />
       <Route path="sign-up" element={<SignUp />} />
       <Route path="*" element={<MainPage />} />
-      {/* Protected routes */}
+      <Route path="verify-email" element={<VerifyEmail />} />
+      {/*---------------------------------- Protected routes --------------------------*/}
       <Route
         path="user/:uid"
         element={
@@ -97,14 +99,6 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <Profile />
-          </RouteGuard>
-        }
-      />
-      <Route
-        path="verify-email"
-        element={
-          <RouteGuard>
-            <VerifyEmail />
           </RouteGuard>
         }
       />
