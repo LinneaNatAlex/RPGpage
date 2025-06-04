@@ -3,6 +3,7 @@ import styles from "./SortingQuiz.module.css";
 import Button from "../Button/Button";
 
 const questions = [
+  // array of questions for the sorting quiz
   {
     question:
       "You’re given an enormous task with no instructions. What do you do first?",
@@ -93,27 +94,35 @@ const questions = [
   },
 ];
 
+// SortingQuiz component
 const SortingQuiz = ({ onClose, onResult }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
 
   const handleAnswers = (house) => {
+    // Function to handle the answeres
     const newAnswers = [...selectedAnswers, house];
+    // if there are more questions continue moving to the next question
     if (currentQuestion + 1 < questions.length) {
       setSelectedAnswers(newAnswers);
       setCurrentQuestion(currentQuestion + 1);
+      // If there are no more question, calculate the result
     } else {
       const result = newAnswers.reduce((acc, h) => {
+        // Coundting how many times each house was selected
         acc[h] = (acc[h] || 0) + 1;
         return acc;
       }, {});
+      // Sorting the hous based on the house that occured the most
       const sortedHouses = Object.entries(result).sort((a, b) => b[1] - a[1]);
       onResult(sortedHouses[0][0]);
       onClose();
     }
   };
-
+  // Render the sorting quiz modal
   return (
+    // --------------------SortingQuiz Modal--------------------
+
     <div className={styles.SortingQuizModal}>
       <div className={styles.SortingQuizContent}>
         <h3>Sorting Quiz</h3>

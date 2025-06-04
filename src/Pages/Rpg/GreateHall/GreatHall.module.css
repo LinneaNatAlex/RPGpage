@@ -1,8 +1,9 @@
 html,
 body {
-  height: 300vh;
-  background-color: var(--primary-color);
   width: 100%;
+}
+.title {
+  color: var(--secondary-color);
 }
 .GreatHallClass {
   display: flex;
@@ -11,4 +12,8 @@ body {
   border: var(--border-size) solid var(--border-color);
   background-color: var(--light-background-color);
   height: 200vh;
+}
+
+button {
+  background-color: var(--secondary-color);
 }
