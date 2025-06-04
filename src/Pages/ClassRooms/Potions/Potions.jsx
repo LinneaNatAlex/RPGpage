@@ -4,7 +4,7 @@ import PotionList from "../../../Components/PotionList/PotionList";
 // Fetching the potion list component.
 const Potions = () => {
   return (
-    <div className={styles.PotionsClass}>
+    <div className={styles.potionsClass}>
       <h1 className={styles.title}>Potions</h1>
       <PotionList />
     </div>

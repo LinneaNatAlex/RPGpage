@@ -3,9 +3,22 @@
   justify-content: center;
   align-items: center;
   padding: 5rem;
+  background-color: var(--background-color);
 }
 
 .classromRulesContainer {
   padding: 1rem;
   border-radius: 10px;
+  background-color: var(--contrast-background-color);
+}
+@media screen and (max-width: 1000px) {
+  .classRooms {
+    padding: 1rem;
+  }
+  .classromRulesContainer {
+    width: 100%;
+  }
+  .classroomsRules {
+    width: 100%;
+  }
 }
