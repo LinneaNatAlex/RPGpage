@@ -1,3 +1,4 @@
+// Import necessary libraries and hooks
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -7,6 +8,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Import the Firestore database object
 import ErrorMessage from "../Components/ErrorMessage/ErrorMessage"; // Import your error message component
 // --------------------------------------STATE VARIABLES--------------------------------------
+// navbar-komponet that shows the difference in navigation based on if user is loged in or not.
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -15,12 +17,14 @@ const Navbar = () => {
   const [error, setError] = useState(null);
 
   // ----------------------------------useEFFECT--------------------------
+  // fetching information about 'if the user is logged in'
   useEffect(() => {
     if (location.pathname === "/verify-email") {
       return;
     }
-
+    //  checks the changes in login status
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // if user is loged in or not then it updates true or falls
       if (user) {
         setIsLoggedIn(true);
       } else {
@@ -32,17 +36,19 @@ const Navbar = () => {
       unsubscribe();
     };
   }, [location.pathname]);
+  // loading state to show the nav only if the user is logged in.
   if (loading) return null;
   // ---------------------------SIGNOUT HANDLER-----------------------
   const handleSignOut = async () => {
     try {
       const user = auth.currentUser;
       if (user) {
+        // uppdates the Firestore to handle the marked user as ofline
         await updateDoc(doc(db, "users", user.uid), { online: false });
       }
       await signOut(auth);
       navigate("/sign-in");
-      // console.log("Wizard has left the castle.");
+      // shows error message if there is user has issue logging out. Usaly because of deleted user in the firestore.
     } catch (error) {
       setError(
         "This Wizard is trapped somwhere inside the castle, contact the headmaster!"
@@ -50,6 +56,7 @@ const Navbar = () => {
     }
   };
   // -----------------------------NAVIGATION BARITEMS-----------------------------
+  // Navigation bar based on if the suer is loged in or not
   return (
     <nav className={styles.navbar}>
       {isLoggedIn ? ( // shows if the user is logged in
@@ -82,7 +89,7 @@ const Navbar = () => {
           </div>
         </>
       ) : (
-        //Shows if the user is not logged in
+        //Shows if the user is not logged in!
         <>
           <span>Welcome new student!</span>
         </>

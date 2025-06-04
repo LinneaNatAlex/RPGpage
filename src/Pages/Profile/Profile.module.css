@@ -1,5 +1,7 @@
 .profileWrapper {
   background-color: var(--light-background-color);
+  width: 100%;
+  min-height: 100vh;
 }
 
 .profileContainer {
@@ -11,10 +13,14 @@
   max-height: 100vh;
   border: var(--border-size) solid var(--border-color);
   background: var(--background-color);
+  width: 100%;
 }
+
 .profileTextContainer {
   display: grid;
   grid-template-columns: 4fr 1fr;
+  width: 100%;
+  gap: 20px;
 }
 
 .profileText {
@@ -22,6 +28,7 @@
   flex-direction: column;
   align-items: center;
   color: var(--text-color);
+  width: 100%;
 }
 
 .imageContainer {
@@ -40,6 +47,7 @@
   object-fit: cover;
   border: 4px solid goldenrod;
 }
+
 .characterInfo {
   display: flex;
   flex-direction: column;
@@ -65,37 +73,48 @@
   background: var(--contrast-background-color);
   gap: 5rem;
   width: 100%;
+  border-radius: 10px;
 }
 
-.profileTextContainer {
-  justify-content: center;
+.chatBar {
   width: 100%;
+  height: 100%;
+}
+
+.chatContainer {
+  width: 100%;
+  height: 100%;
 }
 
 @media screen and (max-width: 1000px) {
   .profileWrapper {
     display: flex;
     flex-direction: column;
+    border-radius: 10px;
   }
+
   .profileContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
+    border-radius: 10px;
   }
+
   .profileTextContainer {
-    display: grid;
-    align-items: center;
-    justify-content: center;
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-  .profileText {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
+
   .characterDetailsContainer {
-    width: 60%;
+    width: 80%;
+    max-width: 800px;
     margin: 10px auto;
+    flex-direction: row;
+    gap: 2rem;
+    border-radius: 10px;
   }
 
   .chatContainer {

@@ -11,21 +11,27 @@
   border-radius: 10px;
   gap: 1rem;
 }
+.messageNamecontainer {
+  width: 100%;
+}
 .messageSender {
-  color: rgb(80, 93, 80);
+  color: var(--primary-color);
   font-weight: bold;
-  font-size: medium;
-  width: 7rem;
+  font-size: small;
 }
 .message {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  top: 0;
+
   gap: 0.5rem;
   align-items: center;
   padding: 0.2rem;
   margin: 0.5rem;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
+  overflow: hidden;
+  word-break: break-word;
 }
 .chatMessages {
   width: 100%;
@@ -33,6 +39,7 @@
   font-size: small;
   font-family: "Times New Roman", Times, serif;
   overflow-y: auto;
+
   scrollbar-width: thin;
 }
 

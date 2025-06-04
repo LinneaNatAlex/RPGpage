@@ -1,5 +1,6 @@
 import styles from "./ClassRooms.module.css";
 const ClassRooms = () => {
+  // Rules page set, only className and simple html to show the rules of the page.
   return (
     <div className={styles.classRooms}>
       <div className={styles.classromRulesContainer}>
@@ -77,5 +78,6 @@ const ClassRooms = () => {
     </div>
   );
 };
+// Exports the classrooms page
 
 export default ClassRooms;

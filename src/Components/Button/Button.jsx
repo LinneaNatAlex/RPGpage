@@ -1,3 +1,4 @@
+// import nessesary libraries and styles
 import styles from "./Button.module.css";
 
 const Button = ({
@@ -7,9 +8,7 @@ const Button = ({
   onClick,
   // function that is the function that is called when the button is clicked
   className,
-  // this gives the oppertunety to add a className to the button
   disabled = false,
-  // a bolean that determines if the button is disabled
   ariaLabel,
   // a string that gives information about the button for screen readers
 }) => {

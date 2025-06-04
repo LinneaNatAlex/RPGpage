@@ -33,17 +33,18 @@ const Profile = () => {
   }, [user, loading]);
 
   if (loading || !userData) {
+    // If the user data is still loading or not available, show a loading state
     return (
       <div className={styles.loadingContainer}>
         <h2>Loading...</h2>
       </div>
     );
   }
-
+  // -----------------------------PROFILE CONTENT-----------------------------
   return (
     <div className={styles.profileWrapper}>
       <div className={styles.profileContainer}>
-        {/* --------------------------- */}
+        {/* ---------------image container------------ */}
         <div className={styles.imageContainer}>
           <img
             src={userData?.profileImageUrl || "/icons/avatar.svg"}
@@ -51,7 +52,7 @@ const Profile = () => {
             className={styles.profileImage}
           />
         </div>
-        {/* --------------------------- */}
+        {/* -------------Character details-------------- */}
         <div className={styles.characterDetailsContainer}>
           <div className={styles.charactinfo}>
             <h2>Character Details</h2>
@@ -106,11 +107,15 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {/* -----------------------------PROFILE TEXT----------------------------- */}
       <div className={styles.profileTextContainer}>
         <div className={styles.profileText}>
           <h2>Profile Text</h2>
-          <ProfileTextEditor />
+          <div className={styles.contentContainer}>
+            <ProfileTextEditor />
+          </div>
         </div>
+        {/* -----------------------------CHAT BAR----------------------------- */}
         <div className={styles.chatBar}>
           <div className={styles.chatContainer}>{user && <Chat />}</div>
         </div>

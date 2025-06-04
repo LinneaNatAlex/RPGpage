@@ -1,11 +1,11 @@
+// imports the necessary modules and components.
 import { useState } from "react";
 import Button from "../Button/Button";
 import useProfileText from "../../hooks/useProfileText";
 import Editor from "@monaco-editor/react";
 import styles from "./ProfileTextEditor.module.css";
-import Chat from "../../Components/Chat/Chat";
 import { useAuth } from "../../context/authContext";
-
+// state variables and hooks to manage user profile text editing
 const ProfileTextEditor = () => {
   const { user } = useAuth();
 
@@ -15,14 +15,14 @@ const ProfileTextEditor = () => {
   const [tempCss, setTempCss] = useState(css);
   const [editMode, setEditMode] = useState(mode);
   const [tempText, setTempText] = useState(text);
-
+  // loding while fetching the profile text
   if (loading) return <div>Loading...</div>;
-
+  //
   const handleStoreText = () => {
     storeText(editMode, tempText, tempHtml, tempCss);
     setEditing(false);
   };
-
+  // bad practice to use inline styles, but for the sake of this example, use it for the profile text editor. Its how the plugins work, apparently.
   const srcDoc = `
   <html>
     <style>${css}</style>
@@ -31,6 +31,7 @@ const ProfileTextEditor = () => {
 `;
 
   if (editing || (!text && !html)) {
+    // --------------------------------------------HTML EDITOR--------------------------------------------
     return (
       <div className={styles.profileEditor}>
         <div>
@@ -62,6 +63,7 @@ const ProfileTextEditor = () => {
           />
         ) : (
           <>
+            {/* HTML EDITOR */}
             <h2>HTML</h2>
             <div className={styles.editorWrapper}>
               <Editor
@@ -70,7 +72,7 @@ const ProfileTextEditor = () => {
                 onChange={(value) => setTempHtml(value)}
               />
             </div>
-
+            {/* CSS EDITOR */}
             <h2>CSS</h2>
             <div className={styles.editorWrapper}>
               <Editor

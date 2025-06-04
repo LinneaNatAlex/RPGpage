@@ -1,6 +1,8 @@
+// imports the necessary modules and components.
 import styles from "./Rpg.module.css";
 const Rpg = () => {
   return (
+    //  simple HTML structure for the RPG rules page
     <div className={styles.classRooms}>
       <div className={styles.RpgRulesContainer}>
         <div className={styles.RpgRules}>

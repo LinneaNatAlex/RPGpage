@@ -75,7 +75,7 @@ const NewsFeed = () => {
   return (
     <div className={styles.newsFeedWrapper}>
       <div className={styles.newsAdminContainer}>
-        <h2>News Feed</h2>
+        <h2 className={styles.title}>News Feed</h2>
         {isAdmin && (
           <>
             <input
@@ -98,19 +98,21 @@ const NewsFeed = () => {
               // starts with {{code}} will make it show up a live prewiew window of the code. If not it wont show up.
               <div className={styles.prewiewContainer}>
                 <h2>Here you can se Live prewiev off your codes</h2>
-                <iframe
-                  // Using iframe to show live preview of code, this is so its easier to know how the code will looklike before it is posted on the wall!
-                  srcDoc={newPost
-                    .replace("{{code}}", "")
-                    .replace("{{/code}}", "")}
-                  sandbox="allow-same-origin"
-                  title="code-preview"
-                  // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
-                  frameBorder="0"
-                  width="100%"
-                  height="300px"
-                  style={{ border: "1px solid #ccc" }}
-                />
+                <div className={styles.iframeWrapper}>
+                  <iframe
+                    // Using iframe to show live preview of code, this is so its easier to know how the code will looklike before it is posted on the wall!
+                    srcDoc={newPost
+                      .replace("{{code}}", "")
+                      .replace("{{/code}}", "")}
+                    sandbox="allow-same-origin"
+                    title="code-preview"
+                    // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
+                    frameBorder="0"
+                    width="100%"
+                    height="300px"
+                    style={{ border: "1px solid #ccc" }}
+                  />
+                </div>
               </div>
             )}
             <Button
