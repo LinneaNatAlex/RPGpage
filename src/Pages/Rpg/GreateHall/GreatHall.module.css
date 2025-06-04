@@ -11,7 +11,7 @@ body {
   align-items: center;
   border: var(--border-size) solid var(--border-color);
   background-color: var(--light-background-color);
-  height: 200vh;
+  height: 201vh;
 }
 
 button {
