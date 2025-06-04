@@ -1,6 +1,6 @@
 // import the nessesary modules
 import { Outlet } from "react-router-dom";
-import { useAuth } from "./context/AuthContext.jsx";
+import { useAuth } from "./context/authContext.jsx";
 import styles from "./App.module.css";
 import Navbar from "./Navbar/Navbar";
 
