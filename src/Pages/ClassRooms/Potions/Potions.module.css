@@ -1,14 +1,16 @@
+/* ------------------GLOBAL STYLES------------------ */
 body {
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: "Arial", sans-serif;
 }
+/* ------------------POTIONS CLASS------------------ */
 .potionsClass {
   background-color: var(--primary-color);
   top: 0;
   left: 0;
 }
-
+/* ------------------TITLE STYLE------------------ */
 .title {
   color: var(--secondary-color);
   text-transform: uppercase;

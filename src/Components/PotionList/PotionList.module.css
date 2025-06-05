@@ -1,3 +1,4 @@
+/* ------------------POTION LIST------------------ */
 .potionList {
   display: flex;
   flex-direction: column;
@@ -31,12 +32,14 @@ ul {
   gap: 1rem;
   padding: 0;
 }
+/* ------------------GRID ELEMENT------------------ */
 
 .gridElement {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 1rem;
 }
+/* IMAGE CONTAINER */
 
 .imageContainer {
   display: flex;

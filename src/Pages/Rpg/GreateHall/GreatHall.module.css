@@ -2,9 +2,11 @@ html,
 body {
   width: 100%;
 }
+/* ------------------TITLE-text------------------ */
 .title {
   color: var(--secondary-color);
 }
+/* ------------------GREAT HALL Rules------------------ */
 .GreatHallClass {
   display: flex;
   flex-direction: column;
@@ -13,7 +15,7 @@ body {
   background-color: var(--light-background-color);
   height: 201vh;
 }
-
+/* ------------------BUTTON STYLES------------------ */
 button {
   background-color: var(--secondary-color);
 }

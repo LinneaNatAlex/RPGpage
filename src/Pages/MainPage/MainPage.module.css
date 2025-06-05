@@ -44,6 +44,7 @@
   font-size: 1.5rem;
   border: none;
 }
+/* ------------------RESPONSIVE---------------------- */
 @media screen and (max-width: 1000px) {
   .mainContentHome {
     display: flex;

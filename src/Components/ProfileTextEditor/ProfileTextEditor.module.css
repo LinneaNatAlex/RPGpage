@@ -1,3 +1,4 @@
+/* ----------------------------profile box wrapper---------------------------- */
 .profileFrame {
   height: 300vh;
   width: 300%;
@@ -11,6 +12,8 @@
   align-items: center;
   flex-direction: column;
 }
+
+/* -------------------------------editor wrapper------------------------------- */
 .editorWrapper {
   height: 300px;
   border-radius: 6px;
@@ -18,6 +21,7 @@
   margin-bottom: 1rem;
   width: 900px;
 }
+/* -------------------------------edit button------------------------------- */
 .editButton {
   display: flex;
   align-items: center;
@@ -38,7 +42,7 @@
   padding: 1rem;
   background-color: var(--secondary-color);
 }
-
+/* -------------SAVE BUTTON STYLES------------- */
 @media screen and (max-width: 768px) {
   .editorWrapper {
     width: 40vh;

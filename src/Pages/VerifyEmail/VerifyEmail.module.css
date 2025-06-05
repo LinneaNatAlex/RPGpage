@@ -1,3 +1,4 @@
+/* ------------------WRAPPER------------------ */
 .verifyWrapper {
   display: flex;
   flex-direction: column;
@@ -7,6 +8,8 @@
   position: relative;
   color: white;
 }
+
+/* ------------------BACKGROUND VIDEO------------------ */
 
 .backgroundVideo {
   position: fixed;
@@ -19,6 +22,7 @@
   filter: brightness(0.5);
 }
 
+/* ------------------VERIFY CONTENT------------------ */
 .verifyContent {
   display: flex;
   flex-direction: column;
@@ -42,6 +46,8 @@
   margin-bottom: 1rem;
   line-height: 1.5;
 }
+
+/* ------------------VERIFY BUTTON------------------ */
 
 .verifyBtn {
   background-color: transparent;

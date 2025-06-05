@@ -14,6 +14,7 @@
   border: var(--primary-color) solid 3px;
   color: var(--contrast-text-color);
 }
+/* ---------------Online users list styles -------------------*/
 
 .onlineUsersList {
   list-style: none;
@@ -26,6 +27,7 @@
 
   border-bottom: 1px solid var(--primary-color);
 }
+/* -----------------USER AVATAR STYLES----------------- */
 
 .userAvatar {
   display: flex;

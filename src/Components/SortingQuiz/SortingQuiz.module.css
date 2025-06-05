@@ -1,3 +1,4 @@
+/* ------------------MODAL------------------ */
 .SortingQuizModal {
   display: flex;
   align-items: center;
@@ -11,6 +12,7 @@
   border-radius: 10px;
 }
 
+/* --------------QUIZ CONTENT-------------- */
 .SortingQuizContent {
   display: flex;
   flex-direction: column;
@@ -31,7 +33,7 @@
   margin: 0.2rem;
   border-radius: 10px;
 }
-
+/* -----------------ANSWER BUTTON STYLES----------------- */
 .answerButton:hover {
   cursor: pointer;
   background-color: var(--light-background-color);
