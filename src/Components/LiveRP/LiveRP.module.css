@@ -1,3 +1,4 @@
+/* -------------------------CHAT CONTAINER------------------------- */
 .chatContainer {
   display: flex;
   flex-direction: column;
@@ -11,6 +12,7 @@
   border-radius: 10px;
   gap: 1rem;
 }
+/* -------------------------MESSAGE CONTAINER------------------------- */
 .messageNamecontainer {
   width: 100%;
 }
@@ -19,6 +21,7 @@
   font-weight: bold;
   font-size: small;
 }
+/* Message container styles */
 .message {
   display: flex;
   flex-direction: column;
@@ -33,6 +36,7 @@
   overflow: hidden;
   word-break: break-word;
 }
+/* Chat messages styles */
 .chatMessages {
   width: 100%;
   color: var(--primary-color);
@@ -42,8 +46,8 @@
 
   scrollbar-width: thin;
 }
-
-.RrchatForm {
+/* -------------CHAT FORM STYLES------------- */
+.chatForm {
   display: flex;
   gap: 1rem;
   width: 100%;
@@ -52,6 +56,7 @@
 .chatInput {
   width: 100%;
 }
+/* -------------RESPONSIVE---------------------- */
 @media screen and (max-width: 768px) {
   .chatContainer {
     width: 90%;

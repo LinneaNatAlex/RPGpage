@@ -1,3 +1,4 @@
+/* ------------------SIGN UP CONTAINER------------------ */
 .signUpContainer {
   display: flex;
   justify-content: center;
@@ -20,6 +21,7 @@
   backdrop-filter: blur(10px);
   border: var(--secondary-color) solid 2px;
 }
+
 .formGroup {
   display: flex;
   justify-content: center;
@@ -36,12 +38,16 @@
   text-transform: uppercase;
 }
 
+/* ------------------INPUT GROUP------------------ */
+
 .inputGroup {
   display: flex;
   flex-direction: column;
   color: white;
   margin: 0.5rem;
 }
+
+/* ------------------IMAGE PREVIEW------------------ */
 
 .styleImagePreview {
   display: flex;
@@ -52,6 +58,8 @@
   border-radius: 10px;
   margin: 1%;
 }
+
+/* ------------------IMAGE BUTTON------------------ */
 
 .removeImageBtn {
   background-color: var(--secondary-color);
@@ -72,6 +80,8 @@
   margin: 1rem;
 }
 
+/* ------------------HOUSE SORTING styles------------------ */
+
 .houseSorting {
   display: flex;
   justify-content: center;
@@ -89,6 +99,7 @@
   cursor: pointer;
 }
 
+/* ------------------INPUT STYLES------------------ */
 input {
   color: goldenrod;
   border: 2px solid goldenrod;
@@ -100,7 +111,7 @@ input::placeholder {
   color: goldenrod;
   transform: uppercase;
 }
-
+/* ------------------BACKGROUND VIDEO------------------ */
 .backgroundVideo {
   position: fixed;
   top: 0;
@@ -111,7 +122,7 @@ input::placeholder {
   z-index: -1;
   filter: brightness(0.5);
 }
-
+/* ------------------RESPONSIVE------------------ */
 @media screen and (max-width: 912px) {
   .signUpForm {
     min-width: 100%;

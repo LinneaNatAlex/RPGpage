@@ -1,3 +1,4 @@
+/* ---------- */
 .profileWrapper {
   background-color: var(--light-background-color);
   padding: var(--main-padding);
@@ -14,6 +15,7 @@
   background: var(--background-color);
 }
 
+/* -------------------------IMAGE CONTAINER------------------------- */
 .imageContainer {
   display: flex;
   flex-direction: column;
@@ -31,6 +33,7 @@
   object-fit: cover;
   border: 4px solid goldenrod;
 }
+/* -------------------------CHARACTER INFO------------------------- */
 .characterInfo {
   display: flex;
   flex-direction: column;
@@ -53,6 +56,7 @@
   width: 100%;
 }
 
+/* -------------------------PROFILE HTML CONTAINER------------------------- */
 .profileHtmlContainer {
   display: grid;
   grid-template-columns: 4fr 1fr;
@@ -72,7 +76,7 @@
 .profileTextContainer {
   color: var(--text-color);
 }
-
+/* -------------------------RESPONSIVE------------------------- */
 @media screen and (max-width: 1000px) {
   .profileWrapper {
     display: flex;
