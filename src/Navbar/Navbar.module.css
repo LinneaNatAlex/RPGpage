@@ -62,6 +62,7 @@
   display: block;
   background-color: var(--navbar-rolldown-background);
 }
+/*------------------RESPONSIVE---------------------- */
 
 @media (max-width: 1000px) {
   body,

@@ -56,7 +56,7 @@
   background-color: rgb(119, 113, 106);
   color: black;
 }
-
+/* ------------RESPONSIVE---------------------- */
 @media screen and (max-width: 768px) {
   .chatContainer {
     height: 100vh;
