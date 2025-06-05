@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Import the Firestore database object
 import ErrorMessage from "../Components/ErrorMessage/ErrorMessage"; // Import your error message component
+import { useAuth } from "../context/authContext";
 // --------------------------------------STATE VARIABLES--------------------------------------
 // navbar-komponet that shows the difference in navigation based on if user is loged in or not.
 const Navbar = () => {
@@ -14,7 +15,9 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
   const [error, setError] = useState(null);
+  const { emailVerified } = useAuth();
 
   // ----------------------------------useEFFECT--------------------------
   // fetching information about 'if the user is logged in'
@@ -55,11 +58,15 @@ const Navbar = () => {
       );
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading state while checking auth status
+  }
   // -----------------------------NAVIGATION BARITEMS-----------------------------
   // Navigation bar based on if the suer is loged in or not
   return (
     <nav className={styles.navbar}>
-      {isLoggedIn ? ( // shows if the user is logged in
+      {isLoggedIn ? (
         <>
           <div className={styles.menuItems}>
             <NavLink to="/">Hogwart Castel</NavLink>
@@ -89,9 +96,13 @@ const Navbar = () => {
           </div>
         </>
       ) : (
-        //Shows if the user is not logged in!
         <>
-          <span>Welcome new student!</span>
+          {!emailVerified && (
+            //Shows if the user is not logged in!
+            <div className={styles.welcomeMessage}>
+              <span>Welcome new student!</span>
+            </div>
+          )}
         </>
       )}
     </nav>
