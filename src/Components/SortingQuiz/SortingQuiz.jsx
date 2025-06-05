@@ -125,8 +125,11 @@ const SortingQuiz = ({ onClose, onResult }) => {
 
     <div className={styles.SortingQuizModal}>
       <div className={styles.SortingQuizContent}>
-        <h3>Sorting Quiz</h3>
-        <p>{questions[currentQuestion].question}</p>
+        <div className={styles.questionText}>
+          <h3>Sorting Quiz</h3>
+
+          <p>{questions[currentQuestion].question}</p>
+        </div>
         <div>
           {questions[currentQuestion].answers.map((answer) => (
             <Button

@@ -17,19 +17,19 @@ export const AuthProvider = ({ children }) => {
           // Get user data from Firestore
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDoc = await getDoc(userDocRef);
-          
+
           if (userDoc.exists()) {
             // Combine auth and Firestore data
             setUser({
               ...currentUser,
-              ...userDoc.data()
+              ...userDoc.data(),
             });
           } else {
             setUser(currentUser);
           }
-          
+
           setEmailVerified(currentUser.emailVerified);
-          
+
           // Update online status
           await setDoc(
             doc(db, "users", currentUser.uid),
