@@ -15,9 +15,8 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-
   const [error, setError] = useState(null);
-  const { emailVerified } = useAuth();
+  const { user } = useAuth(); // <-- Endret her
 
   // ----------------------------------useEFFECT--------------------------
   // fetching information about 'if the user is logged in'
@@ -58,15 +57,11 @@ const Navbar = () => {
       );
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading state while checking auth status
-  }
   // -----------------------------NAVIGATION BARITEMS-----------------------------
   // Navigation bar based on if the suer is loged in or not
   return (
     <nav className={styles.navbar}>
-      {isLoggedIn ? (
+      {isLoggedIn && user?.emailVerified ? ( // <-- Endret her
         <>
           <div className={styles.menuItems}>
             <NavLink to="/">Hogwart Castel</NavLink>
@@ -96,13 +91,9 @@ const Navbar = () => {
           </div>
         </>
       ) : (
+        //Shows if the user is not logged in!
         <>
-          {!emailVerified && (
-            //Shows if the user is not logged in!
-            <div className={styles.welcomeMessage}>
-              <span>Welcome new student!</span>
-            </div>
-          )}
+          <span>Welcome new student!</span>
         </>
       )}
     </nav>
