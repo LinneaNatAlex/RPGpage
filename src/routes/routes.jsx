@@ -21,17 +21,12 @@ import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 
 const RouteGuard = ({ children }) => {
-  // Checks if user is sign in or not
   const { user, loading } = useAuth();
-  //  waits until gathering the user data before entering pages.
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
-  if (!user) {
-    return <Navigate to="/sign-in" />;
-  }
-  // If user is signed in, returnig the children
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/sign-in" />;
+  if (!user.emailVerified) return <Navigate to="/verify-email" />;
+
   return children;
 };
 
