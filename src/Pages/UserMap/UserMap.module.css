@@ -1,5 +1,16 @@
 .userSearchBar {
   display: flex;
   justify-content: center;
-  background-color: var(--secondary-color);
+  align-items: center;
+  background-color: #23232b;
+  color: #b0aac2;
+  border: none;
+  padding: 2rem 0 1rem 0;
+
+  .userMapContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+  }
 }

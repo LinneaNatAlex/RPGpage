@@ -5,15 +5,21 @@
   justify-content: center;
   margin: 10px;
   gap: 10px;
-  color: var(--secondary-color);
+  color: #fff;
+  background: #181820;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
 }
 
 .newsContainer {
   display: flex;
   flex-direction: column;
-  background-color: var(--light-background-color);
+  background: #23232b;
+  border-radius: 6px;
+  border: 2px solid #a084e8;
+  color: #fff;
   padding: 2rem;
-  border-radius: var(--main-border-radius);
+  box-shadow: 0 2px 12px rgba(124, 94, 191, 0.08);
   width: 90%;
 }
 /* -------------------ADMIN TEXT AREA------------------- */
@@ -33,7 +39,9 @@
   border-radius: var(--main-border-radius);
 }
 .title {
-  color: var(--secondary-color);
+  color: #a084e8;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 /* --------------------TEXTBOXES ETC------------ */
 iframe {
@@ -54,9 +62,10 @@ iframe {
 }
 
 .newsContent {
-  background-color: var(--contrast-background-color);
-  border-radius: var(--main-border-radius);
-  border: var(--border-color) 2px solid;
+  background: #23232b;
+  border-radius: 6px;
+  border: 2px solid #a084e8;
+  color: #fff;
 }
 
 .handlePostSubmit {
@@ -87,4 +96,11 @@ iframe {
 .handlePostSubmit:hover {
   background-color: var(--primary-color);
   color: var(--button-background);
+}
+
+.posterName {
+  font-size: 1rem;
+  color: #b0aac2;
+  font-weight: normal;
+  margin-bottom: 0.5rem;
 }

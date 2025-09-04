@@ -64,21 +64,21 @@ const Navbar = () => {
       {isLoggedIn && user?.emailVerified ? ( // <-- Endret her
         <>
           <div className={styles.menuItems}>
-            <NavLink to="/">Hogwart Castel</NavLink>
-            <NavLink to="/Profile">Profile</NavLink>
-            <NavLink to="/userMap">User Map</NavLink>
+            <NavLink to="/">Veyloria Arcane School</NavLink>
+            <NavLink to="/Profile">My Character</NavLink>
+            <NavLink to="/userMap">Student Map</NavLink>
 
             <div className={styles.dropdown}>
-              <NavLink to="/Rpg">RPG</NavLink>
+              <NavLink to="/Rpg">Roleplay</NavLink>
               <div className={styles.dropdownContent}>
-                <NavLink to="/Rpg/GreatHall">Great Hall</NavLink>
+                <NavLink to="/Rpg/GreatHall">Starshade Hall</NavLink>
               </div>
             </div>
 
             <div className={styles.dropdown}>
-              <NavLink to="/ClassRooms">Class Rooms</NavLink>
+              <NavLink to="/ClassRooms">Classrooms</NavLink>
               <div className={styles.dropdownContent}>
-                <NavLink to="/ClassRooms/Potions">Potions</NavLink>
+                <NavLink to="/ClassRooms/Potions">Alchemy & Potions</NavLink>
               </div>
             </div>
 

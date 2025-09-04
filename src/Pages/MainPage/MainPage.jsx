@@ -21,20 +21,20 @@ const MainPage = () => {
       <header className={styles.introductionHeader}>
         <h1 className={styles.introductionTitle}>
           {" "}
-          Welcome {displayName || "Witch/Wizard"}{" "}
+          Welcome {displayName || "Werewolf/Witch/Vampire/Fairy"}{" "}
         </h1>
         <p className={styles.introductionText}>
-          Your magical journey continues. Check the notice board for updates,
-          attend classes and quests, and keep an eye on your house points.
-          Remember: magic is shaped by the choices you make.
+          Your mystical journey continues. Check the notice board for updates,
+          attend classes and quests, and keep an eye on your magical race
+          points. Remember: magic is shaped by the choices you make.
           {/* if not user the text below wil show */}
           {!user && (
             <>
-              Are you ready to begin your journey as a witch or wizard? Here you
-              can be sorted into a house, attend magical classes like Potions
-              and Defense Against the Dark Arts, and write your own Hogwarts
-              story. Join a thriving community and experience the magic like
-              never before.
+              Are you ready to begin your journey as a werewolf, witch, vampire,
+              or fairy? Here you can discover your magical race, attend mystical
+              classes like Alchemy and Enchantments, and write your own Veyloria
+              Arcane School story. Join a thriving community and experience the
+              magic like never before.
             </>
           )}
         </p>

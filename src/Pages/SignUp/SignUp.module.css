@@ -1,3 +1,13 @@
+/* ------------------MAGICAL RACE SELECTION styles------------------ */
+.raceSelection {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.selectedRace {
+  color: #b0aac2; /* dus lilla */
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
 /* ------------------SIGN UP CONTAINER------------------ */
 .signUpContainer {
   display: flex;
@@ -11,15 +21,15 @@
   border-radius: 10px;
   align-items: center;
   flex-direction: column;
-  background-color: transparent;
+  background-color: #23232b;
   padding: 1.5rem;
   justify-content: center;
   gap: 1rem;
-  color: goldenrod;
+  color: #b0aac2;
   text-transform: uppercase;
   font-weight: 600;
   backdrop-filter: blur(10px);
-  border: var(--secondary-color) solid 2px;
+  border: 2px solid #b0aac2;
 }
 
 .formGroup {
@@ -34,7 +44,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: goldenrod;
+  color: #b0aac2;
   text-transform: uppercase;
 }
 
@@ -43,7 +53,7 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  color: white;
+  color: #d1d1d1;
   margin: 0.5rem;
 }
 
@@ -71,8 +81,8 @@
 }
 
 .signUpBtn {
-  background-color: goldenrod;
-  color: white;
+  background-color: #444455;
+  color: #e0e0e0;
   border-radius: 10px;
   padding: 1rem;
   border: none;
@@ -80,9 +90,9 @@
   margin: 1rem;
 }
 
-/* ------------------HOUSE SORTING styles------------------ */
+/* ------------------MAGICAL RACE SORTING styles------------------ */
 
-.houseSorting {
+.raceSorting {
   display: flex;
   justify-content: center;
 }
@@ -95,21 +105,21 @@
 }
 
 .signUpBtn:hover {
-  background-color: rgb(119, 113, 106);
+  background-color: #23232b;
   cursor: pointer;
 }
 
 /* ------------------INPUT STYLES------------------ */
 input {
-  color: goldenrod;
-  border: 2px solid goldenrod;
+  color: #b0aac2;
+  border: 2px solid #b0aac2;
   border-radius: 10px;
   padding: 0.5rem;
-  background-color: transparent;
+  background-color: #23232b;
 }
 input::placeholder {
-  color: goldenrod;
-  transform: uppercase;
+  color: #b0aac2;
+  text-transform: uppercase;
 }
 /* ------------------BACKGROUND VIDEO------------------ */
 .backgroundVideo {

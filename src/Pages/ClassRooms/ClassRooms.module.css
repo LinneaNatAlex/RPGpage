@@ -4,13 +4,15 @@
   justify-content: center;
   align-items: center;
   padding: 5rem;
-  background-color: var(--background-color);
+  background-color: #23232b;
 }
 
 .classromRulesContainer {
-  padding: 1rem;
+  padding: 5rem;
   border-radius: 10px;
-  background-color: var(--contrast-background-color);
+  background-color: #23232b;
+  border: 2px solid #b0aac2;
+  color: #b0aac2;
 }
 /* ---------------RESPONSIVE---------------------- */
 @media screen and (max-width: 1000px) {

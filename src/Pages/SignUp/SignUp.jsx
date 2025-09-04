@@ -34,7 +34,7 @@ const SignUp = () => {
     profilePicture: null,
     previewUrl: "",
     terms: false,
-    house: "",
+    race: "",
     class: "1st year",
   });
   //input type file reference
@@ -44,7 +44,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const { uploadImage } = useImageUpload();
   const [showQuiz, setShowQuiz] = useState(false);
-  const [selectedHouse, setSelectedHouse] = useState("");
+  const [selectedRace, setSelectedRace] = useState("");
 
   //error handling. If there is an error, it will show a message.
   const [error, setError] = useState(null);
@@ -142,7 +142,7 @@ const SignUp = () => {
         email: user.email,
         profileImageUrl: uploadedImageUrl,
         age: 11,
-        house: formData.house,
+        race: formData.race,
         class: formData.class,
         createdAt: serverTimestamp(),
         lastLogin: serverTimestamp(),
@@ -173,16 +173,16 @@ const SignUp = () => {
       <video autoPlay loop muted className={styles.backgroundVideo}>
         <source src={Train} type="video/mp4" />
       </video>
-      <div className={styles.houseSorting}>
+      <div className={styles.raceSorting}>
         {showQuiz && (
           <SortingQuiz
             required
             onClose={() => setShowQuiz(false)}
             onResult={(house) => {
-              setSelectedHouse(house);
+              setSelectedRace(house);
               setFormData((prevData) => ({
                 ...prevData,
-                house: house,
+                race: house,
               }));
             }}
           />
@@ -194,7 +194,6 @@ const SignUp = () => {
             <legend className={styles.formGroupTitle}>
               Caracter information
             </legend>
-
             <div className={styles.inputGroup}>
               <label htmlFor="caracter-firstname">Caracter First name</label>
               <input
@@ -253,7 +252,7 @@ const SignUp = () => {
               />
 
               {/* -------------------HOUSE------------------ */}
-              <div className={styles.houseSelection}>
+              <div className={styles.raceSelection}>
                 <Button
                   type="button"
                   className={styles.sortingQuizButton}
@@ -261,9 +260,9 @@ const SignUp = () => {
                 >
                   Take the sorting quiz
                 </Button>
-                {selectedHouse && (
-                  <p className={styles.selectedHouse}>
-                    Your house is: {selectedHouse}
+                {selectedRace && (
+                  <p className={styles.selectedRace}>
+                    Your magical race is: {selectedRace}
                   </p>
                 )}
               </div>
@@ -291,6 +290,7 @@ const SignUp = () => {
 
           <fieldset className={styles.formGroup}>
             <legend className={styles.formGroupTitle}>Login Information</legend>
+            {/* ----------------CARACTER INFORMATION--------------------- */}
 
             {/* -------------------EMAIL------------------ */}
             <div className={styles.inputGroup}>
