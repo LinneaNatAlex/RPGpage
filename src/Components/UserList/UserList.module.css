@@ -28,12 +28,13 @@
   padding: 10px;
 }
 .profileLink {
-  color: rgb(255, 136, 0);
-  text-decoration: none;
+  color: #7c5ebf;
+  text-decoration: underline;
   font-weight: bold;
+  transition: color 0.2s;
 }
 .profileLink:hover {
-  color: rgb(206, 197, 197);
+  color: #b0aac2;
 }
 
 td {

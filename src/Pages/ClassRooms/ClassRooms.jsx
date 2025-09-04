@@ -5,12 +5,15 @@ const ClassRooms = () => {
     <div className={styles.classRooms}>
       <div className={styles.classromRulesContainer}>
         <div className={styles.classroomsRules}>
-          <h1>Hogwarts Classrooms – Information & Roleplay Rules</h1>
+          <h1>
+            Veyloria Arcane School Classrooms – Information & Roleplay Rules
+          </h1>
           <p>
-            The classrooms on this site serve two main purposes: <br />
+            The classrooms at Veyloria Arcane School serve two main purposes:{" "}
             <br />
-            1. To provide in-character (IC) magical knowledge that students can
-            learn and refer to.
+            <br />
+            1. To provide in-character (IC) mystical knowledge for students of
+            all magical races—werewolves, witches, vampires, and fairies.
             <br />
             2. To offer structured spaces for optional roleplay lessons guided
             by professors or open participation.
@@ -20,34 +23,39 @@ const ClassRooms = () => {
           <br />
           <h2>What You’ll Find in Classrooms</h2>
           <p>
-            Lesson threads for subjects like Potions, Charms, Herbology, and
-            Transfiguration Information posts explaining spells, magical
-            creatures, plants, potion recipes, wand movements, and safety rules
+            Lesson threads for subjects like Alchemy, Enchantments, Herbal Lore,
+            and Transformation. Information posts explaining spells, magical
+            creatures, plants, potion recipes, rituals, and safety rules.
             Homework prompts (optional), useful for character development. Notes
             and study guides written IC, meant to help your character grow over
-            time
+            time.
           </p>
           <h2>Classroom Knowledge Rules</h2>
           <p>
-            1. Year-Based Knowledge Access 1. First Years Basic spellcasting
-            (e.g., Lumos, Wingardium Leviosa), beginner potions (e.g., Cure for
-            Boils), very limited magical theory. Cannot perform nonverbal magic,
-            complex dueling, or dangerous spells.
+            1. Year-Based Knowledge Access
+            <br />
+            1. First Years: Basic mystical skills (e.g., Moonlight Charm,
+            Healing Brew), beginner rituals, very limited magical theory. Cannot
+            perform advanced magic, complex transformations, or dangerous
+            spells.
             <br />
             <br />
-            2. Second to Third Years Intermediate spells (e.g., Expelliarmus,
-            Rictusempra), beginner transfiguration, more potion ingredients and
-            effects. Still no advanced spellwork, dangerous hexes, or major
+            2. Second to Third Years: Intermediate spells (e.g., Shadow Veil,
+            Nature’s Whisper), beginner transformation, more potion ingredients
+            and effects. Still no advanced spellwork, dangerous hexes, or major
             enchantments.
             <br />
             <br />
-            3. Fourth to Fifth Years May begin using shield spells, basic
+            3. Fourth to Fifth Years: May begin using shield spells, basic
             nonverbal magic (with justification), more complex potion work, and
-            deeper magical theory. Limited use of magical creatures or risky
+            deeper mystical theory. Limited use of magical creatures or risky
             magic.
             <br />
             <br />
-            4. Sixth to Seventh Years Access to advanced magic (e.g., nonverbal
+            4. Sixth to Seventh Years: Access to advanced magic (e.g., nonverbal
+            spells, powerful rituals), complex transformations, and rare magical
+            knowledge. Must be justified in roleplay.
+            <br />
             casting, more difficult potions like Felix Felicis), use of
             dangerous creatures and enchanted objects — but only with reason and
             control. Must demonstrate experience through previous RP or lessons.

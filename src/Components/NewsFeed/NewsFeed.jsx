@@ -134,7 +134,7 @@ const NewsFeed = () => {
               <div className={styles.newsInfo}>
                 {" "}
                 <h3>{item.title}</h3>
-                <strong>{item.author}</strong>:{" "}
+                <span className={styles.posterName}>{item.author}</span>:
               </div>
               {item.content.startsWith("{{code}}") ? (
                 <iframe

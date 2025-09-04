@@ -50,7 +50,11 @@ const UserProfile = () => {
           <img
             src={userData?.profileImageUrl || "/icons/avatar.svg"}
             alt="Image"
-            className={styles.profileImage}
+            className={
+              userData.roles && userData.roles.includes("admin")
+                ? `${styles.profileImage} ${styles.adminAvatar}`
+                : styles.profileImage
+            }
           />
         </div>
         {/* --------------------------------CHARACTER DETAILS-------------------------------- */}
@@ -67,7 +71,7 @@ const UserProfile = () => {
               <strong>Age:</strong> {userData.age}
             </p>
             <p>
-              <strong>House:</strong> {userData.house}
+              <strong>Magical Race:</strong> {userData.race}
             </p>
           </div>
 

@@ -3,10 +3,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  border: 3px solid var(--border-color);
-  background-color: rgb(21, 20, 20);
-  width: 50%;
+  justify-content: flex-start;
+  border: 2px solid #a084e8;
+  background: #23232b;
+  width: 95%;
   height: 100vh;
   padding: 1rem;
   border-radius: 10px;
@@ -19,7 +19,7 @@
 .messageSender {
   color: var(--primary-color);
   font-weight: bold;
-  font-size: small;
+  font-size: 0.95rem;
 }
 /* Message container styles */
 .message {
@@ -51,6 +51,7 @@
   display: flex;
   gap: 1rem;
   width: 100%;
+  margin-top: auto;
 }
 
 .chatInput {

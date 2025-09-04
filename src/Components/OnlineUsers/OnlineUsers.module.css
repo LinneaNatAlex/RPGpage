@@ -1,4 +1,5 @@
 .onlineUsersContainer {
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -6,13 +7,13 @@
   max-height: 100vh;
   height: 100vh;
   margin: 0;
-  background-color: var(--secondary-color);
+  background-color: #23232b;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) var(--secondary-color);
-  border-radius: var(--border-radius);
-  border: var(--primary-color) solid 3px;
-  color: var(--contrast-text-color);
+  border-radius: 16px;
+  border: 2px solid #7c5ebf;
+  color: #b0aac2;
 }
 /* ---------------Online users list styles -------------------*/
 
@@ -24,19 +25,23 @@
 .onlineUserItem {
   display: flex;
   align-items: center;
-
-  border-bottom: 1px solid var(--primary-color);
 }
 /* -----------------USER AVATAR STYLES----------------- */
 
 .userAvatar {
   display: flex;
   align-items: center;
-  width: 40px;
-  height: 40px;
-  margin-right: 8px;
-  border: var(--border-size) solid var(--primary-color);
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  border-radius: 50%;
+  border: 3px solid #7c5ebf;
+  box-shadow: 0 0 12px #b0aac2;
+  background: linear-gradient(135deg, #23232b 60%, #7c5ebf 100%);
+  object-fit: cover;
 }
 
-@media screen and (max-width: 768px) {
+.adminAvatar {
+  border: 3px solid #ff2a2a;
+  box-shadow: 0 0 18px 4px #ff2a2a, 0 0 12px #b0aac2;
 }

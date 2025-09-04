@@ -10,14 +10,18 @@ const OnlineUsers = () => {
 
   return (
     <div className={style.onlineUsersContainer}>
-      <h2>Is online Witch/Wizard</h2>
+      <h2>Online Students</h2>
       <ul className={style.onlineUsersList}>
         {users.map((user) => (
           <li key={user.id} className={style.onlineUserItem}>
             <img
               src={user.profileImageUrl || "/icons/avatar.svg"}
               alt="User Avatar"
-              className={style.userAvatar}
+              className={
+                user.roles && user.roles.includes("admin")
+                  ? `${style.userAvatar} ${style.adminAvatar}`
+                  : style.userAvatar
+              }
             />
             {user.displayName}
           </li>

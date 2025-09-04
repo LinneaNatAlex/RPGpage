@@ -8,30 +8,52 @@
 }
 /* --------------------BUTTON -------------------- */
 .ctaBtn {
-  background-color: rgb(207, 170, 78);
-  color: rgb(255, 255, 255);
-  padding: 12px 16px;
+  background: linear-gradient(90deg, #a084e8 0%, #fff 100%);
+  color: #181820;
+  padding: 12px 24px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   margin: 2px;
   text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.08);
+  transition: background 0.2s, color 0.2s;
 }
 .ctaBtn:hover {
-  background-color: gray;
+  background: #fff;
+  color: #a084e8;
 }
 /* --------------------INTRODUCTION HEADER -------------------- */
 .introductionHeader {
-  background-color: rgb(41, 38, 53);
+  background-color: #181820;
   padding: 10%;
-  color: rgb(197, 170, 99);
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.12);
+}
+
+.introductionTitle {
+  color: #a084e8;
+  font-size: 2.5rem;
+  font-family: "Cinzel", serif;
+  margin-bottom: 1rem;
+}
+
+.introductionText {
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
 }
 
 .mainContentHome {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
-  background-color: var(--background-color);
+  background-color: #23232b;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.08);
 }
 
 /* ---------------------------MOBILE--------------------------- */
