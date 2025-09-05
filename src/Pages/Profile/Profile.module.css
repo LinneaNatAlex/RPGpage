@@ -1,19 +1,28 @@
+body,
+#root {
+  overflow-x: hidden;
+}
+
 .profileWrapper {
   background-color: #23232b;
-  width: 100%;
+  width: 100vw;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .profileContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 20px;
   height: auto;
   max-height: 100vh;
   border: 2px solid #b0aac2;
   background: #23232b;
-  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .profileTextContainer {
@@ -89,10 +98,34 @@
 
 .chatContainer {
   width: 100%;
-  height: 100%;
+  max-width: 320px;
+  margin-right: 32px;
+  padding: 0 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
+.friendsBox {
+  width: 220px;
+  max-width: 220px;
+  margin-right: 32px;
+  padding: 0 8px 0 0;
+  border-radius: 16px;
+  box-shadow: 0 0 8px #7c5ebf22;
+}
+
+/* Fjerner ekstra mellomrom under chat og friends på små skjermer */
 @media screen and (max-width: 1000px) {
+  .chatContainer,
+  .friendsBox {
+    margin-right: 0;
+    padding-right: 0;
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 10px;
+  }
+
   .profileWrapper {
     display: flex;
     flex-direction: column;

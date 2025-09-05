@@ -1,8 +1,11 @@
 /* ---------- */
 .profileWrapper {
   background-color: #23232b;
-  padding: var(--main-padding);
-  height: 400vh;
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .profileContainer {
@@ -13,6 +16,9 @@
   max-height: 100vh;
   border: 2px solid #b0aac2;
   background: #23232b;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /* -------------------------IMAGE CONTAINER------------------------- */
@@ -23,7 +29,6 @@
   width: 50%;
   padding: 20px;
   height: 50%;
-  gap: 1rem;
 }
 
 .profileImage {
@@ -53,7 +58,7 @@
 
 .characterDetailsContainer {
   margin: 0 20px;
-  padding: 20px;
+  padding: 20px 24px 20px 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -62,7 +67,19 @@
   background: #23232b;
   color: #b0aac2;
   gap: 5rem;
+  width: calc(100% - 24px);
+}
+
+.chatBar {
   width: 100%;
+  height: 100%;
+}
+
+.chatContainer {
+  width: 320px;
+  max-width: 320px;
+  margin-right: 32px;
+  padding-right: 12px;
 }
 
 /* -------------------------PROFILE HTML CONTAINER------------------------- */
@@ -108,6 +125,16 @@
     display: flex;
   }
   .chatContainer {
-    display: none;
+    width: 320px;
+    max-width: 320px;
+    margin-right: 32px;
+    padding-right: 12px;
+  }
+
+  .friendsBox {
+    width: 260px;
+    max-width: 260px;
+    margin-right: 32px;
+    padding-right: 12px;
   }
 }

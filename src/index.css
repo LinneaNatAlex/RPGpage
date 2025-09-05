@@ -1,13 +1,22 @@
-@import "../src/assets/Variables/Variables.css";
-html,
-body {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-width: 0;
-  font-family: sans-serif;
-  scroll-behavior: smooth;
-  scrollbar-color: var(--primary-color) var(--secondary-color);
+/* Tynn og moderne scrollbar for hele siden */
+body,
+* {
   scrollbar-width: thin;
+  scrollbar-color: #a084e8 #23232b;
+}
+
+/* For Webkit-browsere */
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 8px;
+  background: #23232b;
+}
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: #a084e8;
+  border-radius: 8px;
+}
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: #23232b;
 }

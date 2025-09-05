@@ -1,10 +1,9 @@
 // import the necessary libraries and components
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
-import Chat from "../../Components/Chat/Chat";
 import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
 
@@ -110,10 +109,10 @@ const UserProfile = () => {
             height="100vh"
             width="100%"
           />
-          <div className={styles.chatBar}>
+          {/* <div className={styles.chatBar}>
             <div className={styles.chatContainer}>{user && <Chat />}</div>
             <FriendsList profileUid={uid} />
-          </div>
+          </div> */}
         </div>
       ) : userData.profileMode === "text" && userData.profileText ? (
         <div className={styles.profileTextContainer}>
