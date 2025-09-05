@@ -7,7 +7,7 @@
   width: 100%;
   max-width: 340px;
   color: #b0aac2;
-  box-shadow: 0 2px 12px rgba(160,132,232,0.10);
+  box-shadow: 0 2px 12px rgba(160, 132, 232, 0.1);
 }
 .friendsList {
   display: flex;

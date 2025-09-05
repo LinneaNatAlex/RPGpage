@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
 import Chat from "../../Components/Chat/Chat";
+import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
 
 // state variables and hooks to manage user profile data
@@ -111,6 +112,7 @@ const UserProfile = () => {
           />
           <div className={styles.chatBar}>
             <div className={styles.chatContainer}>{user && <Chat />}</div>
+            <FriendsList profileUid={uid} />
           </div>
         </div>
       ) : userData.profileMode === "text" && userData.profileText ? (

@@ -21,8 +21,8 @@ const useSignUpValidation = () => {
     if (!value.lastname.trim()) {
       newErrors.lastname = "Character lastname is required";
     }
-    if (!value.house.trim()) {
-      newErrors.house = "Character house is required";
+    if (!value.race?.trim()) {
+      newErrors.race = "Character race is required";
     }
     if (!value.email.trim()) {
       newErrors.email = "Email is required";
@@ -39,7 +39,7 @@ const useSignUpValidation = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors); //this teturns an arry
+    return newErrors; // Return objekt med feilmeldinger
   };
   //returns and validate functions and the errors
   return { validate, errors };
