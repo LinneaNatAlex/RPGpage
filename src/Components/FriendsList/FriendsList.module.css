@@ -1,0 +1,57 @@
+.friendsBox {
+  background: #23232b;
+  border: 2px solid #a084e8;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 340px;
+  color: #b0aac2;
+  box-shadow: 0 2px 12px rgba(160,132,232,0.10);
+}
+.friendsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.friendAvatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px;
+}
+.friendAvatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #a084e8;
+  margin-bottom: 0.3rem;
+}
+.friendAvatar span {
+  font-size: 0.95rem;
+  color: #a084e8;
+  text-align: center;
+}
+.addFriendBtn {
+  background: #a084e8;
+  color: #23232b;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.requestSent {
+  color: #b0aac2;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+.isFriend {
+  color: #7c5ebf;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}

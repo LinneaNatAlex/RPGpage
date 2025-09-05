@@ -6,6 +6,7 @@ import { useAuth } from "../../context/authContext";
 import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
 import Chat from "../../Components/Chat/Chat";
+import FriendsList from "../../Components/FriendsList/FriendsList";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -122,6 +123,7 @@ const Profile = () => {
         {/* -----------------------------CHAT BAR----------------------------- */}
         <div className={styles.chatBar}>
           <div className={styles.chatContainer}>{user && <Chat />}</div>
+          <FriendsList profileUid={user.uid} />
         </div>
       </div>
     </div>
