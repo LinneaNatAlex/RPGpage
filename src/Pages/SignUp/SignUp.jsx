@@ -106,8 +106,8 @@ const SignUp = () => {
     e.preventDefault();
     // this resets the error message if they try to sign up again.
     const validationErrors = validate(formData);
-    if (validationErrors.length > 0) {
-      setError("Pleace try againg, check all fields and try again.");
+    if (Object.keys(validationErrors).length > 0) {
+      setError("Please check all fields and try again.");
       return;
     }
     // this checks if the password and confirm password are the same.
@@ -137,7 +137,7 @@ const SignUp = () => {
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
-        // Nb; user can also get admin role, therfor it is placed in an array. Is directly in the database.
+        // Nb; user can also get admin role, therfore it is placed in an array. Is directly in the database.
         roles: ["user"],
         email: user.email,
         profileImageUrl: uploadedImageUrl,
@@ -189,6 +189,22 @@ const SignUp = () => {
         )}
         <form className={styles.signUpForm} onSubmit={handleSignUp}>
           <h1>Sign up</h1>
+          {error && (
+            <div
+              style={{
+                background: "#ff2a2a",
+                color: "#fff",
+                padding: "0.7rem 1.2rem",
+                borderRadius: "8px",
+                marginBottom: "1rem",
+                fontWeight: "bold",
+                textAlign: "center",
+                boxShadow: "0 2px 8px rgba(255,42,42,0.15)",
+              }}
+            >
+              {error}
+            </div>
+          )}
           {/* ----------------CARACTER INFORMATION--------------------- */}
           <fieldset className={styles.formGroup}>
             <legend className={styles.formGroupTitle}>

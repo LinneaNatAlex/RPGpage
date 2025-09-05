@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { db } from "../../firebaseConfig";
-import { getDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import {
+  getDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import styles from "./FriendsList.module.css";
 
@@ -19,7 +25,9 @@ const FriendsList = ({ profileUid }) => {
         setProfileData(userDoc.data());
         setFriends(userDoc.data().friends || []);
         setIsFriend(userDoc.data().friends?.includes(user?.uid));
-        setFriendRequestSent(userDoc.data().friendRequests?.includes(user?.uid));
+        setFriendRequestSent(
+          userDoc.data().friendRequests?.includes(user?.uid)
+        );
       }
     }
     if (profileUid) fetchProfile();
@@ -46,7 +54,9 @@ const FriendsList = ({ profileUid }) => {
           + Add Friend
         </button>
       )}
-      {friendRequestSent && <span className={styles.requestSent}>Request sent</span>}
+      {friendRequestSent && (
+        <span className={styles.requestSent}>Request sent</span>
+      )}
       {isFriend && <span className={styles.isFriend}>Already friends</span>}
     </div>
   );
@@ -65,7 +75,10 @@ const FriendAvatar = ({ uid }) => {
   if (!data) return null;
   return (
     <div className={styles.friendAvatar}>
-      <img src={data.profileImageUrl || "/icons/avatar.svg"} alt={data.displayName} />
+      <img
+        src={data.profileImageUrl || "/icons/avatar.svg"}
+        alt={data.displayName}
+      />
       <span>{data.displayName}</span>
     </div>
   );
