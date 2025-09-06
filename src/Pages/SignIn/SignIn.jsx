@@ -70,14 +70,11 @@ const SignIn = () => {
 
   return (
     // -----------------------------SIGN IN PAGE-----------------------------
-    <div className={styles.signInContainer}>
-      <video autoPlay loop muted className={styles.backgroundVideo}>
-        <source src={Train} type="video/mp4" />
-      </video>
-      {/* Display error message if error occurs */}
-
+    <div className={styles.signUpContainer}>
       <form className={styles.signInForm}>
-        <h2 className={styles.signInTitle}>Enter the Castle</h2>
+        <h2 className={styles.formGroupTitle}>
+          Sign in to your magical account
+        </h2>
         <div className={styles.inputGroup}>
           <label htmlFor="email">Email</label>
           <input type="email" id="email" name="email" onChange={handleChange} />
@@ -91,15 +88,13 @@ const SignIn = () => {
             onChange={handleChange}
           />
         </div>
-        <button className={styles.signInBtn} onClick={handleSignIn}>
-          {" "}
-          Enter Castle
+        <button className={styles.signUpBtn} onClick={handleSignIn}>
+          Sign in
         </button>
-        {/* import error message from the ErrorMessage component */}
         {error && <ErrorMessage message={error} />}
         <p>
-          Dont have an account? Create one {""}
-          <NavLink to="/sign-up" className={styles.signUpLink}>
+          Don't have an account? Create one{" "}
+          <NavLink to="/sign-up" className={styles.signInLink}>
             here
           </NavLink>
         </p>

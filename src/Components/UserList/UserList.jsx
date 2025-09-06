@@ -2,21 +2,27 @@
 import { Link } from "react-router-dom";
 import styles from "./UserList.module.css";
 import useUsers from "../../hooks/useUser"; // Importing the custom hook to fetch users
+import { auth } from "../../firebaseConfig";
 
 const UserList = ({ userQuery }) => {
   const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook
 
+  // Hent innlogget bruker
+  const currentUser = auth.currentUser;
+  // Filtrer ut innlogget bruker
+  const usersWithoutSelf = currentUser
+    ? users.filter((user) => user.uid !== currentUser.uid)
+    : users;
+
   // FILTERING users based on the userQuery!
   const filteredUsers = userQuery
-    ? users.filter((user) =>
+    ? usersWithoutSelf.filter((user) =>
         user.displayName
-          // Checks the displayName of the user, to see if the user is in db
           ?.toLowerCase()
           .trim()
           .startsWith(userQuery.toLowerCase().trim())
       )
-    : // if the userQuery is not null or defined, it will filter the users based on the displayName
-      users;
+    : usersWithoutSelf;
 
   if (loading) return <p>Loading users </p>; // displays a message loding if the users are still loading
 

@@ -1,0 +1,23 @@
+.infoContainer {
+  background: #23232b;
+  color: #b0aac2;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  margin: 2rem auto;
+  max-width: 420px;
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+.backLink {
+  color: #a084e8;
+  text-decoration: underline;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: color 0.2s;
+}
+.backLink:hover {
+  color: goldenrod;
+}

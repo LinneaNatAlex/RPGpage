@@ -47,15 +47,26 @@ const Profile = () => {
       <div className={styles.profileContainer}>
         {/* ---------------image container------------ */}
         <div className={styles.imageContainer}>
-          <img
-            src={userData?.profileImageUrl || "/icons/avatar.svg"}
-            alt="Image"
-            className={
-              userData.roles && userData.roles.includes("admin")
-                ? `${styles.profileImage} ${styles.adminAvatar}`
-                : styles.profileImage
-            }
-          />
+          {(() => {
+            let roleClass = styles.profileImage;
+            if (userData.roles?.some((r) => r.toLowerCase() === "headmaster"))
+              roleClass += ` ${styles.headmasterAvatar}`;
+            else if (userData.roles?.some((r) => r.toLowerCase() === "teacher"))
+              roleClass += ` ${styles.teacherAvatar}`;
+            else if (
+              userData.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+            )
+              roleClass += ` ${styles.shadowPatrolAvatar}`;
+            else if (userData.roles?.some((r) => r.toLowerCase() === "admin"))
+              roleClass += ` ${styles.adminAvatar}`;
+            return (
+              <img
+                src={userData?.profileImageUrl || "/icons/avatar.svg"}
+                alt="Image"
+                className={roleClass}
+              />
+            );
+          })()}
         </div>
         {/* -------------Character details-------------- */}
         <div className={styles.characterDetailsContainer}>

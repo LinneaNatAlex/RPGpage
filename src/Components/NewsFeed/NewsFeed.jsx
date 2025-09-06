@@ -24,8 +24,10 @@ const NewsFeed = () => {
   const [titles, setTitles] = useState("");
 
   // This CHECKS if the user has the role of admin. If the user is admin then this gives the user the ability to post news, and delete posts.
-  const isAdmin =
-    !loadingRoles && Array.isArray(userRoles) && userRoles.includes("admin");
+  const isAdminOrTeacher =
+    !loadingRoles &&
+    Array.isArray(userRoles) &&
+    (userRoles.includes("admin") || userRoles.includes("teacher"));
 
   // USEEFFECT gathering / fetching the neews from the database
   useEffect(() => {
@@ -76,7 +78,7 @@ const NewsFeed = () => {
     <div className={styles.newsFeedWrapper}>
       <div className={styles.newsAdminContainer}>
         <h2 className={styles.title}>News Feed</h2>
-        {isAdmin && (
+        {isAdminOrTeacher && (
           <>
             <input
               type="text"
@@ -157,7 +159,7 @@ const NewsFeed = () => {
             <br />
             <br />
             {/* Theese buttons is only displayed for the admin role */}
-            {isAdmin && (
+            {isAdminOrTeacher && (
               <Button
                 onClick={() => handleDeletePost(item.id)}
                 className={styles.deleteButton}

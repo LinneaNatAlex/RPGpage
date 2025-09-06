@@ -1,3 +1,15 @@
+.headmasterAvatar {
+  border: 4px solid #fff !important;
+  box-shadow: 0 0 18px 4px #fff, 0 0 12px #b0aac2 !important;
+}
+.teacherAvatar {
+  border: 4px solid gold !important;
+  box-shadow: 0 0 18px 4px gold, 0 0 12px #b0aac2 !important;
+}
+.shadowPatrolAvatar {
+  border: 4px solid #1ecb8c !important;
+  box-shadow: 0 0 18px 4px #1ecb8c, 0 0 12px #b0aac2 !important;
+}
 body,
 #root {
   overflow-x: hidden;

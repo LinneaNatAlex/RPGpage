@@ -32,7 +32,7 @@ const LiveRP = () => {
   const { rpgGrateHall } = useChatMessages(); // destructuring the messages to get the rpgGrateHall messages
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
-  const [isAdminUser, setIsAdminUser] = useState(false);
+  const [isPrivilegedUser, setIsPrivilegedUser] = useState(false);
   const [showRulesPopup, setShowRulesPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
   const messagesEndRef = useRef(null);
@@ -45,19 +45,22 @@ const LiveRP = () => {
   }, [rpgGrateHall]);
 
   useEffect(() => {
-    async function checkAdmin() {
+    async function checkPrivileged() {
       const user = auth.currentUser;
-      if (!user) return setIsAdminUser(false);
+      if (!user) return setIsPrivilegedUser(false);
       const q = query(collection(db, "users"), where("uid", "==", user.uid));
       const snap = await getDocs(q);
       if (!snap.empty) {
         const data = snap.docs[0].data();
-        setIsAdminUser(data.roles && data.roles.includes("admin"));
+        setIsPrivilegedUser(
+          data.roles &&
+            (data.roles.includes("admin") || data.roles.includes("teacher"))
+        );
       } else {
-        setIsAdminUser(false);
+        setIsPrivilegedUser(false);
       }
     }
-    checkAdmin();
+    checkPrivileged();
   }, [auth.currentUser]);
 
   useEffect(() => {
@@ -295,11 +298,7 @@ const LiveRP = () => {
         <div style={{ flex: 2 }}>
           <div
             className={styles.chatContainer}
-            style={
-              isMobile
-                ? { width: "100vw", overflowX: "auto" }
-                : {}
-            }
+            style={isMobile ? { width: "100vw", overflowX: "auto" } : {}}
           >
             <div className={styles.chatMessages}>
               {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
@@ -329,7 +328,7 @@ const LiveRP = () => {
                         {formatTime(message.timestamp)}
                       </span>
                     )}
-                    {isAdminUser && (
+                    {isPrivilegedUser && (
                       <button
                         onClick={() => handleDeleteMessage(message.id)}
                         style={{

@@ -18,24 +18,39 @@ import Train from "../../assets/VideoBackgrounds/Train.mp4";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import ErrorMessage from "../../Components/ErrorMessage/ErrorMessage";
 import SortingQuiz from "../../Components/SortingQuiz/SortingQuiz";
+import TermsModal from "../../Components/TermsModal/TermsModal";
 
 // import  useAuth from '../../hooks/useAuth';
 // ------------------------------------------ SIGN UP ----------------------------------------------------
 
 // ---------------------SIGN UP STATE VARIABLES -----------------
+import { useEffect } from "react";
+const initialFormData = {
+  firstname: "",
+  middlename: "",
+  lastname: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  profilePicture: null,
+  previewUrl: "",
+  terms: false,
+  race: "",
+  class: "1st year",
+};
 const SignUp = () => {
-  const [formData, setFormData] = useState({
-    firstname: "",
-    middlename: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    profilePicture: null,
-    previewUrl: "",
-    terms: false,
-    race: "",
-    class: "1st year",
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem("signupFormData");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return { ...initialFormData, ...parsed };
+      } catch {
+        return initialFormData;
+      }
+    }
+    return initialFormData;
   });
   //input type file reference
   const fileInputRef = useRef(null);
@@ -45,9 +60,18 @@ const SignUp = () => {
   const { uploadImage } = useImageUpload();
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedRace, setSelectedRace] = useState("");
+  const [showTerms, setShowTerms] = useState(false);
 
   //error handling. If there is an error, it will show a message.
   const [error, setError] = useState(null);
+
+  // Lagre formData til localStorage hver gang det endres
+  useEffect(() => {
+    const toSave = { ...formData };
+    // Ikke lagre File-objektet (profilePicture) i localStorage
+    if (toSave.profilePicture) delete toSave.profilePicture;
+    localStorage.setItem("signupFormData", JSON.stringify(toSave));
+  }, [formData]);
 
   // ---------------------INPUT CHANGE HANDLER---------------------
   // handeling the changes in the input fields.
@@ -104,40 +128,31 @@ const SignUp = () => {
   // ---------------------HANDLE SIGN UP---------------------
   const handleSignUp = async (e) => {
     e.preventDefault();
-    // this resets the error message if they try to sign up again.
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length > 0) {
       setError("Please check all fields and try again.");
+      setIsSubmitting(false);
       return;
     }
-    // this checks if the password and confirm password are the same.
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
-
       const user = userCredential.user;
-
       await sendEmailVerification(user);
-      console.log("Verification email sent to:", user.email);
-      // function to update display information
-
       await updateProfile(user, {
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
       });
-
-      //making sure image is uploaded to cloudinary
       const uploadedImageUrl = formData.profilePicture
         ? await uploadImage(formData.profilePicture)
         : "";
-
-      // Adding datat to the firestore this is what will be displayed in firestore.
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
-        // Nb; user can also get admin role, therfore it is placed in an array. Is directly in the database.
         roles: ["user"],
         email: user.email,
         profileImageUrl: uploadedImageUrl,
@@ -146,33 +161,22 @@ const SignUp = () => {
         class: formData.class,
         createdAt: serverTimestamp(),
         lastLogin: serverTimestamp(),
-        online: true, // shows if the user is online and active
+        online: true,
       });
-
       await auth.currentUser.reload();
-      const updatedUser = auth.currentUser;
-
-      // console.log("navigate now");
       navigate("/verify-email");
-      setFormData({
-        firstname: "",
-        middlename: "",
-        lastname: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        terms: false,
-      });
+      setFormData(initialFormData);
+      localStorage.removeItem("signupFormData");
     } catch (error) {
       setError("email already in use, please try again with another email.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
   //-----------------------------------------------------------Form and Fieldsets------------------------------------------------------------------
   return (
     <div className={styles.signUpContainer}>
-      <video autoPlay loop muted className={styles.backgroundVideo}>
-        <source src={Train} type="video/mp4" />
-      </video>
+      {/* Bakgrunnsvideo fjernet, bruker kun vanlig bakgrunn */}
       <div className={styles.raceSorting}>
         {showQuiz && (
           <SortingQuiz
@@ -208,15 +212,15 @@ const SignUp = () => {
           {/* ----------------CARACTER INFORMATION--------------------- */}
           <fieldset className={styles.formGroup}>
             <legend className={styles.formGroupTitle}>
-              Caracter information
+              Character Information
             </legend>
             <div className={styles.inputGroup}>
-              <label htmlFor="caracter-firstname">Caracter First name</label>
+              <label htmlFor="caracter-firstname">Character First Name</label>
               <input
                 type="text"
                 id="firstname"
                 name="firstname"
-                placeholder="Your caracter firstname"
+                placeholder="Your character's first name"
                 maxLength={10}
                 onChange={handleInputChange}
                 value={formData.firstname}
@@ -225,12 +229,12 @@ const SignUp = () => {
             </div>
             {/* -----------------MIDDLE NAME-------------------- */}
             <div className={styles.inputGroup}>
-              <label htmlFor="caracter-middlename">Caracter Middle name</label>
+              <label htmlFor="caracter-middlename">Character Middle Name</label>
               <input
                 type="text"
                 id="middlename"
                 name="middlename"
-                placeholder="Your caracter middlename"
+                placeholder="Your character's middle name"
                 maxLength={10}
                 onChange={handleInputChange}
                 value={formData.middlename}
@@ -241,12 +245,12 @@ const SignUp = () => {
             </div>
             {/* -------------------LAST NAME------------------ */}
             <div className={styles.inputGroup}>
-              <label htmlFor="caracter-lastname">Caracter Last name</label>
+              <label htmlFor="caracter-lastname">Character Last Name</label>
               <input
                 type="text"
                 id="lastname"
                 name="lastname"
-                placeholder="Your caracter lastname"
+                placeholder="Your character's last name"
                 maxLength={10}
                 onChange={handleInputChange}
                 value={formData.lastname}
@@ -269,13 +273,15 @@ const SignUp = () => {
 
               {/* -------------------HOUSE------------------ */}
               <div className={styles.raceSelection}>
-                <Button
-                  type="button"
-                  className={styles.sortingQuizButton}
-                  onClick={() => setShowQuiz(true)}
-                >
-                  Take the sorting quiz
-                </Button>
+                {!selectedRace && (
+                  <Button
+                    type="button"
+                    className={styles.sortingQuizButton}
+                    onClick={() => setShowQuiz(true)}
+                  >
+                    Reveal your magical race
+                  </Button>
+                )}
                 {selectedRace && (
                   <p className={styles.selectedRace}>
                     Your magical race is: {selectedRace}
@@ -315,7 +321,7 @@ const SignUp = () => {
                 type="email"
                 id="email"
                 name="email"
-                placeholder="Jon.w@exemple.com"
+                placeholder="jon.w@example.com"
                 maxLength={50}
                 minLength={8}
                 onChange={handleInputChange}
@@ -362,12 +368,27 @@ const SignUp = () => {
                 checked={formData.terms}
                 required
               />
-              <label htmlFor="terms">Agree with terms and conditions</label>
+              <label htmlFor="terms">
+                I agree to the
+                <button
+                  type="button"
+                  className={styles.termsLink}
+                  onClick={() => setShowTerms(true)}
+                  tabIndex={0}
+                >
+                  terms and conditions
+                </button>
+              </label>
             </div>
+            {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
             {/* Sends an error back if there is issues */}
 
-            <Button type="submit" className={styles.signUpBtn}>
-              Sign up
+            <Button
+              type="submit"
+              className={styles.signUpBtn}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Signing up..." : "Sign up"}
             </Button>
             <p>
               Already have an account? Log in {""}

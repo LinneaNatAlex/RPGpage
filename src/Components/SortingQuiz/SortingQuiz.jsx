@@ -2,148 +2,110 @@ import { useState } from "react";
 import styles from "./SortingQuiz.module.css";
 import Button from "../Button/Button";
 
+// Magical sorting quiz in English
 const questions = [
-  // array of questions for the sorting quiz
   {
-    question:
-      "You’re given an enormous task with no instructions. What do you do first?",
+    question: "What are you most drawn to?",
     answers: [
-      {
-        text: "Start organizing everything logically — you'll figure it out as you go.",
-        house: "RavenBird",
-      },
-      {
-        text: "Find allies you trust and split the work fairly.",
-        house: "BadgerPuff",
-      },
-      {
-        text: "Dive in headfirst, trusting your instincts to guide you.",
-        house: "LionClaw",
-      },
-      {
-        text: "Analyze the situation carefully, considering all possible outcomes.",
-        house: "Snake",
-      },
+      { text: "The full moon and the wild power of nature", race: "Werewolf" },
+      { text: "The mysteries of the night and immortality", race: "Vampire" },
+      { text: "Wands, herbs, and magical rituals", race: "Witch" },
+      { text: "Ancient forests and timeless wisdom", race: "Elf" },
     ],
   },
   {
-    question: "How do you approach a new project?",
+    question: "Which description fits you best?",
     answers: [
-      { text: "I create a detailed plan before starting.", house: "RavenBird" },
-      {
-        text: "I gather a team and brainstorm ideas together.",
-        house: "BadgerPuff",
-      },
-      {
-        text: "I jump in and start building, learning as I go.",
-        house: "LionClaw",
-      },
-      {
-        text: "I research extensively to understand all aspects.",
-        house: "Snake",
-      },
+      { text: "Strong, loyal, and a bit wild", race: "Werewolf" },
+      { text: "Elegant, clever, and resourceful", race: "Vampire" },
+      { text: "Creative, intuitive, and curious", race: "Witch" },
+      { text: "Just, wise, and harmonious", race: "Elf" },
     ],
   },
   {
-    question: "What is your ideal working environment?",
+    question: "What would you most love to do at a magical academy?",
     answers: [
-      { text: "A quiet space with minimal distractions.", house: "RavenBird" },
-      { text: "A collaborative team atmosphere.", house: "BadgerPuff" },
-      { text: "A fast-paced, dynamic setting.", house: "LionClaw" },
       {
-        text: "A structured environment with clear guidelines.",
-        house: "Snake",
+        text: "Run through the enchanted woods under the moonlight",
+        race: "Werewolf",
       },
+      { text: "Study ancient tomes about immortality", race: "Vampire" },
+      { text: "Brew potions and master new spells", race: "Witch" },
+      { text: "Learn nature’s secrets and protect others", race: "Elf" },
     ],
   },
   {
-    question: "How do you handle failure?",
+    question: "Which element do you feel most connected to?",
     answers: [
-      {
-        text: "I analyze what went wrong and adjust my approach.",
-        house: "RavenBird",
-      },
-      {
-        text: "I seek support from friends and colleagues.",
-        house: "BadgerPuff",
-      },
-      {
-        text: "I learn from it and try again with renewed energy.",
-        house: "LionClaw",
-      },
-      {
-        text: "I reflect on the experience to gain deeper insights.",
-        house: "Snake",
-      },
-    ],
-  },
-  {
-    question: "What motivates you the most?",
-    answers: [
-      {
-        text: "The pursuit of knowledge and understanding.",
-        house: "RavenBird",
-      },
-      {
-        text: "Building strong relationships and community.",
-        house: "BadgerPuff",
-      },
-      { text: "Achieving personal goals and challenges.", house: "LionClaw" },
-      { text: "Mastering complex problems and strategies.", house: "Snake" },
+      { text: "Earth and animals", race: "Werewolf" },
+      { text: "Night and blood", race: "Vampire" },
+      { text: "Fire and magic", race: "Witch" },
+      { text: "Air and light", race: "Elf" },
     ],
   },
 ];
 
-// SortingQuiz component
+import { raceDescriptions } from "./raceDescriptions";
+
 const SortingQuiz = ({ onClose, onResult }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [resultRace, setResultRace] = useState(null);
 
-  const handleAnswers = (house) => {
-    // Function to handle the answeres
-    const newAnswers = [...selectedAnswers, house];
-    // if there are more questions continue moving to the next question
+  const handleAnswers = (race) => {
+    const newAnswers = [...selectedAnswers, race];
     if (currentQuestion + 1 < questions.length) {
       setSelectedAnswers(newAnswers);
       setCurrentQuestion(currentQuestion + 1);
-      // If there are no more question, calculate the result
     } else {
-      const result = newAnswers.reduce((acc, h) => {
-        // Coundting how many times each house was selected
-        acc[h] = (acc[h] || 0) + 1;
+      const result = newAnswers.reduce((acc, r) => {
+        acc[r] = (acc[r] || 0) + 1;
         return acc;
       }, {});
-      // Sorting the hous based on the house that occured the most
-      const sortedHouses = Object.entries(result).sort((a, b) => b[1] - a[1]);
-      onResult(sortedHouses[0][0]);
-      onClose();
+      const sortedRaces = Object.entries(result).sort((a, b) => b[1] - a[1]);
+      setResultRace(sortedRaces[0][0]);
+      onResult(sortedRaces[0][0]);
     }
   };
-  // Render the sorting quiz modal
-  return (
-    // --------------------SortingQuiz Modal--------------------
 
+  // Modal med quiz eller resultat
+  return (
     <div className={styles.SortingQuizModal}>
       <div className={styles.SortingQuizContent}>
-        <div className={styles.questionText}>
-          <h3>Sorting Quiz</h3>
-
-          <p>{questions[currentQuestion].question}</p>
-        </div>
-        <div>
-          {questions[currentQuestion].answers.map((answer) => (
-            <Button
-              className={styles.answerButton}
-              key={answer.text}
-              onClick={() => handleAnswers(answer.house)}
-            >
-              <div className={styles.answerText}>{answer.text}</div>
+        {!resultRace ? (
+          <>
+            <div className={styles.questionText}>
+              <h3>Magical Race Sorting Quiz</h3>
+              <p>{questions[currentQuestion].question}</p>
+            </div>
+            <div>
+              {questions[currentQuestion].answers.map((answer) => (
+                <Button
+                  className={styles.answerButton}
+                  key={answer.text}
+                  onClick={() => handleAnswers(answer.race)}
+                >
+                  <div className={styles.answerText}>{answer.text}</div>
+                </Button>
+              ))}
+            </div>
+            <Button onClick={onClose} className={styles.ExitButton}>
+              <strong>✕</strong>
             </Button>
-          ))}
-        </div>
-        <Button onClick={onClose} className={styles.ExitButton}>
-          <strong>✕</strong>
-        </Button>
+          </>
+        ) : (
+          <div className={styles.resultContainer}>
+            <h3>
+              Du ble sortert som:{" "}
+              {raceDescriptions[resultRace]?.title || resultRace}
+            </h3>
+            <p>{raceDescriptions[resultRace]?.description}</p>
+            {/* Info link removed, description is now longer and in English */}
+            <Button onClick={onClose} className={styles.ExitButton}>
+              <strong>✕</strong>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

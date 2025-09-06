@@ -1,3 +1,63 @@
+.gearButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.timeoutModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 20, 50, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.timeoutModal {
+  background: #23232b;
+  border-radius: 14px;
+  border: 2px solid #a084e8;
+  color: #b0aac2;
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  box-shadow: 0 4px 32px rgba(160, 132, 232, 0.25);
+  min-width: 260px;
+  max-width: 90vw;
+  text-align: center;
+}
+.timeoutBtn {
+  background: linear-gradient(90deg, #a084e8 60%, #7c5ebf 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+.timeoutBtn:hover {
+  background: linear-gradient(90deg, #7c5ebf 60%, #a084e8 100%);
+}
+.headmasterAvatar {
+  border: 3px solid #fff !important;
+  box-shadow: 0 0 18px 4px #fff, 0 0 12px #b0aac2 !important;
+}
+.teacherAvatar {
+  border: 3px solid gold !important;
+  box-shadow: 0 0 18px 4px gold, 0 0 12px #b0aac2 !important;
+}
+.shadowPatrolAvatar {
+  border: 3px solid #1ecb8c !important;
+  box-shadow: 0 0 18px 4px #1ecb8c, 0 0 12px #b0aac2 !important;
+}
 .onlineUsersContainer {
   box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
   display: flex;

@@ -17,6 +17,7 @@ import ClassRooms from "../Pages/ClassRooms/ClassRooms.jsx";
 import Potions from "../Pages/ClassRooms/Potions/Potions.jsx";
 import Rpg from "../Pages/Rpg/Rpg.jsx";
 import GreatHall from "../Pages/Rpg/GreateHall/GreatHall.jsx";
+import RaceInfo from "../Pages/RaceInfo/RaceInfo.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 
@@ -37,6 +38,7 @@ export const router = createBrowserRouter(
       <Route index element={<MainPage />} />
       <Route path="sign-in" element={<SignIn />} />
       <Route path="sign-up" element={<SignUp />} />
+      <Route path="race-info/:race" element={<RaceInfo />} />
       <Route path="*" element={<MainPage />} />
       <Route path="verify-email" element={<VerifyEmail />} />
       {/*---------------------------------- Protected routes --------------------------*/}

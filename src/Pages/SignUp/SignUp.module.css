@@ -1,3 +1,21 @@
+.termsLink {
+  background: none;
+  border: none;
+  color: #a084e8;
+  text-decoration: underline;
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 1em;
+  cursor: pointer;
+  margin-left: 0.3em;
+  padding: 0;
+  transition: color 0.2s;
+}
+.termsLink:hover,
+.termsLink:focus {
+  color: #f7c873;
+  outline: none;
+}
 /* ------------------MAGICAL RACE SELECTION styles------------------ */
 .raceSelection {
   margin-top: 1rem;
@@ -16,20 +34,28 @@
   padding-top: 100px;
 }
 
-.signUpForm {
-  display: flex;
-  border-radius: 10px;
-  align-items: center;
-  flex-direction: column;
-  background-color: #23232b;
-  padding: 1.5rem;
-  justify-content: center;
-  gap: 1rem;
-  color: #b0aac2;
-  text-transform: uppercase;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-  border: 2px solid #b0aac2;
+.signUpBtn,
+.sortingQuizButton,
+.removeImageBtn {
+  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
+  color: #23232b;
+  font-weight: bold;
+  font-family: "Cinzel", serif;
+  letter-spacing: 1px;
+  padding: 0.7rem 1.5rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
+  font-size: large;
+  transition: background 0.2s, color 0.2s;
+}
+.signUpBtn:hover,
+.sortingQuizButton:hover,
+.removeImageBtn:hover {
+  background: linear-gradient(90deg, #f7c873 0%, #a084e8 100%);
+  color: #fff;
+  cursor: pointer;
 }
 
 .formGroup {
@@ -57,27 +83,50 @@
   margin: 0.5rem;
 }
 
-/* ------------------IMAGE PREVIEW------------------ */
-
-.styleImagePreview {
+.imagePreview {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  width: 25%;
+  justify-content: flex-start;
+  width: 320px;
+  height: 260px;
+  margin: 1.5rem auto 0 auto;
+  background: #181820;
   border: 2px solid goldenrod;
-  border-radius: 10px;
-  margin: 1%;
+  border-radius: 16px;
+  padding: 1rem 1rem 1.2rem 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.styleImagePreview {
+  width: 180px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 auto 0.7rem auto;
+  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
+  background: #23232b;
+  display: block;
 }
 
 /* ------------------IMAGE BUTTON------------------ */
 
 .removeImageBtn {
   background-color: var(--secondary-color);
-  color: var(text-color);
+  color: #23232b;
   border: none;
   font-size: large;
   cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 0.7rem;
+  align-self: center;
+  padding: 0.4rem 1.2rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.08);
+  transition: background 0.2s, color 0.2s;
+}
+.removeImageBtn:hover {
+  background-color: goldenrod;
+  color: #23232b;
 }
 
 .signUpBtn {
@@ -98,10 +147,22 @@
 }
 
 .sortingQuizButton {
-  background-color: goldenrod;
-  color: white;
-  padding: 0.5rem;
+  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
+  color: #23232b;
+  font-weight: bold;
+  font-family: "Cinzel", serif;
+  letter-spacing: 1px;
+  padding: 0.7rem 1.5rem;
   margin: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
+  transition: background 0.2s, color 0.2s;
+}
+.sortingQuizButton:hover {
+  background: linear-gradient(90deg, #f7c873 0%, #a084e8 100%);
+  color: #fff;
+  cursor: pointer;
 }
 
 .signUpBtn:hover {
