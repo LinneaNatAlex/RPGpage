@@ -41,12 +41,6 @@ const LiveRP = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [rpgGrateHall]);
-
-  useEffect(() => {
     async function checkPrivileged() {
       const user = auth.currentUser;
       if (!user) return setIsPrivilegedUser(false);

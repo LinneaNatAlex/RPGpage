@@ -12,6 +12,7 @@ const useProfileText = () => {
   const [text, setText] = useState("");
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
+  const [bbcode, setBBCode] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Fetches the user profile content from firestore, when user changes.
@@ -26,6 +27,7 @@ const useProfileText = () => {
         setText(data.profileText || "");
         setHtml(data.profileHtml || "");
         setCss(data.profileCss || "");
+        setBBCode(data.profileBBCode || "");
       }
 
       setLoading(false);
@@ -35,13 +37,14 @@ const useProfileText = () => {
 
   // Profile content is stored in the firestore.
 
-  const storeText = async (mode, textData, htmlData, cssData) => {
+  const storeText = async (mode, textData, htmlData, cssData, bbcodeData) => {
     if (!user) return;
     const dataToStore = {
       profileMode: mode,
       profileText: textData,
       profileHtml: htmlData,
       profileCss: cssData,
+      profileBBCode: bbcodeData,
     };
     await setDoc(doc(db, "users", user.uid), dataToStore, { merge: true });
     //  Updating the local state to save data
@@ -49,9 +52,10 @@ const useProfileText = () => {
     setHtml(htmlData);
     setCss(cssData);
     setText(textData);
+    setBBCode(bbcodeData);
   };
   // returning the userprofile data.
-  return { text, loading, storeText, mode, html, css };
+  return { text, loading, storeText, mode, html, css, bbcode };
 };
 
 export default useProfileText;

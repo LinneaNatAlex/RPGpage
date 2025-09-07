@@ -7,6 +7,7 @@ import OnlineUsers from "../../Components/OnlineUsers/OnlineUsers";
 import { useAuth } from "../../context/authContext";
 import Button from "../../Components/Button/Button";
 import { useState, useEffect } from "react";
+import PrivateChat from "../../Components/Chat/PrivateChat";
 
 // state variables to handle the components that are shown in the main page
 const MainPage = () => {
@@ -85,6 +86,8 @@ const MainPage = () => {
           <Button onClick={() => setActiveTab("users")}>Online</Button>
         </nav>
       )}
+      {/* Private chat floating window */}
+      <PrivateChat />
     </section>
   );
 };
