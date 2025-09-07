@@ -2,14 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import styles from "./Chat.module.css";
 import { FaPlus } from "react-icons/fa";
 import { auth, db } from "../../firebaseConfig";
-import {
-  query,
-  collection,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 
 const PrivateChat = () => {
@@ -35,23 +27,27 @@ const PrivateChat = () => {
       )
     : [];
 
-  // Scroll to bottom on new message
   useEffect(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [activeChats, selectedUser]);
 
-  // Listen for messages for each active chat
   useEffect(() => {
     if (!currentUser) return;
     const unsubscribes = activeChats.map((chat, idx) => {
       const chatId = [currentUser.uid, chat.user.uid].sort().join("_");
-      const q = query(
-        collection(db, "privateMessages", chatId, "messages"),
-        orderBy("timestamp")
-      );
-      return onSnapshot(q, (snapshot) => {
+      const q =
+        window.firebase && window.firebase.firestore
+          ? window.firebase
+              .firestore()
+              .collection("privateMessages")
+              .doc(chatId)
+              .collection("messages")
+              .orderBy("timestamp")
+          : null;
+      if (!q) return () => {};
+      return q.onSnapshot((snapshot) => {
         setActiveChats((prev) => {
           const updated = [...prev];
           updated[idx] = {
@@ -78,19 +74,18 @@ const PrivateChat = () => {
     e.preventDefault();
     if (!message.trim() || !selectedUser || !currentUser) return;
     const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
-    await addDoc(collection(db, "privateMessages", chatId, "messages"), {
-      text: message,
-      from: currentUser.uid,
-      to: selectedUser.uid,
-      timestamp: serverTimestamp(),
-    });
+    await db
+      .collection("privateMessages")
+      .doc(chatId)
+      .collection("messages")
+      .add({
+        text: message,
+        from: currentUser.uid,
+        to: selectedUser.uid,
+        timestamp: new Date(),
+      });
     setMessage("");
   };
-
-  // Calculate if there are unread messages for the current user
-  const hasUnread = activeChats.some((c) =>
-    c.messages?.some((m) => m.to === currentUser.uid && !m.read)
-  );
 
   return (
     <div
@@ -114,37 +109,8 @@ const PrivateChat = () => {
           borderBottom: "none",
         }}
       >
-        <span
-          style={{
-            flex: 1,
-            color: "#a084e8",
-            fontWeight: 600,
-            position: "relative",
-          }}
-        >
+        <span style={{ flex: 1, color: "#a084e8", fontWeight: 600 }}>
           Private Chat
-          {hasUnread && (
-            <span
-              style={{
-                position: "absolute",
-                top: -6,
-                right: -18,
-                background: "#ff4d4f",
-                color: "#fff",
-                borderRadius: "50%",
-                width: 18,
-                height: 18,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 14,
-                fontWeight: 700,
-                boxShadow: "0 0 2px #000",
-              }}
-            >
-              !
-            </span>
-          )}
         </span>
         <button
           style={{
