@@ -1,6 +1,7 @@
 // importing the nessesarty function that is needed to send messages to the database
 import { useState } from "react";
 import useChatMessages from "../../hooks/useChatMessages";
+import useUsers from "../../hooks/useUser";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./Chat.module.css";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -11,6 +12,7 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 // useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
 const Chat = () => {
   const { messages } = useChatMessages();
+  const { users } = useUsers();
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
 
@@ -36,18 +38,31 @@ const Chat = () => {
     <div className={styles.chatContainer}>
       <div className={styles.chatMessages}>
         {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
-        {messages.map(
-          (
-            message //  this scans throug the messages then return a div for each message.
-          ) => (
-            <div key={message.id} className={styles.message}>
-              <strong className={styles.messageSender}>{message.sender}</strong>
-              :{" "}
-              {/* This is where the message will be displayed! Sender with caracter name followed by the text */}
-              {message.text} {/* the message shows the author/user/messanger */}
-            </div>
+        {messages.map((message) => {
+          // Find the user object by displayName (case-insensitive)
+          const userObj = users.find(
+            (u) =>
+              u.displayName &&
+              u.displayName.toLowerCase() === message.sender?.toLowerCase()
+          );
+          let roleClass = styles.messageSender;
+          if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
+            roleClass += ` ${styles.headmasterSender}`;
+          else if (userObj?.roles?.some((r) => r.toLowerCase() === "teacher"))
+            roleClass += ` ${styles.teacherSender}`;
+          else if (
+            userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
           )
-        )}
+            roleClass += ` ${styles.shadowPatrolSender}`;
+          else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
+            roleClass += ` ${styles.adminSender}`;
+          return (
+            <div key={message.id} className={styles.message}>
+              <strong className={roleClass}>{message.sender}</strong>:{" "}
+              {message.text}
+            </div>
+          );
+        })}
       </div>
       <form className={styles.chatForm} onSubmit={sendtMessage}>
         <input

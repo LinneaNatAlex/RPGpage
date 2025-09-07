@@ -49,9 +49,25 @@
   width: 100%;
 }
 .messageSender {
-  color: var(--primary-color);
+  color: #a084e8;
   font-weight: bold;
   font-size: 0.95rem;
+}
+.headmasterName {
+  color: #fff !important;
+  text-shadow: 0 0 8px #fff, 0 0 4px #b0aac2;
+}
+.teacherName {
+  color: gold !important;
+  text-shadow: 0 0 8px gold, 0 0 4px #b0aac2;
+}
+.shadowPatrolName {
+  color: #1ecb8c !important;
+  text-shadow: 0 0 8px #1ecb8c, 0 0 4px #b0aac2;
+}
+.adminName {
+  color: #ff5e5e !important;
+  text-shadow: 0 0 8px #ff5e5e, 0 0 4px #b0aac2;
 }
 /* Message container styles */
 .message {

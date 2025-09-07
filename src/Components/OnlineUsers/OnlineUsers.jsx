@@ -46,14 +46,20 @@ const OnlineUsers = () => {
       <ul className={style.onlineUsersList}>
         {users.map((u) => {
           let roleClass = style.userAvatar;
-          if (u.roles?.some((r) => r.toLowerCase() === "headmaster"))
+          let nameClass = style.userName;
+          if (u.roles?.some((r) => r.toLowerCase() === "headmaster")) {
             roleClass += ` ${style.headmasterAvatar}`;
-          else if (u.roles?.some((r) => r.toLowerCase() === "teacher"))
+            nameClass += ` ${style.headmasterName}`;
+          } else if (u.roles?.some((r) => r.toLowerCase() === "teacher")) {
             roleClass += ` ${style.teacherAvatar}`;
-          else if (u.roles?.some((r) => r.toLowerCase() === "shadowpatrol"))
+            nameClass += ` ${style.teacherName}`;
+          } else if (u.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
             roleClass += ` ${style.shadowPatrolAvatar}`;
-          else if (u.roles?.some((r) => r.toLowerCase() === "admin"))
+            nameClass += ` ${style.shadowPatrolName}`;
+          } else if (u.roles?.some((r) => r.toLowerCase() === "admin")) {
             roleClass += ` ${style.adminAvatar}`;
+            nameClass += ` ${style.adminName}`;
+          }
           return (
             <li key={u.id} className={style.onlineUserItem}>
               <img
@@ -61,7 +67,7 @@ const OnlineUsers = () => {
                 alt="User Avatar"
                 className={roleClass}
               />
-              {u.displayName}
+              <span className={nameClass}>{u.displayName}</span>
               {isPrivileged && u.id !== user?.uid && (
                 <button
                   className={style.gearButton}

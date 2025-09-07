@@ -1,6 +1,7 @@
 // importing the nessesitary function that is needed to send messages to the database
 import { useState, useRef, useEffect } from "react";
 import useChatMessages from "../../hooks/useChatMessages";
+import useUsers from "../../hooks/useUser";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./LiveRP.module.css"; // importing the css module for styling
 import {
@@ -30,6 +31,7 @@ const hallRules = [
 // useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
 const LiveRP = () => {
   const { rpgGrateHall } = useChatMessages(); // destructuring the messages to get the rpgGrateHall messages
+  const { users } = useUsers();
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
   const [isPrivilegedUser, setIsPrivilegedUser] = useState(false);
@@ -302,58 +304,86 @@ const LiveRP = () => {
           >
             <div className={styles.chatMessages}>
               {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
-              {rpgGrateHall.map((message) => (
-                <div key={message.id} className={styles.message}>
-                  <div
-                    className={styles.messageNamecontainer}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.7rem",
-                    }}
-                  >
-                    <strong>
-                      <p className={styles.messageSender} style={{ margin: 0 }}>
-                        {message.sender}:
-                      </p>
-                    </strong>
-                    {message.timestamp && (
-                      <span
-                        style={{
-                          fontSize: "0.9rem",
-                          color: "#a084e8",
-                          opacity: 0.8,
-                        }}
-                      >
-                        {formatTime(message.timestamp)}
-                      </span>
-                    )}
-                    {isPrivilegedUser && (
-                      <button
-                        onClick={() => handleDeleteMessage(message.id)}
-                        style={{
-                          marginLeft: "1rem",
-                          color: "#ff2a2a",
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Delete
-                      </button>
-                    )}
+              {rpgGrateHall.map((message) => {
+                // Finn brukerobjekt for å hente roller
+                const userObj = users.find(
+                  (u) =>
+                    u.displayName &&
+                    u.displayName.toLowerCase() ===
+                      message.sender?.toLowerCase()
+                );
+                let nameClass = styles.messageSender;
+                if (
+                  userObj?.roles?.some((r) => r.toLowerCase() === "headmaster")
+                )
+                  nameClass += ` ${styles.headmasterName}`;
+                else if (
+                  userObj?.roles?.some((r) => r.toLowerCase() === "teacher")
+                )
+                  nameClass += ` ${styles.teacherName}`;
+                else if (
+                  userObj?.roles?.some(
+                    (r) => r.toLowerCase() === "shadowpatrol"
+                  )
+                )
+                  nameClass += ` ${styles.shadowPatrolName}`;
+                else if (
+                  userObj?.roles?.some((r) => r.toLowerCase() === "admin")
+                )
+                  nameClass += ` ${styles.adminName}`;
+                return (
+                  <div key={message.id} className={styles.message}>
+                    <div
+                      className={styles.messageNamecontainer}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.7rem",
+                      }}
+                    >
+                      <strong>
+                        <span className={nameClass} style={{ margin: 0 }}>
+                          {message.sender}:
+                        </span>
+                      </strong>
+                      {message.timestamp && (
+                        <span
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "#a084e8",
+                            opacity: 0.8,
+                          }}
+                        >
+                          {formatTime(message.timestamp)}
+                        </span>
+                      )}
+                      {isPrivilegedUser && (
+                        <button
+                          onClick={() => handleDeleteMessage(message.id)}
+                          style={{
+                            marginLeft: "1rem",
+                            color: "#ff2a2a",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        textAlign: "left",
+                        width: "100%",
+                        fontSize: "1.15rem",
+                      }}
+                      dangerouslySetInnerHTML={{ __html: message.text }}
+                    />
                   </div>
-                  <div
-                    style={{
-                      textAlign: "left",
-                      width: "100%",
-                      fontSize: "1.15rem",
-                    }}
-                    dangerouslySetInnerHTML={{ __html: message.text }}
-                  />
-                </div>
-              ))}
+                );
+              })}
               <div ref={messagesEndRef} />
             </div>
             <form className={styles.chatForm} onSubmit={sendtMessage}>

@@ -43,7 +43,32 @@ const UserList = ({ userQuery }) => {
               user // Mapping the users to display them in tbody
             ) => (
               <tr key={user.uid}>
-                <td>{user.displayName}</td>
+                <td>
+                  {(() => {
+                    let nameClass = styles.userName;
+                    if (
+                      user.roles?.some((r) => r.toLowerCase() === "headmaster")
+                    )
+                      nameClass += ` ${styles.headmasterName}`;
+                    else if (
+                      user.roles?.some((r) => r.toLowerCase() === "teacher")
+                    )
+                      nameClass += ` ${styles.teacherName}`;
+                    else if (
+                      user.roles?.some(
+                        (r) => r.toLowerCase() === "shadowpatrol"
+                      )
+                    )
+                      nameClass += ` ${styles.shadowPatrolName}`;
+                    else if (
+                      user.roles?.some((r) => r.toLowerCase() === "admin")
+                    )
+                      nameClass += ` ${styles.adminName}`;
+                    return (
+                      <span className={nameClass}>{user.displayName}</span>
+                    );
+                  })()}
+                </td>
                 <td>{user.house}</td>
                 <td>{user.class}</td>
                 {/* When clicking on the View Profile Link the user get send to the route that contains the specific /user/uid */}

@@ -1,5 +1,6 @@
 // import the necessary libraries and components
 import { useState, useEffect } from "react";
+import useUsers from "../../hooks/useUser";
 import { useParams } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
@@ -41,6 +42,17 @@ const UserProfile = () => {
 
   if (notFound) return <div>User not found</div>;
   if (!userData) return <div>Loading...</div>;
+
+  // Rolle-farge for navn
+  let nameClass = styles.userName;
+  if (userData.roles?.some((r) => r.toLowerCase() === "headmaster"))
+    nameClass += ` ${styles.headmasterName}`;
+  else if (userData.roles?.some((r) => r.toLowerCase() === "teacher"))
+    nameClass += ` ${styles.teacherName}`;
+  else if (userData.roles?.some((r) => r.toLowerCase() === "shadowpatrol"))
+    nameClass += ` ${styles.shadowPatrolName}`;
+  else if (userData.roles?.some((r) => r.toLowerCase() === "admin"))
+    nameClass += ` ${styles.adminName}`;
   // ----------------------------------PROFILE CONTENT----------------------------------
   return (
     <div className={styles.profileWrapper}>
@@ -73,7 +85,8 @@ const UserProfile = () => {
           <div className={styles.charactinfo}>
             <h2>Character Details</h2>
             <p>
-              <strong>Full Name:</strong> {userData.displayName}
+              <strong>Full Name:</strong>{" "}
+              <span className={nameClass}>{userData.displayName}</span>
             </p>
             <p>
               <strong>Class:</strong> {userData.class}

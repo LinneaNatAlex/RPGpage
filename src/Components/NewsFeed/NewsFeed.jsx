@@ -1,4 +1,3 @@
-// Imorting necessary libraries and components
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
@@ -13,10 +12,38 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import styles from "./NewsFeed.module.css";
+import useUsers from "../../hooks/useUser";
 import Button from "../Button/Button";
 
 const NewsFeed = () => {
-  // All the state variables andd hooks.
+  // All the state variables and hooks.
+  const [iframeHeights, setIframeHeights] = useState([]);
+
+  // Listen for messages from iframes to set their height
+  useEffect(() => {
+    function handleMessage(event) {
+      if (
+        event.data &&
+        event.data.type === "setHeight" &&
+        typeof event.data.index === "number"
+      ) {
+        setIframeHeights((prev) => {
+          const next = [...prev];
+          next[event.data.index] = event.data.height;
+          return next;
+        });
+      }
+    }
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  // Funksjon for å slette en nyhet
+  const handleDeletePost = async (id) => {
+    const docRef = doc(db, "news", id);
+    await deleteDoc(docRef);
+  };
+  const { users } = useUsers();
   const { user, loading } = useAuth();
   const { roles: userRoles, rolesLoading: loadingRoles } = useUserRoles();
   const [newsList, setNewsList] = useState([]);
@@ -60,115 +87,113 @@ const NewsFeed = () => {
     setTitles("");
     setNewPost("");
   };
-  //  HANDLE DELETE POST is function handeling the deliton of the post.
-  const handleDeletePost = async (id) => {
-    const docRef = doc(db, "news", id);
-    await deleteDoc(docRef);
-  };
-  // Shows the loading screen while the data form the db is loading
-  if (loading || loadingRoles) {
-    return (
-      <div className={styles.loadingContainer}>
-        <h2>Loading...</h2>
-      </div>
-    );
-  }
-  // This is where what the admin will be seing when they are logged in.
+
   return (
     <div className={styles.newsFeedWrapper}>
-      <div className={styles.newsAdminContainer}>
-        <h2 className={styles.title}>News Feed</h2>
-        {isAdminOrTeacher && (
-          <>
-            <input
-              type="text"
-              value={titles}
-              onChange={(e) => setTitles(e.target.value)}
-              placeholder="Title"
-              required
-            />
-            <textarea
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-              placeholder="news here"
-              className={styles.textArea}
-              required
-            />
-
-            {/* This is where the live preview will be shown, IF ONLY IF the post contains code that starts with {{code}} and ends with {{/code}} */}
-            {newPost.startsWith("{{code}}") && (
-              // starts with {{code}} will make it show up a live prewiew window of the code. If not it wont show up.
-              <div className={styles.prewiewContainer}>
-                <h2>Here you can se Live prewiev off your codes</h2>
-                <div className={styles.iframeWrapper}>
-                  <iframe
-                    // Using iframe to show live preview of code, this is so its easier to know how the code will looklike before it is posted on the wall!
-                    srcDoc={newPost
-                      .replace("{{code}}", "")
-                      .replace("{{/code}}", "")}
-                    sandbox="allow-same-origin"
-                    title="code-preview"
-                    // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
-                    frameBorder="0"
-                    width="100%"
-                    height="300px"
-                    style={{ border: "1px solid #ccc" }}
-                  />
-                </div>
-              </div>
-            )}
-            <Button
-              onClick={handlePostSubmit}
-              className={styles.handlePostSubmit}
-            >
-              Post
-            </Button>
-          </>
-        )}
-      </div>
-
+      {/* Admin/teacher input for posting news */}
+      {isAdminOrTeacher && (
+        <div className={styles.newsAdminContainer}>
+          <input
+            type="text"
+            value={titles}
+            onChange={(e) => setTitles(e.target.value)}
+            placeholder="Title"
+            required
+          />
+          <textarea
+            value={newPost}
+            onChange={(e) => setNewPost(e.target.value)}
+            placeholder="news here"
+            className={styles.textArea}
+            required
+          />
+          <Button
+            onClick={handlePostSubmit}
+            className={styles.handlePostSubmit}
+          >
+            Post
+          </Button>
+        </div>
+      )}
       <div className={styles.newsContainer}>
         {/* Display for the news post */}
-
-        {newsList.map((item) => (
-          <div key={item.id}>
-            <div className={styles.newsContent}>
-              <div className={styles.newsInfo}>
-                {" "}
-                <h3>{item.title}</h3>
-                <span className={styles.posterName}>{item.author}</span>:
-              </div>
-              {item.content.startsWith("{{code}}") ? (
-                <iframe
-                  // SrcDoc is used to show the html/css styling inside the Iframe.
-                  srcDoc={item.content
-                    .replace("{{code}}", "")
-                    .replace("{{/code}}", "")}
-                  sandbox="allow-same-origin"
-                  title="code-preview"
-                  // FRAME BORDER is to remove the border around the Iframe, and making it look more part of the page.
-                  frameBorder="0"
-                  // Size is defined so that the iframe can be shown correctly. So the reason is because, even if '' srcDoc '' can show the visual html/css styling it can not change the Iframe size.
-                />
-              ) : (
-                <div className={styles.textBlock}>
-                  <p>{item.content}</p>
+        <>
+          {newsList.map((item, idx) => {
+            // ...existing code...
+            // Finn brukerobjekt for å hente roller
+            const userObj = users.find(
+              (u) =>
+                u.displayName &&
+                u.displayName.toLowerCase() === item.author?.toLowerCase()
+            );
+            let nameClass = styles.posterName;
+            if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
+              nameClass += ` ${styles.headmasterName}`;
+            else if (userObj?.roles?.some((r) => r.toLowerCase() === "teacher"))
+              nameClass += ` ${styles.teacherName}`;
+            else if (
+              userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+            )
+              nameClass += ` ${styles.shadowPatrolName}`;
+            else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
+              nameClass += ` ${styles.adminName}`;
+            return (
+              <div key={item.id}>
+                <div className={styles.newsContent}>
+                  <div className={styles.newsInfo}>
+                    <h3>{item.title}</h3>
+                    <span className={nameClass}>{item.author}</span>:
+                  </div>
+                  {item.content.startsWith("{{code}}") ? (
+                    <iframe
+                      srcDoc={`<body style='margin:0'>${item.content
+                        .replace("{{code}}", "")
+                        .replace("{{/code}}", "")}
+                        <script>
+                          function sendHeight() {
+                            window.parent.postMessage({type: 'setHeight', height: document.body.scrollHeight, index: ${idx}}, '*');
+                          }
+                          window.onload = sendHeight;
+                          window.addEventListener('resize', sendHeight);
+                          setTimeout(sendHeight, 100);
+                        <\/script>
+                      </body>`}
+                      sandbox="allow-same-origin"
+                      title="code-preview"
+                      frameBorder="0"
+                      style={{
+                        width: "100%",
+                        minHeight: "500px",
+                        maxHeight: "1200px",
+                        overflowY: "auto",
+                        display: "block",
+                        padding: "5px",
+                        height: iframeHeights[idx]
+                          ? iframeHeights[idx] + "px"
+                          : "500px",
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.textBlock}>
+                      <p>{item.content}</p>
+                    </div>
+                  )}
                 </div>
-              )}{" "}
-            </div>
-            <br />
-            <br />
-            {/* Theese buttons is only displayed for the admin role */}
-            {isAdminOrTeacher && (
-              <Button
-                onClick={() => handleDeletePost(item.id)}
-                className={styles.deleteButton}
-              >
-                Delete
-              </Button>
-            )}
-          </div>
-        ))}
+                <br />
+                <br />
+                {/* Theese buttons is only displayed for the admin role */}
+                {isAdminOrTeacher && (
+                  <Button
+                    onClick={() => handleDeletePost(item.id)}
+                    className={styles.deleteButton}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+        </>
       </div>
     </div>
   );
