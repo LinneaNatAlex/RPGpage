@@ -15,13 +15,27 @@ const ProfileTextEditor = () => {
   const [tempCss, setTempCss] = useState(css);
   const [editMode, setEditMode] = useState(mode);
   const [tempText, setTempText] = useState(text);
+  const [tempBBCode, setTempBBCode] = useState("");
   // loding while fetching the profile text
   if (loading) return <div>Loading...</div>;
   //
   const handleStoreText = () => {
-    storeText(editMode, tempText, tempHtml, tempCss);
+    storeText(editMode, tempText, tempHtml, tempCss, tempBBCode);
     setEditing(false);
   };
+
+  // Enkel BBCode til HTML parser
+  function parseBBCode(str) {
+    if (!str) return "";
+    return str
+      .replace(/\[b\](.*?)\[\/b\]/gi, '<strong>$1</strong>')
+      .replace(/\[i\](.*?)\[\/i\]/gi, '<em>$1</em>')
+      .replace(/\[u\](.*?)\[\/u\]/gi, '<u>$1</u>')
+      .replace(/\[color=(#[0-9a-fA-F]{3,6}|[a-zA-Z]+)\](.*?)\[\/color\]/gi, '<span style="color:$1">$2</span>')
+      .replace(/\[size=(\d+)\](.*?)\[\/size\]/gi, '<span style="font-size:$1px">$2</span>')
+      .replace(/\[url=(.*?)\](.*?)\[\/url\]/gi, '<a href="$1" target="_blank">$2</a>')
+      .replace(/\n/g, '<br />');
+  }
   // bad practice to use inline styles, but for the sake of this example, use it for the profile text editor. Its how the plugins work, apparently.
   const srcDoc = `
   <html>
@@ -31,7 +45,6 @@ const ProfileTextEditor = () => {
 `;
 
   if (editing || (!text && !html)) {
-    // --------------------------------------------HTML EDITOR--------------------------------------------
     return (
       <div className={styles.profileEditor}>
         <div>
@@ -47,13 +60,23 @@ const ProfileTextEditor = () => {
           <label>
             <input
               type="radio"
+              value="html"
               checked={editMode === "html"}
-              onChange={(e) => setEditMode("html")}
+              onChange={() => setEditMode("html")}
             />
             HTML
           </label>
+          <label>
+            <input
+              type="radio"
+              value="bbcode"
+              checked={editMode === "bbcode"}
+              onChange={() => setEditMode("bbcode")}
+            />
+            BBCode
+          </label>
         </div>
-        {editMode === "text" ? (
+        {editMode === "text" && (
           <textarea
             value={tempText}
             onChange={(e) => setTempText(e.target.value)}
@@ -61,9 +84,9 @@ const ProfileTextEditor = () => {
             rows={10}
             cols={50}
           />
-        ) : (
+        )}
+        {editMode === "html" && (
           <>
-            {/* HTML EDITOR */}
             <h2>HTML</h2>
             <div className={styles.editorWrapper}>
               <Editor
@@ -72,7 +95,6 @@ const ProfileTextEditor = () => {
                 onChange={(value) => setTempHtml(value)}
               />
             </div>
-            {/* CSS EDITOR */}
             <h2>CSS</h2>
             <div className={styles.editorWrapper}>
               <Editor
@@ -82,6 +104,15 @@ const ProfileTextEditor = () => {
               />
             </div>
           </>
+        )}
+        {editMode === "bbcode" && (
+          <textarea
+            value={tempBBCode}
+            onChange={e => setTempBBCode(e.target.value)}
+            placeholder="[b]Bold[/b] [i]Italic[/i] [color=red]Red[/color] osv."
+            rows={10}
+            cols={50}
+          />
         )}
         <br />
         <Button onClick={handleStoreText} className={styles.saveButton}>
@@ -93,9 +124,8 @@ const ProfileTextEditor = () => {
 
   return (
     <div className={styles.profileContainer}>
-      {mode === "text" ? (
-        <p>{text}</p>
-      ) : (
+      {mode === "text" && <p>{text}</p>}
+      {mode === "html" && (
         <div className={styles.profilePreview}>
           <div className={styles.profileText}>
             <iframe
@@ -116,7 +146,22 @@ const ProfileTextEditor = () => {
               Edit Profile Text
             </Button>
           </div>
-          {/* ----------------------------------------------- */}
+        </div>
+      )}
+      {mode === "bbcode" && (
+        <div className={styles.profilePreview}>
+          <div className={styles.profileText}>
+            <div dangerouslySetInnerHTML={{ __html: parseBBCode(tempBBCode) }} />
+            <Button
+              className={styles.editButton}
+              onClick={() => {
+                setEditing(true);
+                setEditMode(mode);
+              }}
+            >
+              Edit Profile Text
+            </Button>
+          </div>
         </div>
       )}
     </div>

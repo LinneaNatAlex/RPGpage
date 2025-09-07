@@ -1,5 +1,5 @@
 // importing the nessesarty function that is needed to send messages to the database
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
 import { db, auth } from "../../firebaseConfig";
@@ -60,12 +60,20 @@ const Chat = () => {
     }
   };
 
+  // Scroll til bunn når meldinger endres
+  const messagesEndRef = useRef(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   // --------------------CHAT FORM AND MESSAGE COMONENT / RENDERING-------------------
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatMessages}>
         {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
-        {messages.map((message) => {
+  {messages.map((message) => {
           // Find the user object by displayName (case-insensitive)
           const userObj = users.find(
             (u) =>
@@ -141,7 +149,8 @@ const Chat = () => {
               <span className={styles.messageText}>: {message.text}</span>
             </div>
           );
-        })}
+  })}
+  <div ref={messagesEndRef} />
       </div>
       <form className={styles.chatForm} onSubmit={sendtMessage}>
         <input
