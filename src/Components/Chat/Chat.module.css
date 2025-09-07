@@ -1,3 +1,92 @@
+.gearMenuWrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-right: 0.3rem;
+}
+.gearButton {
+  background: #23232b;
+  border: 1px solid #ff5e5e;
+  color: #ff5e5e;
+  border-radius: 50%;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 0.2rem;
+  transition: border 0.18s, background 0.18s;
+  z-index: 11;
+}
+.gearButton:hover,
+.gearButton:focus {
+  background: #2a2a36;
+  border-color: #ff8e8e;
+}
+.optionsMenu {
+  position: absolute;
+  left: 0;
+  top: 2.1rem;
+  background: #23232b;
+  border: 1px solid #ff5e5e;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+  min-width: 70px;
+  padding: 0.2rem 0;
+  display: flex;
+  flex-direction: column;
+}
+.deleteOption {
+  background: none;
+  border: none;
+  color: #ff5e5e;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.3rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.deleteOption:hover,
+.deleteOption:focus {
+  background: #3a2323;
+}
+.senderNameWrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+.deleteButtonText {
+  margin-left: 0.5rem;
+  background: #23232b;
+  border: 1px solid #ff5e5e;
+  color: #ff5e5e;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  padding: 0.1rem 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s, background 0.18s, color 0.18s;
+  z-index: 10;
+  position: static;
+}
+.senderNameWrapper:hover .deleteButtonText,
+.senderNameWrapper:focus-within .deleteButtonText,
+.deleteButtonText:hover,
+.deleteButtonText:focus {
+  opacity: 1;
+  pointer-events: auto;
+}
+.messageText {
+  margin-left: 0.2rem;
+  word-break: break-word;
+}
 @import "../../assets/Variables/Variables.css";
 
 .chatContainer {

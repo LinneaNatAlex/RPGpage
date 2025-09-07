@@ -69,9 +69,27 @@ const Navbar = () => {
             <NavLink to="/userMap">Student Map</NavLink>
 
             <div className={styles.dropdown}>
-              <NavLink to="/Rpg">Roleplay</NavLink>
+              <span
+                style={{
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  color: "#b0aac2",
+                }}
+              >
+                Roleplay
+              </span>
               <div className={styles.dropdownContent}>
                 <NavLink to="/Rpg/GreatHall">Starshade Hall</NavLink>
+                <NavLink to="/forum/commonroom">Commonroom</NavLink>
+                <NavLink to="/forum/ritualroom">Ritual Room</NavLink>
+                <NavLink to="/forum/moongarden">Moon Garden</NavLink>
+                <NavLink to="/forum/bloodbank">Blood Bank</NavLink>
+                <NavLink to="/forum/nightlibrary">Night Library</NavLink>
+                <NavLink to="/forum/gymnasium">The Gymnasium</NavLink>
+                <NavLink to="/forum/infirmary">The Infirmary</NavLink>
+                <NavLink to="/forum/greenhouse">The Greenhouse</NavLink>
+                <NavLink to="/forum/artstudio">The Art Studio</NavLink>
+                <NavLink to="/forum/kitchen">Kitchen</NavLink>
               </div>
             </div>
 

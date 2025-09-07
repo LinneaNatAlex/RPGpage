@@ -17,6 +17,7 @@ import ClassRooms from "../Pages/ClassRooms/ClassRooms.jsx";
 import Potions from "../Pages/ClassRooms/Potions/Potions.jsx";
 import Rpg from "../Pages/Rpg/Rpg.jsx";
 import GreatHall from "../Pages/Rpg/GreateHall/GreatHall.jsx";
+import Forum from "../Pages/Forum/Forum.jsx";
 import RaceInfo from "../Pages/RaceInfo/RaceInfo.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
@@ -71,6 +72,14 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <Rpg />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="forum/:forumId"
+        element={
+          <RouteGuard>
+            <Forum />
           </RouteGuard>
         }
       />

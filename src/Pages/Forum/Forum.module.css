@@ -1,0 +1,238 @@
+/* New topic form layout improvements */
+.newTopicForm {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+  background: #181820;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(124, 94, 191, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.newTopicInput {
+  font-size: 1.1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 2px solid #a084e8;
+  background: #23232b;
+  color: #fff;
+  margin-bottom: 0.7rem;
+  outline: none;
+  transition: border 0.18s;
+}
+.newTopicInput:focus {
+  border: 2px solid #bca6f7;
+}
+
+.newTopicEditor {
+  margin-bottom: 0.7rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #23232b;
+  border: 1.5px solid #a084e8;
+}
+
+.newTopicButton {
+  margin-top: 1.2rem;
+  align-self: flex-start;
+}
+.forumWrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #23232b;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.15);
+  padding: 2rem;
+  color: #fff;
+}
+
+.topicsList {
+  margin-top: 2rem;
+}
+.topicBox {
+  background: #181820;
+  border-radius: 8px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+.topicLinkButton {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 1.2rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  font-size: 1.1rem;
+  gap: 1.5rem;
+  outline: none;
+  position: relative;
+}
+.topicLinkButton:hover,
+.topicLinkButton:focus {
+  background: #2d2d3a;
+  box-shadow: 0 2px 8px rgba(160, 132, 232, 0.15);
+  transform: translateY(-2px) scale(1.01);
+}
+.topicTitle {
+  font-size: 1.18rem;
+  font-weight: bold;
+  color: #a084e8;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 8px #a084e8aa;
+}
+
+.topicAuthor {
+  font-size: 0.98rem;
+  color: #b0aac2;
+  margin-left: 1.5rem;
+  font-style: italic;
+}
+.topicTime {
+  font-size: 0.92rem;
+  color: #888ab8;
+  font-style: normal;
+  letter-spacing: 0.01em;
+  margin-left: auto;
+  padding-left: 1.5rem;
+}
+
+.topicsList {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.postBox {
+  background: #181820;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(124, 94, 191, 0.08);
+}
+.postHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.postTitle {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #a084e8;
+}
+.posterName {
+  font-weight: bold;
+  color: #a084e8;
+}
+.headmasterName {
+  color: #fff !important;
+  text-shadow: 0 0 8px #fff, 0 0 4px #b0aac2;
+}
+.teacherName {
+  color: gold !important;
+  text-shadow: 0 0 8px gold, 0 0 4px #b0aac2;
+}
+.shadowPatrolName {
+  color: #1ecb8c !important;
+  text-shadow: 0 0 8px #1ecb8c, 0 0 4px #b0aac2;
+}
+.adminName {
+  color: #ff5e5e !important;
+  text-shadow: 0 0 8px #ff5e5e, 0 0 4px #b0aac2;
+}
+.postContent {
+  background: #fff;
+  color: #23232b;
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 100px;
+}
+
+/* Forum action buttons styling */
+.editButton,
+.deleteButton,
+.saveButton,
+.cancelButton {
+  display: inline-block;
+  margin: 0.2rem 0.5rem 0.2rem 0;
+  padding: 0.4rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
+  box-shadow: 0 1px 4px rgba(160, 132, 232, 0.08);
+  outline: none;
+}
+.editButton {
+  background: #a084e8;
+  color: #fff;
+}
+.editButton:hover,
+.editButton:focus {
+  background: #bca6f7;
+  color: #23232b;
+  transform: translateY(-1px) scale(1.03);
+}
+.deleteButton {
+  background: #ff5e5e;
+  color: #fff;
+}
+.deleteButton:hover,
+.deleteButton:focus {
+  background: #ff8a8a;
+  color: #23232b;
+  transform: translateY(-1px) scale(1.03);
+}
+.saveButton {
+  background: #1ecb8c;
+  color: #fff;
+}
+.saveButton:hover,
+.saveButton:focus {
+  background: #4be3a8;
+  color: #23232b;
+  transform: translateY(-1px) scale(1.03);
+}
+.cancelButton {
+  background: #b0aac2;
+  color: #23232b;
+}
+.cancelButton:hover,
+.cancelButton:focus {
+  background: #d6d3e0;
+  color: #23232b;
+  transform: translateY(-1px) scale(1.03);
+}
+
+.postButton {
+  background: #a084e8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.3rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
+  box-shadow: 0 1px 4px rgba(160, 132, 232, 0.08);
+  outline: none;
+}
+.postButton:hover,
+.postButton:focus {
+  background: #bca6f7;
+  color: #23232b;
+  transform: translateY(-1px) scale(1.03);
+}

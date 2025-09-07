@@ -53,9 +53,29 @@
 .dropdownContent {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
+  background-color: var(--navbar-rolldown-background, #3a373a);
   min-width: 160px;
-  padding: 5px;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.dropdownContent a {
+  display: block;
+  padding: 0.5rem 1.5rem;
+  color: #d0cbe1;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdownContent a:hover {
+  background: #28262b;
+  color: #fff;
 }
 
 .dropdown:hover .dropdownContent {
