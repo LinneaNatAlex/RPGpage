@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./Chat.module.css";
 import { FaPlus } from "react-icons/fa";
+import { auth, db } from "../../firebaseConfig";
 
 // Dummy users for search (replace with real user list from backend)
 const dummyUsers = [
@@ -17,6 +18,8 @@ const PrivateChat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState("");
   const chatBoxRef = useRef(null);
+  const currentUser = auth.currentUser; // Moved currentUser definition above its usage
+  if (!currentUser) return null; // Added check for currentUser
 
   // Filter users for search
   const filteredUsers = search
@@ -34,6 +37,30 @@ const PrivateChat = () => {
     }
   }, [activeChats, selectedUser]);
 
+  // Listen for messages for each active chat
+  useEffect(() => {
+    if (!currentUser) return;
+    const unsubscribes = activeChats.map((chat, idx) => {
+      const chatId = [currentUser.uid, chat.user.uid].sort().join("_");
+      const q = query(
+        collection(db, "privateMessages", chatId, "messages"),
+        orderBy("timestamp")
+      );
+      return onSnapshot(q, (snapshot) => {
+        setActiveChats((prev) => {
+          const updated = [...prev];
+          updated[idx] = {
+            ...chat,
+            messages: snapshot.docs.map((doc) => doc.data()),
+          };
+          return updated;
+        });
+      });
+    });
+    return () => unsubscribes.forEach((unsub) => unsub());
+    // eslint-disable-next-line
+  }, [activeChats.length, currentUser]);
+
   // Add new private chat
   const addChat = (user) => {
     setActiveChats((prev) => [...prev, { user, messages: [] }]);
@@ -41,17 +68,17 @@ const PrivateChat = () => {
     setSearch("");
   };
 
-  // Send message in active chat
-  const sendMessage = (e) => {
+  // Send message in active chat (Firestore)
+  const sendMessage = async (e) => {
     e.preventDefault();
-    if (!message.trim() || !selectedUser) return;
-    setActiveChats((prev) =>
-      prev.map((c) =>
-        c.user.id === selectedUser.id
-          ? { ...c, messages: [...c.messages, { text: message, fromMe: true }] }
-          : c
-      )
-    );
+    if (!message.trim() || !selectedUser || !currentUser) return;
+    const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
+    await addDoc(collection(db, "privateMessages", chatId, "messages"), {
+      text: message,
+      from: currentUser.uid,
+      to: selectedUser.uid,
+      timestamp: serverTimestamp(),
+    });
     setMessage("");
   };
 
@@ -73,11 +100,9 @@ const PrivateChat = () => {
           padding: "0.5rem 1rem",
           display: "flex",
           alignItems: "center",
-          cursor: "pointer",
           border: "2px solid #a084e8",
           borderBottom: "none",
         }}
-        onClick={() => setIsCollapsed((prev) => !prev)}
       >
         <span style={{ flex: 1, color: "#a084e8", fontWeight: 600 }}>
           Private Chat
@@ -90,10 +115,7 @@ const PrivateChat = () => {
             fontSize: 18,
             cursor: "pointer",
           }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsCollapsed(false);
-          }}
+          onClick={() => setIsCollapsed((prev) => !prev)}
         >
           {isCollapsed ? "▲" : "▼"}
         </button>
@@ -152,11 +174,11 @@ const PrivateChat = () => {
               >
                 {filteredUsers.map((u) => (
                   <div
-                    key={u.id}
+                    key={u.uid}
                     style={{ padding: 8, cursor: "pointer", color: "#a084e8" }}
                     onClick={() => addChat(u)}
                   >
-                    {u.name}
+                    {u.displayName || u.uid}
                   </div>
                 ))}
               </div>
@@ -165,12 +187,16 @@ const PrivateChat = () => {
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                 {activeChats.map((c) => (
                   <button
-                    key={c.user.id}
+                    key={c.user.uid}
                     style={{
                       background:
-                        selectedUser?.id === c.user.id ? "#a084e8" : "#23232b",
+                        selectedUser?.uid === c.user.uid
+                          ? "#a084e8"
+                          : "#23232b",
                       color:
-                        selectedUser?.id === c.user.id ? "#23232b" : "#a084e8",
+                        selectedUser?.uid === c.user.uid
+                          ? "#23232b"
+                          : "#a084e8",
                       border: "1px solid #a084e8",
                       borderRadius: 6,
                       padding: "4px 10px",
@@ -178,7 +204,7 @@ const PrivateChat = () => {
                     }}
                     onClick={() => setSelectedUser(c.user)}
                   >
-                    {c.user.name.split(" ")[0]}
+                    {(c.user.displayName || c.user.uid).split(" ")[0]}
                   </button>
                 ))}
               </div>
@@ -192,13 +218,14 @@ const PrivateChat = () => {
                 style={{ minHeight: 200, maxHeight: 300 }}
               >
                 {activeChats
-                  .find((c) => c.user.id === selectedUser.id)
+                  .find((c) => c.user.uid === selectedUser.uid)
                   ?.messages.map((m, i) => (
                     <div
                       key={i}
                       style={{
-                        textAlign: m.fromMe ? "right" : "left",
-                        color: m.fromMe ? "#a084e8" : "#fff",
+                        textAlign:
+                          m.from === currentUser?.uid ? "right" : "left",
+                        color: m.from === currentUser?.uid ? "#a084e8" : "#fff",
                       }}
                     >
                       {m.text}
@@ -210,7 +237,9 @@ const PrivateChat = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   type="text"
-                  placeholder={`Message ${selectedUser.name}...`}
+                  placeholder={`Message ${
+                    selectedUser.displayName || selectedUser.uid
+                  }...`}
                   maxLength={200}
                   className={styles.chatInput}
                 />
