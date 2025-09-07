@@ -133,7 +133,6 @@ const Profile = () => {
         </div>
         {/* -----------------------------CHAT BAR----------------------------- */}
         <div className={styles.chatBar}>
-          <div className={styles.chatContainer}>{user && <Chat />}</div>
           <FriendsList profileUid={user.uid} />
         </div>
       </div>

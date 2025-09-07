@@ -4,6 +4,7 @@ import { useAuth } from "./context/authContext.jsx";
 import styles from "./App.module.css";
 import Navbar from "./Navbar/Navbar";
 import PrivateChat from "./Components/Chat/PrivateChat";
+import Chat from "./Components/Chat/Chat";
 
 function App() {
   const { user, loading } = useAuth();
@@ -19,7 +20,8 @@ function App() {
         <main className={styles.main}>
           <Outlet />
         </main>
-        {/* PrivateChat is now global for all logged-in users */}
+        {/* Main chat and PrivateChat are now global for all logged-in users */}
+        {user && <Chat />}
         {user && <PrivateChat />}
       </div>
     </>

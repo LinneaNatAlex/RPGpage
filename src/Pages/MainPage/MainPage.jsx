@@ -74,20 +74,16 @@ const MainPage = () => {
               <NewsFeed />
             ))}
         </div>
-        <div className={styles.chatContainer}>
-          {user && (isMobile ? activeTab === "chat" && <Chat /> : <Chat />)}
-        </div>
       </main>
       {/* Responsive navigation for the MainPage */}
       {user && (
         <nav className={styles.mobileNavigation}>
           <Button onClick={() => setActiveTab("newsFeed")}>News</Button>
-          <Button onClick={() => setActiveTab("chat")}>Chat</Button>
+
           <Button onClick={() => setActiveTab("users")}>Online</Button>
         </nav>
       )}
       {/* Private chat floating window */}
-      <PrivateChat />
     </section>
   );
 };

@@ -9,13 +9,23 @@ import {
   onSnapshot,
   addDoc,
   serverTimestamp,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 
 const PrivateChat = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Husk om chatten var lukket eller åpen (default: lukket)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem("privateChatCollapsed");
+    return stored === null ? true : stored === "true";
+  });
   const [search, setSearch] = useState("");
   const [activeChats, setActiveChats] = useState([]); // [{user, messages: []}]
+  // Only one chat window
+  const [chatLoaded, setChatLoaded] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState("");
   const chatBoxRef = useRef(null);
@@ -35,6 +45,11 @@ const PrivateChat = () => {
       )
     : [];
 
+  // Oppdater localStorage når isCollapsed endres
+  useEffect(() => {
+    localStorage.setItem("privateChatCollapsed", isCollapsed);
+  }, [isCollapsed]);
+
   // Scroll to bottom on new message
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -42,9 +57,29 @@ const PrivateChat = () => {
     }
   }, [activeChats, selectedUser]);
 
-  // Listen for messages for each active chat
+  // Load active chats from Firestore on mount
   useEffect(() => {
     if (!currentUser) return;
+    const fetchChats = async () => {
+      const userChatsRef = doc(db, "userChats", currentUser.uid);
+      const userChatsSnap = await getDoc(userChatsRef);
+      let chatList = [];
+      if (userChatsSnap.exists()) {
+        const chatUids = userChatsSnap.data().chats || [];
+        chatList = chatUids
+          .map((uid) => users.find((u) => u.uid === uid))
+          .filter(Boolean)
+          .map((user) => ({ user, messages: [] }));
+      }
+      setActiveChats(chatList);
+      setChatLoaded(true);
+    };
+    fetchChats();
+  }, [currentUser, users]);
+
+  // Listen for messages for each active chat
+  useEffect(() => {
+    if (!currentUser || !chatLoaded) return;
     const unsubscribes = activeChats.map((chat, idx) => {
       const chatId = [currentUser.uid, chat.user.uid].sort().join("_");
       const q = query(
@@ -64,13 +99,29 @@ const PrivateChat = () => {
     });
     return () => unsubscribes.forEach((unsub) => unsub());
     // eslint-disable-next-line
-  }, [activeChats.length, currentUser]);
+  }, [activeChats.length, currentUser, chatLoaded]);
 
   // Add new private chat
-  const addChat = (user) => {
-    setActiveChats((prev) => [...prev, { user, messages: [] }]);
+  const addChat = async (user) => {
+    // Add to Firestore userChats
+    const userChatsRef = doc(db, "userChats", currentUser.uid);
+    const userChatsSnap = await getDoc(userChatsRef);
+    let chatUids = [];
+    if (userChatsSnap.exists()) {
+      chatUids = userChatsSnap.data().chats || [];
+    }
+    if (!chatUids.includes(user.uid)) {
+      chatUids.push(user.uid);
+      await setDoc(userChatsRef, { chats: chatUids }, { merge: true });
+    }
+    setActiveChats((prev) =>
+      prev.some((c) => c.user.uid === user.uid)
+        ? prev
+        : [...prev, { user, messages: [] }]
+    );
     setSelectedUser(user);
     setSearch("");
+    setIsCollapsed(false); // Åpne chatten når ny chat startes
   };
 
   // Send message in active chat (Firestore)
@@ -87,10 +138,18 @@ const PrivateChat = () => {
     setMessage("");
   };
 
-  // Calculate if there are unread messages for the current user
-  const hasUnread = activeChats.some((c) =>
-    c.messages?.some((m) => m.to === currentUser.uid && !m.read)
-  );
+  // Calculate per-chat unread messages for the current user
+  // Badge skal kun vises for mottaker, ikke for meldinger man selv har sendt
+  const getUnreadCount = (chat) => {
+    if (!chat.messages) return 0;
+    // Kun meldinger som er sendt TIL innlogget bruker og ikke lest
+    return chat.messages.filter(
+      (m) => m.to === currentUser.uid && m.from !== currentUser.uid && !m.read
+    ).length;
+  };
+
+  // Any chat has unread? (etter at meldinger er lest forsvinner badge umiddelbart)
+  const hasUnread = activeChats.some((c) => getUnreadCount(c) > 0);
 
   return (
     <div
@@ -215,7 +274,20 @@ const PrivateChat = () => {
                   <div
                     key={u.uid}
                     style={{ padding: 8, cursor: "pointer", color: "#a084e8" }}
-                    onClick={() => addChat(u)}
+                    onClick={() => {
+                      // Always set selected user and open chat, and ensure chat history is shown
+                      const existing = activeChats.find(
+                        (c) => c.user.uid === u.uid
+                      );
+                      if (existing) {
+                        // Select the chat from activeChats to ensure messages are shown
+                        setSelectedUser(existing.user);
+                        setSearch("");
+                        setIsCollapsed(false);
+                      } else {
+                        addChat(u);
+                      }
+                    }}
                   >
                     {u.displayName || u.name || u.uid}
                   </div>
@@ -224,32 +296,88 @@ const PrivateChat = () => {
             )}
             {activeChats.length > 0 && (
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                {activeChats.map((c) => (
-                  <button
-                    key={c.user.uid}
-                    style={{
-                      background:
-                        selectedUser?.uid === c.user.uid
+                {activeChats.map((c) => {
+                  const unread = getUnreadCount(c);
+                  const isSelected = selectedUser?.uid === c.user.uid;
+                  return (
+                    <button
+                      key={c.user.uid}
+                      style={{
+                        background: isSelected
                           ? "#a084e8"
+                          : unread > 0
+                          ? "#3a2e5c"
                           : "#23232b",
-                      color:
-                        selectedUser?.uid === c.user.uid
+                        color: isSelected
                           ? "#23232b"
+                          : unread > 0
+                          ? "#ff4d4f"
                           : "#a084e8",
-                      border: "1px solid #a084e8",
-                      borderRadius: 6,
-                      padding: "4px 10px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setSelectedUser(c.user)}
-                  >
-                    {
-                      (c.user.displayName || c.user.name || c.user.uid).split(
-                        " "
-                      )[0]
-                    }
-                  </button>
-                ))}
+                        border: "1px solid #a084e8",
+                        borderRadius: 6,
+                        padding: "4px 10px",
+                        cursor: "pointer",
+                        position: "relative",
+                        fontWeight: unread > 0 ? 700 : 400,
+                      }}
+                      onClick={async () => {
+                        setSelectedUser(c.user);
+                        // Marker alle meldinger som lest i Firestore NÅR chatten åpnes
+                        const chatId = [currentUser.uid, c.user.uid]
+                          .sort()
+                          .join("_");
+                        const msgsRef = collection(
+                          db,
+                          "privateMessages",
+                          chatId,
+                          "messages"
+                        );
+                        if (unread > 0) {
+                          const { getDocs, writeBatch } = await import(
+                            "firebase/firestore"
+                          );
+                          const docsSnap = await getDocs(msgsRef);
+                          const batch = writeBatch(db);
+                          docsSnap.forEach((docSnap) => {
+                            const data = docSnap.data();
+                            if (data.to === currentUser.uid && !data.read) {
+                              batch.update(docSnap.ref, { read: true });
+                            }
+                          });
+                          await batch.commit();
+                        }
+                      }}
+                    >
+                      {
+                        (c.user.displayName || c.user.name || c.user.uid).split(
+                          " "
+                        )[0]
+                      }
+                      {unread > 0 && (
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: -6,
+                            right: -6,
+                            background: "#ff4d4f",
+                            color: "#fff",
+                            borderRadius: "50%",
+                            width: 18,
+                            height: 18,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: 12,
+                            fontWeight: 700,
+                            boxShadow: "0 0 2px #000",
+                          }}
+                        >
+                          {unread}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

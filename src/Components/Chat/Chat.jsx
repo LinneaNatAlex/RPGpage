@@ -1,4 +1,3 @@
-// importing the nessesarty function that is needed to send messages to the database
 import { useState, useRef, useEffect } from "react";
 import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
@@ -14,15 +13,21 @@ import {
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
-// costume hooks usestate to hold the new message input value
-// useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
 const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
   const [menuOpenId, setMenuOpenId] = useState(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Husk om chatten var lukket eller åpen (default: lukket)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem("mainChatCollapsed");
+    return stored === null ? true : stored === "true";
+  });
+  // Oppdater localStorage når isCollapsed endres
+  useEffect(() => {
+    localStorage.setItem("mainChatCollapsed", isCollapsed);
+  }, [isCollapsed]);
   const chatBoxRef = useRef(null);
 
   // Sjekk om innlogget bruker har admin, teacher, headmaster eller shadow patrol-rolle
@@ -54,28 +59,20 @@ const Chat = () => {
 
   // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {
-    e.preventDefault(); // preventing the form from refresing the page when form is submited
-
+    e.preventDefault();
     if (!newMess.trim()) return;
-
-    await addDoc(collection(db, "messages"), {
-      text: newMess,
-      timestamp: serverTimestamp(), // adds the timestam for the message
-
-      sender: auth.currentUser.displayName,
-      // gets the user name from firebase auth
-    });
-
-    setNewMess(""); // this clears the input field after pressing enter! Makes sure the input field is empty after sending a message
-    // Scroll til bunn etter sending
-    setTimeout(() => {
-      if (endOfMessagesRef.current) {
-        endOfMessagesRef.current.scrollIntoView({ behavior: "auto" });
-      }
-    }, 0);
+    try {
+      await addDoc(collection(db, "messages"), {
+        text: newMess,
+        sender: auth.currentUser?.displayName || "",
+        timestamp: serverTimestamp(),
+      });
+      setNewMess("");
+    } catch (err) {
+      setError("Could not send message.");
+    }
   };
 
-  // --------------------CHAT FORM AND MESSAGE COMONENT / RENDERING-------------------
   return (
     <div
       style={{
@@ -125,9 +122,7 @@ const Chat = () => {
           }}
         >
           <div className={styles.chatMessages} ref={chatBoxRef}>
-            {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
             {messages.map((message) => {
-              // Find the user object by displayName (case-insensitive)
               const userObj = users.find(
                 (u) =>
                   u.displayName &&
@@ -215,7 +210,6 @@ const Chat = () => {
               maxLength={200}
               className={`${styles.chatInput} ${styles.textArea}`}
             />
-            {/* ^ form input field for new messages */}
             <Button type="submit" className={styles.chatBtn}>
               Send
             </Button>
