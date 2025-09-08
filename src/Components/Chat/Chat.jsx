@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
 import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
 import { db, auth } from "../../firebaseConfig";
@@ -18,6 +20,7 @@ const Chat = () => {
   const { users } = useUsers();
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
+  const [showEmoji, setShowEmoji] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -81,6 +84,7 @@ const Chat = () => {
         right: 0,
         width: 350,
         zIndex: 2000,
+        boxShadow: "0 0 12px #0008",
       }}
     >
       <div
@@ -202,17 +206,55 @@ const Chat = () => {
             })}
           </div>
           <form className={styles.chatForm} onSubmit={sendtMessage}>
-            <input
-              value={newMess}
-              onChange={(e) => setNewMess(e.target.value)}
-              type="text"
-              placeholder="your messages..."
-              maxLength={200}
-              className={`${styles.chatInput} ${styles.textArea}`}
-            />
-            <Button type="submit" className={styles.chatBtn}>
-              Send
-            </Button>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                value={newMess}
+                onChange={(e) => setNewMess(e.target.value)}
+                type="text"
+                placeholder="your messages..."
+                maxLength={200}
+                className={`${styles.chatInput} ${styles.textArea}`}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: 22,
+                  cursor: "pointer",
+                  color: "#a084e8",
+                }}
+                onClick={() => setShowEmoji((v) => !v)}
+                aria-label="Add emoji"
+              >
+                😊
+              </button>
+              {showEmoji && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 60,
+                    right: 0,
+                    zIndex: 9999,
+                  }}
+                >
+                  <Picker
+                    data={data}
+                    onEmojiSelect={(emoji) => {
+                      setNewMess(
+                        (prev) => prev + (emoji.native || emoji.colons || "")
+                      );
+                      setShowEmoji(false);
+                    }}
+                    theme="dark"
+                  />
+                </div>
+              )}
+              <Button type="submit" className={styles.chatBtn}>
+                Send
+              </Button>
+            </div>
             {error && <ErrorMessage message={error} />}
           </form>
         </div>

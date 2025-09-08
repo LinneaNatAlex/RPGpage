@@ -1,7 +1,8 @@
 import styles from "./Profile.module.css";
 import { useEffect, useState } from "react";
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import { useImageUpload } from "../../hooks/useImageUpload";
 import { useAuth } from "../../context/authContext";
 import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
@@ -33,6 +34,27 @@ const Profile = () => {
     fetchUserData();
   }, [user, loading]);
 
+  const [uploading, setUploading] = useState(false);
+  const { uploadImage } = useImageUpload();
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      if (!url) throw new Error("Ingen URL fra bildeopplasting");
+      await updateDoc(doc(db, "users", user.uid), { profileImageUrl: url });
+      setUserData((prev) => ({ ...prev, profileImageUrl: url }));
+    } catch (err) {
+      console.error("Bildeopplasting feilet:", err);
+      alert(
+        "Kunne ikke laste opp bilde. Prøv igjen.\n" + (err?.message || err)
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading || !userData) {
     // If the user data is still loading or not available, show a loading state
     return (
@@ -41,6 +63,7 @@ const Profile = () => {
       </div>
     );
   }
+
   // -----------------------------PROFILE CONTENT-----------------------------
   return (
     <div className={styles.profileWrapper}>
@@ -60,11 +83,39 @@ const Profile = () => {
             else if (userData.roles?.some((r) => r.toLowerCase() === "admin"))
               roleClass += ` ${styles.adminAvatar}`;
             return (
-              <img
-                src={userData?.profileImageUrl || "/icons/avatar.svg"}
-                alt="Image"
-                className={roleClass}
-              />
+              <>
+                <img
+                  src={userData?.profileImageUrl || "/icons/avatar.svg"}
+                  alt="Image"
+                  className={roleClass}
+                />
+                <label className={styles.editBtn} style={{ marginTop: 12 }}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageChange}
+                    disabled={uploading}
+                  />
+                  <span
+                    style={{
+                      display: "inline-block",
+                      background: uploading ? "#ccc" : "#a084e8",
+                      color: uploading ? "#888" : "#fff",
+                      borderRadius: 6,
+                      padding: "6px 18px",
+                      fontWeight: 600,
+                      fontSize: 15,
+                      cursor: uploading ? "not-allowed" : "pointer",
+                      border: "none",
+                      marginTop: 8,
+                      boxShadow: "0 2px 8px #0002",
+                    }}
+                  >
+                    {uploading ? "Laster opp..." : "Edit"}
+                  </span>
+                </label>
+              </>
             );
           })()}
         </div>
@@ -125,12 +176,27 @@ const Profile = () => {
       </div>
       {/* -----------------------------PROFILE TEXT----------------------------- */}
       <div className={styles.profileTextContainer}>
-        <div className={styles.profileText}>
-          <h2>Profile Text</h2>
-          <div className={styles.contentContainer}>
-            <ProfileTextEditor />
+        {userData.profileMode === "html" &&
+        userData.profileHtml &&
+        userData.profileCss ? (
+          <div className={styles.profileHtmlContainer}>
+            <h2>Profile Text</h2>
+            <iframe
+              className={styles.profileIframe}
+              srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
+              sandbox=""
+              height="100vh"
+              width="100%"
+            />
           </div>
-        </div>
+        ) : (
+          <div className={styles.profileText}>
+            <h2>Profile Text</h2>
+            <div className={styles.contentContainer}>
+              <ProfileTextEditor />
+            </div>
+          </div>
+        )}
         {/* -----------------------------CHAT BAR----------------------------- */}
         <div className={styles.chatBar}>
           <FriendsList profileUid={user.uid} />

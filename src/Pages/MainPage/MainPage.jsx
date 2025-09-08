@@ -17,6 +17,8 @@ const MainPage = () => {
   const displayName = user?.displayName || user?.email;
   // --------------------------------RETURNING HEADER TEXT----------------------------
   // simple returning of HTML showing the introduction page
+  // Tilbake til enkel desktop/mobil logikk uten modal eller floating button
+
   return (
     <section className={styles.introductionPage}>
       <header className={styles.introductionHeader}>
@@ -55,35 +57,12 @@ const MainPage = () => {
           </>
         )}
       </header>
-      {/* ----------------------------MOBILE CONTENT RESPONSIVNES------------------------- */}
       <main className={styles.mainContentHome}>
         <div className={styles.onlineUsersContainer}>
-          {/* Makes a mobile menu for users online to guid through the page on the mainpage */}
-          {user &&
-            (isMobile ? (
-              activeTab === "users" && <OnlineUsers />
-            ) : (
-              <OnlineUsers />
-            ))}
+          {user && <OnlineUsers />}
         </div>
-        <div className={styles.newsFeedContainer}>
-          {user &&
-            (isMobile ? (
-              activeTab === "newsFeed" && <NewsFeed />
-            ) : (
-              <NewsFeed />
-            ))}
-        </div>
+        <div className={styles.newsFeedContainer}>{user && <NewsFeed />}</div>
       </main>
-      {/* Responsive navigation for the MainPage */}
-      {user && (
-        <nav className={styles.mobileNavigation}>
-          <Button onClick={() => setActiveTab("newsFeed")}>News</Button>
-
-          <Button onClick={() => setActiveTab("users")}>Online</Button>
-        </nav>
-      )}
-      {/* Private chat floating window */}
     </section>
   );
 };
