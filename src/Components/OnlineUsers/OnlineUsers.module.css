@@ -110,8 +110,6 @@
 /* -----------------USER AVATAR STYLES----------------- */
 
 .userAvatar {
-  display: flex;
-  align-items: center;
   width: 48px;
   height: 48px;
   margin-right: 12px;
@@ -120,6 +118,8 @@
   box-shadow: 0 0 12px #b0aac2;
   background: linear-gradient(135deg, #23232b 60%, #7c5ebf 100%);
   object-fit: cover;
+  aspect-ratio: 1/1;
+  display: block;
 }
 
 .adminAvatar {

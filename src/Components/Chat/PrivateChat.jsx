@@ -157,42 +157,46 @@ const PrivateChat = () => {
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!message.trim() || !selectedUser || !currentUser) return;
+    setMessage(""); // Tøm input umiddelbart
     const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
-    await addDoc(collection(db, "privateMessages", chatId, "messages"), {
-      text: message,
-      from: currentUser.uid,
-      to: selectedUser.uid,
-      timestamp: serverTimestamp(),
-    });
+    try {
+      await addDoc(collection(db, "privateMessages", chatId, "messages"), {
+        text: message,
+        from: currentUser.uid,
+        to: selectedUser.uid,
+        timestamp: serverTimestamp(),
+      });
 
-    // Legg til hverandre i userChats for både avsender og mottaker
-    const senderChatsRef = doc(db, "userChats", currentUser.uid);
-    const receiverChatsRef = doc(db, "userChats", selectedUser.uid);
-    const [senderSnap, receiverSnap] = await Promise.all([
-      getDoc(senderChatsRef),
-      getDoc(receiverChatsRef),
-    ]);
-    let senderChats = [];
-    let receiverChats = [];
-    if (senderSnap.exists()) senderChats = senderSnap.data().chats || [];
-    if (receiverSnap.exists()) receiverChats = receiverSnap.data().chats || [];
-    // Oppdater hvis nødvendig
-    if (!senderChats.includes(selectedUser.uid)) {
-      await setDoc(
-        senderChatsRef,
-        { chats: [...senderChats, selectedUser.uid] },
-        { merge: true }
-      );
+      // Legg til hverandre i userChats for både avsender og mottaker
+      const senderChatsRef = doc(db, "userChats", currentUser.uid);
+      const receiverChatsRef = doc(db, "userChats", selectedUser.uid);
+      const [senderSnap, receiverSnap] = await Promise.all([
+        getDoc(senderChatsRef),
+        getDoc(receiverChatsRef),
+      ]);
+      let senderChats = [];
+      let receiverChats = [];
+      if (senderSnap.exists()) senderChats = senderSnap.data().chats || [];
+      if (receiverSnap.exists())
+        receiverChats = receiverSnap.data().chats || [];
+      // Oppdater hvis nødvendig
+      if (!senderChats.includes(selectedUser.uid)) {
+        await setDoc(
+          senderChatsRef,
+          { chats: [...senderChats, selectedUser.uid] },
+          { merge: true }
+        );
+      }
+      if (!receiverChats.includes(currentUser.uid)) {
+        await setDoc(
+          receiverChatsRef,
+          { chats: [...receiverChats, currentUser.uid] },
+          { merge: true }
+        );
+      }
+    } catch (err) {
+      // evt. vis feilmelding
     }
-    if (!receiverChats.includes(currentUser.uid)) {
-      await setDoc(
-        receiverChatsRef,
-        { chats: [...receiverChats, currentUser.uid] },
-        { merge: true }
-      );
-    }
-
-    setMessage("");
   };
 
   // Calculate per-chat unread messages for the current user
