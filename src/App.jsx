@@ -2,9 +2,11 @@
 import { Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext.jsx";
 import styles from "./App.module.css";
+
 import Navbar from "./Navbar/Navbar";
 import PrivateChat from "./Components/Chat/PrivateChat";
 import Chat from "./Components/Chat/Chat";
+import TopBar from "./Components/TopBar/TopBar";
 
 function App() {
   const { user, loading } = useAuth();
@@ -17,6 +19,7 @@ function App() {
       <div className={styles.rootContainer}>
         {/* Shows only nav to users logged in */}
         <header className={styles.header}>{user && <Navbar />}</header>
+        {user && <TopBar />}
         <main className={styles.main}>
           <Outlet />
         </main>

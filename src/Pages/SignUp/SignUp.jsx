@@ -162,6 +162,7 @@ const SignUp = () => {
         createdAt: serverTimestamp(),
         lastLogin: serverTimestamp(),
         online: true,
+        currency: 1000, // Start with 1000 Nits
       });
       await auth.currentUser.reload();
       navigate("/verify-email");

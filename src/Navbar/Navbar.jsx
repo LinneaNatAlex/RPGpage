@@ -68,6 +68,8 @@ const Navbar = () => {
             <NavLink to="/Profile">My Character</NavLink>
             <NavLink to="/userMap">Student Map</NavLink>
 
+            <NavLink to="/shop">Shop</NavLink>
+
             <div className={styles.dropdown}>
               <span
                 style={{

@@ -19,6 +19,7 @@ import Rpg from "../Pages/Rpg/Rpg.jsx";
 import GreatHall from "../Pages/Rpg/GreateHall/GreatHall.jsx";
 import Forum from "../Pages/Forum/Forum.jsx";
 import RaceInfo from "../Pages/RaceInfo/RaceInfo.jsx";
+import Shop from "../Components/Shop/Shop.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 
@@ -105,6 +106,14 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <Profile />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="shop"
+        element={
+          <RouteGuard>
+            <Shop />
           </RouteGuard>
         }
       />
