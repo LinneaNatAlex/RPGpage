@@ -11,10 +11,13 @@ const useOnlineUsers = () => {
     // makes a query in firestore to filter online user.
     const querry = query(collection(db, "users"), where("online", "==", true));
     const unsubscribe = onSnapshot(querry, (snapshot) => {
-      const onlineUsers = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const now = Date.now();
+      const onlineUsers = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((user) => !user.invisibleUntil || user.invisibleUntil < now);
       setOnlineUsers(onlineUsers);
     });
     // returns list of the online users

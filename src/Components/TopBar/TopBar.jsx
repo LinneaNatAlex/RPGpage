@@ -40,6 +40,8 @@ const TopBar = () => {
   const [infirmary, setInfirmary] = useState(false);
   const [infirmaryEnd, setInfirmaryEnd] = useState(null);
   const [countdown, setCountdown] = useState(0);
+  const [invisibleUntil, setInvisibleUntil] = useState(null);
+  const [invisibleCountdown, setInvisibleCountdown] = useState(0);
   const intervalRef = useRef();
 
   useEffect(() => {
@@ -61,6 +63,11 @@ const TopBar = () => {
         } else {
           setInfirmary(false);
           setInfirmaryEnd(null);
+        }
+        if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
+          setInvisibleUntil(data.invisibleUntil);
+        } else {
+          setInvisibleUntil(null);
         }
       }
     });
@@ -129,6 +136,25 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [infirmary, infirmaryEnd, user]);
 
+  // Invisibility countdown
+  useEffect(() => {
+    if (!invisibleUntil) {
+      setInvisibleCountdown(0);
+      return;
+    }
+    const updateCountdown = () => {
+      const secs = Math.max(
+        0,
+        Math.floor((invisibleUntil - Date.now()) / 1000)
+      );
+      setInvisibleCountdown(secs);
+      if (secs <= 0) setInvisibleUntil(null);
+    };
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [invisibleUntil]);
+
   return (
     <>
       {infirmary && (
@@ -194,6 +220,13 @@ const TopBar = () => {
             className={styles.coinIcon}
           />
           {balance} Nits
+          {invisibleUntil && (
+            <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
+              Invisible:{" "}
+              {String(Math.floor(invisibleCountdown / 60)).padStart(2, "0")}:
+              {String(invisibleCountdown % 60).padStart(2, "0")}
+            </span>
+          )}
         </div>
         <button
           className={styles.inventoryIconBtn}
@@ -250,30 +283,33 @@ const TopBar = () => {
                               // Fjern én av denne matvaren
                               inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
                               if (inv[invIdx].qty <= 0) inv.splice(invIdx, 1);
-                              // Oppdater health
-                              let newHealth = 100;
                               let update = {
                                 inventory: inv,
                                 lastHealthUpdate: Date.now(),
                               };
                               if (isDeathPotion) {
-                                newHealth = 0;
                                 update.health = 0;
-                                // Set infirmaryEnd to 20 minutes from now
                                 update.infirmaryEnd =
                                   Date.now() + 20 * 60 * 1000;
                               } else if (item.name === "Healing Potion") {
-                                newHealth = 100;
                                 update.health = 100;
+                              } else if (item.name === "Invisibility Draught") {
+                                update.invisibleUntil =
+                                  Date.now() + 5 * 60 * 1000;
                               } else {
-                                newHealth = (data.health || 100) + healAmount;
+                                let newHealth =
+                                  (data.health || 100) + healAmount;
                                 if (newHealth > 100) newHealth = 100;
                                 update.health = newHealth;
                               }
                               await updateDoc(userRef, update);
                             }}
                           >
-                            {isDeathPotion ? "Drikk" : "Spis"}
+                            {item.name === "Death Draught"
+                              ? "Drink"
+                              : item.name === "Invisibility Draught"
+                              ? "Drink"
+                              : "Eat"}
                           </button>
                         )}
                       </li>
