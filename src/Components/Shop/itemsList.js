@@ -2,6 +2,16 @@
 const shopItems = [
   // POTION INGREDIENTS & EQUIPMENT (for Potions class)
   {
+    id: 599,
+    name: "Moonstone Dust",
+    price: 22,
+    type: "ingredient",
+    category: "Ingredients",
+    description:
+      "Glittering dust from a moonstone, enhances clarity in potions.",
+    effect: "Used in advanced potion making.",
+  },
+  {
     id: 501,
     name: "Rose Petals",
     price: 12,
