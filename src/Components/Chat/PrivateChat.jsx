@@ -1,4 +1,78 @@
 import { useState, useRef, useEffect } from "react";
+// MessageMenu component for edit/delete menu
+// ...existing code...
+// ...existing code...
+function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef();
+  useEffect(() => {
+    if (!open) return;
+    function handle(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target))
+        setOpen(false);
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [open]);
+  return (
+    <div className={styles.privateMessageMenu} ref={menuRef}>
+      <button
+        className={styles.privateMessageMenuBtn}
+        aria-label="Meldingsmeny"
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen((v) => !v);
+        }}
+        tabIndex={0}
+      >
+        &#8230;
+      </button>
+      {open && (
+        <div className={styles.privateMessageMenuDropdown}>
+          <button
+            className={styles.privateMessageMenuDropdownBtn}
+            onClick={async (e) => {
+              e.preventDefault();
+              setOpen(false);
+              if (!window.confirm("Slett denne meldingen?")) return;
+              const chatId = [currentUser.uid, selectedUser.uid]
+                .sort()
+                .join("_");
+              const msgsRef = collection(
+                db,
+                "privateMessages",
+                chatId,
+                "messages"
+              );
+              const { getDocs, deleteDoc } = await import("firebase/firestore");
+              const docsSnap = await getDocs(msgsRef);
+              const docToDelete = docsSnap.docs.find(
+                (docSnap) =>
+                  docSnap.data().timestamp?.seconds ===
+                    message.timestamp?.seconds &&
+                  docSnap.data().from === currentUser.uid &&
+                  docSnap.data().text === message.text
+              );
+              if (docToDelete) await deleteDoc(docToDelete.ref);
+            }}
+          >
+            Delete
+          </button>
+          <button
+            className={styles.privateMessageMenuDropdownBtn}
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen(false);
+              onEdit(message);
+            }}
+          >
+            Edit
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import styles from "./Chat.module.css";
@@ -19,6 +93,8 @@ import {
 import useUsers from "../../hooks/useUser";
 
 const PrivateChat = () => {
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [selectedMessages, setSelectedMessages] = useState([]);
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = localStorage.getItem("privateChatCollapsed");
@@ -91,7 +167,7 @@ const PrivateChat = () => {
     fetchChats();
   }, [currentUser, users]);
 
-  // Listen for messages for each active chat
+  // Listen for messages for each active chat (for unread badges etc)
   useEffect(() => {
     if (!currentUser || !chatLoaded) return;
     const unsubscribes = activeChats.map((chat, idx) => {
@@ -130,6 +206,23 @@ const PrivateChat = () => {
     // eslint-disable-next-line
   }, [activeChats.length, currentUser, chatLoaded]);
 
+  // Always listen for messages for the selected user
+  useEffect(() => {
+    if (!currentUser || !selectedUser) {
+      setSelectedMessages([]);
+      return;
+    }
+    const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
+    const q = query(
+      collection(db, "privateMessages", chatId, "messages"),
+      orderBy("timestamp")
+    );
+    const unsub = onSnapshot(q, (snapshot) => {
+      setSelectedMessages(snapshot.docs.map((doc) => doc.data()));
+    });
+    return () => unsub();
+  }, [currentUser, selectedUser]);
+
   // Add new private chat
   const addChat = async (user) => {
     // Add to Firestore userChats
@@ -153,10 +246,28 @@ const PrivateChat = () => {
     setIsCollapsed(false); // Åpne chatten når ny chat startes
   };
 
-  // Send message in active chat (Firestore)
+  // Send or edit message in active chat (Firestore)
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!message.trim() || !selectedUser || !currentUser) return;
+    if (editingMessage) {
+      // Edit existing message
+      const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
+      const msgsRef = collection(db, "privateMessages", chatId, "messages");
+      const { getDocs, updateDoc } = await import("firebase/firestore");
+      const docsSnap = await getDocs(msgsRef);
+      const docToEdit = docsSnap.docs.find(
+        (docSnap) =>
+          docSnap.data().timestamp?.seconds ===
+            editingMessage.timestamp?.seconds &&
+          docSnap.data().from === currentUser.uid &&
+          docSnap.data().text === editingMessage.text
+      );
+      if (docToEdit) await updateDoc(docToEdit.ref, { text: message });
+      setEditingMessage(null);
+      setMessage("");
+      return;
+    }
     setMessage(""); // Tøm input umiddelbart
     const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
     try {
@@ -368,7 +479,7 @@ const PrivateChat = () => {
               </div>
             )}
             {activeChats.length > 0 && (
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+              <div className={styles.activeChatsRow}>
                 {activeChats
                   .filter((c) => !hiddenChats.includes(c.user.uid))
                   .map((c) => {
@@ -404,6 +515,14 @@ const PrivateChat = () => {
                           }}
                           onClick={async () => {
                             setSelectedUser(c.user);
+                            setTimeout(() => {
+                              if (chatBoxRef.current) {
+                                chatBoxRef.current.scrollTop =
+                                  chatBoxRef.current.scrollHeight;
+                              }
+                            }, 100);
+                            // Force a re-render to show message history
+                            setActiveChats((prev) => [...prev]);
                             // Marker alle meldinger som lest i Firestore NÅR chatten åpnes
                             const chatId = [currentUser.uid, c.user.uid]
                               .sort()
@@ -502,20 +621,71 @@ const PrivateChat = () => {
                 ref={chatBoxRef}
                 style={{ minHeight: 200, maxHeight: 300 }}
               >
-                {activeChats
-                  .find((c) => c.user.uid === selectedUser.uid)
-                  ?.messages.map((m, i) => (
+                {selectedMessages.map((m, i) => {
+                  return (
                     <div
                       key={i}
-                      style={{
-                        textAlign:
-                          m.from === currentUser?.uid ? "right" : "left",
-                        color: m.from === currentUser?.uid ? "#a084e8" : "#fff",
-                      }}
+                      className={
+                        styles.privateMessageRow +
+                        (m.from === currentUser?.uid ? " " + styles.me : "")
+                      }
                     >
-                      {m.text}
+                      <div className={styles.privateMessageBubble}>
+                        <div className={styles.privateMessageSender}>
+                          {m.from === currentUser?.uid
+                            ? "You"
+                            : selectedUser.displayName ||
+                              selectedUser.name ||
+                              selectedUser.uid}
+                        </div>
+                        <div style={{ position: "relative" }}>
+                          {m.from === currentUser?.uid && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: -28,
+                                right: -10,
+                                zIndex: 3,
+                              }}
+                            >
+                              <MessageMenu
+                                message={m}
+                                currentUser={currentUser}
+                                selectedUser={selectedUser}
+                                db={db}
+                                onEdit={(msg) => {
+                                  setEditingMessage(msg);
+                                  setMessage(msg.text);
+                                }}
+                              />
+                            </div>
+                          )}
+                          <span
+                            style={{
+                              display: "block",
+                              wordBreak: "break-word",
+                            }}
+                          >
+                            {m.text}
+                          </span>
+                        </div>
+                        <div className={styles.privateMessageTimestamp}>
+                          {m.timestamp && m.timestamp.seconds
+                            ? new Date(
+                                m.timestamp.seconds * 1000
+                              ).toLocaleString("no-NO", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                            : ""}
+                        </div>
+                      </div>
                     </div>
-                  ))}
+                  );
+                })}
               </div>
               <form className={styles.chatForm} onSubmit={sendMessage}>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -523,11 +693,15 @@ const PrivateChat = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     type="text"
-                    placeholder={`Message ${
-                      selectedUser.displayName ||
-                      selectedUser.name ||
-                      selectedUser.uid
-                    }...`}
+                    placeholder={
+                      editingMessage
+                        ? "Rediger melding..."
+                        : `Message ${
+                            selectedUser.displayName ||
+                            selectedUser.name ||
+                            selectedUser.uid
+                          }...`
+                    }
                     maxLength={200}
                     className={styles.chatInput}
                     style={{ flex: 1 }}
@@ -568,8 +742,21 @@ const PrivateChat = () => {
                       />
                     </div>
                   )}
+                  {editingMessage && (
+                    <button
+                      type="button"
+                      className={styles.chatBtn}
+                      style={{ background: "#ff4d4f", marginLeft: 4 }}
+                      onClick={() => {
+                        setEditingMessage(null);
+                        setMessage("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  )}
                   <button type="submit" className={styles.chatBtn}>
-                    Send
+                    {editingMessage ? "Save" : "Send"}
                   </button>
                 </div>
               </form>

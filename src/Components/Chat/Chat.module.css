@@ -1,3 +1,117 @@
+.privateMessageMenu {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 2;
+}
+.privateMessageBubble:hover .privateMessageMenu,
+.privateMessageBubble:focus-within .privateMessageMenu {
+  opacity: 1;
+}
+.privateMessageMenuBtn {
+  background: none;
+  border: none;
+  color: #b7b7b7;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.privateMessageMenuBtn:hover,
+.privateMessageMenuBtn:focus {
+  background: #23232b;
+  color: #a084e8;
+}
+.privateMessageMenuDropdown {
+  position: absolute;
+  top: 24px;
+  right: 0;
+  background: #23232b;
+  border: 1px solid #a084e8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  min-width: 90px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+.privateMessageMenuDropdownBtn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.privateMessageMenuDropdownBtn:hover,
+.privateMessageMenuDropdownBtn:focus {
+  background: #a084e8;
+  color: #23232b;
+}
+.activeChatsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.privateMessageRow {
+  display: flex;
+  align-items: flex-end;
+  margin: 12px 0;
+}
+.privateMessageRow.me {
+  flex-direction: row-reverse;
+}
+.privateMessageBubble {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #23232b;
+  color: #fff;
+  border-radius: 18px 18px 18px 4px;
+  padding: 12px 18px;
+  font-size: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  max-width: 75%;
+  min-width: 40px;
+  word-break: break-word;
+  position: relative;
+}
+.privateMessageRow.me .privateMessageBubble {
+  background: linear-gradient(135deg, #a084e8 60%, #6d5fc1 100%);
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
+  align-items: flex-end;
+}
+.privateMessageSender {
+  font-size: 12px;
+  color: #b7aaff;
+  margin-bottom: 2px;
+  margin-left: 6px;
+  margin-right: 6px;
+  text-align: left;
+}
+.privateMessageRow.me .privateMessageSender {
+  color: #b7aaff;
+  text-align: right;
+}
+.privateMessageTimestamp {
+  font-size: 11px;
+  color: #b7b7b7;
+  margin-top: 4px;
+  text-align: right;
+}
+.privateMessageRow.me .privateMessageTimestamp {
+  text-align: left;
+}
 .gearMenuWrapper {
   display: flex;
   align-items: center;
