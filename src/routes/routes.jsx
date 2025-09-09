@@ -22,7 +22,7 @@ import RaceInfo from "../Pages/RaceInfo/RaceInfo.jsx";
 import Shop from "../Components/Shop/Shop.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
-import Admin from "../pages/Admin.jsx";
+import Admin from "../Pages/Admin.jsx";
 import useUserRoles from "../hooks/useUserRoles";
 import HousePointsPage from "../pages/HousePoints.jsx";
 import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
