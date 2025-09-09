@@ -24,7 +24,7 @@ import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 import Admin from "../Pages/Admin.jsx";
 import useUserRoles from "../hooks/useUserRoles";
-import HousePointsPage from "../pages/HousePoints.jsx";
+import HousePointsPage from "../Pages/HousePoints.jsx";
 import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
 
 const RouteGuard = ({ children }) => {
