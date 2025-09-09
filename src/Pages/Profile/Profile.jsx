@@ -153,25 +153,7 @@ const Profile = () => {
               </p>{" "}
               {userData.currency ?? 1000} Nits
             </div>
-            <div className={styles.caracterDetails}>
-              <p>
-                <strong>Inventory:</strong>
-              </p>
-              {Array.isArray(userData.inventory) &&
-              userData.inventory.length > 0 ? (
-                <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-                  {userData.inventory.map((item, idx) => (
-                    <li key={idx}>
-                      {item.name} x{item.qty || 1}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <span style={{ color: "#b0aac2", fontStyle: "italic" }}>
-                  Empty
-                </span>
-              )}
-            </div>
+            {/* Inventory fjernet fra karakterinfo/profilvisning */}
           </div>
           <div className={styles.charactinfo}>
             <div className={styles.caracterDetails}>

@@ -8,6 +8,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Import the Firestore database object
 import ErrorMessage from "../Components/ErrorMessage/ErrorMessage"; // Import your error message component
 import { useAuth } from "../context/authContext";
+import useUserRoles from "../hooks/useUserRoles"; // Import the custom hook for user roles
 // --------------------------------------STATE VARIABLES--------------------------------------
 // navbar-komponet that shows the difference in navigation based on if user is loged in or not.
 const Navbar = () => {
@@ -17,6 +18,7 @@ const Navbar = () => {
   const location = useLocation();
   const [error, setError] = useState(null);
   const { user } = useAuth(); // <-- Endret her
+  const { roles } = useUserRoles(); // <-- Get user roles using the custom hook
 
   // ----------------------------------useEFFECT--------------------------
   // fetching information about 'if the user is logged in'
@@ -67,9 +69,7 @@ const Navbar = () => {
             <NavLink to="/">Veyloria Arcane School</NavLink>
             <NavLink to="/Profile">My Character</NavLink>
             <NavLink to="/userMap">Student Map</NavLink>
-
             <NavLink to="/shop">Shop</NavLink>
-
             <div className={styles.dropdown}>
               <span
                 style={{
@@ -94,16 +94,13 @@ const Navbar = () => {
                 <NavLink to="/forum/kitchen">Kitchen</NavLink>
               </div>
             </div>
-
             <div className={styles.dropdown}>
               <NavLink to="/ClassRooms">Classrooms</NavLink>
-              <div className={styles.dropdownContent}>
-                <NavLink to="/ClassRooms/Potions">Alchemy & Potions</NavLink>
-              </div>
+              {/* Removed Alchemy & Potions from dropdown */}
             </div>
-
+            {roles.includes("admin") && <NavLink to="/admin">Admin</NavLink>}{" "}
+            {/* Shows the Admin link only if the user has admin role */}
             {/* Makes the butten only avalible when logged in */}
-
             <button onClick={handleSignOut} className={styles.signOutBtn}>
               Exit
             </button>

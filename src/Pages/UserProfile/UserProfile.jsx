@@ -71,12 +71,39 @@ const UserProfile = () => {
               roleClass += ` ${styles.shadowPatrolAvatar}`;
             else if (userData.roles?.some((r) => r.toLowerCase() === "admin"))
               roleClass += ` ${styles.adminAvatar}`;
+            // Love Potion effect: pink glow if inLoveUntil in future
+            const inLove =
+              userData.inLoveUntil && userData.inLoveUntil > Date.now();
             return (
-              <img
-                src={userData?.profileImageUrl || "/icons/avatar.svg"}
-                alt="Image"
-                className={roleClass}
-              />
+              <>
+                <img
+                  src={userData?.profileImageUrl || "/icons/avatar.svg"}
+                  alt="Image"
+                  className={roleClass}
+                  style={
+                    inLove
+                      ? {
+                          boxShadow:
+                            "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                          borderRadius: "50%",
+                        }
+                      : {}
+                  }
+                />
+                {inLove && userData.inLoveWith && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      color: "#ff69b4",
+                      fontWeight: 700,
+                      fontSize: "1.1rem",
+                      textShadow: "0 0 6px #fff, 0 0 12px #ffb6d5",
+                    }}
+                  >
+                    In love with {userData.inLoveWith}
+                  </div>
+                )}
+              </>
             );
           })()}
         </div>

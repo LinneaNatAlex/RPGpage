@@ -1,4 +1,26 @@
 import React, { useState } from "react";
+import PotionList from "../PotionList/PotionList";
+
+// Dummy inventory for demonstration; replace with real user inventory from props or context
+const dummyInventory = [
+  "Rose petals",
+  "unicorn hair",
+  "sugar",
+  "raspberries",
+  "magical water",
+  "Hidden mushrooms",
+  "dragon blood",
+  "stardust",
+  "shadow leaf",
+  "Blackcurrant",
+  "phoenix feather",
+  "honey",
+  "magical herb",
+  "Silver leaf",
+  "amber",
+  "troll berries",
+  "magical salt",
+];
 
 const potions = [
   {
@@ -44,7 +66,7 @@ const potions = [
   },
 ];
 
-export default function Potions() {
+export default function PotionCrafting({ user }) {
   const [selectedPotion, setSelectedPotion] = useState(null);
   const [step, setStep] = useState(0);
   const [added, setAdded] = useState([]);
@@ -98,11 +120,10 @@ export default function Potions() {
         background: "#232340",
         borderRadius: 8,
         padding: 16,
-        margin: "24px auto",
-        maxWidth: 600,
+        margin: "24px 0",
       }}
     >
-      <h2>🧪 Potions Class: Brew Your Own Potion</h2>
+      <h3>🧪 Potion Brewing</h3>
       {!selectedPotion && (
         <div>
           <b>Select a potion to brew:</b>
@@ -125,10 +146,17 @@ export default function Potions() {
             {selectedPotion.ingredients.map((ing) => (
               <li key={ing}>
                 <button
-                  disabled={added.includes(ing)}
+                  disabled={
+                    added.includes(ing) || !dummyInventory.includes(ing)
+                  }
                   onClick={() => addIngredient(ing)}
                 >
-                  {ing} {added.includes(ing) ? "(added)" : ""}
+                  {ing}{" "}
+                  {added.includes(ing)
+                    ? "(added)"
+                    : !dummyInventory.includes(ing)
+                    ? "(not in inventory)"
+                    : ""}
                 </button>
               </li>
             ))}

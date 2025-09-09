@@ -60,14 +60,38 @@ const OnlineUsers = () => {
             roleClass += ` ${style.adminAvatar}`;
             nameClass += ` ${style.adminName}`;
           }
+          // Love Potion effect: pink glow and text if inLoveUntil in future
+          const inLove = u.inLoveUntil && u.inLoveUntil > Date.now();
           return (
             <li key={u.id} className={style.onlineUserItem}>
               <img
                 src={u.profileImageUrl || "/icons/avatar.svg"}
                 alt="User Avatar"
                 className={roleClass}
+                style={
+                  inLove
+                    ? {
+                        boxShadow:
+                          "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                        borderRadius: "50%",
+                      }
+                    : {}
+                }
               />
               <span className={nameClass}>{u.displayName}</span>
+              {inLove && u.inLoveWith && (
+                <span
+                  style={{
+                    marginLeft: 8,
+                    color: "#ff69b4",
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    textShadow: "0 0 6px #fff, 0 0 12px #ffb6d5",
+                  }}
+                >
+                  In love with {u.inLoveWith}
+                </span>
+              )}
               {isPrivileged && u.id !== user?.uid && (
                 <button
                   className={style.gearButton}

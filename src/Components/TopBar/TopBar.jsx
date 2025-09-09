@@ -41,6 +41,7 @@ const TopBar = () => {
   const { user } = useAuth();
   const [balance, setBalance] = useState(0);
   const [inventory, setInventory] = useState([]);
+  const [points, setPoints] = useState(0);
   const [showInventory, setShowInventory] = useState(false);
   const [health, setHealth] = useState(100);
   const [infirmary, setInfirmary] = useState(false);
@@ -50,6 +51,9 @@ const TopBar = () => {
   const [invisibleCountdown, setInvisibleCountdown] = useState(0);
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
   const [notifications, setNotifications] = useState([]);
+  const [inLoveWith, setInLoveWith] = useState(null);
+  const [inLoveUntil, setInLoveUntil] = useState(null);
+  const [inLoveCountdown, setInLoveCountdown] = useState(0);
   const intervalRef = useRef();
   const { users } = useUsers();
 
@@ -62,9 +66,18 @@ const TopBar = () => {
         setBalance(data.currency ?? 1000);
         setInventory(data.inventory ?? []);
         setHealth(data.health ?? 100);
+        setPoints(data.points ?? 0);
         // Sett lastHealthUpdate første gang hvis mangler
         if (!data.lastHealthUpdate) {
           await updateDoc(userRef, { lastHealthUpdate: Date.now() });
+        }
+        // Love Potion effect
+        if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
+          setInLoveWith(data.inLoveWith || "Someone");
+          setInLoveUntil(data.inLoveUntil);
+        } else {
+          setInLoveWith(null);
+          setInLoveUntil(null);
         }
         if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
           setInfirmary(true);
@@ -82,6 +95,21 @@ const TopBar = () => {
     });
     return () => unsub && unsub();
   }, [user]);
+
+  // Love Potion countdown
+  useEffect(() => {
+    if (!inLoveUntil || inLoveUntil < Date.now()) {
+      setInLoveCountdown(0);
+      return;
+    }
+    const updateCountdown = () => {
+      const secs = Math.max(0, Math.floor((inLoveUntil - Date.now()) / 1000));
+      setInLoveCountdown(secs);
+    };
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [inLoveUntil]);
 
   // Health decay som fungerer offline/online
   useEffect(() => {
@@ -222,9 +250,55 @@ const TopBar = () => {
           `}</style>
         </div>
       )}
+      {/* Love Potion: hearts rain overlay */}
+      {inLoveUntil && inLoveUntil > Date.now() && (
+        <div
+          style={{
+            pointerEvents: "none",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 9998,
+            overflow: "hidden",
+          }}
+        >
+          {/* Simple hearts rain animation */}
+          {[...Array(30)].map((_, i) => (
+            <span
+              key={i}
+              style={{
+                position: "absolute",
+                left: `${Math.random() * 100}vw`,
+                top: `-${Math.random() * 20}vh`,
+                fontSize: `${Math.random() * 2 + 1.5}rem`,
+                color: "#ff69b4",
+                opacity: 0.7,
+                animation: `heartRain 6s linear infinite`,
+                animationDelay: `${Math.random() * 6}s`,
+              }}
+            >
+              ❤️
+            </span>
+          ))}
+          <style>{`
+            @keyframes heartRain {
+              0% { transform: translateY(0); opacity: 0.7; }
+              90% { opacity: 0.7; }
+              100% { transform: translateY(110vh); opacity: 0; }
+            }
+          `}</style>
+        </div>
+      )}
       <div
         className={styles.topBar}
-        style={infirmary ? { opacity: 0.5, filter: "grayscale(1)" } : {}}
+        style={{
+          ...(infirmary ? { opacity: 0.5, filter: "grayscale(1)" } : {}),
+          ...(inLoveUntil && inLoveUntil > Date.now()
+            ? { boxShadow: "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset" }
+            : {}),
+        }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
           {user && user.photoURL && (
@@ -232,6 +306,15 @@ const TopBar = () => {
               src={user.photoURL}
               alt="Profile"
               className={styles.profilePic}
+              style={
+                inLoveUntil && inLoveUntil > Date.now()
+                  ? {
+                      boxShadow:
+                        "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                      borderRadius: "50%",
+                    }
+                  : {}
+              }
             />
           )}
           <HealthBar health={health} maxHealth={100} />
@@ -243,6 +326,9 @@ const TopBar = () => {
             className={styles.coinIcon}
           />
           {balance} Nits
+          <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
+            ⭐ {points} points
+          </span>
           {invisibleUntil && (
             <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
               Invisible:{" "}
@@ -263,6 +349,28 @@ const TopBar = () => {
             className={styles.chestIcon}
           />
         </button>
+        {/* Love Potion: in love text */}
+        {inLoveUntil && inLoveUntil > Date.now() && inLoveWith && (
+          <span
+            style={{
+              marginLeft: 16,
+              color: "#ff69b4",
+              fontWeight: 700,
+              fontSize: "1.1rem",
+              textShadow: "0 0 6px #fff, 0 0 12px #ffb6d5",
+            }}
+          >
+            In love with {inLoveWith}
+            {inLoveCountdown > 0 && (
+              <span
+                style={{ marginLeft: 8, fontSize: "0.95rem", color: "#fff" }}
+              >
+                ({String(Math.floor(inLoveCountdown / 60)).padStart(2, "0")}:
+                {String(inLoveCountdown % 60).padStart(2, "0")})
+              </span>
+            )}
+          </span>
+        )}
         {showInventory && !infirmary && (
           <div
             className={styles.inventoryPopup}
@@ -328,6 +436,43 @@ const TopBar = () => {
                               } else if (item.name === "Invisibility Draught") {
                                 update.invisibleUntil =
                                   Date.now() + 5 * 60 * 1000;
+                              } else if (item.name === "Love Potion") {
+                                // Love Potion effect: bruk giftedBy fra inventory hvis finnes, ellers fallback til notifikasjon
+                                let giver = item.giftedBy;
+                                if (!giver) {
+                                  try {
+                                    const notifQuery = query(
+                                      collection(db, "notifications"),
+                                      where("to", "==", user.uid),
+                                      where("item", "==", "Love Potion"),
+                                      where("read", "==", false)
+                                    );
+                                    const notifSnap = await getDocs(notifQuery);
+                                    if (!notifSnap.empty) {
+                                      // Use the most recent notification
+                                      const notifDoc = notifSnap.docs
+                                        .map((d) => d)
+                                        .sort(
+                                          (a, b) =>
+                                            b.data().created - a.data().created
+                                        )[0];
+                                      const notif = notifDoc.data();
+                                      if (notif && notif.from) {
+                                        giver = notif.from;
+                                        // Mark notification as read
+                                        await updateDoc(
+                                          doc(db, "notifications", notifDoc.id),
+                                          { read: true }
+                                        );
+                                      }
+                                    }
+                                  } catch (e) {
+                                    giver = "Unknown";
+                                  }
+                                }
+                                if (!giver) giver = "Unknown";
+                                update.inLoveUntil = Date.now() + 1 * 60 * 1000; // 1 minutt for testing
+                                update.inLoveWith = giver;
                               } else {
                                 let newHealth =
                                   (data.health || 100) + healAmount;
@@ -340,6 +485,8 @@ const TopBar = () => {
                             {item.name === "Death Draught"
                               ? "Drink"
                               : item.name === "Invisibility Draught"
+                              ? "Drink"
+                              : item.name === "Love Potion"
                               ? "Drink"
                               : "Eat"}
                           </button>
@@ -362,8 +509,9 @@ const TopBar = () => {
           open={giftModal.open}
           onClose={() => setGiftModal({ open: false, item: null })}
           item={giftModal.item}
-          users={users} // Ikke filtrer ut egen bruker her, filter i GiftModal
-          onGift={async (toUser) => {
+          users={users}
+          inventory={inventory}
+          onGift={async (toUser, disguise) => {
             if (!user || !giftModal.item) return;
             // Remove one from sender
             const userRef = doc(db, "users", user.uid);
@@ -379,16 +527,34 @@ const TopBar = () => {
             const toRef = doc(db, "users", toUser.uid);
             const toDoc = await getDoc(toRef);
             let toInv = (toDoc.exists() ? toDoc.data().inventory : []) || [];
+            // Sjekk om disguised name finnes fra før
             const toIdx = toInv.findIndex(
-              (i) => i.name === giftModal.item.name
+              (i) => i.name === (disguise?.name || giftModal.item.name)
             );
+            const giftedBy =
+              user.displayName && user.displayName.trim()
+                ? user.displayName
+                : user.email || "Unknown";
             if (toIdx === -1) {
-              toInv.push({ ...giftModal.item, qty: 1 });
+              // Legg til disguised item, men behold id/effekt fra original
+              toInv.push({
+                ...giftModal.item,
+                name: disguise?.name || giftModal.item.name,
+                description:
+                  disguise?.description || giftModal.item.description,
+                type: disguise?.type || giftModal.item.type,
+                category: disguise?.category || giftModal.item.category,
+                qty: 1,
+                giftedBy:
+                  giftModal.item.name === "Love Potion" ? giftedBy : undefined,
+              });
             } else {
               toInv[toIdx].qty = (toInv[toIdx].qty || 1) + 1;
+              // Hvis det er Love Potion, oppdater giftedBy på eksisterende item ALLTID
+              if (giftModal.item.name === "Love Potion") {
+                toInv[toIdx].giftedBy = giftedBy;
+              }
             }
-            // FEILSØK: Logg alt om mottaker og inventory
-            // window.alert fjernet etter feilsøking
             try {
               await updateDoc(toRef, { inventory: toInv });
             } catch (e) {
@@ -397,8 +563,14 @@ const TopBar = () => {
             // Legg til notification til mottaker
             await addDoc(collection(db, "notifications"), {
               to: toUser.uid,
-              from: user.displayName || user.email,
-              item: giftModal.item.name,
+              from:
+                user.displayName && user.displayName.trim()
+                  ? user.displayName
+                  : user.email || "Unknown",
+              item: disguise?.name || giftModal.item.name,
+              disguised:
+                giftModal.item.name !== (disguise?.name || giftModal.item.name),
+              realItem: giftModal.item.name,
               read: false,
               created: Date.now(),
             });

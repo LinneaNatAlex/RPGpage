@@ -22,6 +22,10 @@ import RaceInfo from "../Pages/RaceInfo/RaceInfo.jsx";
 import Shop from "../Components/Shop/Shop.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
+import Admin from "../pages/Admin.jsx";
+import useUserRoles from "../hooks/useUserRoles";
+import HousePointsPage from "../pages/HousePoints.jsx";
+import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
 
 const RouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
@@ -30,6 +34,15 @@ const RouteGuard = ({ children }) => {
   if (!user) return <Navigate to="/sign-in" />;
   if (!user.emailVerified) return <Navigate to="/verify-email" />;
 
+  return children;
+};
+
+const AdminRouteGuard = ({ children }) => {
+  const { user, loading } = useAuth();
+  const { roles, rolesLoading } = useUserRoles();
+  if (loading || rolesLoading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/sign-in" />;
+  if (!roles.includes("admin")) return <Navigate to="/" />;
   return children;
 };
 
@@ -94,10 +107,10 @@ export const router = createBrowserRouter(
       />
 
       <Route
-        path="ClassRooms/Potions"
+        path="ClassRooms/potions"
         element={
           <RouteGuard>
-            <Potions />
+            <ClassroomSession />
           </RouteGuard>
         }
       />
@@ -114,6 +127,30 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <Shop />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="admin"
+        element={
+          <AdminRouteGuard>
+            <Admin />
+          </AdminRouteGuard>
+        }
+      />
+      <Route
+        path="housepoints"
+        element={
+          <RouteGuard>
+            <HousePointsPage />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="classrooms/:classId"
+        element={
+          <RouteGuard>
+            <ClassroomSession />
           </RouteGuard>
         }
       />
