@@ -1,4 +1,17 @@
 import { useState, useRef, useEffect } from "react";
+import { playPing } from "./ping_alt";
+// Varslingsfunksjon for desktop notification
+const showNotification = (title, body) => {
+  if (window.Notification && Notification.permission === "granted") {
+    new Notification(title, { body });
+  } else if (window.Notification && Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        new Notification(title, { body });
+      }
+    });
+  }
+};
 // MessageMenu component for edit/delete menu
 // ...existing code...
 // ...existing code...
@@ -93,6 +106,16 @@ import {
 import useUsers from "../../hooks/useUser";
 
 const PrivateChat = () => {
+  // Mute state for varsler
+  const [muted, setMuted] = useState(() => {
+    const stored = localStorage.getItem("privateChatMuted");
+    return stored === "true";
+  });
+  const mutedRef = useRef(muted);
+  useEffect(() => {
+    localStorage.setItem("privateChatMuted", muted);
+    mutedRef.current = muted;
+  }, [muted]);
   const [editingMessage, setEditingMessage] = useState(null);
   const [selectedMessages, setSelectedMessages] = useState([]);
   // Husk om chatten var lukket eller åpen (default: lukket)
@@ -100,6 +123,10 @@ const PrivateChat = () => {
     const stored = localStorage.getItem("privateChatCollapsed");
     return stored === null ? true : stored === "true";
   });
+  const isCollapsedRef = useRef(isCollapsed);
+  useEffect(() => {
+    isCollapsedRef.current = isCollapsed;
+  }, [isCollapsed]);
   const [search, setSearch] = useState("");
   const [activeChats, setActiveChats] = useState([]); // [{user, messages: []}]
   // Skjulte brukere (uid-array), lagres i localStorage
@@ -113,6 +140,10 @@ const PrivateChat = () => {
   // Only one chat window
   const [chatLoaded, setChatLoaded] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const selectedUserRef = useRef(selectedUser);
+  useEffect(() => {
+    selectedUserRef.current = selectedUser;
+  }, [selectedUser]);
   const [message, setMessage] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const chatBoxRef = useRef(null);
@@ -176,6 +207,7 @@ const PrivateChat = () => {
         collection(db, "privateMessages", chatId, "messages"),
         orderBy("timestamp")
       );
+      let prevMessages = chat.messages || [];
       return onSnapshot(q, (snapshot) => {
         const newMessages = snapshot.docs.map((doc) => doc.data());
         setActiveChats((prev) => {
@@ -186,6 +218,31 @@ const PrivateChat = () => {
           };
           return updated;
         });
+        // Sjekk om det faktisk har kommet en ny melding til brukeren
+        const newToMe = newMessages.filter(
+          (m) => m.to === currentUser.uid && m.from !== currentUser.uid
+        );
+        const prevToMe = prevMessages.filter(
+          (m) => m.to === currentUser.uid && m.from !== currentUser.uid
+        );
+        // Ping/varsel kun hvis chatten IKKE er synlig (enten collapsed eller annen bruker valgt)
+        const isChatVisible =
+          selectedUserRef.current &&
+          selectedUserRef.current.uid === chat.user.uid &&
+          !isCollapsedRef.current;
+        if (
+          newToMe.length > prevToMe.length &&
+          !mutedRef.current &&
+          !isChatVisible
+        ) {
+          playPing();
+          const lastMsg = newToMe[newToMe.length - 1];
+          showNotification(
+            `Ny melding fra ${chat.user.displayName || chat.user.email}`,
+            lastMsg.text || "Du har fått en ny melding!"
+          );
+        }
+        prevMessages = newMessages;
         // Hvis det er nye uleste meldinger fra denne brukeren, fjern fra hiddenChats
         if (newMessages.some((m) => m.to === currentUser.uid && !m.read)) {
           setHiddenChats((prev) => {
@@ -378,6 +435,63 @@ const PrivateChat = () => {
             </span>
           )}
         </span>
+        {/* Mute/unmute icon button */}
+        <button
+          onClick={() => setMuted((m) => !m)}
+          style={{
+            background: "none",
+            border: "none",
+            marginLeft: 8,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            padding: 0,
+            outline: "none",
+          }}
+          title={muted ? "Slå på varsler" : "Slå av varsler"}
+        >
+          {muted ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="#a084e8"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ filter: "drop-shadow(0 0 2px #a084e8)" }}
+            >
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              <line
+                x1="1"
+                y1="1"
+                x2="23"
+                y2="23"
+                stroke="#a084e8"
+                strokeWidth="2"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="#a084e8"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ filter: "drop-shadow(0 0 2px #a084e8)" }}
+            >
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          )}
+        </button>
         <button
           style={{
             background: "none",
