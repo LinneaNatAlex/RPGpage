@@ -1,0 +1,15 @@
+# Ignore node modules
+node_modules/
+
+# Ignore environment and secret files
+.env
+*.env
+rpg-hp-firebase-adminsdk-fbsvc-7536d0f0d0.json
+
+# Ignore build output
+dist/
+build/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
