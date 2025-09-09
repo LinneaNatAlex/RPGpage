@@ -19,17 +19,31 @@ export default function GiftModal({
       u.displayName &&
       u.displayName.toLowerCase().includes(search.toLowerCase())
   );
-  // Bruk alle mat og potion fra shopItems som disguise-alternativer
-  const disguiseOptions = shopItems
-    .filter(
-      (i) => (i.type === "food" || i.type === "potion") && i.name !== item.name
-    )
-    .map((i) => ({
-      name: i.name,
-      description: i.description,
-      type: i.type,
-      category: i.category,
-    }));
+  // Hvis det er en potion, kun tillat mat og potions som forkledning
+  let disguiseOptions;
+  if (item.type === "potion") {
+    disguiseOptions = shopItems
+      .filter(
+        (i) =>
+          (i.type === "food" || i.type === "potion") && i.name !== item.name
+      )
+      .map((i) => ({
+        name: i.name,
+        description: i.description,
+        type: i.type,
+        category: i.category,
+      }));
+  } else {
+    // For alt annet, tillat alle varer som forkledning
+    disguiseOptions = shopItems
+      .filter((i) => i.name !== item.name)
+      .map((i) => ({
+        name: i.name,
+        description: i.description,
+        type: i.type,
+        category: i.category,
+      }));
+  }
   // Legg til original som default
   disguiseOptions.unshift({
     name: item.name,

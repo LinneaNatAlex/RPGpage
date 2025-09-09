@@ -1,6 +1,6 @@
 import style from "./OnlineUsers.module.css";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
@@ -12,6 +12,44 @@ const OnlineUsers = () => {
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeoutMinutes, setTimeoutMinutes] = useState(10);
+
+  // Set online status only when this component is mounted (folder open)
+  useEffect(() => {
+    if (!user || !user.uid) return;
+    let isOnline = true;
+    const setOnline = async () => {
+      try {
+        await updateDoc(doc(db, "users", user.uid), { online: true });
+      } catch {}
+    };
+    const setOffline = async () => {
+      if (!isOnline) return;
+      isOnline = false;
+      try {
+        await updateDoc(doc(db, "users", user.uid), { online: false });
+      } catch {}
+    };
+    setOnline();
+    // Set offline on tab close, browser close, or navigation away
+    const handleUnload = (e) => {
+      setOffline();
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        setOffline();
+      } else if (document.visibilityState === "visible") {
+        setOnline();
+      }
+    };
+    window.addEventListener("beforeunload", handleUnload);
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      setOffline();
+      window.removeEventListener("beforeunload", handleUnload);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+    // eslint-disable-next-line
+  }, [user]);
 
   // Sjekk om innlogget bruker har admin eller teacher rolle
   const isPrivileged = user?.roles?.some((r) =>

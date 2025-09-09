@@ -13,11 +13,7 @@ const useUsers = () => {
       try {
         // fetch users using firebase config function
         const allUsers = await getUserTerms();
-        const now = Date.now();
-        const visibleUsers = allUsers.filter(
-          (user) => !user.invisibleUntil || user.invisibleUntil < now
-        );
-        setUsers(visibleUsers);
+        setUsers(allUsers);
       } catch (error) {
         console.error("Failed to fetch witch or wizard users:", error.message);
       } finally {

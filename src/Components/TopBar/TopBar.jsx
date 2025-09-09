@@ -391,7 +391,18 @@ const TopBar = () => {
                       item.type === "food" || item.type === "potion";
                     let healAmount = 0;
                     const isDeathPotion = item.name === "Death Draught";
-                    if (item.name === "Chocolate Frog") healAmount = 15;
+                    // Finn health-verdi for matvarer
+                    if (item.type === "food") {
+                      // Prøv å hente health fra item direkte, ellers fra shopItems
+                      healAmount = item.health;
+                      if (healAmount === undefined) {
+                        try {
+                          const shopItems = require("../Shop/itemsList").default;
+                          const foodDef = shopItems.find((i) => i.name === item.name);
+                          healAmount = foodDef && foodDef.health ? foodDef.health : 0;
+                        } catch (e) { healAmount = 0; }
+                      }
+                    }
                     if (item.name === "Healing Potion") healAmount = 1000; // Fyller health til max
                     return (
                       <li key={idx} className={styles.itemRow}>
@@ -427,16 +438,19 @@ const TopBar = () => {
                                 inventory: inv,
                                 lastHealthUpdate: Date.now(),
                               };
-                              if (isDeathPotion) {
+                              // Finn originalnavn hvis forkledd
+                              const realName =
+                                item.originalName || item.realItem || item.name;
+                              if (realName === "Death Draught") {
                                 update.health = 0;
                                 update.infirmaryEnd =
                                   Date.now() + 20 * 60 * 1000;
-                              } else if (item.name === "Healing Potion") {
+                              } else if (realName === "Healing Potion") {
                                 update.health = 100;
-                              } else if (item.name === "Invisibility Draught") {
+                              } else if (realName === "Invisibility Draught") {
                                 update.invisibleUntil =
                                   Date.now() + 5 * 60 * 1000;
-                              } else if (item.name === "Love Potion") {
+                              } else if (realName === "Love Potion") {
                                 // Love Potion effect: bruk giftedBy fra inventory hvis finnes, ellers fallback til notifikasjon
                                 let giver = item.giftedBy;
                                 if (!giver) {
@@ -471,11 +485,12 @@ const TopBar = () => {
                                   }
                                 }
                                 if (!giver) giver = "Unknown";
-                                update.inLoveUntil = Date.now() + 1 * 60 * 1000; // 1 minutt for testing
+                                update.inLoveUntil =
+                                  Date.now() + 12 * 60 * 60 * 1000; // 12 timer (halv dag)
                                 update.inLoveWith = giver;
-                              } else {
-                                let newHealth =
-                                  (data.health || 100) + healAmount;
+                              } else if (item.type === "food" && healAmount > 0) {
+                                // For all food, apply health gain
+                                let newHealth = (data.health || 100) + healAmount;
                                 if (newHealth > 100) newHealth = 100;
                                 update.health = newHealth;
                               }
@@ -545,15 +560,20 @@ const TopBar = () => {
                 type: disguise?.type || giftModal.item.type,
                 category: disguise?.category || giftModal.item.category,
                 qty: 1,
-                giftedBy:
-                  giftModal.item.name === "Love Potion" ? giftedBy : undefined,
+                giftedBy: giftedBy,
+                originalName:
+                  disguise && disguise.name !== giftModal.item.name
+                    ? giftModal.item.name
+                    : undefined,
+                realItem:
+                  disguise && disguise.name !== giftModal.item.name
+                    ? giftModal.item.name
+                    : undefined,
               });
             } else {
               toInv[toIdx].qty = (toInv[toIdx].qty || 1) + 1;
-              // Hvis det er Love Potion, oppdater giftedBy på eksisterende item ALLTID
-              if (giftModal.item.name === "Love Potion") {
-                toInv[toIdx].giftedBy = giftedBy;
-              }
+              // Oppdater giftedBy på eksisterende item ALLTID
+              toInv[toIdx].giftedBy = giftedBy;
             }
             try {
               await updateDoc(toRef, { inventory: toInv });

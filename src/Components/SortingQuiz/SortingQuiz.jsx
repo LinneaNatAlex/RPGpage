@@ -96,7 +96,7 @@ const SortingQuiz = ({ onClose, onResult }) => {
         ) : (
           <div className={styles.resultContainer}>
             <h3>
-              Du ble sortert som:{" "}
+              You have been sorted as:{" "}
               {raceDescriptions[resultRace]?.title || resultRace}
             </h3>
             <p>{raceDescriptions[resultRace]?.description}</p>

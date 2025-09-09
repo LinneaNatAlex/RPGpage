@@ -1,5 +1,6 @@
 // import the necessary libraries and components
 import { useState, useEffect } from "react";
+import parseBBCode from "../../Components/ProfileTextEditor/parseBBCode.js";
 import useUsers from "../../hooks/useUser";
 import { useParams } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -169,9 +170,18 @@ const UserProfile = () => {
       </div>
       {/* -----------------------------PROFILE BIO----------------------------- */}
       {/* BIO: HTML eller tekst */}
-      {userData.profileMode === "html" &&
-      userData.profileHtml &&
-      userData.profileCss ? (
+      {userData.profileMode === "bbcode" && userData.profileBBCode ? (
+        <div className={styles.profileTextContainer}>
+          <h2>Profile Text</h2>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: parseBBCode(userData.profileBBCode),
+            }}
+          />
+        </div>
+      ) : userData.profileMode === "html" &&
+        userData.profileHtml &&
+        userData.profileCss ? (
         <div className={styles.profileHtmlContainer}>
           <iframe
             className={styles.profileIframe}
@@ -180,10 +190,6 @@ const UserProfile = () => {
             height="100vh"
             width="100%"
           />
-          {/* <div className={styles.chatBar}>
-            <div className={styles.chatContainer}>{user && <Chat />}</div>
-            <FriendsList profileUid={uid} />
-          </div> */}
         </div>
       ) : userData.profileMode === "text" && userData.profileText ? (
         <div className={styles.profileTextContainer}>

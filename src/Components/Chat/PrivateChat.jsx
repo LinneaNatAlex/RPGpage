@@ -208,6 +208,7 @@ const PrivateChat = () => {
         orderBy("timestamp")
       );
       let prevMessages = chat.messages || [];
+      let firstRun = true;
       return onSnapshot(q, (snapshot) => {
         const newMessages = snapshot.docs.map((doc) => doc.data());
         setActiveChats((prev) => {
@@ -218,6 +219,12 @@ const PrivateChat = () => {
           };
           return updated;
         });
+        // Skip notifications on the initial snapshot to avoid login-time pings
+        if (firstRun) {
+          firstRun = false;
+          prevMessages = newMessages;
+          return;
+        }
         // Sjekk om det faktisk har kommet en ny melding til brukeren
         const newToMe = newMessages.filter(
           (m) => m.to === currentUser.uid && m.from !== currentUser.uid

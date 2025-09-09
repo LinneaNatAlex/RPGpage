@@ -112,7 +112,7 @@ const Profile = () => {
                       boxShadow: "0 2px 8px #0002",
                     }}
                   >
-                    {uploading ? "Laster opp..." : "Edit"}
+                    {uploading ? "Uploading..." : "Choose file"}
                   </span>
                 </label>
               </>
