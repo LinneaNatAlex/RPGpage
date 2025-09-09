@@ -9,8 +9,14 @@ import {
   onSnapshot,
   updateDoc,
   serverTimestamp,
+  collection,
+  addDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { useRef } from "react";
+import GiftModal from "./GiftModal";
+import useUsers from "../../hooks/useUser";
 
 import styles from "./TopBar.module.css";
 
@@ -42,7 +48,10 @@ const TopBar = () => {
   const [countdown, setCountdown] = useState(0);
   const [invisibleUntil, setInvisibleUntil] = useState(null);
   const [invisibleCountdown, setInvisibleCountdown] = useState(0);
+  const [giftModal, setGiftModal] = useState({ open: false, item: null });
+  const [notifications, setNotifications] = useState([]);
   const intervalRef = useRef();
+  const { users } = useUsers();
 
   useEffect(() => {
     if (!user) return;
@@ -155,6 +164,20 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [invisibleUntil]);
 
+  // Hent notifications for innlogget bruker
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, "notifications"),
+      where("to", "==", user.uid),
+      where("read", "==", false)
+    );
+    const unsub = onSnapshot(q, (snap) => {
+      setNotifications(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => unsub();
+  }, [user]);
+
   return (
     <>
       {infirmary && (
@@ -266,6 +289,15 @@ const TopBar = () => {
                       <li key={idx} className={styles.itemRow}>
                         <span className={styles.itemName}>{item.name}</span> x
                         {item.qty || 1}
+                        {/* Gift button */}
+                        <button
+                          className={styles.giftBtn}
+                          title="Gift this item"
+                          onClick={() => setGiftModal({ open: true, item })}
+                          style={{ marginLeft: 8 }}
+                        >
+                          🎁
+                        </button>
                         {isEdible && !infirmary && (
                           <button
                             className={styles.eatBtn}
@@ -326,7 +358,78 @@ const TopBar = () => {
             </div>
           </div>
         )}
+        <GiftModal
+          open={giftModal.open}
+          onClose={() => setGiftModal({ open: false, item: null })}
+          item={giftModal.item}
+          users={users} // Ikke filtrer ut egen bruker her, filter i GiftModal
+          onGift={async (toUser) => {
+            if (!user || !giftModal.item) return;
+            // Remove one from sender
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            if (!userDoc.exists()) return;
+            let inv = userDoc.data().inventory || [];
+            const idx = inv.findIndex((i) => i.name === giftModal.item.name);
+            if (idx === -1) return;
+            inv[idx].qty = (inv[idx].qty || 1) - 1;
+            if (inv[idx].qty <= 0) inv.splice(idx, 1);
+            await updateDoc(userRef, { inventory: inv });
+            // Add to recipient (bruk alltid uid)
+            const toRef = doc(db, "users", toUser.uid);
+            const toDoc = await getDoc(toRef);
+            let toInv = (toDoc.exists() ? toDoc.data().inventory : []) || [];
+            const toIdx = toInv.findIndex(
+              (i) => i.name === giftModal.item.name
+            );
+            if (toIdx === -1) {
+              toInv.push({ ...giftModal.item, qty: 1 });
+            } else {
+              toInv[toIdx].qty = (toInv[toIdx].qty || 1) + 1;
+            }
+            // FEILSØK: Logg alt om mottaker og inventory
+            // window.alert fjernet etter feilsøking
+            try {
+              await updateDoc(toRef, { inventory: toInv });
+            } catch (e) {
+              // window.alert fjernet etter feilsøking
+            }
+            // Legg til notification til mottaker
+            await addDoc(collection(db, "notifications"), {
+              to: toUser.uid,
+              from: user.displayName || user.email,
+              item: giftModal.item.name,
+              read: false,
+              created: Date.now(),
+            });
+            setGiftModal({ open: false, item: null });
+          }}
+        />
         {/* Fainted overlay moved to global overlay above */}
+        {/* Notification bell/alert */}
+        {notifications.length > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 16,
+              color: "#ff0",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+            title="You have a new gift! Click to mark as read."
+            onClick={async () => {
+              // Sett alle notifications som lest
+              for (const n of notifications) {
+                await updateDoc(doc(db, "notifications", n.id), { read: true });
+              }
+              setNotifications([]);
+            }}
+          >
+            ! You received a gift from {notifications[0].from}:{" "}
+            {notifications[0].item}
+          </div>
+        )}
       </div>
     </>
   );

@@ -196,3 +196,63 @@
 .closeBtn:hover {
   background: #7c5fe6;
 }
+.giftBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: transform 0.1s;
+}
+.giftBtn:hover {
+  transform: scale(1.2);
+}
+.giftModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.giftModal {
+  background: #23202b;
+  color: #fff;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  border-radius: 10px;
+  min-width: 320px;
+  box-shadow: 0 4px 24px #000a;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.giftSearch {
+  margin-bottom: 1rem;
+  padding: 0.5em;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background: #18161e;
+  color: #fff;
+}
+.giftUserList {
+  list-style: none;
+  max-height: 160px;
+  overflow-y: auto;
+  margin: 0 0 1rem 0;
+  padding: 0;
+}
+.giftUserList li {
+  padding: 0.4em 0.7em;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 2px;
+  transition: background 0.1s;
+}
+.giftUserList li:hover,
+.giftUserList .selected {
+  background: #00e6a8;
+  color: #18161e;
+}
