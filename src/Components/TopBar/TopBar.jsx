@@ -44,6 +44,8 @@ const TopBar = () => {
   const [points, setPoints] = useState(0);
   const [showInventory, setShowInventory] = useState(false);
   const [health, setHealth] = useState(100);
+  const [roles, setRoles] = useState([]);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [infirmary, setInfirmary] = useState(false);
   const [infirmaryEnd, setInfirmaryEnd] = useState(null);
   const [countdown, setCountdown] = useState(0);
@@ -67,6 +69,8 @@ const TopBar = () => {
         setInventory(data.inventory ?? []);
         setHealth(data.health ?? 100);
         setPoints(data.points ?? 0);
+        setRoles(data.roles ?? []);
+        setProfileImageUrl(data.profileImageUrl || null);
         // Sett lastHealthUpdate første gang hvis mangler
         if (!data.lastHealthUpdate) {
           await updateDoc(userRef, { lastHealthUpdate: Date.now() });
@@ -301,22 +305,33 @@ const TopBar = () => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-          {user && user.photoURL && (
-            <img
-              src={user.photoURL}
-              alt="Profile"
-              className={styles.profilePic}
-              style={
-                inLoveUntil && inLoveUntil > Date.now()
-                  ? {
-                      boxShadow:
-                        "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
-                      borderRadius: "50%",
-                    }
-                  : {}
-              }
-            />
-          )}
+          {(() => {
+            if (!user) return null;
+            const src = user.photoURL || profileImageUrl || "/icons/avatar.svg";
+            // Compute role-based class
+            let roleClass = styles.profilePic;
+            const lower = (roles || []).map((r) => String(r).toLowerCase());
+            if (lower.includes("headmaster")) roleClass += ` ${styles.headmasterPic}`;
+            else if (lower.includes("teacher")) roleClass += ` ${styles.teacherPic}`;
+            else if (lower.includes("shadowpatrol")) roleClass += ` ${styles.shadowPatrolPic}`;
+            else if (lower.includes("admin")) roleClass += ` ${styles.adminPic}`;
+            return (
+              <img
+                src={src}
+                alt="Profile"
+                className={roleClass}
+                style={
+                  inLoveUntil && inLoveUntil > Date.now()
+                    ? {
+                        boxShadow:
+                          "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                        borderRadius: "50%",
+                      }
+                    : {}
+                }
+              />
+            );
+          })()}
           <HealthBar health={health} maxHealth={100} />
         </div>
         <div className={styles.currency}>

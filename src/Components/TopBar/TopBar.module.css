@@ -27,6 +27,24 @@
   background: #23232b;
 }
 
+/* Role-colored borders for profile picture */
+.headmasterPic {
+  border-color: #ffffff;
+  box-shadow: 0 0 8px #fff, 0 0 4px #b0aac2;
+}
+.teacherPic {
+  border-color: gold;
+  box-shadow: 0 0 8px gold, 0 0 4px #b0aac2;
+}
+.shadowPatrolPic {
+  border-color: #1ecb8c;
+  box-shadow: 0 0 8px #1ecb8c, 0 0 4px #b0aac2;
+}
+.adminPic {
+  border-color: #ff5e5e;
+  box-shadow: 0 0 8px #ff5e5e, 0 0 4px #b0aac2;
+}
+
 /* Inventory ikon-knapp */
 .inventoryIconBtn {
   background: none;
