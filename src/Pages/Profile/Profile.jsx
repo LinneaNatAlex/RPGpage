@@ -8,10 +8,16 @@ import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
 import Chat from "../../Components/Chat/Chat";
 import FriendsList from "../../Components/FriendsList/FriendsList";
+import { isBirthdayToday } from "../../utils/rpgCalendar";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { user, loading } = useAuth();
+  // Birthday state
+  const [birthdayMonth, setBirthdayMonth] = useState(1);
+  const [birthdayDay, setBirthdayDay] = useState(1);
+  const [birthdaySaved, setBirthdaySaved] = useState(false);
+  const [editingBirthday, setEditingBirthday] = useState(false);
 
   // This uses the auth context to get the current user! teck loding state!
 
@@ -22,7 +28,12 @@ const Profile = () => {
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-          setUserData(userDoc.data());
+          const data = userDoc.data();
+          setUserData(data);
+          // Sett bursdag state hvis finnes
+          if (data.birthdayMonth) setBirthdayMonth(data.birthdayMonth);
+          if (data.birthdayDay) setBirthdayDay(data.birthdayDay);
+          if (data.birthdayMonth && data.birthdayDay) setBirthdaySaved(true);
         } else {
           console.log("No such document!");
         }
@@ -30,9 +41,33 @@ const Profile = () => {
         console.error("Error fetching user data:", error);
       }
     };
-    // fetching user date, to display on the profile page
     fetchUserData();
   }, [user, loading]);
+
+  // Automatisk aldersøkning med fellesmodul
+  useEffect(() => {
+    if (!userData || !userData.birthdayMonth || !userData.birthdayDay) return;
+    const currentYear = new Date().getFullYear();
+    if (
+      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay) &&
+      userData.lastBirthdayYear !== currentYear
+    ) {
+      // Oppdater alder og siste feirede år i Firestore
+      const newAge = (userData.age || 0) + 1;
+      updateDoc(doc(db, "users", user.uid), {
+        age: newAge,
+        lastBirthdayYear: currentYear,
+      })
+        .then(() => {
+          setUserData((prev) => ({
+            ...prev,
+            age: newAge,
+            lastBirthdayYear: currentYear,
+          }));
+        })
+        .catch((err) => console.error("Failed to update age:", err));
+    }
+  }, [userData, user]);
 
   const [uploading, setUploading] = useState(false);
   const { uploadImage } = useImageUpload();
@@ -147,11 +182,106 @@ const Profile = () => {
               </p>{" "}
               {userData.race}
             </div>
+            {/* Bursdag: vis og la brukeren velge hvis ikke satt */}
             <div className={styles.caracterDetails}>
-              <p>
-                <strong>Balance:</strong>
-              </p>{" "}
-              {userData.currency ?? 1000} Nits
+              <p
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  margin: 0,
+                }}
+              >
+                <span role="img" aria-label="birthday" style={{ fontSize: 18 }}>
+                  🎂
+                </span>
+                <strong>Birthday:</strong>{" "}
+                {userData.birthdayMonth && userData.birthdayDay ? (
+                  <span style={{ color: "#ffe084", fontWeight: 600 }}>
+                    Month {userData.birthdayMonth}, Day {userData.birthdayDay}
+                  </span>
+                ) : null}
+                {user?.uid === userData.uid &&
+                  (!userData.birthdayMonth || !userData.birthdayDay) && (
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!user) return;
+                        try {
+                          await updateDoc(doc(db, "users", user.uid), {
+                            birthdayMonth,
+                            birthdayDay,
+                          });
+                          setUserData((prev) => ({
+                            ...prev,
+                            birthdayMonth,
+                            birthdayDay,
+                          }));
+                          setBirthdaySaved(true);
+                          setEditingBirthday(false);
+                        } catch (err) {
+                          alert("Could not save birthday. Try again.");
+                        }
+                      }}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        marginLeft: 8,
+                      }}
+                    >
+                      <label style={{ fontSize: 13, marginRight: 6 }}>
+                        Month:
+                        <select
+                          value={birthdayMonth}
+                          onChange={(e) =>
+                            setBirthdayMonth(Number(e.target.value))
+                          }
+                          style={{ marginLeft: 4 }}
+                        >
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label style={{ fontSize: 13, marginRight: 6 }}>
+                        Day:
+                        <select
+                          value={birthdayDay}
+                          onChange={(e) =>
+                            setBirthdayDay(Number(e.target.value))
+                          }
+                          style={{ marginLeft: 4 }}
+                        >
+                          {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <button
+                        type="submit"
+                        style={{ fontSize: 12, marginLeft: 8 }}
+                      >
+                        Save
+                      </button>
+                    </form>
+                  )}
+                {!userData.birthdayMonth || !userData.birthdayDay ? (
+                  <span
+                    style={{
+                      color: "#b0aac2",
+                      fontStyle: "italic",
+                      marginLeft: 6,
+                    }}
+                  >
+                    Not set
+                  </span>
+                ) : null}
+              </p>
             </div>
             {/* Inventory fjernet fra karakterinfo/profilvisning */}
           </div>

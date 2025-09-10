@@ -391,18 +391,7 @@ const TopBar = () => {
                       item.type === "food" || item.type === "potion";
                     let healAmount = 0;
                     const isDeathPotion = item.name === "Death Draught";
-                    // Finn health-verdi for matvarer
-                    if (item.type === "food") {
-                      // Prøv å hente health fra item direkte, ellers fra shopItems
-                      healAmount = item.health;
-                      if (healAmount === undefined) {
-                        try {
-                          const shopItems = require("../Shop/itemsList").default;
-                          const foodDef = shopItems.find((i) => i.name === item.name);
-                          healAmount = foodDef && foodDef.health ? foodDef.health : 0;
-                        } catch (e) { healAmount = 0; }
-                      }
-                    }
+                    if (item.name === "Chocolate Frog") healAmount = 15;
                     if (item.name === "Healing Potion") healAmount = 1000; // Fyller health til max
                     return (
                       <li key={idx} className={styles.itemRow}>
@@ -488,9 +477,9 @@ const TopBar = () => {
                                 update.inLoveUntil =
                                   Date.now() + 12 * 60 * 60 * 1000; // 12 timer (halv dag)
                                 update.inLoveWith = giver;
-                              } else if (item.type === "food" && healAmount > 0) {
-                                // For all food, apply health gain
-                                let newHealth = (data.health || 100) + healAmount;
+                              } else {
+                                let newHealth =
+                                  (data.health || 100) + healAmount;
                                 if (newHealth > 100) newHealth = 100;
                                 update.health = newHealth;
                               }

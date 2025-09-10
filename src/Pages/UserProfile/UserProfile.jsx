@@ -1,9 +1,17 @@
 // import the necessary libraries and components
 import { useState, useEffect } from "react";
+import { isBirthdayToday } from "../../utils/rpgCalendar";
 import parseBBCode from "../../Components/ProfileTextEditor/parseBBCode.js";
 import useUsers from "../../hooks/useUser";
 import { useParams } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
 import FriendsList from "../../Components/FriendsList/FriendsList";
@@ -15,6 +23,18 @@ const UserProfile = () => {
   const { uid } = useParams();
   const [userData, setUserData] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  // Birthday state
+  const [editingBirthday, setEditingBirthday] = useState(false);
+  const [birthdayMonth, setBirthdayMonth] = useState(
+    userData?.birthdayMonth || 1
+  );
+  const [birthdayDay, setBirthdayDay] = useState(userData?.birthdayDay || 1);
+  const [birthdaySaved, setBirthdaySaved] = useState(
+    !!userData?.birthdayMonth && !!userData?.birthdayDay
+  );
+  // For å hindre dobbel feiring
+  const [ageChecked, setAgeChecked] = useState(false);
+
   //  ----------------------------------useEffect----------------------------------
   useEffect(() => {
     // function to fetch user data based on rout parameter 'uid'
@@ -36,10 +56,44 @@ const UserProfile = () => {
         setNotFound(true);
       }
     };
-    // fetching the user data if it is avalible
-
     if (uid) fetchUserData();
   }, [uid]);
+
+  // --- Automatisk aldersøkning på RPG-bursdag med fellesmodul ---
+  useEffect(() => {
+    if (
+      !userData ||
+      !userData.birthdayMonth ||
+      !userData.birthdayDay ||
+      ageChecked
+    )
+      return;
+    const currentYear = new Date().getFullYear();
+    if (
+      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay) &&
+      user?.uid === userData.uid &&
+      userData.lastBirthdayYear !== currentYear
+    ) {
+      // Oppdater alder og siste feirede år i Firestore
+      const newAge = (userData.age || 0) + 1;
+      const userRef = doc(db, "users", userData.uid);
+      updateDoc(userRef, {
+        age: newAge,
+        lastBirthdayYear: currentYear,
+      })
+        .then(() => {
+          setUserData({
+            ...userData,
+            age: newAge,
+            lastBirthdayYear: currentYear,
+          });
+          setAgeChecked(true);
+        })
+        .catch((err) => console.error("Failed to update age:", err));
+    } else {
+      setAgeChecked(true);
+    }
+  }, [userData, ageChecked, user]);
 
   if (notFound) return <div>User not found</div>;
   if (!userData) return <div>Loading...</div>;
@@ -122,6 +176,157 @@ const UserProfile = () => {
             <p>
               <strong>Age:</strong> {userData.age}
             </p>
+            {/* Bursdag kun i Character Details, med valgskjema hvis ikke satt */}
+            {userData.birthdayMonth && userData.birthdayDay ? (
+              <p
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  margin: 0,
+                }}
+              >
+                <span role="img" aria-label="birthday" style={{ fontSize: 18 }}>
+                  🎂
+                </span>
+                <strong>Birthday:</strong>{" "}
+                <span style={{ color: "#ffe084", fontWeight: 600 }}>
+                  Month {userData.birthdayMonth}, Day {userData.birthdayDay}
+                </span>
+                {user?.uid === userData.uid && !birthdaySaved && (
+                  <button
+                    onClick={() => setEditingBirthday(true)}
+                    style={{ marginLeft: 8, fontSize: 11 }}
+                  >
+                    Edit
+                  </button>
+                )}
+              </p>
+            ) : user?.uid === userData.uid ? (
+              <div style={{ margin: "8px 0" }}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    // TODO: Save to Firestore her
+                    setBirthdaySaved(true);
+                    setEditingBirthday(false);
+                  }}
+                  style={{ display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <span
+                    role="img"
+                    aria-label="birthday"
+                    style={{ fontSize: 18 }}
+                  >
+                    🎂
+                  </span>
+                  <label style={{ fontSize: 13, marginRight: 6 }}>
+                    Month:
+                    <select
+                      value={birthdayMonth}
+                      onChange={(e) => setBirthdayMonth(Number(e.target.value))}
+                      style={{ marginLeft: 4 }}
+                    >
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label style={{ fontSize: 13, marginRight: 6 }}>
+                    Day:
+                    <select
+                      value={birthdayDay}
+                      onChange={(e) => setBirthdayDay(Number(e.target.value))}
+                      style={{ marginLeft: 4 }}
+                    >
+                      {Array.from({ length: 31 }, (_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="submit" style={{ fontSize: 12, marginLeft: 8 }}>
+                    Save
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <p
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  margin: 0,
+                }}
+              >
+                <span role="img" aria-label="birthday" style={{ fontSize: 18 }}>
+                  🎂
+                </span>
+                <strong>Birthday:</strong>
+                <span
+                  style={{
+                    color: "#b0aac2",
+                    fontStyle: "italic",
+                    marginLeft: 6,
+                  }}
+                >
+                  Not set
+                </span>
+              </p>
+            )}
+            {editingBirthday && user?.uid === userData.uid && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  // TODO: Save to Firestore here
+                  setBirthdaySaved(true);
+                  setEditingBirthday(false);
+                }}
+                style={{ margin: "8px 0" }}
+              >
+                <label style={{ fontSize: 13, marginRight: 6 }}>
+                  Month:
+                  <select
+                    value={birthdayMonth}
+                    onChange={(e) => setBirthdayMonth(Number(e.target.value))}
+                    style={{ marginLeft: 4 }}
+                  >
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label style={{ fontSize: 13, marginRight: 6 }}>
+                  Day:
+                  <select
+                    value={birthdayDay}
+                    onChange={(e) => setBirthdayDay(Number(e.target.value))}
+                    style={{ marginLeft: 4 }}
+                  >
+                    {Array.from({ length: 31 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" style={{ fontSize: 12, marginLeft: 8 }}>
+                  Save
+                </button>
+                <button
+                  type="button"
+                  style={{ fontSize: 12, marginLeft: 4 }}
+                  onClick={() => setEditingBirthday(false)}
+                >
+                  Cancel
+                </button>
+              </form>
+            )}
             <p>
               <strong>Magical Race:</strong> {userData.race}
             </p>

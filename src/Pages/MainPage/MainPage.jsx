@@ -8,6 +8,7 @@ import { useAuth } from "../../context/authContext";
 import Button from "../../Components/Button/Button";
 import { useState, useEffect } from "react";
 import PrivateChat from "../../Components/Chat/PrivateChat";
+import RPGCalendarSidebar from "../../Components/RPGCalendarSidebar";
 
 // state variables to handle the components that are shown in the main page
 const MainPage = () => {
@@ -62,6 +63,10 @@ const MainPage = () => {
           {user && <OnlineUsers />}
         </div>
         <div className={styles.newsFeedContainer}>{user && <NewsFeed />}</div>
+        {/* Right sidebar for RPG calendar, only show on desktop */}
+        <div className={styles.rpgCalendarSidebarContainer}>
+          <RPGCalendarSidebar />
+        </div>
       </main>
     </section>
   );

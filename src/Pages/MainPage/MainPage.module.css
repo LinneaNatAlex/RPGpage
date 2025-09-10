@@ -132,10 +132,24 @@
 .mainContentHome {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 1fr 3fr 1.2fr;
   background-color: #23232b;
   border-radius: 18px;
   box-shadow: 0 4px 24px rgba(124, 94, 191, 0.08);
+  gap: 0.5rem;
+}
+
+.rpgCalendarSidebarContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 1.5rem 0.5rem 1.5rem 0.5rem;
+}
+
+@media screen and (max-width: 1000px) {
+  .rpgCalendarSidebarContainer {
+    display: none;
+  }
 }
 
 /* ---------------------------MOBILE--------------------------- */
