@@ -13,12 +13,12 @@
   transition: background 0.2s;
 }
 .eatBtn:hover {
-  background: #17a06a;
+  background: #2d2346;
   color: #fff;
 }
 /* Profile image next to the health bar */
 .profilePic {
-  width: 36px;
+  background: transparent;
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
@@ -78,20 +78,20 @@
 .healthBarOuter {
   width: 100px;
   height: 18px;
-  background: #444;
+  background: #3a3a44;
   border-radius: 8px;
   overflow: hidden;
   margin-right: 0.5rem;
 }
 .healthBarInner {
   height: 100%;
-  background: linear-gradient(90deg, #1ecb8c, #ffe066 80%);
+  background: linear-gradient(90deg, #1ecb8c, var(--gold-accent) 80%);
   border-radius: 8px;
   transition: width 0.3s;
 }
 .healthText {
   font-weight: bold;
-  color: #fff;
+  color: var(--text-color);
   font-size: 1rem;
 }
 .topBar {
@@ -103,7 +103,7 @@
   display: flex;
   align-items: center;
   background: transparent;
-  color: #fff;
+  color: var(--text-color);
   padding: 0 2.2rem 0 0;
   font-size: 1.1rem;
   gap: 2.5rem;
@@ -118,7 +118,7 @@
   background: transparent;
   border-radius: 0;
   padding: 0 0.7rem 0 0;
-  margin-right: 0.7rem;
+  color: var(--text-color);
   box-shadow: none;
 }
 .coinIcon {
@@ -130,7 +130,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
+  background: transparent;
 .itemList {
   display: flex;
   flex-direction: column;

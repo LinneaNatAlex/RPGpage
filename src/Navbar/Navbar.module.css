@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #23232b;
+  background-color: var(--navbar-background);
   width: 100%;
   height: var(--navbar-height);
   box-sizing: border-box;
@@ -19,19 +19,19 @@
 
 .navbar a {
   text-decoration: none;
-  color: #b0aac2;
+  color: var(--navbar-text-color);
   font-size: 1.2rem;
   font-weight: bold;
   transition: color 0.3s ease;
 }
 
 .navbar a:hover {
-  color: #e0e0e0;
+  color: var(--text-color);
 }
 /* -----------------SIGN OUT BUTTON--------------------------- */
 .signOutBtn {
   background-color: #444455;
-  color: #e0e0e0;
+  color: var(--text-color);
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -65,7 +65,7 @@
 .dropdownContent a {
   display: block;
   padding: 0.5rem 1.5rem;
-  color: #d0cbe1;
+  color: var(--text-muted);
   text-align: left;
   font-size: 1.1rem;
   font-weight: 600;
@@ -74,8 +74,8 @@
 }
 
 .dropdownContent a:hover {
-  background: #28262b;
-  color: #fff;
+  background: #2d2a3a;
+  color: var(--text-color);
 }
 
 .dropdown:hover .dropdownContent {
