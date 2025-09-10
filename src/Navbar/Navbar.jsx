@@ -99,7 +99,10 @@ const Navbar = () => {
               {/* Removed Alchemy & Potions from dropdown */}
             </div>
             {roles.includes("admin") && <NavLink to="/admin">Admin</NavLink>}{" "}
-            {/* Shows the Admin link only if the user has admin role */}
+            {(roles.includes("teacher") || roles.includes("admin")) && (
+              <NavLink to="/teacher">TeacherPanel</NavLink>
+            )}{" "}
+            {/* Shows the Admin link only for admin, TeacherPanel for teacher/admin */}
             {/* Makes the butten only avalible when logged in */}
             <button onClick={handleSignOut} className={styles.signOutBtn}>
               Exit

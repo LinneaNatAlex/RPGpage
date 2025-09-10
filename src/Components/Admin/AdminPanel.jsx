@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useAuth } from "../../context/authContext";
+import useUserRoles from "../../hooks/useUserRoles";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
@@ -6,6 +8,8 @@ import firebase from "firebase/compat/app";
 
 export default function AdminPanel() {
   const { users } = useUsers();
+  const { user } = useAuth();
+  const { roles = [] } = useUserRoles();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
   const [amount, setAmount] = useState(0);
@@ -23,6 +27,10 @@ export default function AdminPanel() {
 
   async function handleNitsChange(delta) {
     if (!selected) return;
+    if (!roles.includes("admin")) {
+      setStatus("Bare admin kan endre Nits.");
+      return;
+    }
     setStatus("Working...");
     const ref = doc(db, "users", selected.uid);
     const snap = await getDoc(ref);
@@ -36,7 +44,7 @@ export default function AdminPanel() {
   const handlePointsUpdate = async () => {
     setPointsMessage("");
     if (!pointsUser || !pointsAmount) {
-      setPointsMessage("Fyll ut brukernavn og poeng");
+      setPointsMessage("Please enter username and points");
       return;
     }
     try {
@@ -55,7 +63,7 @@ export default function AdminPanel() {
       await updateDoc(userRef, {
         points: increment(Number(pointsAmount)),
       });
-      setPointsMessage("Poeng oppdatert!");
+      setPointsMessage("Points updated!");
     } catch (err) {
       setPointsMessage("Feil: " + err.message);
     }
@@ -100,7 +108,7 @@ export default function AdminPanel() {
           </li>
         ))}
       </ul>
-      {selected && (
+      {selected && roles.includes("admin") && (
         <div style={{ marginBottom: 12 }}>
           <input
             type="number"
@@ -120,30 +128,32 @@ export default function AdminPanel() {
       {status && <div style={{ color: "#ff0", marginTop: 8 }}>{status}</div>}
 
       {/* Points management section */}
-      <div className="admin-section">
-        <h3>Legg til / trekk fra poeng</h3>
-        <input
-          type="text"
-          placeholder="Brukernavn eller e-post"
-          value={pointsUser}
-          onChange={(e) => setPointsUser(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Antall poeng (+/-)"
-          value={pointsAmount}
-          onChange={(e) => setPointsAmount(e.target.value)}
-        />
-        <button onClick={handlePointsUpdate}>Oppdater poeng</button>
-        {pointsMessage && (
-          <div
-            className="admin-message"
-            style={{ color: "#ff0", marginTop: 8 }}
-          >
-            {pointsMessage}
-          </div>
-        )}
-      </div>
+      {(roles.includes("admin") || roles.includes("teacher")) && (
+        <div className="admin-section">
+          <h3>Add / subtract points</h3>
+          <input
+            type="text"
+            placeholder="Brukernavn eller e-post"
+            value={pointsUser}
+            onChange={(e) => setPointsUser(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Number of points (+/-)"
+            value={pointsAmount}
+            onChange={(e) => setPointsAmount(e.target.value)}
+          />
+          <button onClick={handlePointsUpdate}>Update points</button>
+          {pointsMessage && (
+            <div
+              className="admin-message"
+              style={{ color: "#ff0", marginTop: 8 }}
+            >
+              {pointsMessage}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

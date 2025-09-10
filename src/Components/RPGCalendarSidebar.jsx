@@ -12,9 +12,27 @@ export default function RPGCalendarSidebar() {
     "Saturday",
     "Sunday",
   ];
+
+  // Månedsnavn på norsk/engelsk
+  const monthNames = [
+    "Januar",
+    "Februar",
+    "Mars",
+    "April",
+    "Mai",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+
   // Bruk fellesmodul for RPG-kalender
   const {
     rpgYear,
+    rpgMonth,
     rpgWeek,
     rpgDayOfWeek,
     rpgDayNum,
@@ -53,7 +71,7 @@ export default function RPGCalendarSidebar() {
         School Calendar
       </h3>
       <div style={{ fontSize: 14, marginBottom: 2, fontWeight: 600 }}>
-        Year 1, Week 1
+        {monthNames[(rpgMonth || 1) - 1]}, Year {rpgYear}
       </div>
       <div style={{ fontSize: 12, marginBottom: 8, color: "#ffe084" }}>
         Days left in this week:{" "}

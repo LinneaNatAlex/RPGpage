@@ -2,7 +2,7 @@ import useUsers from "../../hooks/useUser";
 
 export default function HousePoints() {
   const { users } = useUsers();
-  // Samle poeng per hus/rase
+  // Collect points per house/race
   const houseTotals = {};
   users.forEach((u) => {
     const house = u.house || u.race || "Unknown";

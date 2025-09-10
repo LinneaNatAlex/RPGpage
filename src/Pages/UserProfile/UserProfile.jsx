@@ -191,7 +191,23 @@ const UserProfile = () => {
                 </span>
                 <strong>Birthday:</strong>{" "}
                 <span style={{ color: "#ffe084", fontWeight: 600 }}>
-                  Month {userData.birthdayMonth}, Day {userData.birthdayDay}
+                  {
+                    [
+                      "Januar",
+                      "Februar",
+                      "Mars",
+                      "April",
+                      "Mai",
+                      "Juni",
+                      "Juli",
+                      "August",
+                      "September",
+                      "Oktober",
+                      "November",
+                      "Desember",
+                    ][userData.birthdayMonth - 1]
+                  }
+                  , Day {userData.birthdayDay}
                 </span>
                 {user?.uid === userData.uid && !birthdaySaved && (
                   <button

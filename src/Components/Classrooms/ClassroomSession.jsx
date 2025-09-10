@@ -77,6 +77,7 @@ import {
 import { useAuth } from "../../context/authContext";
 import { classesList } from "../../data/classesList";
 import useUserRoles from "../../hooks/useUserRoles";
+import onlineUserStyles from "../OnlineUsers/OnlineUsers.module.css";
 import useUsers from "../../hooks/useUser";
 
 export default function ClassroomSession() {
@@ -295,8 +296,6 @@ export default function ClassroomSession() {
             <div style={{ color: "#888" }}>No messages yet.</div>
           )}
           {messages.map((m, i) => {
-            const isAdmin = m.roles?.includes("admin");
-            const isTeacher = m.roles?.includes("teacher");
             const canDelete =
               userRoles.includes("admin") ||
               userRoles.includes("teacher") ||
@@ -311,14 +310,18 @@ export default function ClassroomSession() {
                 }}
               >
                 <span
-                  style={{
-                    color: isAdmin
-                      ? "#ffb347"
-                      : isTeacher
-                      ? "#4fc3f7"
-                      : "#a084e8",
-                    fontWeight: isAdmin || isTeacher ? "bold" : "normal",
-                  }}
+                  className={[
+                    onlineUserStyles.userName,
+                    m.roles?.some((r) => r.toLowerCase() === "headmaster")
+                      ? onlineUserStyles.headmasterName
+                      : m.roles?.some((r) => r.toLowerCase() === "teacher")
+                      ? onlineUserStyles.teacherName
+                      : m.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+                      ? onlineUserStyles.shadowPatrolName
+                      : m.roles?.some((r) => r.toLowerCase() === "admin")
+                      ? onlineUserStyles.adminName
+                      : "",
+                  ].join(" ")}
                 >
                   {m.displayName}
                   {m.roles && m.roles.length > 0 && (

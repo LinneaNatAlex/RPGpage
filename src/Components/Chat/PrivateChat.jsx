@@ -166,7 +166,7 @@ const PrivateChat = () => {
       )
     : [];
 
-  // Oppdater localStorage når isCollapsed endres
+  // Update localStorage when isCollapsed changes
   useEffect(() => {
     localStorage.setItem("privateChatCollapsed", isCollapsed);
   }, [isCollapsed]);
@@ -342,7 +342,7 @@ const PrivateChat = () => {
         timestamp: serverTimestamp(),
       });
 
-      // Legg til hverandre i userChats for både avsender og mottaker
+      // Add each other in userChats for both sender and receiver
       const senderChatsRef = doc(db, "userChats", currentUser.uid);
       const receiverChatsRef = doc(db, "userChats", selectedUser.uid);
       const [senderSnap, receiverSnap] = await Promise.all([
@@ -354,7 +354,7 @@ const PrivateChat = () => {
       if (senderSnap.exists()) senderChats = senderSnap.data().chats || [];
       if (receiverSnap.exists())
         receiverChats = receiverSnap.data().chats || [];
-      // Oppdater hvis nødvendig
+      // Update if necessary
       if (!senderChats.includes(selectedUser.uid)) {
         await setDoc(
           senderChatsRef,

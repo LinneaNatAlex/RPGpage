@@ -198,7 +198,23 @@ const Profile = () => {
                 <strong>Birthday:</strong>{" "}
                 {userData.birthdayMonth && userData.birthdayDay ? (
                   <span style={{ color: "#ffe084", fontWeight: 600 }}>
-                    Month {userData.birthdayMonth}, Day {userData.birthdayDay}
+                    {
+                      [
+                        "Januar",
+                        "Februar",
+                        "Mars",
+                        "April",
+                        "Mai",
+                        "Juni",
+                        "Juli",
+                        "August",
+                        "September",
+                        "Oktober",
+                        "November",
+                        "Desember",
+                      ][userData.birthdayMonth - 1]
+                    }
+                    , Day {userData.birthdayDay}
                   </span>
                 ) : null}
                 {user?.uid === userData.uid &&

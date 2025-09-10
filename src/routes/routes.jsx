@@ -23,6 +23,16 @@ import Shop from "../Components/Shop/Shop.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 import Admin from "../Pages/Admin.jsx";
+import Teacher from "../Pages/Teacher.jsx";
+const TeacherRouteGuard = ({ children }) => {
+  const { user, loading } = useAuth();
+  const { roles, rolesLoading } = useUserRoles();
+  if (loading || rolesLoading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/sign-in" />;
+  if (!(roles.includes("teacher") || roles.includes("admin")))
+    return <Navigate to="/" />;
+  return children;
+};
 import useUserRoles from "../hooks/useUserRoles";
 import HousePointsPage from "../Pages/HousePoints.jsx";
 import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
@@ -136,6 +146,14 @@ export const router = createBrowserRouter(
           <AdminRouteGuard>
             <Admin />
           </AdminRouteGuard>
+        }
+      />
+      <Route
+        path="teacher"
+        element={
+          <TeacherRouteGuard>
+            <Teacher />
+          </TeacherRouteGuard>
         }
       />
       <Route

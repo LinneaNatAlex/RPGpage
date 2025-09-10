@@ -392,7 +392,7 @@ const TopBar = () => {
                     let healAmount = 0;
                     const isDeathPotion = item.name === "Death Draught";
                     if (item.name === "Chocolate Frog") healAmount = 15;
-                    if (item.name === "Healing Potion") healAmount = 1000; // Fyller health til max
+                    if (item.name === "Healing Potion") healAmount = 1000; // Fills health to max
                     return (
                       <li key={idx} className={styles.itemRow}>
                         <span className={styles.itemName}>{item.name}</span> x
@@ -427,7 +427,7 @@ const TopBar = () => {
                                 inventory: inv,
                                 lastHealthUpdate: Date.now(),
                               };
-                              // Finn originalnavn hvis forkledd
+                              // Find original name if disguised
                               const realName =
                                 item.originalName || item.realItem || item.name;
                               if (realName === "Death Draught") {
@@ -440,7 +440,7 @@ const TopBar = () => {
                                 update.invisibleUntil =
                                   Date.now() + 5 * 60 * 1000;
                               } else if (realName === "Love Potion") {
-                                // Love Potion effect: bruk giftedBy fra inventory hvis finnes, ellers fallback til notifikasjon
+                                // Love Potion effect: use giftedBy from inventory if available, otherwise fallback to notification
                                 let giver = item.giftedBy;
                                 if (!giver) {
                                   try {
@@ -540,7 +540,7 @@ const TopBar = () => {
                 ? user.displayName
                 : user.email || "Unknown";
             if (toIdx === -1) {
-              // Legg til disguised item, men behold id/effekt fra original
+              // Add disguised item, but keep id/effect from original
               toInv.push({
                 ...giftModal.item,
                 name: disguise?.name || giftModal.item.name,
