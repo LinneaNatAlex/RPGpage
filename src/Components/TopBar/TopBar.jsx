@@ -393,6 +393,10 @@ const TopBar = () => {
                     const isDeathPotion = item.name === "Death Draught";
                     if (item.name === "Chocolate Frog") healAmount = 15;
                     if (item.name === "Healing Potion") healAmount = 1000; // Fills health to max
+                    // If it's a food item and has a health property, use that
+                    if (item.type === "food" && typeof item.health === "number") {
+                      healAmount = item.health;
+                    }
                     return (
                       <li key={idx} className={styles.itemRow}>
                         <span className={styles.itemName}>{item.name}</span> x
