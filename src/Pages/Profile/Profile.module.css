@@ -16,7 +16,7 @@ body,
 }
 
 .profileWrapper {
-  background-color: #23232b;
+  background-color: var(--background-color);
   width: 100vw;
   min-height: 100vh;
   margin: 0;
@@ -30,8 +30,8 @@ body,
   align-items: center;
   height: auto;
   max-height: 100vh;
-  border: 2px solid #b0aac2;
-  background: #23232b;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -48,7 +48,7 @@ body,
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #b0aac2;
+  color: var(--text-muted);
   width: 100%;
 }
 
@@ -66,8 +66,8 @@ body,
   height: 300px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #7c5ebf;
-  box-shadow: 0 0 12px #b0aac2;
+  border: 4px solid var(--accent-strong);
+  box-shadow: var(--shadow-soft);
 }
 
 .adminAvatar {
@@ -96,9 +96,9 @@ body,
   flex-direction: row;
   align-items: center;
   height: auto;
-  border: 2px solid #7c5ebf;
-  background: #23232b;
-  color: #b0aac2;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-muted);
   gap: 5rem;
   width: 100%;
 }
@@ -124,7 +124,7 @@ body,
   margin-right: 32px;
   padding: 0 8px 0 0;
   border-radius: 16px;
-  box-shadow: 0 0 8px #7c5ebf22;
+  box-shadow: var(--shadow-soft);
 }
 
 /* Fjerner ekstra mellomrom under chat og friends på små skjermer */
