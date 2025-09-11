@@ -207,11 +207,11 @@
   display: flex;
   flex-direction: column;
   height: 105vh;
-  border: 1px solid var(--border-color);
-  border-radius: var(--main-border-radius);
-  background: var(--surface-alt-color);
-  color: var(--text-color);
-  box-shadow: var(--shadow-soft);
+  border: 2px solid #a084e8;
+  border-radius: 18px;
+  background: #181820;
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
 }
 
 .chatMessages {
@@ -221,8 +221,8 @@
   padding: 1rem;
   word-wrap: break-word;
   scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
-  color: var(--text-color);
+  scrollbar-color: #a084e8 transparent;
+  color: #fff;
   display: flex;
   flex-direction: column;
 }

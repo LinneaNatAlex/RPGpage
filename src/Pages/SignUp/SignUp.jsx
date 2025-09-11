@@ -163,6 +163,7 @@ const SignUp = () => {
         lastLogin: serverTimestamp(),
         online: true,
         currency: 1000, // Start with 1000 Nits
+        inventory: [], // Legg til inventory-feltet fra start
       });
       await auth.currentUser.reload();
       navigate("/verify-email");

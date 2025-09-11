@@ -1,38 +1,31 @@
-/* Global theme variables for a neutral, dark RPG look */
+/* VStand variables through out the page */
 :root {
-  /* Core palette */
-  --background-color: #1a1b21; /* page background */
-  --surface-color: #23232b;    /* cards/containers */
-  --surface-alt-color: #1f2130;/* subtle alt surface */
-  --border-color: #3e3857;     /* subtle violet/indigo border */
-  --text-color: #e2deee;       /* primary text (soft, not pure white) */
-  --text-muted: #b0aac2;       /* secondary text */
+  --primary-color: rgb(41, 38, 53);
+  --secondary-color: rgb(207, 170, 78);
+  --light-background-color: rgb(57, 48, 75);
+  --text-color: rgb(197, 170, 99);
+  --border-color: #c7a008;
+  --contrast-text-color: #1b1425;
+  --contrast-background-color: #fdf6e3;
+  --background-color: #1b1425;
 
-  /* Accents (kept from current identity) */
-  --accent: #a084e8;           /* purple accent */
-  --accent-strong: #7c5ebf;    /* stronger purple for borders */
-  --gold-accent: #cfaa4e;      /* warm neutral gold */
+  /* -----------------NAVBARCOLOR PALLET--------------------------- */
+  --navbar-background: rgb(41, 38, 53);
+  --navbar-text-color: rgb(197, 170, 99);
+  --navbar-rolldown-background: rgb(79, 75, 75);
+  /* -----------------BUTTON--------------------------- */
+  --button-background: rgb(207, 170, 78);
+  --button-text-color: rgb(255, 255, 255);
 
-  /* Navbar */
-  --navbar-background: #292635;
-  --navbar-text-color: var(--text-color);
-  --navbar-rolldown-background: #2b2a35;
-
-  /* Buttons */
-  --button-background: var(--accent);
-  --button-text-color: #23232b;
-  --button-background-hover: #c7b3f7;
-
-  /* Sizing */
+  /* ------------------------MAINSIZING---------------------- */
   --border-size: 1px;
-  --main-padding: 12px;
+  --main-padding: 6px;
   --main-margin: 1rem;
-  --main-border-radius: 12px;
+  --main-border-radius: 10px;
+  /* -----------------NAVBAR SIZING */
   --navbar-height: 60px;
   --navbar-width: 100%;
-  --navbar-mobile-text-size: 0.8rem;
-
-  /* Shadows */
-  --shadow-soft: 0 2px 8px rgba(124, 94, 191, 0.15);
-  --shadow-strong: 0 4px 16px rgba(124, 94, 191, 0.25);
+  /* -------------------NAVBARMOBILE TEXTSIZING --------------------------- */
+  /* -----------------FONT SIZING --------------------------- */
+  --navbar-mobile-text-size: 0.5rem;
 }

@@ -32,8 +32,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  border: 1px solid var(--border-color);
-  background: var(--surface-alt-color);
+  border: 2px solid #a084e8;
+  background: #23232b;
   width: 100%;
   max-width: 600px;
   min-width: 320px;
@@ -221,8 +221,8 @@ body,
     box-sizing: border-box;
     background: var(--background-color);
     color: var(--text-color);
-    scrollbar-color: var(--accent) transparent;
-    color: var(--text-color);
+    border-radius: 0;
+  }
   .chatContainer {
     gap: 0.5rem;
     box-shadow: none;

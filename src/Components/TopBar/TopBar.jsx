@@ -311,10 +311,14 @@ const TopBar = () => {
             // Compute role-based class
             let roleClass = styles.profilePic;
             const lower = (roles || []).map((r) => String(r).toLowerCase());
-            if (lower.includes("headmaster")) roleClass += ` ${styles.headmasterPic}`;
-            else if (lower.includes("teacher")) roleClass += ` ${styles.teacherPic}`;
-            else if (lower.includes("shadowpatrol")) roleClass += ` ${styles.shadowPatrolPic}`;
-            else if (lower.includes("admin")) roleClass += ` ${styles.adminPic}`;
+            if (lower.includes("headmaster"))
+              roleClass += ` ${styles.headmasterPic}`;
+            else if (lower.includes("teacher"))
+              roleClass += ` ${styles.teacherPic}`;
+            else if (lower.includes("shadowpatrol"))
+              roleClass += ` ${styles.shadowPatrolPic}`;
+            else if (lower.includes("admin"))
+              roleClass += ` ${styles.adminPic}`;
             return (
               <img
                 src={src}
@@ -409,7 +413,10 @@ const TopBar = () => {
                     if (item.name === "Chocolate Frog") healAmount = 15;
                     if (item.name === "Healing Potion") healAmount = 1000; // Fills health to max
                     // If it's a food item and has a health property, use that
-                    if (item.type === "food" && typeof item.health === "number") {
+                    if (
+                      item.type === "food" &&
+                      typeof item.health === "number"
+                    ) {
                       healAmount = item.health;
                     }
                     return (
@@ -494,7 +501,7 @@ const TopBar = () => {
                                 }
                                 if (!giver) giver = "Unknown";
                                 update.inLoveUntil =
-                                  Date.now() + 12 * 60 * 60 * 1000; // 12 timer (halv dag)
+                                  Date.now() + 60 * 60 * 1000; // 1 time
                                 update.inLoveWith = giver;
                               } else {
                                 let newHealth =
@@ -559,8 +566,8 @@ const TopBar = () => {
                 ? user.displayName
                 : user.email || "Unknown";
             if (toIdx === -1) {
-              // Add disguised item, but keep id/effect from original
-              toInv.push({
+              // Add disguised item, men fjern undefined-felter
+              const rawItem = {
                 ...giftModal.item,
                 name: disguise?.name || giftModal.item.name,
                 description:
@@ -577,14 +584,31 @@ const TopBar = () => {
                   disguise && disguise.name !== giftModal.item.name
                     ? giftModal.item.name
                     : undefined,
-              });
+              };
+              const cleanItem = Object.fromEntries(
+                Object.entries(rawItem).filter(([, v]) => v !== undefined)
+              );
+              toInv.push(cleanItem);
             } else {
               toInv[toIdx].qty = (toInv[toIdx].qty || 1) + 1;
-              // Oppdater giftedBy på eksisterende item ALLTID
               toInv[toIdx].giftedBy = giftedBy;
+              // Fjern undefined-felter fra eksisterende item
+              Object.keys(toInv[toIdx]).forEach((key) => {
+                if (toInv[toIdx][key] === undefined) delete toInv[toIdx][key];
+              });
             }
+            // Bygg nytt dokument med nøyaktig samme key-rekkefølge som i mottakerens dokument
+            const oldDoc = toDoc.data();
+            const updatedDoc = {};
+            Object.keys(oldDoc).forEach((key) => {
+              if (key === "inventory") {
+                updatedDoc.inventory = toInv;
+              } else {
+                updatedDoc[key] = oldDoc[key];
+              }
+            });
             try {
-              await updateDoc(toRef, { inventory: toInv });
+              await updateDoc(toRef, updatedDoc);
             } catch (e) {
               // window.alert fjernet etter feilsøking
             }
