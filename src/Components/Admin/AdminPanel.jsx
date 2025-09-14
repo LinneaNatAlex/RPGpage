@@ -5,6 +5,7 @@ import { db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import firebase from "firebase/compat/app";
+import AgeVerificationAdmin from "../Forum/AgeVerificationAdmin";
 
 export default function AdminPanel() {
   const { users } = useUsers();
@@ -154,6 +155,11 @@ export default function AdminPanel() {
           )}
         </div>
       )}
+
+      {/* 18+ Forum Access Section */}
+      <div style={{ marginTop: 32 }}>
+        <AgeVerificationAdmin />
+      </div>
     </div>
   );
 }

@@ -24,6 +24,7 @@ import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 import Admin from "../Pages/Admin.jsx";
 import Teacher from "../Pages/Teacher.jsx";
+import AgeRestrictedForum from "../Components/Forum/AgeRestrictedForum";
 const TeacherRouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
   const { roles, rolesLoading } = useUserRoles();
@@ -104,6 +105,16 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <Forum />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="forum/16plus"
+        element={
+          <RouteGuard>
+            <AgeRestrictedForum>
+              <Forum />
+            </AgeRestrictedForum>
           </RouteGuard>
         }
       />

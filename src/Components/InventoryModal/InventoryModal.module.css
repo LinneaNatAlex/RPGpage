@@ -1,0 +1,99 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 24, 48, 0.85);
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modalContent {
+  background: linear-gradient(135deg, #23232b 80%, #a084e8 100%);
+  color: #e7e3fa;
+  border-radius: 22px;
+  padding: 0;
+  max-width: 480px;
+  width: 92vw;
+  box-shadow: 0 8px 40px 0 rgba(124, 94, 191, 0.25), 0 1.5px 0 #a084e8 inset;
+  border: 2.5px solid #a084e8;
+  position: relative;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  overflow: hidden;
+}
+.inventoryList {
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+  padding: 2.2rem 2.5rem 1.2rem 2.5rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  max-height: 60vh;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.inventoryItem {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: rgba(160, 132, 232, 0.08);
+  border-radius: 8px;
+  padding: 0.6rem 1.1rem;
+  font-size: 1.13rem;
+  font-family: "Cinzel", serif;
+  color: #ffe084;
+  box-shadow: 0 1.5px 0 #a084e8 inset;
+  transition: background 0.18s, color 0.18s;
+}
+.inventoryItem:hover {
+  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
+  color: #23232b;
+}
+.emptyText {
+  color: #b0aac2;
+  font-style: italic;
+  padding: 2.2rem 2.5rem 1.2rem 2.5rem;
+  font-size: 1.1rem;
+}
+.closeBtn {
+  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
+  color: #23232b;
+  font-weight: bold;
+  font-family: "Cinzel", serif;
+  letter-spacing: 1px;
+  padding: 0.7rem 2.1rem;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.13);
+  font-size: 1.13rem;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  margin: 0 auto 2.1rem auto;
+  display: block;
+  position: sticky;
+  bottom: 0;
+  letter-spacing: 2px;
+}
+.closeBtn:hover {
+  background: linear-gradient(90deg, #f7c873 0%, #a084e8 100%);
+  color: #23232b;
+  box-shadow: 0 4px 16px #a084e8;
+}
+.modalContent h2 {
+  font-family: "Cinzel", serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #ffe084;
+  margin: 0;
+  padding: 1.5rem 2.5rem 0.5rem 2.5rem;
+  background: none;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #a084e8;
+}

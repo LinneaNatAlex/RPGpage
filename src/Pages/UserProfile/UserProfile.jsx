@@ -1,5 +1,6 @@
 // import the necessary libraries and components
 import { useState, useEffect } from "react";
+import InventoryModal from "../../Components/InventoryModal/InventoryModal";
 import { isBirthdayToday } from "../../utils/rpgCalendar";
 import parseBBCode from "../../Components/ProfileTextEditor/parseBBCode.js";
 import useUsers from "../../hooks/useUser";
@@ -19,6 +20,8 @@ import { useAuth } from "../../context/authContext";
 
 // state variables and hooks to manage user profile data
 const UserProfile = () => {
+  // Modal state for inventory (må stå øverst pga hooks)
+  const [inventoryOpen, setInventoryOpen] = useState(false);
   const { user } = useAuth();
   const { uid } = useParams();
   const [userData, setUserData] = useState(null);
@@ -355,21 +358,31 @@ const UserProfile = () => {
             </p>
             <p>
               <strong>Inventory:</strong>
-              {Array.isArray(userData.inventory) &&
-              userData.inventory.length > 0 ? (
-                <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-                  {userData.inventory.map((item, idx) => (
-                    <li key={idx}>
-                      {item.name} x{item.qty || 1}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <span style={{ color: "#b0aac2", fontStyle: "italic" }}>
-                  Empty
-                </span>
-              )}
+              <img
+                src="/icons/chest.svg"
+                alt="Open inventory"
+                title="Open inventory"
+                style={{
+                  width: 28,
+                  height: 28,
+                  cursor: "pointer",
+                  verticalAlign: "middle",
+                }}
+                onClick={() => setInventoryOpen(true)}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    setInventoryOpen(true);
+                }}
+                role="button"
+                aria-label="Open inventory"
+              />
             </p>
+            <InventoryModal
+              open={inventoryOpen}
+              onClose={() => setInventoryOpen(false)}
+              inventory={userData.inventory}
+            />
           </div>
 
           <div className={styles.charactinfo}>

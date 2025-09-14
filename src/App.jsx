@@ -7,6 +7,7 @@ import Navbar from "./Navbar/Navbar";
 import PrivateChat from "./Components/Chat/PrivateChat";
 import Chat from "./Components/Chat/Chat";
 import TopBar from "./Components/TopBar/TopBar";
+import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
 
 function App() {
   const { user, loading } = useAuth();
@@ -20,6 +21,8 @@ function App() {
         {/* Shows only nav to users logged in */}
         <header className={styles.header}>{user && <Navbar />}</header>
         {user && <TopBar />}
+        {/* Global admin popup for age verification requests */}
+        {user && <AdminGlobalAgeVerificationModal />}
         <main className={styles.main}>
           <Outlet />
         </main>
