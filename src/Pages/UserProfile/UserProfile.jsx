@@ -344,7 +344,11 @@ const UserProfile = () => {
               </form>
             )}
             <p>
-              <strong>Magical Race:</strong> {userData.race}
+              <strong>Magical Race:</strong>{" "}
+              {userData.race &&
+              ["Witch", "witch", "witches", "Witches"].includes(userData.race)
+                ? "Wizard"
+                : userData.race}
             </p>
             <p>
               <strong>Balance:</strong> {userData.currency ?? 1000} Nits

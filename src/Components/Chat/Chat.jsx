@@ -198,7 +198,17 @@ const Chat = () => {
                         )}
                       </span>
                     )}
-                    <strong className={roleClass}>{message.sender}</strong>
+                    <strong className={roleClass}>
+                      {message.sender
+                        ? (() => {
+                            const parts = message.sender.trim().split(" ");
+                            if (parts.length === 1) return parts[0];
+                            if (parts.length > 1)
+                              return parts[0] + " " + parts[parts.length - 1];
+                            return "";
+                          })()
+                        : ""}
+                    </strong>
                   </span>
                   <span className={styles.messageText}>: {message.text}</span>
                 </div>

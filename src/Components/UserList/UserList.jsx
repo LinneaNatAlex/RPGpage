@@ -74,7 +74,12 @@ const UserList = ({ userQuery }) => {
                   return <span className={nameClass}>{user.displayName}</span>;
                 })()}
               </td>
-              <td>{user.race}</td>
+              <td>
+                {user.race &&
+                ["Witch", "witch", "witches", "Witches"].includes(user.race)
+                  ? "Wizard"
+                  : user.race}
+              </td>
               <td>{user.class}</td>
               <td
                 style={{
@@ -111,22 +116,32 @@ const UserList = ({ userQuery }) => {
           Total points per race
         </h3>
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {sortedRacePoints.map(([race, points], i) => (
-            <li
-              key={race}
-              style={{
-                marginBottom: 8,
-                fontWeight: i === 0 ? "bold" : "normal",
-                color: i === 0 ? "#ffd700" : "#fff",
-                fontSize: i === 0 ? 20 : 16,
-                background: i === 0 ? "#2e2e4d" : "transparent",
-                borderRadius: 6,
-                padding: i === 0 ? "8px 0" : 0,
-              }}
-            >
-              <b>{race}:</b> {points} points
-            </li>
-          ))}
+          {sortedRacePoints.map(([race, points], i) => {
+            const displayRace = [
+              "Witch",
+              "witch",
+              "witches",
+              "Witches",
+            ].includes(race)
+              ? "Wizard"
+              : race;
+            return (
+              <li
+                key={race}
+                style={{
+                  marginBottom: 8,
+                  fontWeight: i === 0 ? "bold" : "normal",
+                  color: i === 0 ? "#ffd700" : "#fff",
+                  fontSize: i === 0 ? 20 : 16,
+                  background: i === 0 ? "#2e2e4d" : "transparent",
+                  borderRadius: 6,
+                  padding: i === 0 ? "8px 0" : 0,
+                }}
+              >
+                <b>{displayRace}:</b> {points} points
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
