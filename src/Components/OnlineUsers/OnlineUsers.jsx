@@ -3,7 +3,7 @@ import useOnlineUsers from "../../hooks/useOnlineUsers";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import GearIcon from "../Icons/Gear.svg";
 
 const OnlineUsers = () => {
@@ -12,6 +12,7 @@ const OnlineUsers = () => {
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeoutMinutes, setTimeoutMinutes] = useState(10);
+  const [suspendReason, setSuspendReason] = useState("");
 
   // Set online status only when this component is mounted (folder open)
   useEffect(() => {
@@ -66,13 +67,23 @@ const OnlineUsers = () => {
     e.preventDefault();
     if (!selectedUser) return;
     const until = Date.now() + timeoutMinutes * 60 * 1000;
-    await updateDoc(doc(db, "users", selectedUser.id), {
-      timeoutUntil: until,
-      timeoutSetBy: user.displayName || user.email,
-      timeoutSetAt: serverTimestamp(),
+    // Get current suspension count
+    const ref = doc(db, "users", selectedUser.id);
+    let suspCount = 0;
+    try {
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        suspCount = snap.data().suspensionCount || 0;
+      }
+    } catch {}
+    await updateDoc(ref, {
+      pausedUntil: until,
+      suspendReason: suspendReason || null,
+      suspensionCount: suspCount + 1,
     });
     setShowTimeoutModal(false);
     setSelectedUser(null);
+    setSuspendReason("");
   };
 
   if (!users.length) return null;
@@ -170,9 +181,19 @@ const OnlineUsers = () => {
                   required
                 />
               </label>
+              <label style={{ display: "block", marginTop: 12 }}>
+                Reason (optional):
+                <input
+                  type="text"
+                  value={suspendReason}
+                  onChange={(e) => setSuspendReason(e.target.value)}
+                  style={{ marginLeft: 8, width: 180 }}
+                  placeholder="Reason for suspension"
+                />
+              </label>
               <div style={{ marginTop: 16 }}>
                 <button type="submit" className={style.timeoutBtn}>
-                  Set timeout
+                  Suspend
                 </button>
                 <button
                   type="button"
