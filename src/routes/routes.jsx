@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import App from "../App.jsx";
+import ForumRules from "../Pages/ForumRules.jsx";
 import Profile from "../Pages/Profile/Profile.jsx";
 import SignIn from "../Pages/SignIn/SignIn.jsx";
 import SignUp from "../Pages/SignUp/SignUp.jsx";
@@ -118,6 +119,7 @@ export const router = createBrowserRouter(
           </RouteGuard>
         }
       />
+      <Route path="forumrules" element={<ForumRules />} />
       <Route
         path="Rpg/GreatHall"
         element={

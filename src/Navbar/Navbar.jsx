@@ -92,9 +92,10 @@ const Navbar = () => {
                 <NavLink to="/forum/greenhouse">The Greenhouse</NavLink>
                 <NavLink to="/forum/artstudio">The Art Studio</NavLink>
                 <NavLink to="/forum/kitchen">Kitchen</NavLink>
-                <NavLink to="/forum/16plus">16+ Forum</NavLink>
+                <NavLink to="/forum/16plus">18+ Forum</NavLink>
               </div>
             </div>
+            <NavLink to="/forumrules">Forum Rules</NavLink>
             <div className={styles.dropdown}>
               <NavLink to="/ClassRooms">Classrooms</NavLink>
               {/* Removed Alchemy & Potions from dropdown */}

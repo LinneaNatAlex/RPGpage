@@ -20,9 +20,15 @@
 .navbar a {
   text-decoration: none;
   color: #b0aac2;
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 600;
   transition: color 0.3s ease;
+}
+
+/* Make the main site title larger and bolder */
+.menuItems > a:first-child {
+  font-size: 1.35rem;
+  font-weight: bold;
 }
 
 .navbar a:hover {

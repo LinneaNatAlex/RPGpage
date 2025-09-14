@@ -18,15 +18,17 @@ function App() {
   return (
     <>
       <div className={styles.rootContainer}>
-        {/* Shows only nav to users logged in */}
-        <header className={styles.header}>{user && <Navbar />}</header>
+        {/* Navbar and TopBar always visible */}
+        <header className={styles.header}>
+          <Navbar />
+        </header>
         {user && <TopBar />}
-        {/* Global admin popup for age verification requests */}
+        {/* Global admin popup for age verification requests (only for logged-in users) */}
         {user && <AdminGlobalAgeVerificationModal />}
         <main className={styles.main}>
           <Outlet />
         </main>
-        {/* Main chat and PrivateChat are now global for all logged-in users */}
+        {/* Main chat and PrivateChat only for logged-in users */}
         {user && <Chat />}
         {user && <PrivateChat />}
       </div>

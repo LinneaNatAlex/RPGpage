@@ -64,9 +64,11 @@ const MainPage = () => {
         </div>
         <div className={styles.newsFeedContainer}>{user && <NewsFeed />}</div>
         {/* Right sidebar for RPG calendar, only show on desktop */}
-        <div className={styles.rpgCalendarSidebarContainer}>
-          <RPGCalendarSidebar />
-        </div>
+        {user && (
+          <div className={styles.rpgCalendarSidebarContainer}>
+            <RPGCalendarSidebar />
+          </div>
+        )}
       </main>
     </section>
   );

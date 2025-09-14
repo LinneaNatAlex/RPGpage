@@ -75,8 +75,10 @@ const Forum = () => {
   // New topic state
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
+  const [newTopicWordCount, setNewTopicWordCount] = useState(0);
   // New post state (reply)
   const [replyContent, setReplyContent] = useState("");
+  const [replyWordCount, setReplyWordCount] = useState(0);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const navigate = useNavigate();
@@ -296,14 +298,34 @@ const Forum = () => {
             />
             <ReactQuill
               value={newTopicContent}
-              onChange={setNewTopicContent}
+              onChange={(val) => {
+                setNewTopicContent(val);
+                // Strip HTML tags and count words
+                const text = val
+                  .replace(/<[^>]+>/g, " ")
+                  .replace(/&nbsp;/g, " ");
+                const words = text.trim().split(/\s+/).filter(Boolean);
+                setNewTopicWordCount(words.length);
+              }}
               className={styles.newTopicEditor}
             />
+            <div
+              style={{
+                color: newTopicWordCount < 300 ? "#ff6b6b" : "#ffd86b",
+                margin: "8px 0 12px 0",
+                fontWeight: 600,
+              }}
+            >
+              {`Ord: ${newTopicWordCount} / 300`}
+              {newTopicWordCount < 300 && " (minimum 300 ord for å poste)"}
+            </div>
             <Button
               onClick={handleCreateTopic}
               className={`${styles.postButton} ${styles.newTopicButton}`}
               disabled={
-                !newTopicTitle.trim() || isContentEmpty(newTopicContent)
+                !newTopicTitle.trim() ||
+                isContentEmpty(newTopicContent) ||
+                newTopicWordCount < 300
               }
             >
               Create topic
@@ -512,13 +534,31 @@ const Forum = () => {
           <div className={styles.replyBox}>
             <ReactQuill
               value={replyContent}
-              onChange={setReplyContent}
+              onChange={(val) => {
+                setReplyContent(val);
+                // Strip HTML tags and count words
+                const text = val
+                  .replace(/<[^>]+>/g, " ")
+                  .replace(/&nbsp;/g, " ");
+                const words = text.trim().split(/\s+/).filter(Boolean);
+                setReplyWordCount(words.length);
+              }}
               className={styles.quill}
             />
+            <div
+              style={{
+                color: replyWordCount < 300 ? "#ff6b6b" : "#ffd86b",
+                margin: "8px 0 12px 0",
+                fontWeight: 600,
+              }}
+            >
+              {`Ord: ${replyWordCount} / 300`}
+              {replyWordCount < 300 && " (minimum 300 ord for å poste)"}
+            </div>
             <Button
               onClick={handleReply}
               className={styles.postButton}
-              disabled={isContentEmpty(replyContent)}
+              disabled={isContentEmpty(replyContent) || replyWordCount < 300}
             >
               Reply
             </Button>
