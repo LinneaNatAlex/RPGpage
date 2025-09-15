@@ -12,6 +12,7 @@ import {
 import useUsers from "../../hooks/useUser";
 import firebase from "firebase/compat/app";
 import AgeVerificationAdmin from "../Forum/AgeVerificationAdmin";
+import ShopProductAdmin from "./ShopProductAdmin";
 
 export default function AdminPanel() {
   const { users } = useUsers();
@@ -175,6 +176,7 @@ export default function AdminPanel() {
       }}
     >
       <h2>Admin Panel</h2>
+      {(roles.includes("admin") || roles.includes("teacher")) && <ShopProductAdmin />}
       <button
         onClick={() => setShowBanned((v) => !v)}
         style={{ marginBottom: 8 }}

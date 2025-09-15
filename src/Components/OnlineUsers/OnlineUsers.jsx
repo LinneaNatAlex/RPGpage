@@ -1,6 +1,6 @@
 import style from "./OnlineUsers.module.css";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
@@ -13,43 +13,26 @@ const OnlineUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeoutMinutes, setTimeoutMinutes] = useState(10);
   const [suspendReason, setSuspendReason] = useState("");
+  const intervalRef = useRef();
 
-  // Set online status only when this component is mounted (folder open)
+  // Robust online-status: Oppdater lastActive hvert 20. sekund
   useEffect(() => {
     if (!user || !user.uid) return;
     let isOnline = true;
-    const setOnline = async () => {
+    const setActive = async () => {
       try {
-        await updateDoc(doc(db, "users", user.uid), { online: true });
+        await updateDoc(doc(db, "users", user.uid), { lastActive: Date.now() });
       } catch {}
     };
-    const setOffline = async () => {
-      if (!isOnline) return;
-      isOnline = false;
-      try {
-        await updateDoc(doc(db, "users", user.uid), { online: false });
-      } catch {}
-    };
-    setOnline();
-    // Set offline on tab close, browser close, or navigation away
-    const handleUnload = (e) => {
-      setOffline();
-    };
-    const handleVisibility = () => {
-      if (document.visibilityState === "hidden") {
-        setOffline();
-      } else if (document.visibilityState === "visible") {
-        setOnline();
-      }
-    };
+    setActive();
+    intervalRef.current = setInterval(setActive, 20000);
+    // Sett lastActive én siste gang ved tab close
+    const handleUnload = () => setActive();
     window.addEventListener("beforeunload", handleUnload);
-    document.addEventListener("visibilitychange", handleVisibility);
     return () => {
-      setOffline();
+      clearInterval(intervalRef.current);
       window.removeEventListener("beforeunload", handleUnload);
-      document.removeEventListener("visibilitychange", handleVisibility);
     };
-    // eslint-disable-next-line
   }, [user]);
 
   // Sjekk om innlogget bruker har admin eller teacher rolle
@@ -89,11 +72,17 @@ const OnlineUsers = () => {
   if (!users.length) return null;
   // this is where users 'online' are displayed
 
+  // Vis kun brukere som har vært aktive siste 2 minutter
+  const now = Date.now();
+  const filteredUsers = users.filter(
+    (u) => u.lastActive && now - u.lastActive < 10 * 60 * 1000
+  );
+
   return (
     <div className={style.onlineUsersContainer}>
       <h2>Online</h2>
       <ul className={style.onlineUsersList}>
-        {users.map((u) => {
+        {filteredUsers.map((u) => {
           let roleClass = style.userAvatar;
           let nameClass = style.userName;
           if (u.roles?.some((r) => r.toLowerCase() === "headmaster")) {
@@ -111,23 +100,44 @@ const OnlineUsers = () => {
           }
           // Love Potion effect: pink glow and text if inLoveUntil in future
           const inLove = u.inLoveUntil && u.inLoveUntil > Date.now();
+          // Ny bruker: opprettet siste 24 timer
+          const isNewUser =
+            u.createdAt &&
+            (Date.now() - u.createdAt.toMillis
+              ? u.createdAt.toMillis()
+              : u.createdAt) <
+              24 * 60 * 60 * 1000;
           return (
             <li key={u.id} className={style.onlineUserItem}>
               <img
                 src={u.profileImageUrl || "/icons/avatar.svg"}
                 alt="User Avatar"
                 className={roleClass}
-                style={
-                  inLove
-                    ? {
-                        boxShadow:
-                          "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
-                        borderRadius: "50%",
-                      }
-                    : {}
-                }
+                style={{
+                  boxShadow: inLove ? "0 0 12px 2px #ffb6e6" : undefined,
+                  border: isNewUser ? "2px solid #4da3ff" : undefined,
+                }}
               />
-              <span className={nameClass}>{u.displayName}</span>
+              <span className={nameClass}>
+                {u.displayName}
+                {isNewUser && (
+                  <span
+                    style={{
+                      background: "#4da3ff",
+                      color: "#fff",
+                      borderRadius: 6,
+                      fontSize: "0.8em",
+                      fontWeight: 700,
+                      marginLeft: 6,
+                      padding: "2px 7px",
+                      boxShadow: "0 0 8px #4da3ff",
+                      verticalAlign: "middle",
+                    }}
+                  >
+                    NY!
+                  </span>
+                )}
+              </span>
               {inLove && u.inLoveWith && (
                 <span
                   style={{

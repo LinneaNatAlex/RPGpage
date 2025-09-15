@@ -412,7 +412,7 @@ const TopBar = () => {
                     const isDeathPotion = item.name === "Death Draught";
                     if (item.name === "Chocolate Frog") healAmount = 15;
                     if (item.name === "Healing Potion") healAmount = 1000; // Fills health to max
-                    // If it's a food item and has a health property, use that
+                    // Firestore-mat: bruk health-feltet hvis satt
                     if (
                       item.type === "food" &&
                       typeof item.health === "number"
@@ -423,6 +423,12 @@ const TopBar = () => {
                       <li key={idx} className={styles.itemRow}>
                         <span className={styles.itemName}>{item.name}</span> x
                         {item.qty || 1}
+                        {typeof item.health === "number" &&
+                          item.type === "food" && (
+                            <span style={{ color: "#6f6", marginLeft: 6 }}>
+                              (+{item.health} HP)
+                            </span>
+                          )}
                         {/* Gift button */}
                         <button
                           className={styles.giftBtn}
@@ -431,6 +437,27 @@ const TopBar = () => {
                           style={{ marginLeft: 8 }}
                         >
                           🎁
+                        </button>
+                        {/* Delete button */}
+                        <button
+                          className={styles.eatBtn}
+                          style={{ marginLeft: 4, background: "#c44" }}
+                          title="Delete this item"
+                          onClick={async () => {
+                            if (!user) return;
+                            const userRef = doc(db, "users", user.uid);
+                            const userDoc = await getDoc(userRef);
+                            if (!userDoc.exists()) return;
+                            let inv = userDoc.data().inventory || [];
+                            const invIdx = inv.findIndex(
+                              (i) => i.name === item.name
+                            );
+                            if (invIdx === -1) return;
+                            inv.splice(invIdx, 1);
+                            await updateDoc(userRef, { inventory: inv });
+                          }}
+                        >
+                          Delete
                         </button>
                         {isEdible && !infirmary && (
                           <button

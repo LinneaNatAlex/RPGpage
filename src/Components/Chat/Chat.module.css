@@ -1,3 +1,21 @@
+.mentionHighlight {
+  background: #a084e8;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 0 4px;
+  font-weight: bold;
+  box-shadow: 0 0 8px #a084e8;
+}
+
+.mentionAll {
+  background: #ff5e5e;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 0 4px;
+  font-weight: bold;
+  box-shadow: 0 0 8px #ff5e5e;
+  letter-spacing: 1px;
+}
 @import "../../assets/Variables/Variables.css";
 
 .privateMessageMenu {
@@ -207,12 +225,15 @@
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 105vh;
+  height: 500px;
+  min-height: 200px;
+  max-height: 80vh;
   border: 2px solid #a084e8;
   border-radius: 18px;
   background: #181820;
   color: #fff;
   box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
+  overflow: hidden;
 }
 
 .chatMessages {
@@ -227,6 +248,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .messageSender {
   font-weight: bold;
   color: #a084e8;
@@ -253,10 +275,13 @@
 
 .chatForm {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.5rem;
   padding: 1rem;
   border-radius: 0 0 0 20px;
+  background: #181820;
+  position: relative;
+  z-index: 2;
 }
 
 .chatInput {
@@ -265,6 +290,23 @@
   background: #23232b;
   color: #fff;
   width: 100%;
+  min-width: 0;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+}
+
+.emojiBtn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #a084e8;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chatBtn {
@@ -274,20 +316,19 @@
   border-radius: 10px;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  font-size: 1rem;
+  margin-left: 0.2rem;
+  white-space: nowrap;
 }
 
-.chatBtn:hover {
-  background: #fff;
-  color: #a084e8;
-}
-/* ------------RESPONSIVE---------------------- */
 @media screen and (max-width: 768px) {
   .chatContainer {
-    height: 100vh;
-    width: 100%;
+    height: 60vh;
+    width: 100vw;
     border-radius: 0;
     border: none;
     overflow-y: auto;
+    max-height: 80vh;
   }
   .chatMessages {
     padding: 0.5rem;
@@ -295,8 +336,11 @@
   }
   .chatForm {
     padding: 0.5rem;
+    gap: 0.3rem;
   }
-  .chatBtn .chatInput {
-    width: calc(100% - 2rem);
+  .chatBtn,
+  .emojiBtn {
+    font-size: 1rem;
+    padding: 0.4rem 0.7rem;
   }
 }

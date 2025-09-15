@@ -3,6 +3,7 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
+import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./Chat.module.css";
 import {
@@ -18,7 +19,11 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
+  const onlineUsers = useOnlineUsers();
   const [newMess, setNewMess] = useState("");
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [showMentions, setShowMentions] = useState(false);
+  const inputRef = useRef();
   const [error, setError] = useState(null);
   const [showEmoji, setShowEmoji] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
@@ -74,6 +79,38 @@ const Chat = () => {
     } catch (err) {
       setError("Could not send message.");
     }
+  };
+
+  // Filtrer kun online brukere for @mention autocomplete
+  const mentionableUsers = onlineUsers.filter(
+    (u) =>
+      u.displayName &&
+      (!mentionQuery ||
+        u.displayName.toLowerCase().startsWith(mentionQuery.toLowerCase()))
+  );
+
+  // Håndter input for @mention
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setNewMess(value);
+    // Finn siste @ og tekst etter
+    const match = value.match(/@([\wæøåÆØÅ\- ]*)$/);
+    if (match) {
+      setMentionQuery(match[1]);
+      setShowMentions(true);
+    } else {
+      setShowMentions(false);
+      setMentionQuery("");
+    }
+  };
+
+  // Sett inn valgt brukernavn
+  const handleSelectMention = (displayName) => {
+    const before = newMess.replace(/@([\wæøåÆØÅ\- ]*)$/, "@");
+    setNewMess(before + displayName + " ");
+    setShowMentions(false);
+    setMentionQuery("");
+    inputRef.current?.focus();
   };
 
   return (
@@ -210,57 +247,98 @@ const Chat = () => {
                         : ""}
                     </strong>
                   </span>
-                  <span className={styles.messageText}>: {message.text}</span>
+                  {/* Uthev @mentions og @all i meldingen */}
+                  <span
+                    className={
+                      styles.messageText +
+                      (message.text
+                        ?.toLowerCase()
+                        .includes(
+                          `@${auth.currentUser?.displayName?.toLowerCase()}`
+                        )
+                        ? " " + styles.mentionHighlight
+                        : "") +
+                      (message.text?.toLowerCase().includes("@all")
+                        ? " " + styles.mentionAll
+                        : "")
+                    }
+                  >
+                    :{" "}
+                    {message.text?.split(/(\s+)/).map((part, i) => {
+                      if (
+                        part.toLowerCase() ===
+                        `@${auth.currentUser?.displayName?.toLowerCase()}`
+                      ) {
+                        return (
+                          <span key={i} className={styles.mentionHighlight}>
+                            {part}
+                          </span>
+                        );
+                      }
+                      if (part.toLowerCase() === "@all") {
+                        return (
+                          <span key={i} className={styles.mentionAll}>
+                            {part}
+                          </span>
+                        );
+                      }
+                      return part;
+                    })}
+                  </span>
                 </div>
               );
             })}
           </div>
           <form className={styles.chatForm} onSubmit={sendtMessage}>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <input
-                value={newMess}
-                onChange={(e) => setNewMess(e.target.value)}
-                type="text"
-                placeholder="your messages..."
-                maxLength={200}
-                className={`${styles.chatInput} ${styles.textArea}`}
-                style={{ flex: 1 }}
-              />
-              <button
-                type="button"
+              <div
                 style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: 22,
-                  cursor: "pointer",
-                  color: "#a084e8",
+                  position: "relative",
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
                 }}
-                onClick={() => setShowEmoji((v) => !v)}
-                aria-label="Add emoji"
               >
-                😊
-              </button>
-              {showEmoji && (
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 60,
-                    right: 0,
-                    zIndex: 9999,
-                  }}
+                <input
+                  ref={inputRef}
+                  value={newMess}
+                  onChange={handleInputChange}
+                  type="text"
+                  placeholder="YOUR MESSAGES..."
+                  maxLength={200}
+                  className={`${styles.chatInput} ${styles.textArea}`}
+                  style={{ width: "100%", minWidth: 0 }}
+                />
+                <button
+                  type="button"
+                  className={styles.emojiBtn}
+                  onClick={() => setShowEmoji((v) => !v)}
+                  aria-label="Add emoji"
                 >
-                  <Picker
-                    data={data}
-                    onEmojiSelect={(emoji) => {
-                      setNewMess(
-                        (prev) => prev + (emoji.native || emoji.colons || "")
-                      );
-                      setShowEmoji(false);
+                  😊
+                </button>
+                {showEmoji && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 60,
+                      right: 0,
+                      zIndex: 9999,
                     }}
-                    theme="dark"
-                  />
-                </div>
-              )}
+                  >
+                    <Picker
+                      data={data}
+                      onEmojiSelect={(emoji) => {
+                        setNewMess(
+                          (prev) => prev + (emoji.native || emoji.colons || "")
+                        );
+                        setShowEmoji(false);
+                      }}
+                      theme="dark"
+                    />
+                  </div>
+                )}
+              </div>
               <Button type="submit" className={styles.chatBtn}>
                 Send
               </Button>

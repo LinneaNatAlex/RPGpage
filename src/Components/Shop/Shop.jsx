@@ -1,20 +1,45 @@
 import { useState, useEffect } from "react";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import styles from "./Shop.module.css";
 import shopItems from "./itemsList";
 
-const items = shopItems;
+// itemsList.js varer + Firestore varer vises sammen
 
 const categories = ["Books", "Potions", "Ingredients", "Equipment", "Food"];
 
 const Shop = () => {
   const { user } = useAuth();
+  // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
+  const isAdmin =
+    user && (user.roles?.includes("admin") || user.roles?.includes("teacher"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("Books");
+  const [firestoreItems, setFirestoreItems] = useState([]);
+  // Hent varer fra Firestore
+  useEffect(() => {
+    const q = query(collection(db, "shopItems"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const arr = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        firestore: true,
+      }));
+      setFirestoreItems(arr);
+    });
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -55,10 +80,16 @@ const Shop = () => {
         }
       });
     } else {
-      const existingIdx = inventory.findIndex((i) => i.id === item.id);
+      // Finn eksisterende item i inventory basert på id eller navn
+      const existingIdx = inventory.findIndex(
+        (i) => i.id === item.id || i.name === item.name
+      );
       if (existingIdx > -1) {
         inventory[existingIdx].qty = (inventory[existingIdx].qty || 1) + 1;
+        // Oppdater alle relevante felter hvis de mangler (f.eks. type, health)
+        inventory[existingIdx] = { ...item, qty: inventory[existingIdx].qty };
       } else {
+        // Legg til ALLE felter fra item (også type, health, osv.)
         inventory.push({ ...item, qty: 1 });
       }
     }
@@ -86,13 +117,16 @@ const Shop = () => {
       </div>
       {message && <div className={styles.message}>{message}</div>}
       <ul className={styles.itemList}>
-        {items
+        {[...shopItems, ...firestoreItems]
           .filter((item) => item.category === activeCategory)
           .map((item) => (
-            <li key={item.id} className={styles.item}>
+            <li
+              key={item.id + (item.firestore ? "-fs" : "-static")}
+              className={styles.item}
+            >
               <div className={styles.itemInfo}>
                 <span className={styles.itemName}>{item.name}</span>
-                {item.ingredients && (
+                {item.ingredients && Array.isArray(item.ingredients) && (
                   <span className={styles.ingredients}>
                     [Includes: {item.ingredients.join(", ")}]
                   </span>
@@ -103,6 +137,11 @@ const Shop = () => {
                 {item.effect && (
                   <span className={styles.itemEffect}>
                     <strong>Effect:</strong> {item.effect}
+                  </span>
+                )}
+                {typeof item.health === "number" && item.health > 0 && (
+                  <span className={styles.itemEffect}>
+                    <strong>HP:</strong> +{item.health}
                   </span>
                 )}
               </div>
@@ -124,6 +163,31 @@ const Shop = () => {
                   {item.price} Nits
                 </span>
                 <button onClick={() => handleBuy(item)}>Buy</button>
+                {/* Slett-knapp for Firestore-varer, kun for admin/teacher */}
+                {item.firestore && isAdmin && (
+                  <button
+                    style={{
+                      marginTop: 6,
+                      background: "#c44",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 4,
+                      padding: "0.3rem 0.7rem",
+                      cursor: "pointer",
+                    }}
+                    onClick={async () => {
+                      if (!window.confirm(`Slette produktet "${item.name}"?`))
+                        return;
+                      await import("firebase/firestore").then(
+                        async ({ deleteDoc, doc }) => {
+                          await deleteDoc(doc(db, "shopItems", item.id));
+                        }
+                      );
+                    }}
+                  >
+                    Slett
+                  </button>
+                )}
               </div>
             </li>
           ))}
