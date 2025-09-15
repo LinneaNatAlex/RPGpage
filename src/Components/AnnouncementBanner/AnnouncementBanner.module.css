@@ -1,0 +1,35 @@
+.bannerWrapper {
+  width: 100vw;
+  background: #6b4f27;
+  color: #fffbe7;
+  padding: 0.5rem 0;
+  overflow: hidden;
+  border-bottom: 2px solid #b8a48a;
+  font-size: 1.1rem;
+}
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+.marquee span {
+  display: inline-block;
+  padding-left: 100vw;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+.deleteBtn {
+  display: none;
+  vertical-align: middle;
+}
+.marquee span:hover .deleteBtn {
+  display: inline-block;
+}
