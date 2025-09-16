@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import playMentionSound from "./playMentionSound";
+import { playPing } from "./ping_alt";
 
 const Chat = () => {
   const { messages } = useChatMessages();
@@ -72,13 +72,14 @@ const Chat = () => {
     if (!isCollapsed && messages.length > 0) {
       const lastMsg = messages[messages.length - 1];
       const myName = auth.currentUser?.displayName?.toLowerCase();
-      if (lastMsg.text) {
-        if (
-          lastMsg.text.toLowerCase().includes(`@${myName}`) ||
-          lastMsg.text.toLowerCase().includes("@all")
-        ) {
-          playMentionSound();
-        }
+      // Spill lyd kun hvis meldingen er fra en annen bruker
+      if (
+        lastMsg.text &&
+        lastMsg.sender?.toLowerCase() !== myName &&
+        (lastMsg.text.toLowerCase().includes(`@${myName}`) ||
+          lastMsg.text.toLowerCase().includes("@all"))
+      ) {
+        playPing();
       }
     }
   }, [messages, isCollapsed]);
