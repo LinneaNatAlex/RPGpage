@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import playMentionSound from "./playMentionSound";
 
 const Chat = () => {
   const { messages } = useChatMessages();
@@ -27,6 +28,7 @@ const Chat = () => {
   const [error, setError] = useState(null);
   const [showEmoji, setShowEmoji] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
+  const [mentionActiveIdx, setMentionActiveIdx] = useState(0);
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = localStorage.getItem("mainChatCollapsed");
@@ -65,6 +67,22 @@ const Chat = () => {
     }
   }, [messages, isCollapsed]);
 
+  // Spill lyd hvis du blir nevnt med @navn eller @all
+  useEffect(() => {
+    if (!isCollapsed && messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      const myName = auth.currentUser?.displayName?.toLowerCase();
+      if (lastMsg.text) {
+        if (
+          lastMsg.text.toLowerCase().includes(`@${myName}`) ||
+          lastMsg.text.toLowerCase().includes("@all")
+        ) {
+          playMentionSound();
+        }
+      }
+    }
+  }, [messages, isCollapsed]);
+
   // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {
     e.preventDefault();
@@ -98,6 +116,7 @@ const Chat = () => {
     if (match) {
       setMentionQuery(match[1]);
       setShowMentions(true);
+      setMentionActiveIdx(0);
     } else {
       setShowMentions(false);
       setMentionQuery("");
@@ -111,6 +130,23 @@ const Chat = () => {
     setShowMentions(false);
     setMentionQuery("");
     inputRef.current?.focus();
+  };
+
+  // Tastaturnavigering for dropdown
+  const handleMentionKeyDown = (e) => {
+    if (!showMentions || mentionableUsers.length === 0) return;
+    if (e.key === "ArrowDown") {
+      setMentionActiveIdx((idx) => (idx + 1) % mentionableUsers.length);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      setMentionActiveIdx(
+        (idx) => (idx - 1 + mentionableUsers.length) % mentionableUsers.length
+      );
+      e.preventDefault();
+    } else if (e.key === "Enter") {
+      handleSelectMention(mentionableUsers[mentionActiveIdx].displayName);
+      e.preventDefault();
+    }
   };
 
   return (
@@ -303,12 +339,31 @@ const Chat = () => {
                   ref={inputRef}
                   value={newMess}
                   onChange={handleInputChange}
+                  onKeyDown={handleMentionKeyDown}
                   type="text"
                   placeholder="YOUR MESSAGES..."
                   maxLength={200}
                   className={`${styles.chatInput} ${styles.textArea}`}
                   style={{ width: "100%", minWidth: 0 }}
                 />
+                {showMentions && mentionableUsers.length > 0 && (
+                  <ul className={styles.mentionDropdown}>
+                    {mentionableUsers.map((u, idx) => (
+                      <li
+                        key={u.displayName}
+                        className={
+                          styles.mentionDropdownItem +
+                          (idx === mentionActiveIdx
+                            ? " " + styles.mentionDropdownItemActive
+                            : "")
+                        }
+                        onMouseDown={() => handleSelectMention(u.displayName)}
+                      >
+                        @{u.displayName}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <button
                   type="button"
                   className={styles.emojiBtn}
