@@ -163,11 +163,11 @@ function App() {
         <header className={styles.header}>
           <Navbar />
         </header>
-        {/* TopBar for logged-in users */}
-        {user && <TopBar />}
         {/* Global admin popup for age verification requests (only for logged-in users) */}
         {user && <AdminGlobalAgeVerificationModal />}
         <main className={styles.main}>
+          {/* TopBar for logged-in users */}
+          {user && <TopBar />}
           <Outlet />
         </main>
         {/* Main chat and PrivateChat only for logged-in users */}
