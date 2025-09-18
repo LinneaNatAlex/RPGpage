@@ -352,7 +352,7 @@ const Forum = () => {
               justifyContent: "center"
             }}
           >
-            ×
+            ✕
           </button>
         </div>
       )}

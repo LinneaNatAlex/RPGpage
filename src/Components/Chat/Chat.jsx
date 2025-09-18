@@ -12,6 +12,7 @@ import {
   serverTimestamp,
   deleteDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
@@ -34,11 +35,119 @@ const Chat = () => {
     const stored = localStorage.getItem("mainChatCollapsed");
     return stored === null ? true : stored === "true";
   });
+  
+  // Potion effect states
+  const [hairColorUntil, setHairColorUntil] = useState(null);
+  const [rainbowUntil, setRainbowUntil] = useState(null);
+  const [glowUntil, setGlowUntil] = useState(null);
+  const [translationUntil, setTranslationUntil] = useState(null);
+  const [echoUntil, setEchoUntil] = useState(null);
+  const [whisperUntil, setWhisperUntil] = useState(null);
+  const [shoutUntil, setShoutUntil] = useState(null);
+  const [mysteryUntil, setMysteryUntil] = useState(null);
+  const [charmUntil, setCharmUntil] = useState(null);
+  const [inLoveUntil, setInLoveUntil] = useState(null);
+  const [rainbowColor, setRainbowColor] = useState('#ff6b6b');
+  
+  // Rainbow Potion effect - change color every 10 seconds
+  useEffect(() => {
+    if (!rainbowUntil || rainbowUntil <= Date.now()) return;
+    
+    const interval = setInterval(() => {
+      setRainbowColor(getRandomColor());
+    }, 10000); // Change every 10 seconds
+    
+    return () => clearInterval(interval);
+  }, [rainbowUntil]);
+  
   // Oppdater localStorage når isCollapsed endres
   useEffect(() => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
   }, [isCollapsed]);
+  
+  // Load user's potion effects
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    const unsub = onSnapshot(userRef, (userDoc) => {
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
+        setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
+        setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
+        setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
+        setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
+        setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
+        setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
+        setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
+        setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
+        setInLoveUntil(data.inLoveUntil && data.inLoveUntil > Date.now() ? data.inLoveUntil : null);
+      }
+    });
+    return () => unsub();
+  }, []);
   const chatBoxRef = useRef(null);
+
+  // Helper functions for potion effects
+  const getRandomColor = () => {
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const translateText = (text) => {
+    const translations = {
+      'hello': 'hola', 'hi': 'ciao', 'goodbye': 'adios', 'thanks': 'gracias',
+      'yes': 'si', 'no': 'nein', 'maybe': 'peut-être', 'love': 'amour',
+      'friend': 'ami', 'magic': 'magie', 'potion': 'poción', 'wizard': 'mago'
+    };
+    return text.split(' ').map(word => {
+      const lower = word.toLowerCase().replace(/[^\w]/g, '');
+      return translations[lower] || word;
+    }).join(' ');
+  };
+
+  const getMessageStyle = (message) => {
+    let style = {};
+    
+    // Check if message has potion effects stored
+    if (message.potionEffects) {
+      // Hair Color Potion
+      if (message.potionEffects.hairColor) {
+        style.color = message.potionEffects.hairColor;
+      }
+      
+      // Rainbow Potion
+      if (message.potionEffects.rainbow) {
+        style.color = message.potionEffects.rainbowColor;
+      }
+      
+      // Shout Potion
+      if (message.potionEffects.shout) {
+        style.textTransform = 'uppercase';
+        style.fontWeight = 'bold';
+      }
+    }
+    
+    return style;
+  };
+
+  const getDisplayName = (message) => {
+    // Check if message has potion effects stored
+    if (message.potionEffects && message.potionEffects.mystery) {
+      return '???';
+    }
+    
+    return message.sender;
+  };
+
+  const getDisplayText = (text, message) => {
+    // Check if message has potion effects stored
+    if (message.potionEffects && message.potionEffects.translation) {
+      return translateText(text);
+    }
+    
+    return text;
+  };
 
   // Sjekk om innlogget bruker har admin, teacher, headmaster eller shadow patrol-rolle
   const currentUserObj = users.find(
@@ -88,12 +197,69 @@ const Chat = () => {
   const sendtMessage = async (e) => {
     e.preventDefault();
     if (!newMess.trim()) return;
+    
+    // Whisper Potion - only allow private messages
+    if (whisperUntil && whisperUntil > Date.now()) {
+      if (!newMess.toLowerCase().includes('@')) {
+        setError("Whisper Potion active: You can only send private messages!");
+        return;
+      }
+    }
+    
     try {
-      await addDoc(collection(db, "messages"), {
-        text: newMess,
-        sender: auth.currentUser?.displayName || "",
-        timestamp: serverTimestamp(),
-      });
+      const messageText = newMess;
+      
+      // Prepare potion effects for this message
+      const potionEffects = {};
+      if (hairColorUntil && hairColorUntil > Date.now()) {
+        potionEffects.hairColor = getRandomColor();
+      }
+      if (rainbowUntil && rainbowUntil > Date.now()) {
+        potionEffects.rainbow = true;
+        potionEffects.rainbowColor = rainbowColor;
+      }
+      if (shoutUntil && shoutUntil > Date.now()) {
+        potionEffects.shout = true;
+      }
+      if (translationUntil && translationUntil > Date.now()) {
+        potionEffects.translation = true;
+      }
+      if (mysteryUntil && mysteryUntil > Date.now()) {
+        potionEffects.mystery = true;
+      }
+      if (glowUntil && glowUntil > Date.now()) {
+        potionEffects.glow = true;
+      }
+      if (charmUntil && charmUntil > Date.now()) {
+        potionEffects.charm = true;
+      }
+      if (inLoveUntil && inLoveUntil > Date.now()) {
+        potionEffects.love = true;
+      }
+      
+      // Echo Potion - send message twice
+      if (echoUntil && echoUntil > Date.now()) {
+        await addDoc(collection(db, "messages"), {
+          text: messageText,
+          sender: auth.currentUser?.displayName || "",
+          timestamp: serverTimestamp(),
+          potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+        });
+        // Send echo
+        await addDoc(collection(db, "messages"), {
+          text: messageText,
+          sender: auth.currentUser?.displayName || "",
+          timestamp: serverTimestamp(),
+          potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+        });
+      } else {
+        await addDoc(collection(db, "messages"), {
+          text: messageText,
+          sender: auth.currentUser?.displayName || "",
+          timestamp: serverTimestamp(),
+          potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+        });
+      }
       setNewMess("");
     } catch (err) {
       setError("Could not send message.");
@@ -295,16 +461,32 @@ const Chat = () => {
                         )}
                       </span>
                     )}
-                    <strong className={roleClass}>
-                      {message.sender
+                    <strong 
+                      className={roleClass}
+                      style={{
+                        ...(message.potionEffects && message.potionEffects.glow ? {
+                          textShadow: '0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700',
+                          color: '#ffd700'
+                        } : {}),
+                        ...(message.potionEffects && message.potionEffects.charm ? {
+                          textShadow: '0 0 8px #ff69b4, 0 0 16px #ff1493, 0 0 24px #ff69b4',
+                          color: '#ff69b4',
+                          position: 'relative'
+                        } : {})
+                      }}
+                    >
+                      {getDisplayName(message)
                         ? (() => {
-                            const parts = message.sender.trim().split(" ");
+                            const displayName = getDisplayName(message);
+                            const parts = displayName.trim().split(" ");
                             if (parts.length === 1) return parts[0];
                             if (parts.length > 1)
                               return parts[0] + " " + parts[parts.length - 1];
                             return "";
                           })()
                         : ""}
+                      {message.potionEffects && message.potionEffects.charm && " 💕"}
+                      {message.potionEffects && message.potionEffects.love && " 💖"}
                     </strong>
                   </span>
                   {/* Uthev @mentions og @all i meldingen */}
@@ -322,9 +504,10 @@ const Chat = () => {
                         ? " " + styles.mentionAll
                         : "")
                     }
+                    style={getMessageStyle(message)}
                   >
                     :{" "}
-                    {message.text?.split(/(\s+)/).map((part, i) => {
+                    {getDisplayText(message.text, message)?.split(/(\s+)/).map((part, i) => {
                       if (
                         part.toLowerCase() ===
                         `@${auth.currentUser?.displayName?.toLowerCase()}`

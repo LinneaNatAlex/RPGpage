@@ -17,6 +17,7 @@ import {
 import { useRef } from "react";
 import GiftModal from "./GiftModal";
 import useUsers from "../../hooks/useUser";
+import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
 
 import styles from "./TopBar.module.css";
 
@@ -56,8 +57,34 @@ const TopBar = () => {
   const [inLoveWith, setInLoveWith] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
   const [inLoveCountdown, setInLoveCountdown] = useState(0);
+  const [magicalCursorEnabled, setMagicalCursorEnabled] = useState(true);
+  
+  // New potion effect states
+  const [hairColorUntil, setHairColorUntil] = useState(null);
+  const [rainbowUntil, setRainbowUntil] = useState(null);
+  const [glowUntil, setGlowUntil] = useState(null);
+  const [sparkleUntil, setSparkleUntil] = useState(null);
+  const [translationUntil, setTranslationUntil] = useState(null);
+  const [echoUntil, setEchoUntil] = useState(null);
+  const [whisperUntil, setWhisperUntil] = useState(null);
+  const [shoutUntil, setShoutUntil] = useState(null);
+  const [darkModeUntil, setDarkModeUntil] = useState(null);
+  const [retroUntil, setRetroUntil] = useState(null);
+  const [mirrorUntil, setMirrorUntil] = useState(null);
+  const [speedUntil, setSpeedUntil] = useState(null);
+  const [slowMotionUntil, setSlowMotionUntil] = useState(null);
+  const [luckyUntil, setLuckyUntil] = useState(null);
+  const [wisdomUntil, setWisdomUntil] = useState(null);
+  const [surveillanceUntil, setSurveillanceUntil] = useState(null);
+  const [charmUntil, setCharmUntil] = useState(null);
+  const [mysteryUntil, setMysteryUntil] = useState(null);
   const intervalRef = useRef();
   const { users } = useUsers();
+
+  const handleMagicalCursorToggle = () => {
+    setMagicalCursorEnabled(!magicalCursorEnabled);
+    toggleMagicalCursor();
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -83,6 +110,26 @@ const TopBar = () => {
           setInLoveWith(null);
           setInLoveUntil(null);
         }
+        
+        // New potion effects
+        setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
+        setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
+        setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
+        setSparkleUntil(data.sparkleUntil && data.sparkleUntil > Date.now() ? data.sparkleUntil : null);
+        setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
+        setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
+        setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
+        setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
+        setDarkModeUntil(data.darkModeUntil && data.darkModeUntil > Date.now() ? data.darkModeUntil : null);
+        setRetroUntil(data.retroUntil && data.retroUntil > Date.now() ? data.retroUntil : null);
+        setMirrorUntil(data.mirrorUntil && data.mirrorUntil > Date.now() ? data.mirrorUntil : null);
+        setSpeedUntil(data.speedUntil && data.speedUntil > Date.now() ? data.speedUntil : null);
+        setSlowMotionUntil(data.slowMotionUntil && data.slowMotionUntil > Date.now() ? data.slowMotionUntil : null);
+        setLuckyUntil(data.luckyUntil && data.luckyUntil > Date.now() ? data.luckyUntil : null);
+        setWisdomUntil(data.wisdomUntil && data.wisdomUntil > Date.now() ? data.wisdomUntil : null);
+        setSurveillanceUntil(data.surveillanceUntil && data.surveillanceUntil > Date.now() ? data.surveillanceUntil : null);
+        setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
+        setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
         if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
           setInfirmary(true);
           setInfirmaryEnd(data.infirmaryEnd);
@@ -254,6 +301,76 @@ const TopBar = () => {
           `}</style>
         </div>
       )}
+      
+      {/* Potion Effects CSS */}
+      <style>{`
+        /* Dark Mode Potion */
+        ${darkModeUntil && darkModeUntil > Date.now() ? `
+          html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
+            background: #1a1a1a !important;
+            color: #e0e0e0 !important;
+          }
+          .navbar, .topbar, .inventory, .chat, .sidebar, .main-content, .container, .wrapper {
+            background: #2a2a2a !important;
+            border-color: #444 !important;
+          }
+        ` : ''}
+        
+        /* Retro Potion */
+        ${retroUntil && retroUntil > Date.now() ? `
+          html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+            text-shadow: 1px 1px 0px #000 !important;
+            letter-spacing: 0.5px !important;
+          }
+        ` : ''}
+        
+        /* Mirror Potion */
+        ${mirrorUntil && mirrorUntil > Date.now() ? `
+          body {
+            transform: scaleX(-1) !important;
+          }
+        ` : ''}
+        
+        /* Speed Potion */
+        ${speedUntil && speedUntil > Date.now() ? `
+          *, *::before, *::after {
+            animation-duration: 0.5s !important;
+            transition-duration: 0.1s !important;
+          }
+        ` : ''}
+        
+        /* Slow Motion Potion */
+        ${slowMotionUntil && slowMotionUntil > Date.now() ? `
+          *, *::before, *::after {
+            animation-duration: 2s !important;
+            transition-duration: 1s !important;
+          }
+        ` : ''}
+        
+        /* Sparkle Potion - floating sparkles around avatar */
+        ${sparkleUntil && sparkleUntil > Date.now() ? `
+          .sparkle-effect::before {
+            content: '✨';
+            position: absolute;
+            animation: sparkleFloat 2s infinite;
+            pointer-events: none;
+            z-index: 1000;
+          }
+          .sparkle-effect::after {
+            content: '⭐';
+            position: absolute;
+            animation: sparkleFloat 2s infinite 0.5s;
+            pointer-events: none;
+            z-index: 1000;
+          }
+          @keyframes sparkleFloat {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.7; }
+            100% { transform: translateY(-40px) rotate(360deg); opacity: 0; }
+          }
+        ` : ''}
+      `}</style>
       {/* Love Potion: hearts rain overlay */}
       {inLoveUntil && inLoveUntil > Date.now() && (
         <div
@@ -323,7 +440,7 @@ const TopBar = () => {
                 <img
                   src={src}
                   alt="Profile"
-                  className={roleClass}
+                  className={`${roleClass} ${sparkleUntil && sparkleUntil > Date.now() ? 'sparkle-effect' : ''}`}
                   style={
                     inLoveUntil && inLoveUntil > Date.now()
                       ? {
@@ -346,7 +463,7 @@ const TopBar = () => {
             />
             {balance} Nits
             <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
-              ⭐ {points} points
+              ◆ {points} points
             </span>
             {invisibleUntil && (
               <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
@@ -367,6 +484,19 @@ const TopBar = () => {
               alt="Inventory"
               className={styles.chestIcon}
             />
+          </button>
+        <button
+            className={styles.inventoryIconBtn}
+            onClick={handleMagicalCursorToggle}
+            title={magicalCursorEnabled ? "Disable Magical Cursor" : "Enable Magical Cursor"}
+            style={{
+              background: magicalCursorEnabled ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#E8DDD4',
+              color: magicalCursorEnabled ? '#2C2C2C' : '#7B6857',
+              fontSize: '18px',
+              fontWeight: 'bold'
+            }}
+          >
+            ✦
           </button>
         {/* Love Potion: in love text */}
         {inLoveUntil && inLoveUntil > Date.now() && inLoveWith && (
@@ -421,48 +551,53 @@ const TopBar = () => {
                     }
                     return (
                       <li key={idx} className={styles.itemRow}>
-                        <span className={styles.itemName}>{item.name}</span> x
-                        {item.qty || 1}
-                        {typeof item.health === "number" &&
-                          item.type === "food" && (
-                            <span style={{ color: "#6f6", marginLeft: 6 }}>
-                              (+{item.health} HP)
-                            </span>
-                          )}
-                        {/* Gift button */}
-                        <button
-                          className={styles.giftBtn}
-                          title="Gift this item"
-                          onClick={() => setGiftModal({ open: true, item })}
-                          style={{ marginLeft: 8 }}
-                        >
-                          🎁
-                        </button>
-                        {/* Delete button */}
-                        <button
-                          className={styles.eatBtn}
-                          style={{ marginLeft: 4, background: "#c44" }}
-                          title="Delete this item"
-                          onClick={async () => {
-                            if (!user) return;
-                            const userRef = doc(db, "users", user.uid);
-                            const userDoc = await getDoc(userRef);
-                            if (!userDoc.exists()) return;
-                            let inv = userDoc.data().inventory || [];
-                            const invIdx = inv.findIndex(
-                              (i) => i.name === item.name
-                            );
-                            if (invIdx === -1) return;
-                            inv.splice(invIdx, 1);
-                            await updateDoc(userRef, { inventory: inv });
-                          }}
-                        >
-                          Delete
-                        </button>
-                        {isEdible && !infirmary && (
+                        <div className={styles.itemInfo}>
+                          <span className={styles.itemName}>{item.name}</span> x
+                          {item.qty || 1}
+                          {typeof item.health === "number" &&
+                            item.type === "food" && (
+                              <span style={{ color: "#6f6", marginLeft: 6 }}>
+                                (+{item.health} HP)
+                              </span>
+                            )}
+                        </div>
+                        <div className={styles.itemButtons}>
+                          {/* Gift button */}
                           <button
-                            className={styles.eatBtn}
+                            className={styles.giftBtn}
+                            title="Gift this item"
+                            onClick={() => setGiftModal({ open: true, item })}
+                          >
+                            ⚜
+                          </button>
+                          {/* Delete button */}
+                          <button
+                            className={styles.deleteBtn}
+                            title="Delete this item"
                             onClick={async () => {
+                              if (!user) return;
+                              const userRef = doc(db, "users", user.uid);
+                              const userDoc = await getDoc(userRef);
+                              if (!userDoc.exists()) return;
+                              let inv = userDoc.data().inventory || [];
+                              const invIdx = inv.findIndex(
+                                (i) => i.name === item.name
+                              );
+                              if (invIdx === -1) return;
+                              // Only remove one item, not all
+                              inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
+                              if (inv[invIdx].qty <= 0) {
+                                inv.splice(invIdx, 1);
+                              }
+                              await updateDoc(userRef, { inventory: inv });
+                            }}
+                          >
+                            ✕
+                          </button>
+                          {isEdible && !infirmary && (
+                            <button
+                              className={styles.eatBtn}
+                              onClick={async () => {
                               if (!user) return;
                               const userRef = doc(db, "users", user.uid);
                               const userDoc = await getDoc(userRef);
@@ -483,6 +618,15 @@ const TopBar = () => {
                               // Find original name if disguised
                               const realName =
                                 item.originalName || item.realItem || item.name;
+                              
+                              // Debug log to help troubleshoot
+                              console.log('Consuming item:', {
+                                displayName: item.name,
+                                realName: realName,
+                                originalName: item.originalName,
+                                realItem: item.realItem,
+                                giftedBy: item.giftedBy
+                              });
                               if (realName === "Death Draught") {
                                 update.health = 0;
                                 update.infirmaryEnd =
@@ -495,15 +639,20 @@ const TopBar = () => {
                               } else if (realName === "Love Potion") {
                                 // Love Potion effect: use giftedBy from inventory if available, otherwise fallback to notification
                                 let giver = item.giftedBy;
+                                console.log('Love Potion - giver from item:', giver);
+                                
                                 if (!giver) {
                                   try {
+                                    // Search for notification with the disguised item name
                                     const notifQuery = query(
                                       collection(db, "notifications"),
                                       where("to", "==", user.uid),
-                                      where("item", "==", "Love Potion"),
+                                      where("item", "==", item.name), // Use the disguised name
                                       where("read", "==", false)
                                     );
                                     const notifSnap = await getDocs(notifQuery);
+                                    console.log('Found notifications:', notifSnap.docs.length);
+                                    
                                     if (!notifSnap.empty) {
                                       // Use the most recent notification
                                       const notifDoc = notifSnap.docs
@@ -513,6 +662,8 @@ const TopBar = () => {
                                             b.data().created - a.data().created
                                         )[0];
                                       const notif = notifDoc.data();
+                                      console.log('Using notification:', notif);
+                                      
                                       if (notif && notif.from) {
                                         giver = notif.from;
                                         // Mark notification as read
@@ -523,13 +674,52 @@ const TopBar = () => {
                                       }
                                     }
                                   } catch (e) {
+                                    console.error('Error finding notification:', e);
                                     giver = "Unknown";
                                   }
                                 }
                                 if (!giver) giver = "Unknown";
+                                console.log('Final giver for Love Potion:', giver);
+                                
                                 update.inLoveUntil =
                                   Date.now() + 60 * 60 * 1000; // 1 time
                                 update.inLoveWith = giver;
+                              } else if (realName === "Hair Color Potion") {
+                                update.hairColorUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Rainbow Potion") {
+                                update.rainbowUntil = Date.now() + 60 * 60 * 1000; // 1 hour
+                              } else if (realName === "Glow Potion") {
+                                update.glowUntil = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
+                              } else if (realName === "Sparkle Potion") {
+                                update.sparkleUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Translation Potion") {
+                                update.translationUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Echo Potion") {
+                                update.echoUntil = Date.now() + 60 * 60 * 1000; // 1 hour
+                              } else if (realName === "Whisper Potion") {
+                                update.whisperUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Shout Potion") {
+                                update.shoutUntil = Date.now() + 15 * 60 * 1000; // 15 minutes
+                              } else if (realName === "Dark Mode Potion") {
+                                update.darkModeUntil = Date.now() + 4 * 60 * 60 * 1000; // 4 hours
+                              } else if (realName === "Retro Potion") {
+                                update.retroUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Mirror Potion") {
+                                update.mirrorUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Speed Potion") {
+                                update.speedUntil = Date.now() + 15 * 60 * 1000; // 15 minutes
+                              } else if (realName === "Slow Motion Potion") {
+                                update.slowMotionUntil = Date.now() + 60 * 60 * 1000; // 1 hour
+                              } else if (realName === "Lucky Potion") {
+                                update.luckyUntil = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
+                              } else if (realName === "Wisdom Potion") {
+                                update.wisdomUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Surveillance Potion") {
+                                update.surveillanceUntil = Date.now() + 60 * 60 * 1000; // 1 hour
+                              } else if (realName === "Charm Potion") {
+                                update.charmUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                              } else if (realName === "Mystery Potion") {
+                                update.mysteryUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
                               } else {
                                 let newHealth =
                                   (data.health || 100) + healAmount;
@@ -539,15 +729,32 @@ const TopBar = () => {
                               await updateDoc(userRef, update);
                             }}
                           >
-                            {item.name === "Death Draught"
-                              ? "Drink"
-                              : item.name === "Invisibility Draught"
-                              ? "Drink"
-                              : item.name === "Love Potion"
+                            {item.name === "Death Draught" ||
+                            item.name === "Invisibility Draught" ||
+                            item.name === "Love Potion" ||
+                            item.name === "Hair Color Potion" ||
+                            item.name === "Rainbow Potion" ||
+                            item.name === "Glow Potion" ||
+                            item.name === "Sparkle Potion" ||
+                            item.name === "Translation Potion" ||
+                            item.name === "Echo Potion" ||
+                            item.name === "Whisper Potion" ||
+                            item.name === "Shout Potion" ||
+                            item.name === "Dark Mode Potion" ||
+                            item.name === "Retro Potion" ||
+                            item.name === "Mirror Potion" ||
+                            item.name === "Speed Potion" ||
+                            item.name === "Slow Motion Potion" ||
+                            item.name === "Lucky Potion" ||
+                            item.name === "Wisdom Potion" ||
+                            item.name === "Surveillance Potion" ||
+                            item.name === "Charm Potion" ||
+                            item.name === "Mystery Potion"
                               ? "Drink"
                               : "Eat"}
                           </button>
-                        )}
+                          )}
+                        </div>
                       </li>
                     );
                   })}
@@ -619,6 +826,11 @@ const TopBar = () => {
             } else {
               toInv[toIdx].qty = (toInv[toIdx].qty || 1) + 1;
               toInv[toIdx].giftedBy = giftedBy;
+              // Preserve original item info if disguised
+              if (disguise && disguise.name !== giftModal.item.name) {
+                toInv[toIdx].originalName = giftModal.item.name;
+                toInv[toIdx].realItem = giftModal.item.name;
+              }
               // Fjern undefined-felter fra eksisterende item
               Object.keys(toInv[toIdx]).forEach((key) => {
                 if (toInv[toIdx][key] === undefined) delete toInv[toIdx][key];

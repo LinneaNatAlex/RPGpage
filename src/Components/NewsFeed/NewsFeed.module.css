@@ -74,11 +74,34 @@
   border: 2px solid goldenrod;
   width: 100%;
   gap: 10px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 .textArea {
   height: 200px;
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
   border-radius: var(--main-border-radius);
+  border: 2px solid #D4C4A8;
+  padding: 12px;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-size: 14px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* Style for title input in news admin */
+.newsAdminContainer input[type="text"] {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px;
+  border: 2px solid #D4C4A8;
+  border-radius: var(--main-border-radius);
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: #F5EFE0;
+  color: #2C2C2C;
 }
 .title {
   color: #7B6857;
@@ -147,9 +170,19 @@ iframe {
 }
 
 .handlePostSubmit {
-  width: 50%;
-  padding: 10px;
-  margin: 1rem;
+  width: 100%;
+  max-width: 600px;
+  padding: 12px;
+  margin: 0;
+  border-radius: var(--main-border-radius);
+  background-color: var(--button-background);
+  border: 2px solid #D4C4A8;
+  color: #2C2C2C;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 /* --------------------BUTTON------------------ */
 .deleteButton {
@@ -165,15 +198,11 @@ iframe {
   background-color: var(--secondary-color);
 }
 
-.handlePostSubmit {
-  width: 30%;
-  border-radius: var(--main-border-radius);
-  background-color: var(--button-background);
-}
-
 .handlePostSubmit:hover {
   background-color: var(--primary-color);
   color: var(--button-background);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .posterName {

@@ -3,21 +3,25 @@
   background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
   color: #F5EFE0;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  margin-left: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  min-width: 40px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .eatBtn:hover {
   background: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
   color: #F5EFE0;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Delete button in inventory */
@@ -25,21 +29,25 @@
   background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
   color: #F5EFE0;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  margin-left: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .deleteBtn:hover {
   background: linear-gradient(135deg, #e57373 0%, #ef5350 100%);
   color: #F5EFE0;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 /* Profile image next to the health bar */
 .profilePic {
@@ -200,16 +208,31 @@
 .itemRow {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  justify-content: space-between;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 12px;
-  padding: 0.8rem 1.2rem;
-  font-size: 1.13rem;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 1.1rem;
   font-family: "Cinzel", serif;
   color: #F5EFE0;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  flex-wrap: nowrap;
+}
+
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.itemButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
 }
 
 .itemRow:hover {
@@ -347,19 +370,26 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 .giftBtn {
-  background: none;
-  border: none;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  font-size: 1.2em;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
-  color: #F5EFE0;
-  padding: 0.2rem;
-  border-radius: 4px;
+  color: #2C2C2C;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 }
 .giftBtn:hover {
-  transform: scale(1.2);
-  background: rgba(255, 255, 255, 0.1);
-  color: #F5EFE0;
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 .giftModalOverlay {
   position: fixed;

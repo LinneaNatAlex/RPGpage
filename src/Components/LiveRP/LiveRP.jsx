@@ -310,7 +310,7 @@ const LiveRP = () => {
               justifyContent: "center"
             }}
           >
-            ×
+            ✕
           </button>
         </div>
       )}

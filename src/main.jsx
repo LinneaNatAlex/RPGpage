@@ -3,6 +3,8 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/routes.jsx";
 import { AuthProvider } from "./context/authContext.jsx";
+import "./assets/Cursor/magicalCursor.css";
+import { enableMagicalCursor } from "./assets/Cursor/magicalCursor.js";
 
 // root element for the application
 createRoot(document.getElementById("root")).render(
@@ -10,3 +12,6 @@ createRoot(document.getElementById("root")).render(
     <RouterProvider router={router} />
   </AuthProvider>
 );
+
+// Enable magical cursor effect
+enableMagicalCursor();
