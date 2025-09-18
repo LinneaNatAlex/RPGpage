@@ -302,7 +302,7 @@ const TopBar = () => {
         </div>
       )}
       
-      {/* Love Potion: hearts rain overlay */}
+      {/* Love Potion: falling hearts */}
       {inLoveUntil && inLoveUntil > Date.now() && (
         <div
           style={{
@@ -312,46 +312,77 @@ const TopBar = () => {
             left: 0,
             width: "100vw",
             height: "100vh",
-            zIndex: 9998,
+            zIndex: -10,
             overflow: "hidden",
           }}
         >
-          {/* Simple hearts rain animation */}
-          {[...Array(30)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <span
               key={i}
               style={{
                 position: "absolute",
                 left: `${Math.random() * 100}vw`,
                 top: `-${Math.random() * 20}vh`,
-                fontSize: `${Math.random() * 2 + 1.5}rem`,
+                fontSize: `${Math.random() * 1.5 + 1}rem`,
                 color: "#ff69b4",
-                opacity: 0.7,
-                animation: `heartRain 6s linear infinite`,
-                animationDelay: `${Math.random() * 6}s`,
+                opacity: 0.4,
+                animation: `heartFall 10s linear infinite`,
+                animationDelay: `${Math.random() * 10}s`,
               }}
             >
               ❤️
             </span>
           ))}
           <style>{`
-            @keyframes heartRain {
-              0% { transform: translateY(0); opacity: 0.7; }
-              90% { opacity: 0.7; }
-              100% { transform: translateY(110vh); opacity: 0; }
+            @keyframes heartFall {
+              0% { transform: translateY(0); opacity: 0.4; }
+              90% { opacity: 0.4; }
+              100% { transform: translateY(120vh); opacity: 0; }
             }
           `}</style>
         </div>
       )}
+      
       <div
         className={styles.topBar}
         style={{
           ...(infirmary ? { opacity: 0.5, filter: "grayscale(1)" } : {}),
           ...(inLoveUntil && inLoveUntil > Date.now()
-            ? { boxShadow: "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset" }
+            ? { 
+                backgroundColor: "#ff69b4",
+                color: "#ffffff",
+                boxShadow: "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset"
+              }
             : {}),
         }}
       >
+        {/* Love Potion CSS for all elements */}
+        {inLoveUntil && inLoveUntil > Date.now() && (
+          <style>{`
+            .${styles.topBar} {
+              background: linear-gradient(135deg, #ff69b4 0%, #ffb6d5 100%) !important;
+            }
+            .${styles.topBar} * {
+              background-color: rgba(255, 255, 255, 0.15) !important;
+              color: #ffffff !important;
+            }
+            .${styles.topBar} button {
+              background-color: rgba(255, 255, 255, 0.2) !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(255, 255, 255, 0.3) !important;
+              backdrop-filter: blur(10px);
+            }
+            .${styles.topBar} button:hover {
+              background-color: rgba(255, 255, 255, 0.3) !important;
+            }
+            .${styles.topBar} div[style*="background"] {
+              background-color: rgba(255, 255, 255, 0.15) !important;
+            }
+            .${styles.topBar} span {
+              background-color: rgba(255, 255, 255, 0.15) !important;
+            }
+          `}</style>
+        )}
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
             {(() => {
               if (!user) return null;

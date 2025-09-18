@@ -162,10 +162,10 @@ const OnlineUsers = () => {
                 <span
                   style={{
                     marginLeft: 8,
-                    color: "#ff69b4",
+                    color: inDarkMode ? "#ff69b4" : "#ff69b4",
                     fontWeight: 700,
                     fontSize: "0.95rem",
-                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                    textShadow: inDarkMode ? "0 0 8px #ff69b4" : "0 1px 2px rgba(0, 0, 0, 0.3)",
                   }}
                 >
                   In love with {u.inLoveWith}
