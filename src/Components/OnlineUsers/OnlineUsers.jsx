@@ -100,6 +100,8 @@ const OnlineUsers = () => {
           }
           // Love Potion effect: pink glow and text if inLoveUntil in future
           const inLove = u.inLoveUntil && u.inLoveUntil > Date.now();
+          // Dark Mode Potion effect: show /Dark indicator
+          const inDarkMode = u.darkModeUntil && u.darkModeUntil > Date.now();
           // Ny bruker: opprettet siste 24 timer
           const isNewUser =
             u.createdAt &&
@@ -120,6 +122,24 @@ const OnlineUsers = () => {
               />
               <span className={nameClass}>
                 {u.displayName}
+                {inDarkMode && (
+                  <span
+                    style={{
+                      background: "#1a1a1a",
+                      color: "#e0e0e0",
+                      borderRadius: 6,
+                      fontSize: "0.8em",
+                      fontWeight: 700,
+                      marginLeft: 6,
+                      padding: "2px 7px",
+                      boxShadow: "0 0 8px #444",
+                      verticalAlign: "middle",
+                      border: "1px solid #444",
+                    }}
+                  >
+                    /Dark
+                  </span>
+                )}
                 {isNewUser && (
                   <span
                     style={{

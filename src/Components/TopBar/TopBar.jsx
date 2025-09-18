@@ -302,75 +302,6 @@ const TopBar = () => {
         </div>
       )}
       
-      {/* Potion Effects CSS */}
-      <style>{`
-        /* Dark Mode Potion */
-        ${darkModeUntil && darkModeUntil > Date.now() ? `
-          html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
-            background: #1a1a1a !important;
-            color: #e0e0e0 !important;
-          }
-          .navbar, .topbar, .inventory, .chat, .sidebar, .main-content, .container, .wrapper {
-            background: #2a2a2a !important;
-            border-color: #444 !important;
-          }
-        ` : ''}
-        
-        /* Retro Potion */
-        ${retroUntil && retroUntil > Date.now() ? `
-          html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-            text-shadow: 1px 1px 0px #000 !important;
-            letter-spacing: 0.5px !important;
-          }
-        ` : ''}
-        
-        /* Mirror Potion */
-        ${mirrorUntil && mirrorUntil > Date.now() ? `
-          body {
-            transform: scaleX(-1) !important;
-          }
-        ` : ''}
-        
-        /* Speed Potion */
-        ${speedUntil && speedUntil > Date.now() ? `
-          *, *::before, *::after {
-            animation-duration: 0.5s !important;
-            transition-duration: 0.1s !important;
-          }
-        ` : ''}
-        
-        /* Slow Motion Potion */
-        ${slowMotionUntil && slowMotionUntil > Date.now() ? `
-          *, *::before, *::after {
-            animation-duration: 2s !important;
-            transition-duration: 1s !important;
-          }
-        ` : ''}
-        
-        /* Sparkle Potion - floating sparkles around avatar */
-        ${sparkleUntil && sparkleUntil > Date.now() ? `
-          .sparkle-effect::before {
-            content: '✨';
-            position: absolute;
-            animation: sparkleFloat 2s infinite;
-            pointer-events: none;
-            z-index: 1000;
-          }
-          .sparkle-effect::after {
-            content: '⭐';
-            position: absolute;
-            animation: sparkleFloat 2s infinite 0.5s;
-            pointer-events: none;
-            z-index: 1000;
-          }
-          @keyframes sparkleFloat {
-            0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.7; }
-            100% { transform: translateY(-40px) rotate(360deg); opacity: 0; }
-          }
-        ` : ''}
-      `}</style>
       {/* Love Potion: hearts rain overlay */}
       {inLoveUntil && inLoveUntil > Date.now() && (
         <div
@@ -701,7 +632,7 @@ const TopBar = () => {
                               } else if (realName === "Shout Potion") {
                                 update.shoutUntil = Date.now() + 15 * 60 * 1000; // 15 minutes
                               } else if (realName === "Dark Mode Potion") {
-                                update.darkModeUntil = Date.now() + 4 * 60 * 60 * 1000; // 4 hours
+                                update.darkModeUntil = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
                               } else if (realName === "Retro Potion") {
                                 update.retroUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
                               } else if (realName === "Mirror Potion") {

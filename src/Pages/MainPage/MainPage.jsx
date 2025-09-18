@@ -11,7 +11,6 @@ import PrivateChat from "../../Components/Chat/PrivateChat";
 import RPGCalendarSidebar from "../../Components/RPGCalendarSidebar";
 import AnnouncementBanner from "../../Components/AnnouncementBanner/AnnouncementBanner";
 import AnnouncementAdmin from "../../Components/AnnouncementBanner/AnnouncementAdmin";
-import TopBar from "../../Components/TopBar/TopBar";
 
 // state variables to handle the components that are shown in the main page
 const MainPage = () => {
@@ -27,7 +26,6 @@ const MainPage = () => {
 
   return (
     <section className={styles.introductionPage}>
-      {user && <TopBar />}
       <AnnouncementBanner user={user} />
       {user?.roles?.includes("admin") || user?.roles?.includes("teacher") ? (
         <AnnouncementAdmin user={user} />

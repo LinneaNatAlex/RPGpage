@@ -236,7 +236,7 @@ const shopItems = [
   {
     id: 123,
     name: "Love Potion",
-    price: 150,
+    price: 750,
     type: "potion",
     category: "Potions",
     description:
@@ -307,7 +307,7 @@ const shopItems = [
   {
     id: 4,
     name: "Healing Potion",
-    price: 200,
+    price: 600,
     type: "potion",
     category: "Potions",
     description:
@@ -317,7 +317,7 @@ const shopItems = [
   {
     id: 98,
     name: "Death Draught",
-    price: 10,
+    price: 500,
     type: "potion",
     category: "Potions",
     description:
@@ -327,7 +327,7 @@ const shopItems = [
   {
     id: 5,
     name: "Invisibility Draught",
-    price: 110,
+    price: 650,
     type: "potion",
     category: "Potions",
     description:
@@ -338,7 +338,7 @@ const shopItems = [
   {
     id: 600,
     name: "Hair Color Potion",
-    price: 45,
+    price: 550,
     type: "potion",
     category: "Potions",
     description: "Changes your chat text to a random color for 2 hours.",
@@ -347,7 +347,7 @@ const shopItems = [
   {
     id: 601,
     name: "Rainbow Potion",
-    price: 60,
+    price: 700,
     type: "potion",
     category: "Potions",
     description: "Your chat text changes color every 10 seconds for 1 hour.",
@@ -356,7 +356,7 @@ const shopItems = [
   {
     id: 602,
     name: "Glow Potion",
-    price: 55,
+    price: 800,
     type: "potion",
     category: "Potions",
     description: "Makes your name glow in chat for 3 hours.",
@@ -365,7 +365,7 @@ const shopItems = [
   {
     id: 603,
     name: "Sparkle Potion",
-    price: 50,
+    price: 650,
     type: "potion",
     category: "Potions",
     description: "Sparkles float around your avatar for 2 hours.",
@@ -375,7 +375,7 @@ const shopItems = [
   {
     id: 604,
     name: "Translation Potion",
-    price: 70,
+    price: 750,
     type: "potion",
     category: "Potions",
     description: "All messages are translated to random languages for 2 hours.",
@@ -384,7 +384,7 @@ const shopItems = [
   {
     id: 605,
     name: "Echo Potion",
-    price: 40,
+    price: 500,
     type: "potion",
     category: "Potions",
     description: "All your messages are sent twice for 1 hour.",
@@ -393,7 +393,7 @@ const shopItems = [
   {
     id: 606,
     name: "Whisper Potion",
-    price: 35,
+    price: 600,
     type: "potion",
     category: "Potions",
     description: "You can only send private messages for 2 hours.",
@@ -402,7 +402,7 @@ const shopItems = [
   {
     id: 607,
     name: "Shout Potion",
-    price: 30,
+    price: 550,
     type: "potion",
     category: "Potions",
     description: "All your messages are in CAPS for 15 minutes.",
@@ -412,16 +412,16 @@ const shopItems = [
   {
     id: 608,
     name: "Dark Mode Potion",
-    price: 80,
+    price: 1000,
     type: "potion",
     category: "Potions",
-    description: "Changes the entire website to dark mode for 4 hours.",
-    effect: "Dark mode for 4 hours.",
+    description: "Changes the entire website to dark mode for 24 hours.",
+    effect: "Dark mode for 24 hours.",
   },
   {
     id: 609,
     name: "Retro Potion",
-    price: 45,
+    price: 650,
     type: "potion",
     category: "Potions",
     description: "Changes all fonts to retro style for 2 hours.",
@@ -430,7 +430,7 @@ const shopItems = [
   {
     id: 610,
     name: "Mirror Potion",
-    price: 65,
+    price: 700,
     type: "potion",
     category: "Potions",
     description: "Flips the entire website horizontally for 2 hours.",
@@ -440,7 +440,7 @@ const shopItems = [
   {
     id: 611,
     name: "Speed Potion",
-    price: 55,
+    price: 600,
     type: "potion",
     category: "Potions",
     description: "All animations run 2x faster for 15 minutes.",
@@ -449,7 +449,7 @@ const shopItems = [
   {
     id: 612,
     name: "Slow Motion Potion",
-    price: 50,
+    price: 650,
     type: "potion",
     category: "Potions",
     description: "All animations run 0.5x slower for 1 hour.",
@@ -458,7 +458,7 @@ const shopItems = [
   {
     id: 613,
     name: "Lucky Potion",
-    price: 90,
+    price: 850,
     type: "potion",
     category: "Potions",
     description: "Doubles your chance of getting rare items for 3 hours.",
@@ -467,7 +467,7 @@ const shopItems = [
   {
     id: 614,
     name: "Wisdom Potion",
-    price: 200,
+    price: 1200,
     type: "potion",
     category: "Potions",
     description: "Gives extra points for all actions for 2 hours. Very expensive!",
@@ -477,7 +477,7 @@ const shopItems = [
   {
     id: 615,
     name: "Surveillance Potion",
-    price: 120,
+    price: 1000,
     type: "potion",
     category: "Potions",
     description: "See what all users are doing and where they are on the website for 1 hour.",
@@ -487,7 +487,7 @@ const shopItems = [
   {
     id: 616,
     name: "Charm Potion",
-    price: 75,
+    price: 750,
     type: "potion",
     category: "Potions",
     description: "Other users see you as more attractive with special icons for 2 hours.",
@@ -496,7 +496,7 @@ const shopItems = [
   {
     id: 617,
     name: "Mystery Potion",
-    price: 60,
+    price: 650,
     type: "potion",
     category: "Potions",
     description: "Your name appears as '???' to other users for 2 hours.",
