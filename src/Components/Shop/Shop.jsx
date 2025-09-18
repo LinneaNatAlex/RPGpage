@@ -102,7 +102,16 @@ const Shop = () => {
 
   return (
     <div className={styles.shopWrapper}>
-      <h2>School Shop</h2>
+      <h2 style={{
+        fontFamily: '"Cinzel", serif',
+        fontSize: "2.2rem",
+        fontWeight: 700,
+        letterSpacing: "1.5px",
+        textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+        marginBottom: "2rem",
+        textAlign: "center",
+        color: "#F5EFE0"
+      }}>School Shop</h2>
       <div className={styles.balance}>Balance: {balance} Nits</div>
       <div className={styles.tabs}>
         {categories.map((cat) => (

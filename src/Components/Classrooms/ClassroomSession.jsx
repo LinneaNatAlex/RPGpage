@@ -241,27 +241,70 @@ export default function ClassroomSession() {
   return (
     <div
       style={{
-        maxWidth: 700,
+        maxWidth: 900,
         margin: "2rem auto",
-        background: "#23232b",
-        color: "#fff",
-        padding: 24,
-        borderRadius: 12,
+        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+        color: "#F5EFE0",
+        padding: 40,
+        borderRadius: 20,
+        boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+        border: "3px solid #7B6857",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <h2>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "4px",
+          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
+          borderRadius: "20px 20px 0 0",
+        }}
+      />
+      <h2 style={{
+        fontFamily: '"Cinzel", serif',
+        fontSize: "2.2rem",
+        fontWeight: 700,
+        letterSpacing: "1.5px",
+        textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+        marginBottom: "1.5rem",
+        textAlign: "center"
+      }}>
         {classInfo.name} (Year {userYear})
       </h2>
       {isTeacher && (
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="year-select">
-            <b>Select year: </b>
+        <div style={{ 
+          marginBottom: 24,
+          background: "rgba(245, 239, 224, 0.1)",
+          padding: 16,
+          borderRadius: 12,
+          border: "2px solid rgba(255, 255, 255, 0.2)"
+        }}>
+          <label htmlFor="year-select" style={{
+            color: "#D4C4A8",
+            fontSize: "1.1rem",
+            fontWeight: 600,
+            fontFamily: '"Cinzel", serif'
+          }}>
+            Select year: 
           </label>
           <select
             id="year-select"
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            style={{ marginLeft: 8, padding: 4, borderRadius: 4 }}
+            style={{ 
+              marginLeft: 12, 
+              padding: "8px 12px", 
+              borderRadius: 8,
+              background: "#F5EFE0",
+              color: "#2C2C2C",
+              border: "2px solid #D4C4A8",
+              fontSize: "1rem",
+              fontWeight: 600
+            }}
           >
             {[1, 2, 3, 4, 5, 6, 7].map((y) => (
               <option key={y} value={y}>
@@ -271,29 +314,51 @@ export default function ClassroomSession() {
           </select>
         </div>
       )}
-      <p style={{ color: "#b3b3b3" }}>{classInfo.description}</p>
+      <p style={{ 
+        color: "#D4C4A8",
+        fontSize: "1.2rem",
+        textAlign: "center",
+        fontStyle: "italic",
+        marginBottom: "2rem",
+        lineHeight: 1.5
+      }}>{classInfo.description}</p>
       {/* Potion Crafting Section - Only show in Potions class */}
       {classId === "potions" && user && <PotionCrafting user={user} />}
       {/* Leave class button removed as requested */}
       {/* Teachers/Admins in this session */}
       {/* All users in this session */}
 
-      <div style={{ marginBottom: 16 }}>
-        <b>Class Chat</b>
+      <div style={{ marginBottom: 24 }}>
+        <h3 style={{
+          color: "#D4C4A8",
+          fontSize: "1.5rem",
+          fontFamily: '"Cinzel", serif',
+          fontWeight: 600,
+          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+          marginBottom: 16
+        }}>Class Chat</h3>
         <div
           ref={chatRef}
           style={{
-            background: "#222",
-            minHeight: 120,
-            maxHeight: 300,
+            background: "rgba(245, 239, 224, 0.1)",
+            minHeight: 150,
+            maxHeight: 400,
             overflowY: "auto",
-            borderRadius: 6,
-            padding: 8,
-            marginBottom: 8,
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
           }}
         >
           {messages.length === 0 && (
-            <div style={{ color: "#888" }}>No messages yet.</div>
+            <div style={{ 
+              color: "#D4C4A8",
+              fontSize: "1.1rem",
+              textAlign: "center",
+              fontStyle: "italic",
+              padding: "20px"
+            }}>No messages yet.</div>
           )}
           {messages.map((m, i) => {
             const canDelete =
@@ -304,94 +369,227 @@ export default function ClassroomSession() {
               <div
                 key={i}
                 style={{
-                  marginBottom: 4,
+                  marginBottom: 16,
+                  padding: "16px 20px",
+                  background: "rgba(245, 239, 224, 0.1)",
+                  borderRadius: 12,
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
+                  gap: 12,
+                  position: "relative",
                 }}
               >
-                <span
-                  className={[
-                    onlineUserStyles.userName,
-                    m.roles?.some((r) => r.toLowerCase() === "headmaster")
-                      ? onlineUserStyles.headmasterName
-                      : m.roles?.some((r) => r.toLowerCase() === "teacher")
-                      ? onlineUserStyles.teacherName
-                      : m.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
-                      ? onlineUserStyles.shadowPatrolName
-                      : m.roles?.some((r) => r.toLowerCase() === "admin")
-                      ? onlineUserStyles.adminName
-                      : "",
-                  ].join(" ")}
-                >
-                  {m.displayName}
-                  {m.roles && m.roles.length > 0 && (
-                    <span
-                      style={{ fontSize: 12, color: "#aaa", marginLeft: 4 }}
-                    >
-                      ({m.roles.join(", ")})
-                    </span>
-                  )}
-                  :
-                </span>
-                <span style={{ marginLeft: 4, flex: 1 }}>{m.text}</span>
-                {canDelete && (
-                  <button
-                    onClick={() => handleDeleteMessage(i)}
-                    style={{
-                      marginLeft: 8,
-                      background: "#ff6b6b",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: 4,
-                      padding: "2px 8px",
-                      fontSize: 12,
-                      cursor: "pointer",
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 8
+                }}>
+                  <span
+                    className={[
+                      onlineUserStyles.userName,
+                      m.roles?.some((r) => r.toLowerCase() === "headmaster")
+                        ? onlineUserStyles.headmasterName
+                        : m.roles?.some((r) => r.toLowerCase() === "teacher")
+                        ? onlineUserStyles.teacherName
+                        : m.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+                        ? onlineUserStyles.shadowPatrolName
+                        : m.roles?.some((r) => r.toLowerCase() === "admin")
+                        ? onlineUserStyles.adminName
+                        : "",
+                    ].join(" ")}
+                    style={{ 
+                      fontSize: "1.1rem", 
+                      fontWeight: 600,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8
                     }}
                   >
-                    Delete
-                  </button>
-                )}
+                    {m.displayName}
+                    {m.roles && m.roles.length > 0 && (
+                      <span
+                        style={{ 
+                          fontSize: "0.9rem", 
+                          color: "#D4C4A8", 
+                          fontStyle: "italic",
+                          fontWeight: 400
+                        }}
+                      >
+                        ({m.roles.join(", ")})
+                      </span>
+                    )}
+                  </span>
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDeleteMessage(i)}
+                      style={{
+                        background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                        color: "#F5EFE0",
+                        border: "2px solid rgba(255, 255, 255, 0.2)",
+                        borderRadius: 8,
+                        padding: "6px 12px",
+                        fontSize: "0.85rem",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                        transition: "all 0.3s ease",
+                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                        textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = "translateY(-2px)";
+                        e.target.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = "translateY(0)";
+                        e.target.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.2)";
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+                <div style={{ 
+                  color: "#F5EFE0",
+                  fontSize: "1rem",
+                  lineHeight: 1.6,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  whiteSpace: "pre-wrap",
+                  maxWidth: "100%",
+                  padding: "8px 12px",
+                  background: "rgba(245, 239, 224, 0.05)",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255, 255, 255, 0.1)"
+                }}>
+                  {m.text}
+                </div>
               </div>
             );
           })}
         </div>
-        <form onSubmit={handleSend} style={{ display: "flex", gap: 8 }}>
-          <input
+        <form onSubmit={handleSend} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            style={{ flex: 1, borderRadius: 4, border: "none", padding: 6 }}
-            placeholder="Type your message..."
-            maxLength={300}
-          />
-          <button
-            type="submit"
-            style={{
-              background: "#4fc3f7",
-              color: "#23232b",
-              border: "none",
-              borderRadius: 4,
-              padding: "6px 16px",
+            style={{ 
+              width: "100%", 
+              borderRadius: 12, 
+              border: "2px solid #D4C4A8", 
+              padding: "12px 16px",
+              background: "#F5EFE0",
+              color: "#2C2C2C",
+              fontSize: "1rem",
+              fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
+              minHeight: "60px",
+              maxHeight: "120px",
+              resize: "vertical",
+              lineHeight: 1.5,
+              outline: "none",
+              transition: "all 0.3s ease"
             }}
-          >
-            Send
-          </button>
+            placeholder="Type your message... (You can write long messages here)"
+            maxLength={1000}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#7B6857";
+              e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "#D4C4A8";
+              e.target.style.boxShadow = "none";
+            }}
+          />
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button
+              type="submit"
+              style={{
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "12px 32px",
+                fontWeight: 600,
+                fontSize: "1rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px",
+                minWidth: "120px"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              Send Message
+            </button>
+          </div>
         </form>
       </div>
       <div
         style={{
-          background: "#232340",
-          borderRadius: 6,
-          padding: 12,
-          marginTop: 24,
+          background: "rgba(245, 239, 224, 0.1)",
+          borderRadius: 16,
+          padding: 20,
+          marginTop: 32,
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
         }}
       >
-        <b>About this class:</b>
-        <ul style={{ margin: 0, paddingLeft: 18 }}>
-          <li>
-            Points for attending: <b>{classInfo.points}</b>
+        <h3 style={{
+          color: "#D4C4A8",
+          fontSize: "1.3rem",
+          fontFamily: '"Cinzel", serif',
+          fontWeight: 600,
+          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+          marginBottom: 16
+        }}>About this class:</h3>
+        <ul style={{ 
+          margin: 0, 
+          paddingLeft: 20,
+          listStyle: "none"
+        }}>
+          <li style={{
+            marginBottom: 8,
+            padding: "8px 12px",
+            background: "rgba(245, 239, 224, 0.1)",
+            borderRadius: 8,
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            color: "#F5EFE0",
+            fontSize: "1rem"
+          }}>
+            Points for attending: <b style={{ color: "#D4C4A8" }}>{classInfo.points}</b>
           </li>
-          <li>Class for all races and backgrounds</li>
-          <li>Roleplay, ask questions, or just hang out!</li>
+          <li style={{
+            marginBottom: 8,
+            padding: "8px 12px",
+            background: "rgba(245, 239, 224, 0.1)",
+            borderRadius: 8,
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            color: "#F5EFE0",
+            fontSize: "1rem"
+          }}>
+            Class for all races and backgrounds
+          </li>
+          <li style={{
+            marginBottom: 8,
+            padding: "8px 12px",
+            background: "rgba(245, 239, 224, 0.1)",
+            borderRadius: 8,
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            color: "#F5EFE0",
+            fontSize: "1rem"
+          }}>
+            Roleplay, ask questions, or just hang out!
+          </li>
         </ul>
       </div>
     </div>

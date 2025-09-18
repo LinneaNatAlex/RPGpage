@@ -37,6 +37,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Forum.module.css";
 import Button from "../../Components/Button/Button";
+import { countWords, checkWordCountReward, updateUserWordCount } from "../../utils/wordCountReward";
 
 // Rich text editor (install react-quill if not present)
 import ReactQuill from "react-quill";
@@ -81,6 +82,7 @@ const Forum = () => {
   const [replyWordCount, setReplyWordCount] = useState(0);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
+  const [nitsReward, setNitsReward] = useState(null);
   const navigate = useNavigate();
 
   // Hent forumId fra URL
@@ -143,6 +145,9 @@ const Forum = () => {
   // Create new topic
   const handleCreateTopic = async () => {
     if (!newTopicTitle.trim() || isContentEmpty(newTopicContent)) return;
+    
+    const wordCount = countWords(newTopicContent);
+    
     const topicRef = await addDoc(
       collection(db, `forums/${forumRoom}/topics`),
       {
@@ -161,8 +166,19 @@ const Forum = () => {
         uid: user.uid,
       }
     );
+    
+    // Update user's total word count and check for nits reward
+    const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
+    const reward = await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
+    
+    if (reward.awarded) {
+      setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
+      setTimeout(() => setNitsReward(null), 10000);
+    }
+    
     setNewTopicTitle("");
     setNewTopicContent("");
+    setNewTopicWordCount(0);
     setSelectedTopic(topicRef.id);
   };
 
@@ -233,6 +249,9 @@ const Forum = () => {
   // Post reply in topic
   const handleReply = async () => {
     if (!selectedTopic || isContentEmpty(replyContent)) return;
+    
+    const wordCount = countWords(replyContent);
+    
     await addDoc(
       collection(db, `forums/${forumRoom}/topics/${selectedTopic}/posts`),
       {
@@ -242,7 +261,18 @@ const Forum = () => {
         uid: user.uid,
       }
     );
+    
+    // Update user's total word count and check for nits reward
+    const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
+    const reward = await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
+    
+    if (reward.awarded) {
+      setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
+      setTimeout(() => setNitsReward(null), 10000);
+    }
+    
     setReplyContent("");
+    setReplyWordCount(0);
   };
 
   // Edit post (correct Firestore path)
@@ -286,6 +316,46 @@ const Forum = () => {
   return (
     <div className={styles.forumWrapper}>
       <h2>{forumTitle}</h2>
+      {nitsReward && (
+        <div style={{
+          background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+          color: "#F5EFE0",
+          padding: "20px 30px",
+          borderRadius: "16px",
+          marginBottom: "25px",
+          border: "3px solid #D4C4A8",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+          textAlign: "center",
+          fontWeight: 700,
+          fontSize: "1.3rem",
+          position: "relative",
+          animation: "pulse 2s infinite"
+        }}>
+          {nitsReward}
+          <button
+            onClick={() => setNitsReward(null)}
+            style={{
+              position: "absolute",
+              top: "8px",
+              right: "12px",
+              background: "rgba(255, 255, 255, 0.2)",
+              border: "none",
+              color: "#F5EFE0",
+              borderRadius: "50%",
+              width: "24px",
+              height: "24px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
       {/* Topic list view */}
       {!selectedTopic && (
         <>
@@ -300,12 +370,8 @@ const Forum = () => {
               value={newTopicContent}
               onChange={(val) => {
                 setNewTopicContent(val);
-                // Strip HTML tags and count words
-                const text = val
-                  .replace(/<[^>]+>/g, " ")
-                  .replace(/&nbsp;/g, " ");
-                const words = text.trim().split(/\s+/).filter(Boolean);
-                setNewTopicWordCount(words.length);
+                const wordCount = countWords(val);
+                setNewTopicWordCount(wordCount);
               }}
               className={styles.newTopicEditor}
             />
@@ -318,6 +384,9 @@ const Forum = () => {
             >
               {`Ord: ${newTopicWordCount} / 300`}
               {newTopicWordCount < 300 && " (minimum 300 ord for å poste)"}
+              <div style={{ fontSize: "0.8rem", color: "#8B7A6B", marginTop: "4px" }}>
+                Earn 10 nits for every 500 words written!
+              </div>
             </div>
             <Button
               onClick={handleCreateTopic}
@@ -536,12 +605,8 @@ const Forum = () => {
               value={replyContent}
               onChange={(val) => {
                 setReplyContent(val);
-                // Strip HTML tags and count words
-                const text = val
-                  .replace(/<[^>]+>/g, " ")
-                  .replace(/&nbsp;/g, " ");
-                const words = text.trim().split(/\s+/).filter(Boolean);
-                setReplyWordCount(words.length);
+                const wordCount = countWords(val);
+                setReplyWordCount(wordCount);
               }}
               className={styles.quill}
             />
@@ -554,6 +619,9 @@ const Forum = () => {
             >
               {`Ord: ${replyWordCount} / 300`}
               {replyWordCount < 300 && " (minimum 300 ord for å poste)"}
+              <div style={{ fontSize: "0.8rem", color: "#8B7A6B", marginTop: "4px" }}>
+                Earn 10 nits for every 500 words written!
+              </div>
             </div>
             <Button
               onClick={handleReply}

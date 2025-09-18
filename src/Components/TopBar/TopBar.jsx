@@ -305,69 +305,69 @@ const TopBar = () => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-          {(() => {
-            if (!user) return null;
-            const src = user.photoURL || profileImageUrl || "/icons/avatar.svg";
-            // Compute role-based class
-            let roleClass = styles.profilePic;
-            const lower = (roles || []).map((r) => String(r).toLowerCase());
-            if (lower.includes("headmaster"))
-              roleClass += ` ${styles.headmasterPic}`;
-            else if (lower.includes("teacher"))
-              roleClass += ` ${styles.teacherPic}`;
-            else if (lower.includes("shadowpatrol"))
-              roleClass += ` ${styles.shadowPatrolPic}`;
-            else if (lower.includes("admin"))
-              roleClass += ` ${styles.adminPic}`;
-            return (
-              <img
-                src={src}
-                alt="Profile"
-                className={roleClass}
-                style={
-                  inLoveUntil && inLoveUntil > Date.now()
-                    ? {
-                        boxShadow:
-                          "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
-                        borderRadius: "50%",
-                      }
-                    : {}
-                }
-              />
-            );
-          })()}
-          <HealthBar health={health} maxHealth={100} />
-        </div>
+            {(() => {
+              if (!user) return null;
+              const src = user.photoURL || profileImageUrl || "/icons/avatar.svg";
+              // Compute role-based class
+              let roleClass = styles.profilePic;
+              const lower = (roles || []).map((r) => String(r).toLowerCase());
+              if (lower.includes("headmaster"))
+                roleClass += ` ${styles.headmasterPic}`;
+              else if (lower.includes("teacher"))
+                roleClass += ` ${styles.teacherPic}`;
+              else if (lower.includes("shadowpatrol"))
+                roleClass += ` ${styles.shadowPatrolPic}`;
+              else if (lower.includes("admin"))
+                roleClass += ` ${styles.adminPic}`;
+              return (
+                <img
+                  src={src}
+                  alt="Profile"
+                  className={roleClass}
+                  style={
+                    inLoveUntil && inLoveUntil > Date.now()
+                      ? {
+                          boxShadow:
+                            "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                          borderRadius: "50%",
+                        }
+                      : {}
+                  }
+                />
+              );
+            })()}
+            <HealthBar health={health} maxHealth={100} />
+          </div>
         <div className={styles.currency}>
-          <img
-            src="/icons/gold-coin.svg"
-            alt="Nits"
-            className={styles.coinIcon}
-          />
-          {balance} Nits
-          <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
-            ⭐ {points} points
-          </span>
-          {invisibleUntil && (
-            <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
-              Invisible:{" "}
-              {String(Math.floor(invisibleCountdown / 60)).padStart(2, "0")}:
-              {String(invisibleCountdown % 60).padStart(2, "0")}
+            <img
+              src="/icons/gold-coin.svg"
+              alt="Nits"
+              className={styles.coinIcon}
+            />
+            {balance} Nits
+            <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
+              ⭐ {points} points
             </span>
-          )}
-        </div>
+            {invisibleUntil && (
+              <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
+                Invisible:{" "}
+                {String(Math.floor(invisibleCountdown / 60)).padStart(2, "0")}:
+                {String(invisibleCountdown % 60).padStart(2, "0")}
+              </span>
+            )}
+          </div>
         <button
-          className={styles.inventoryIconBtn}
-          onClick={() => setShowInventory((v) => !v)}
-          title="Inventory"
-          disabled={infirmary}
-        >
-          <img
-            src="/icons/chest.svg"
-            alt="Inventory"
-            className={styles.chestIcon}
-          />
-        </button>
+            className={styles.inventoryIconBtn}
+            onClick={() => setShowInventory((v) => !v)}
+            title="Inventory"
+            disabled={infirmary}
+          >
+            <img
+              src="/icons/chest.svg"
+              alt="Inventory"
+              className={styles.chestIcon}
+            />
+          </button>
         {/* Love Potion: in love text */}
         {inLoveUntil && inLoveUntil > Date.now() && inLoveWith && (
           <span
@@ -376,7 +376,7 @@ const TopBar = () => {
               color: "#ff69b4",
               fontWeight: 700,
               fontSize: "1.1rem",
-              textShadow: "0 0 6px #fff, 0 0 12px #ffb6d5",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
             }}
           >
             In love with {inLoveWith}

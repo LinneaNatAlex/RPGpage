@@ -2,15 +2,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #23232b;
-  color: #b0aac2;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
   border: none;
   padding: 2rem 0 1rem 0;
+  width: 100%;
+}
 
-  .userMapContainer {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-  }
+.userMapContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
 }

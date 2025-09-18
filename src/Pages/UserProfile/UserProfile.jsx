@@ -155,7 +155,7 @@ const UserProfile = () => {
                       color: "#ff69b4",
                       fontWeight: 700,
                       fontSize: "1.1rem",
-                      textShadow: "0 0 6px #fff, 0 0 12px #ffb6d5",
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     }}
                   >
                     In love with {userData.inLoveWith}
@@ -168,16 +168,52 @@ const UserProfile = () => {
         {/* --------------------------------CHARACTER DETAILS-------------------------------- */}
         <div className={styles.characterDetailsContainer}>
           <div className={styles.charactinfo}>
-            <h2>Character Details</h2>
-            <p>
-              <strong>Full Name:</strong>{" "}
+            <h2 style={{
+              color: "#F5EFE0",
+              fontSize: "2rem",
+              fontWeight: 700,
+              margin: "0 0 1.5rem 0",
+              textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+              textAlign: "center",
+              position: "relative",
+              zIndex: 1
+            }}>Character Details</h2>
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Full Name:</strong>{" "}
               <span className={nameClass}>{userData.displayName}</span>
             </p>
-            <p>
-              <strong>Class:</strong> {userData.class}
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Class:</strong> {userData.class}
             </p>
-            <p>
-              <strong>Age:</strong> {userData.age}
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Age:</strong> {userData.age}
             </p>
             {/* Bursdag kun i Character Details, med valgskjema hvis ikke satt */}
             {userData.birthdayMonth && userData.birthdayDay ? (
@@ -346,18 +382,45 @@ const UserProfile = () => {
                 </button>
               </form>
             )}
-            <p>
-              <strong>Magical Race:</strong>{" "}
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Magical Race:</strong>{" "}
               {userData.race &&
               ["Witch", "witch", "witches", "Witches"].includes(userData.race)
                 ? "Wizard"
                 : userData.race}
             </p>
-            <p>
-              <strong>Balance:</strong> {userData.currency ?? 1000} Nits
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Balance:</strong> {userData.currency ?? 1000} Nits
             </p>
-            <p>
-              <strong>Inventory:</strong>
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Inventory:</strong>
               <img
                 src="/icons/chest.svg"
                 alt="Open inventory"
@@ -386,22 +449,49 @@ const UserProfile = () => {
           </div>
 
           <div className={styles.charactinfo}>
-            <p>
-              <strong>Account Created:</strong>
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Account Created:</strong>
               {userData.createdAt && userData.createdAt.toDate
                 ? userData.createdAt.toDate().toLocaleDateString()
                 : "N/A"}
             </p>
-            <p>
-              <strong>Last Login:</strong>
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Last Login:</strong>
               {auth.currentUser?.metadata?.lastLoginAt
                 ? new Date(
                     Number(auth.currentUser.metadata.lastLoginAt)
                   ).toLocaleDateString()
                 : "N/A"}
             </p>
-            <p>
-              <strong>Roles:</strong> {userData.roles?.join(", ")}
+            <p style={{
+              color: "#F5EFE0",
+              fontSize: "1.1rem",
+              margin: "0.5rem 0",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            }}>
+              <strong style={{
+                color: "#D4C4A8",
+                fontWeight: 700,
+                marginRight: "0.5rem"
+              }}>Roles:</strong> {userData.roles?.join(", ")}
             </p>
           </div>
         </div>

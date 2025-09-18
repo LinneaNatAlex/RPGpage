@@ -153,52 +153,75 @@ const Chat = () => {
   return (
     <div
       style={{
-        position: "fixed",
-        bottom: 0,
-        right: 0,
-        width: 350,
-        zIndex: 2000,
-        boxShadow: "0 0 12px #0008",
+        position: window.innerWidth <= 768 ? "relative" : "fixed",
+        bottom: window.innerWidth <= 768 ? "auto" : 0,
+        right: window.innerWidth <= 768 ? "auto" : 0,
+        width: window.innerWidth <= 768 ? "100%" : 350,
+        zIndex: window.innerWidth <= 768 ? 1 : 10005,
+        boxShadow: window.innerWidth <= 768 ? "none" : "0 0 12px #0008",
       }}
     >
-      <div
-        style={{
-          background: "#23232b",
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
-          padding: "0.5rem 1rem",
-          display: "flex",
-          alignItems: "center",
-          cursor: "pointer",
-          border: "2px solid #a084e8",
-          borderBottom: "none",
-        }}
-        onClick={() => setIsCollapsed((prev) => !prev)}
-      >
-        <span style={{ flex: 1, color: "#a084e8", fontWeight: 600 }}>Chat</span>
-        <button
+      {window.innerWidth > 768 && (
+        <div
           style={{
-            background: "none",
-            border: "none",
-            color: "#a084e8",
-            fontSize: 18,
+            background: "#5D4E37",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            padding: "0.5rem 1rem",
+            display: "flex",
+            alignItems: "center",
             cursor: "pointer",
+            border: "1px solid #7B6857",
+            borderBottom: "none",
           }}
+          onClick={() => setIsCollapsed((prev) => !prev)}
         >
-          {isCollapsed ? "▲" : "▼"}
-        </button>
-      </div>
-      {!isCollapsed && (
+          <span style={{ flex: 1, color: "#F5EFE0", fontWeight: 600 }}>Chat</span>
+          <button
+            style={{
+              background: "none",
+              border: "none",
+              color: "#F5EFE0",
+              fontSize: 18,
+              cursor: "pointer",
+            }}
+          >
+            {isCollapsed ? "▲" : "▼"}
+          </button>
+        </div>
+      )}
+      {(window.innerWidth > 768 ? !isCollapsed : true) && (
         <div
           className={styles.chatContainer}
           style={{
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-            borderTop: "none",
+            borderTopLeftRadius: window.innerWidth <= 768 ? 12 : 0,
+            borderTopRightRadius: window.innerWidth <= 768 ? 12 : 0,
+            borderTop: window.innerWidth <= 768 ? "1px solid #7B6857" : "none",
             height: 500,
             minHeight: 200,
           }}
         >
+          {window.innerWidth <= 768 && (
+            <div
+              style={{
+                background: "#5D4E37",
+                padding: "0.8rem 1rem",
+                borderTopLeftRadius: 12,
+                borderTopRightRadius: 12,
+                borderBottom: "1px solid #7B6857",
+                marginBottom: "1rem",
+              }}
+            >
+              <h3 style={{
+                color: "#F5EFE0",
+                fontSize: "1.2rem",
+                fontWeight: 600,
+                margin: 0,
+                fontFamily: '"Cinzel", serif',
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+              }}>Main Chat</h3>
+            </div>
+          )}
           <div className={styles.chatMessages} ref={chatBoxRef}>
             {messages.map((message) => {
               const userObj = users.find(
@@ -247,7 +270,7 @@ const Chat = () => {
                               r="8"
                               stroke="#ff5e5e"
                               strokeWidth="2"
-                              fill="#23232b"
+                              fill="#5D4E37"
                             />
                             <path
                               d="M10 6v2m0 4v2m-4-4h2m4 0h2"

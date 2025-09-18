@@ -145,7 +145,7 @@ const OnlineUsers = () => {
                     color: "#ff69b4",
                     fontWeight: 700,
                     fontSize: "0.95rem",
-                    textShadow: "0 0 6px #fff, 0 0 12px #ffb6d5",
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   }}
                 >
                   In love with {u.inLoveWith}

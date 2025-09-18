@@ -4,27 +4,38 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(30, 24, 48, 0.85);
+  background: rgba(44, 44, 44, 0.85);
   z-index: 2100;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .modalContent {
-  background: linear-gradient(135deg, #23232b 80%, #a084e8 100%);
-  color: #e7e3fa;
-  border-radius: 22px;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
+  border-radius: 16px;
   padding: 0;
-  max-width: 480px;
+  max-width: 500px;
   width: 92vw;
-  box-shadow: 0 8px 40px 0 rgba(124, 94, 191, 0.25), 0 1.5px 0 #a084e8 inset;
-  border: 2.5px solid #a084e8;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 2px solid #7B6857;
   position: relative;
   text-align: left;
   display: flex;
   flex-direction: column;
   max-height: 92vh;
   overflow: hidden;
+}
+
+.modalContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #7B6857 0%, #8B7A6B 50%, #7B6857 100%);
+  z-index: 1;
 }
 .inventoryList {
   font-size: 1.15rem;
@@ -38,62 +49,91 @@
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #7B6857 #E8DDD4;
+}
+
+.inventoryList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.inventoryList::-webkit-scrollbar-track {
+  background: #E8DDD4;
+  border-radius: 4px;
+}
+
+.inventoryList::-webkit-scrollbar-thumb {
+  background: #7B6857;
+  border-radius: 4px;
+}
+
+.inventoryList::-webkit-scrollbar-thumb:hover {
+  background: #8B7A6B;
 }
 .inventoryItem {
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  background: rgba(160, 132, 232, 0.08);
-  border-radius: 8px;
-  padding: 0.6rem 1.1rem;
+  background: rgba(245, 239, 224, 0.1);
+  border-radius: 12px;
+  padding: 0.8rem 1.2rem;
   font-size: 1.13rem;
   font-family: "Cinzel", serif;
-  color: #ffe084;
-  box-shadow: 0 1.5px 0 #a084e8 inset;
-  transition: background 0.18s, color 0.18s;
+  color: #F5EFE0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 .inventoryItem:hover {
-  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
-  color: #23232b;
+  background: rgba(245, 239, 224, 0.2);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .emptyText {
-  color: #b0aac2;
+  color: #D4C4A8;
   font-style: italic;
   padding: 2.2rem 2.5rem 1.2rem 2.5rem;
   font-size: 1.1rem;
+  text-align: center;
 }
 .closeBtn {
-  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
-  color: #23232b;
-  font-weight: bold;
+  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  color: #F5EFE0;
+  font-weight: 700;
   font-family: "Cinzel", serif;
   letter-spacing: 1px;
-  padding: 0.7rem 2.1rem;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.13);
+  padding: 0.8rem 2.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
   font-size: 1.13rem;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
   cursor: pointer;
   margin: 0 auto 2.1rem auto;
   display: block;
   position: sticky;
   bottom: 0;
   letter-spacing: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .closeBtn:hover {
-  background: linear-gradient(90deg, #f7c873 0%, #a084e8 100%);
-  color: #23232b;
-  box-shadow: 0 4px 16px #a084e8;
+  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 .modalContent h2 {
   font-family: "Cinzel", serif;
   font-size: 2.1rem;
   font-weight: 700;
-  color: #ffe084;
+  color: #F5EFE0;
   margin: 0;
   padding: 1.5rem 2.5rem 0.5rem 2.5rem;
   background: none;
   letter-spacing: 1.5px;
-  text-shadow: 0 2px 8px #a084e8;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }

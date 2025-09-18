@@ -16,6 +16,7 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import { countWords, checkWordCountReward, updateUserWordCount } from "../../utils/wordCountReward";
 
 const hallRules = [
   "Be respectful to all participants.",
@@ -37,6 +38,7 @@ const LiveRP = () => {
   const [isPrivilegedUser, setIsPrivilegedUser] = useState(false);
   const [showRulesPopup, setShowRulesPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [nitsReward, setNitsReward] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -92,13 +94,27 @@ const LiveRP = () => {
   const sendtMessage = async (e) => {
     if (e) e.preventDefault();
     if (!newMess || newMess.replace(/<(.|\n)*?>/g, "").trim() === "") return;
+    
+    const wordCount = countWords(newMess);
+    
     await addDoc(collection(db, "rpgGrateHall"), {
       text: newMess,
       timestamp: serverTimestamp(), // adds the timestam for the message
-
       sender: auth.currentUser.displayName,
       // gets the user name from firebase auth
     });
+    
+    // Update user's total word count and check for nits reward
+    if (auth.currentUser) {
+      const newTotalWordCount = await updateUserWordCount(auth.currentUser.uid, wordCount);
+      const reward = await checkWordCountReward(auth.currentUser.uid, newTotalWordCount, newTotalWordCount - wordCount);
+      
+      if (reward.awarded) {
+        setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
+        setTimeout(() => setNitsReward(null), 10000);
+      }
+    }
+    
     setNewMess("");
     if (inputRef.current) inputRef.current.innerHTML = "";
   };
@@ -138,7 +154,7 @@ const LiveRP = () => {
         left: 0,
         width: "100vw",
         height: "100vh",
-        background: "rgba(60, 40, 100, 0.7)",
+        background: "rgba(44, 44, 44, 0.7)",
         zIndex: 9999,
         display: "flex",
         alignItems: "center",
@@ -148,31 +164,45 @@ const LiveRP = () => {
     >
       <div
         style={{
-          background: "#2d2540",
-          borderRadius: "18px",
-          border: "2px solid #a084e8",
-          color: "#e2d9fa",
+          background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+          borderRadius: "16px",
+          border: "2px solid #7B6857",
+          color: "#F5EFE0",
           maxWidth: "95vw",
           width: "340px",
           padding: "2rem 1.2rem 1.2rem 1.2rem",
-          boxShadow: "0 4px 32px rgba(160,132,232,0.25)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "4px",
+            background: "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
+          }}
+        />
         <h2
           style={{
-            color: "#a084e8",
+            color: "#F5EFE0",
             fontSize: "1.25rem",
             marginBottom: "1rem",
             fontWeight: "bold",
             textAlign: "center",
+            textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+            fontFamily: "'Cinzel', serif",
           }}
         >
-          Great Hall Rules
+          Starshade Hall Rules
         </h2>
         <ul
           style={{
@@ -182,6 +212,8 @@ const LiveRP = () => {
             textAlign: "center",
             marginBottom: "2rem",
             listStylePosition: "inside",
+            color: "#D4C4A8",
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
           }}
         >
           {hallRules.map((rule, idx) => (
@@ -201,16 +233,17 @@ const LiveRP = () => {
           <button
             onClick={onClose}
             style={{
-              background: "#a084e8",
-              color: "#23232b",
-              border: "none",
-              borderRadius: "10px",
+              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              color: "#F5EFE0",
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: "8px",
               padding: "0.7rem 1.5rem",
               fontWeight: "bold",
               fontSize: "1rem",
               cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(160,132,232,0.15)",
-              transition: "background 0.2s, color 0.2s",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              transition: "all 0.3s ease",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
             }}
           >
             Show later
@@ -218,16 +251,17 @@ const LiveRP = () => {
           <button
             onClick={onNeverShow}
             style={{
-              background: "#fff",
-              color: "#a084e8",
-              border: "2px solid #a084e8",
-              borderRadius: "10px",
+              background: "linear-gradient(135deg, #6B6B6B 0%, #7B7B7B 100%)",
+              color: "#F5EFE0",
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: "8px",
               padding: "0.7rem 1.5rem",
               fontWeight: "bold",
               fontSize: "1rem",
               cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(160,132,232,0.10)",
-              transition: "background 0.2s, color 0.2s",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              transition: "all 0.3s ease",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
             }}
           >
             Don't show again
@@ -240,6 +274,46 @@ const LiveRP = () => {
   // --------------------CHAT FORM AND MESSAGE COMONENT / RENDERING-------------------
   return (
     <>
+      {nitsReward && (
+        <div style={{
+          background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+          color: "#F5EFE0",
+          padding: "20px 30px",
+          borderRadius: "16px",
+          marginBottom: "25px",
+          border: "3px solid #D4C4A8",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+          textAlign: "center",
+          fontWeight: 700,
+          fontSize: "1.3rem",
+          position: "relative",
+          animation: "pulse 2s infinite"
+        }}>
+          {nitsReward}
+          <button
+            onClick={() => setNitsReward(null)}
+            style={{
+              position: "absolute",
+              top: "8px",
+              right: "12px",
+              background: "rgba(255, 255, 255, 0.2)",
+              border: "none",
+              color: "#F5EFE0",
+              borderRadius: "50%",
+              width: "24px",
+              height: "24px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
       {isMobile && showRulesPopup && (
         <RulesPopup
           onClose={handleCloseRulesPopup}
@@ -260,33 +334,51 @@ const LiveRP = () => {
           <div
             style={{
               flex: 1,
-              background: "#23232b",
-              border: "2px solid #a084e8",
-              borderRadius: "8px",
-              color: "#b0aac2",
+              background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+              border: "2px solid #7B6857",
+              borderRadius: "12px",
+              color: "#F5EFE0",
               padding: "1.5rem",
               minWidth: "220px",
               maxWidth: "300px",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
+              position: "relative",
+              overflow: "hidden",
             }}
           >
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
+              }}
+            />
             <h2
               style={{
-                color: "#a084e8",
+                color: "#F5EFE0",
                 fontSize: "1.2rem",
                 marginBottom: "1rem",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: "'Cinzel', serif",
+                fontWeight: "600",
               }}
             >
-              Great Hall Rules
+              Starshade Hall Rules
             </h2>
             <ul
               style={{
                 fontSize: "0.95rem",
                 lineHeight: "1.6",
                 paddingLeft: "1.2rem",
+                color: "#D4C4A8",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
               }}
             >
               {hallRules.map((rule, idx) => (
-                <li key={idx}>{rule}</li>
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>{rule}</li>
               ))}
             </ul>
           </div>
@@ -344,8 +436,9 @@ const LiveRP = () => {
                         <span
                           style={{
                             fontSize: "0.9rem",
-                            color: "#a084e8",
+                            color: "#D4C4A8",
                             opacity: 0.8,
+                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                           }}
                         >
                           {formatTime(message.timestamp)}
@@ -356,11 +449,17 @@ const LiveRP = () => {
                           onClick={() => handleDeleteMessage(message.id)}
                           style={{
                             marginLeft: "1rem",
-                            color: "#ff2a2a",
-                            background: "none",
-                            border: "none",
+                            color: "#F5EFE0",
+                            background: "linear-gradient(135deg, #8B4A4A 0%, #9B5A5A 100%)",
+                            border: "1px solid rgba(255, 255, 255, 0.2)",
+                            borderRadius: "4px",
+                            padding: "0.2rem 0.5rem",
                             cursor: "pointer",
                             fontWeight: "bold",
+                            fontSize: "0.8rem",
+                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                            transition: "all 0.2s ease",
+                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                           }}
                         >
                           Delete
@@ -413,6 +512,14 @@ const LiveRP = () => {
                 className={styles.chatInput}
                 suppressContentEditableWarning={true}
               />
+              <div style={{ 
+                fontSize: "0.8rem", 
+                color: "#8B7A6B", 
+                marginTop: "4px",
+                textAlign: "center"
+              }}>
+                Earn 10 nits for every 500 words written!
+              </div>
               <Button
                 type="submit"
                 className={styles.RpchatBtn}
@@ -428,12 +535,17 @@ const LiveRP = () => {
                   type="button"
                   onClick={() => setShowRulesPopup(true)}
                   style={{
-                    background: "none",
-                    color: "#a084e8",
-                    border: "none",
-                    textDecoration: "underline",
+                    background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    color: "#F5EFE0",
+                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: "8px",
+                    padding: "0.5rem 1rem",
                     cursor: "pointer",
                     fontSize: "0.95rem",
+                    fontWeight: "600",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    transition: "all 0.3s ease",
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   }}
                 >
                   Show rules

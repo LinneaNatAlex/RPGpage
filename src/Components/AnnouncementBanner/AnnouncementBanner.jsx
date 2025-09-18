@@ -30,39 +30,45 @@ export default function AnnouncementBanner({ user }) {
     await deleteDoc(doc(db, "announcements", id));
   };
 
-  if (!announcements.length) return null;
+  // Always show banner, even if no announcements
 
   return (
     <div className={styles.bannerWrapper}>
-      <div className={styles.marquee}>
-        <span>
-          {announcements.map((a, i) => (
-            <React.Fragment key={a.id}>
-              {a.text}
-              {user?.roles?.includes("admin") ||
-              user?.roles?.includes("teacher") ? (
-                <button
-                  className={styles.deleteBtn}
-                  onClick={() => handleDelete(a.id)}
-                  style={{
-                    marginLeft: 12,
-                    background: "#e57373",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
-                    padding: "2px 8px",
-                    fontSize: "0.95em",
-                    cursor: "pointer",
-                  }}
-                  title="Delete announcement"
-                >
-                  ×
-                </button>
-              ) : null}
-              {i < announcements.length - 1 && "  •  "}
-            </React.Fragment>
-          ))}
-        </span>
+      <div className={styles.bannerContent}>
+        <div className={styles.marquee}>
+          <span>
+            {announcements.length > 0 ? (
+              announcements.map((a, i) => (
+                <React.Fragment key={a.id}>
+                  {a.text}
+                  {user?.roles?.includes("admin") ||
+                  user?.roles?.includes("teacher") ? (
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={() => handleDelete(a.id)}
+                      style={{
+                        marginLeft: 12,
+                        background: "#e57373",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        padding: "2px 8px",
+                        fontSize: "0.95em",
+                        cursor: "pointer",
+                      }}
+                      title="Delete announcement"
+                    >
+                      ×
+                    </button>
+                  ) : null}
+                  {i < announcements.length - 1 && "  •  "}
+                </React.Fragment>
+              ))
+            ) : (
+              "News here"
+            )}
+          </span>
+        </div>
       </div>
     </div>
   );

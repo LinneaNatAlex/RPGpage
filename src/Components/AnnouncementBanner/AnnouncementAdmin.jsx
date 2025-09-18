@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import styles from "./AnnouncementAdmin.module.css";
 
 export default function AnnouncementAdmin({ user }) {
   const [text, setText] = useState("");
@@ -29,62 +30,27 @@ export default function AnnouncementAdmin({ user }) {
   };
 
   return (
-    <form
-      onSubmit={handleAdd}
-      style={{
-        margin: "1rem 0",
-        display: "flex",
-        gap: 8,
-        alignItems: "center",
-      }}
-    >
+    <div className={styles.announcementAdminContainer}>
+      <form onSubmit={handleAdd} className={styles.announcementForm}>
       <input
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Write a new announcement for the banner..."
-        style={{
-          flex: 1,
-          padding: 8,
-          borderRadius: 6,
-          border: "1.5px solid #b8a48a",
-          background: "#23232b",
-          color: "#fffbe7",
-          fontSize: "1rem",
-          outline: "none",
-        }}
+        placeholder="WRITE A NEW ANNOUNCEMENT FOR THE BANNER..."
+        className={styles.announcementInput}
       />
       <button
         type="submit"
-        style={{
-          background: "#b8a48a",
-          color: "#23232b",
-          border: "none",
-          borderRadius: 6,
-          padding: "8px 20px",
-          fontWeight: 700,
-          fontSize: "1rem",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-          cursor: "pointer",
-          transition: "background 0.2s",
-        }}
+        className={styles.announcementButton}
       >
         Add
       </button>
       {error && (
-        <span
-          style={{
-            color: "#e57373",
-            background: "#23232b",
-            borderRadius: 4,
-            padding: "4px 10px",
-            marginLeft: 8,
-            fontWeight: 600,
-          }}
-        >
+        <span className={styles.errorMessage}>
           {error}
         </span>
       )}
-    </form>
+      </form>
+    </div>
   );
 }

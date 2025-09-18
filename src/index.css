@@ -1,22 +1,191 @@
-/* Tynn og moderne scrollbar for hele siden */
+/* Global styles for Arcane School theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background-color: #E8DDD4;
+  color: #2C2C2C;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling to match the earthy theme */
 body,
 * {
   scrollbar-width: thin;
-  scrollbar-color: #a084e8 #23232b;
+  scrollbar-color: #7B6857 #E8DDD4;
 }
 
-/* For Webkit-browsere */
+/* For Webkit-browsers */
 body::-webkit-scrollbar,
 *::-webkit-scrollbar {
   width: 8px;
-  background: #23232b;
+  background: #E8DDD4;
 }
 body::-webkit-scrollbar-thumb,
 *::-webkit-scrollbar-thumb {
-  background: #a084e8;
+  background: #7B6857;
   border-radius: 8px;
 }
 body::-webkit-scrollbar-track,
 *::-webkit-scrollbar-track {
-  background: #23232b;
+  background: #E8DDD4;
+}
+
+/* ReactQuill Editor Overrides - Force Light Theme with Dark Text */
+.ql-editor {
+  background-color: #F5EFE0 !important;
+  color: #2C2C2C !important;
+  border: 2px solid #D4C4A8 !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  min-height: 120px !important;
+}
+
+.ql-editor p {
+  color: #2C2C2C !important;
+}
+
+.ql-editor strong {
+  color: #2C2C2C !important;
+}
+
+.ql-editor em {
+  color: #2C2C2C !important;
+}
+
+.ql-editor u {
+  color: #2C2C2C !important;
+}
+
+.ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4, .ql-editor h5, .ql-editor h6 {
+  color: #2C2C2C !important;
+}
+
+.ql-editor li {
+  color: #2C2C2C !important;
+}
+
+.ql-editor blockquote {
+  color: #2C2C2C !important;
+}
+
+.ql-toolbar {
+  background-color: #F5EFE0 !important;
+  border: 2px solid #D4C4A8 !important;
+  border-bottom: none !important;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 12px !important;
+}
+
+.ql-container {
+  border: 2px solid #D4C4A8 !important;
+  border-top: none !important;
+  border-radius: 0 0 12px 12px !important;
+  background-color: #F5EFE0 !important;
+}
+
+.ql-toolbar .ql-stroke {
+  stroke: #2C2C2C !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: #2C2C2C !important;
+}
+
+.ql-toolbar button {
+  color: #2C2C2C !important;
+  background-color: transparent !important;
+  border: 1px solid #D4C4A8 !important;
+  border-radius: 6px !important;
+  margin: 2px !important;
+  padding: 6px !important;
+}
+
+.ql-toolbar button:hover {
+  background-color: #D4C4A8 !important;
+  color: #F5EFE0 !important;
+}
+
+.ql-toolbar button.ql-active {
+  background-color: #7B6857 !important;
+  color: #F5EFE0 !important;
+}
+
+.ql-toolbar .ql-picker {
+  color: #2C2C2C !important;
+}
+
+.ql-toolbar .ql-picker-options {
+  background-color: #F5EFE0 !important;
+  border: 2px solid #D4C4A8 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+.ql-toolbar .ql-picker-item {
+  color: #2C2C2C !important;
+}
+
+.ql-toolbar .ql-picker-item:hover {
+  background-color: #D4C4A8 !important;
+  color: #F5EFE0 !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: #7B6857 !important;
+  font-style: italic !important;
+}
+
+/* Force all text content to be dark */
+.ql-editor * {
+  color: #2C2C2C !important;
+}
+
+/* Override any white text */
+.ql-editor .ql-font-white,
+.ql-editor .ql-color-white,
+.ql-editor [style*="color: white"],
+.ql-editor [style*="color: #fff"],
+.ql-editor [style*="color: #ffffff"] {
+  color: #2C2C2C !important;
+}
+
+/* Additional overrides for text visibility */
+.ql-editor .ql-font,
+.ql-editor .ql-size,
+.ql-editor .ql-color,
+.ql-editor .ql-background {
+  color: #2C2C2C !important;
+}
+
+/* Ensure placeholder text is visible */
+.ql-editor.ql-blank::before {
+  color: #7B6857 !important;
+  opacity: 0.7 !important;
+}
+
+/* Pulse animation for nits reward notifications */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
 }

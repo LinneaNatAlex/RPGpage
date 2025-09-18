@@ -11,10 +11,13 @@ import PrivateChat from "../../Components/Chat/PrivateChat";
 import RPGCalendarSidebar from "../../Components/RPGCalendarSidebar";
 import AnnouncementBanner from "../../Components/AnnouncementBanner/AnnouncementBanner";
 import AnnouncementAdmin from "../../Components/AnnouncementBanner/AnnouncementAdmin";
+import TopBar from "../../Components/TopBar/TopBar";
 
 // state variables to handle the components that are shown in the main page
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState("newsFeed");
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatActiveTab, setChatActiveTab] = useState("mainChat");
   const isMobile = window.innerWidth <= 768;
   const { user } = useAuth();
   const displayName = user?.displayName || user?.email;
@@ -24,6 +27,7 @@ const MainPage = () => {
 
   return (
     <section className={styles.introductionPage}>
+      {user && <TopBar />}
       <AnnouncementBanner user={user} />
       {user?.roles?.includes("admin") || user?.roles?.includes("teacher") ? (
         <AnnouncementAdmin user={user} />
@@ -115,6 +119,52 @@ const MainPage = () => {
           </div>
         )}
       </main>
+      
+      {/* Chat Modal for Mobile */}
+      {user && isMobile && (
+        <>
+          {/* Floating Action Button */}
+          <button
+            className={styles.fabChatBtn}
+            onClick={() => setShowChatModal(true)}
+            aria-label="Open Chat"
+          >
+            💬
+          </button>
+          
+          {/* Chat Modal */}
+          {showChatModal && (
+            <div className={styles.chatModalOverlay}>
+              <div className={styles.chatModal}>
+                <div className={styles.chatModalTabs}>
+                  <button
+                    className={chatActiveTab === "mainChat" ? styles.activeTab : ""}
+                    onClick={() => setChatActiveTab("mainChat")}
+                  >
+                    Main Chat
+                  </button>
+                  <button
+                    className={chatActiveTab === "privateChat" ? styles.activeTab : ""}
+                    onClick={() => setChatActiveTab("privateChat")}
+                  >
+                    Private Chat
+                  </button>
+                  <button
+                    className={styles.closeModalBtn}
+                    onClick={() => setShowChatModal(false)}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className={styles.chatModalContent}>
+                  {chatActiveTab === "mainChat" && <Chat />}
+                  {chatActiveTab === "privateChat" && <PrivateChat />}
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </section>
   );
 };

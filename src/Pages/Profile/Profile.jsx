@@ -124,7 +124,7 @@ const Profile = () => {
                   alt="Image"
                   className={roleClass}
                 />
-                <label className={styles.editBtn} style={{ marginTop: 12 }}>
+                <label className={styles.editBtn} style={{ marginTop: 20, display: "block" }}>
                   <input
                     type="file"
                     accept="image/*"
@@ -135,16 +135,16 @@ const Profile = () => {
                   <span
                     style={{
                       display: "inline-block",
-                      background: uploading ? "#ccc" : "#a084e8",
-                      color: uploading ? "#888" : "#fff",
-                      borderRadius: 6,
-                      padding: "6px 18px",
+                      background: uploading ? "#ccc" : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                      color: uploading ? "#888" : "#F5EFE0",
+                      borderRadius: 8,
+                      padding: "8px 20px",
                       fontWeight: 600,
                       fontSize: 15,
                       cursor: uploading ? "not-allowed" : "pointer",
-                      border: "none",
-                      marginTop: 8,
-                      boxShadow: "0 2px 8px #0002",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     }}
                   >
                     {uploading ? "Uploading..." : "Choose file"}
@@ -197,7 +197,7 @@ const Profile = () => {
                 </span>
                 <strong>Birthday:</strong>{" "}
                 {userData.birthdayMonth && userData.birthdayDay ? (
-                  <span style={{ color: "#ffe084", fontWeight: 600 }}>
+                  <span style={{ color: "#D4C4A8", fontWeight: 600 }}>
                     {
                       [
                         "Januar",
@@ -289,7 +289,7 @@ const Profile = () => {
                 {!userData.birthdayMonth || !userData.birthdayDay ? (
                   <span
                     style={{
-                      color: "#b0aac2",
+                      color: "#D4C4A8",
                       fontStyle: "italic",
                       marginLeft: 6,
                     }}
@@ -351,9 +351,7 @@ const Profile = () => {
           </div>
         )}
         {/* -----------------------------CHAT BAR----------------------------- */}
-        <div className={styles.chatBar}>
-          <FriendsList profileUid={user.uid} />
-        </div>
+     
       </div>
     </div>
   );

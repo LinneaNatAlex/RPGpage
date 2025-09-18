@@ -16,12 +16,13 @@ body,
 }
 
 .profileWrapper {
-  background-color: #23232b;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
   width: 100vw;
   min-height: 100vh;
   margin: 0;
-  padding: 0;
+  padding: 2rem;
   overflow-x: hidden;
+  font-family: 'Cinzel', serif;
 }
 
 .profileContainer {
@@ -30,35 +31,106 @@ body,
   align-items: center;
   height: auto;
   max-height: 100vh;
-  border: 2px solid #b0aac2;
-  background: #23232b;
+  border: 2px solid #7B6857;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
   margin: 0;
-  padding: 0;
+  padding: 1.5rem;
   overflow-x: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+  max-width: 95%;
+}
+
+.profileContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #7B6857 0%, #8B7A6B 50%, #7B6857 100%);
+  z-index: 1;
 }
 
 .profileTextContainer {
-  display: grid;
-  grid-template-columns: 4fr 1fr;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   gap: 20px;
+  margin-top: 2rem;
+}
+
+.profileTextContainer h2 {
+  color: #7B6857;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profileTextContainer p {
+  color: #2C2C2C;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .profileText {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #b0aac2;
+  color: #2C2C2C;
   width: 100%;
+  max-width: 95%;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 2px solid #D4C4A8;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.profileText::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #7B6857 0%, #8B7A6B 50%, #7B6857 100%);
+  z-index: 1;
 }
 
 .imageContainer {
+  width: 40%;
+  padding: 1.5rem;
+  height: 50%;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
-  padding: 20px;
-  height: 50%;
+}
+
+.imageContainer h1 {
+  color: #F5EFE0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.imageContainer p {
+  color: #D4C4A8;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 .profileImage {
@@ -66,8 +138,8 @@ body,
   height: 300px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #7c5ebf;
-  box-shadow: 0 0 12px #b0aac2;
+  border: 4px solid #7B6857;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .adminAvatar {
@@ -78,9 +150,10 @@ body,
 .characterInfo {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  width: 100%;
+  width: 60%;
+  padding: 1rem;
 }
 
 .caracterDetails {
@@ -89,55 +162,50 @@ body,
   flex-direction: column;
 }
 
+.caracterDetails p {
+  color: #F5EFE0;
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.caracterDetails strong {
+  color: #D4C4A8;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
 .characterDetailsContainer {
-  margin: 0 20px;
-  padding: 20px;
+  margin: 2rem 0;
+  padding: 1.5rem;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   height: auto;
-  border: 2px solid #7c5ebf;
-  background: #23232b;
-  color: #b0aac2;
-  gap: 5rem;
-  width: 100%;
-}
-
-.chatBar {
-  width: 100%;
-  height: 100%;
-}
-
-.chatContainer {
-  width: 100%;
-  max-width: 320px;
-  margin-right: 32px;
-  padding: 0 12px 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.friendsBox {
-  width: 220px;
-  max-width: 220px;
-  margin-right: 32px;
-  padding: 0 8px 0 0;
+  border: 2px solid #7B6857;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
+  gap: 2rem;
+  max-width: 70%;
   border-radius: 16px;
-  box-shadow: 0 0 8px #7c5ebf22;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
-/* Fjerner ekstra mellomrom under chat og friends på små skjermer */
-@media screen and (max-width: 1000px) {
-  .chatContainer,
-  .friendsBox {
-    margin-right: 0;
-    padding-right: 0;
-    width: 100vw;
-    max-width: 100vw;
-    border-radius: 10px;
-  }
+.characterDetailsContainer h2 {
+  color: #F5EFE0;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
 
+
+/* Responsive design for mobile */
+@media screen and (max-width: 1000px) {
   .profileWrapper {
     display: flex;
     flex-direction: column;
@@ -166,9 +234,5 @@ body,
     flex-direction: row;
     gap: 2rem;
     border-radius: 10px;
-  }
-
-  .chatContainer {
-    display: none;
   }
 }

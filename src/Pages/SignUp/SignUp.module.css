@@ -37,25 +37,27 @@
 .signUpBtn,
 .sortingQuizButton,
 .removeImageBtn {
-  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
-  color: #23232b;
-  font-weight: bold;
+  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  color: #F5EFE0;
+  font-weight: 600;
   font-family: "Cinzel", serif;
   letter-spacing: 1px;
-  padding: 0.7rem 1.5rem;
+  padding: 12px 24px;
   margin: 0.5rem 0;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
-  font-size: large;
-  transition: background 0.2s, color 0.2s;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 .signUpBtn:hover,
 .sortingQuizButton:hover,
 .removeImageBtn:hover {
-  background: linear-gradient(90deg, #f7c873 0%, #a084e8 100%);
-  color: #fff;
-  cursor: pointer;
+  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .formGroup {
@@ -70,8 +72,13 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #b0aac2;
+  color: #F5EFE0;
   text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
 }
 
 /* ------------------INPUT GROUP------------------ */
@@ -79,8 +86,16 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  color: #d1d1d1;
+  color: #F5EFE0;
   margin: 0.5rem;
+  gap: 8px;
+}
+
+.inputGroup label {
+  color: #D4C4A8;
+  font-weight: 600;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .imagePreview {
@@ -91,12 +106,25 @@
   width: 320px;
   height: 260px;
   margin: 1.5rem auto 0 auto;
-  background: #181820;
-  border: 2px solid goldenrod;
-  border-radius: 16px;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  border: 3px solid #7B6857;
+  border-radius: 20px;
   padding: 1rem 1rem 1.2rem 1rem;
   box-sizing: border-box;
   overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.imagePreview::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
+  border-radius: 20px 20px 0 0;
 }
 .styleImagePreview {
   width: 180px;
@@ -104,29 +132,35 @@
   object-fit: cover;
   border-radius: 12px;
   margin: 0 auto 0.7rem auto;
-  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
-  background: #23232b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  background: #F5EFE0;
   display: block;
+  border: 2px solid #D4C4A8;
 }
 
 /* ------------------IMAGE BUTTON------------------ */
 
 .removeImageBtn {
-  background-color: var(--secondary-color);
-  color: #23232b;
-  border: none;
-  font-size: large;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: #F5EFE0;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  font-size: 1rem;
   cursor: pointer;
   margin-top: 0.7rem;
   align-self: center;
-  padding: 0.4rem 1.2rem;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.08);
-  transition: background 0.2s, color 0.2s;
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 .removeImageBtn:hover {
-  background-color: goldenrod;
-  color: #23232b;
+  background: linear-gradient(135deg, #ff5722 0%, #e53935 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .signUpBtn {
@@ -147,22 +181,24 @@
 }
 
 .sortingQuizButton {
-  background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
-  color: #23232b;
-  font-weight: bold;
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+  color: #F5EFE0;
+  font-weight: 600;
   font-family: "Cinzel", serif;
   letter-spacing: 1px;
-  padding: 0.7rem 1.5rem;
+  padding: 12px 24px;
   margin: 0.5rem;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
-  transition: background 0.2s, color 0.2s;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 .sortingQuizButton:hover {
-  background: linear-gradient(90deg, #f7c873 0%, #a084e8 100%);
-  color: #fff;
-  cursor: pointer;
+  background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .signUpBtn:hover {
@@ -172,15 +208,25 @@
 
 /* ------------------INPUT STYLES------------------ */
 input {
-  color: #b0aac2;
-  border: 2px solid #b0aac2;
-  border-radius: 10px;
-  padding: 0.5rem;
-  background-color: #23232b;
+  color: #2C2C2C;
+  border: 2px solid #D4C4A8;
+  border-radius: 12px;
+  padding: 12px 16px;
+  background-color: #F5EFE0;
+  font-size: 1rem;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+input:focus {
+  border-color: #7B6857;
+  box-shadow: 0 0 16px rgba(123, 104, 87, 0.4);
+  transform: translateY(-1px);
 }
 input::placeholder {
-  color: #b0aac2;
-  text-transform: uppercase;
+  color: #7B6857;
+  text-transform: none;
+  font-style: italic;
 }
 /* ------------------BACKGROUND VIDEO------------------ */
 .backgroundVideo {
@@ -194,9 +240,57 @@ input::placeholder {
   filter: brightness(0.5);
 }
 /* ------------------RESPONSIVE------------------ */
-@media screen and (max-width: 912px) {
-  .signUpForm {
-    min-width: 100%;
-    max-height: 100%;
+@media screen and (max-width: 768px) {
+  .signUpContainer {
+    padding: 20px;
+    padding-top: 80px;
+  }
+  
+  .imagePreview {
+    width: 280px;
+    height: 220px;
+    margin: 1rem auto 0 auto;
+  }
+  
+  .styleImagePreview {
+    width: 150px;
+    height: 180px;
+  }
+  
+  .formGroupTitle {
+    font-size: 1.3rem;
+  }
+  
+  .signUpBtn,
+  .sortingQuizButton,
+  .removeImageBtn {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  
+  input {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .signUpContainer {
+    padding: 15px;
+    padding-top: 60px;
+  }
+  
+  .imagePreview {
+    width: 250px;
+    height: 200px;
+  }
+  
+  .styleImagePreview {
+    width: 130px;
+    height: 160px;
+  }
+  
+  .formGroupTitle {
+    font-size: 1.2rem;
   }
 }

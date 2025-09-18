@@ -1,50 +1,88 @@
 /* Eat button in inventory */
 .eatBtn {
-  background: #1ecb8c;
-  color: #23232b;
-  border: none;
-  border-radius: 6px;
-  padding: 0.2rem 0.8rem;
+  background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+  color: #F5EFE0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
   margin-left: 0.5rem;
-  box-shadow: 0 2px 8px #0002;
-  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .eatBtn:hover {
-  background: #17a06a;
-  color: #fff;
+  background: linear-gradient(135deg, #66BB6A 0%, #81C784 100%);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Delete button in inventory */
+.deleteBtn {
+  background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+  color: #F5EFE0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.deleteBtn:hover {
+  background: linear-gradient(135deg, #e57373 0%, #ef5350 100%);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 /* Profile image next to the health bar */
 .profilePic {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 0.5rem;
-  border: 2px solid #a084e8;
+  border: 3px solid #7B6857;
   background: #23232b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 12px rgba(123, 104, 87, 0.3);
+  transition: transform 0.2s ease;
+}
+.profilePic:hover {
+  transform: scale(1.05);
 }
 
 /* Inventory ikon-knapp */
 .inventoryIconBtn {
-  background: none;
-  border: none;
-  padding: 0.2rem 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 0.6rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  border-radius: 6px;
-  transition: background 0.2s;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 .inventoryIconBtn:hover {
-  background: #2d2346;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 .chestIcon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: block;
+  filter: drop-shadow(0 0 4px rgba(139, 69, 19, 0.5));
+  transition: transform 0.2s ease;
+}
+.inventoryIconBtn:hover .chestIcon {
+  transform: scale(1.1);
 }
 .healthBarWrapper {
   display: flex;
@@ -58,55 +96,67 @@
   gap: 0.7rem;
 }
 .healthBarOuter {
-  width: 100px;
-  height: 18px;
-  background: #444;
-  border-radius: 8px;
+  width: 110px;
+  height: 20px;
+  background: #2C2C2C;
+  border-radius: 10px;
   overflow: hidden;
   margin-right: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .healthBarInner {
   height: 100%;
-  background: linear-gradient(90deg, #1ecb8c, #ffe066 80%);
-  border-radius: 8px;
-  transition: width 0.3s;
+  background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 50%, #8BC34A 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
 }
 .healthText {
   font-weight: bold;
-  color: #fff;
-  font-size: 1rem;
+  color: #F5EFE0;
+  font-size: 0.9rem;
 }
 .topBar {
   position: relative;
-  top: 0;
-  right: 0;
   height: 60px;
-  z-index: 1;
+  z-index: 100;
   display: flex;
   align-items: center;
-  background: transparent;
-  color: #fff;
-  padding: 0 2.2rem 0 0;
-  font-size: 1.1rem;
-  gap: 2.5rem;
-  box-shadow: none;
+  justify-content: flex-start;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  gap: 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  margin: 1rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .currency {
   display: flex;
   align-items: center;
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1rem;
   gap: 0.5rem;
-  background: transparent;
-  border-radius: 0;
-  padding: 0 0.7rem 0 0;
-  margin-right: 0.7rem;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  margin: 0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: #F5EFE0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .coinIcon {
-  width: 24px;
-  height: 24px;
-  filter: drop-shadow(0 0 2px gold);
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 0 4px gold) drop-shadow(0 0 8px rgba(255, 215, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+.coinIcon:hover {
+  transform: scale(1.1) rotate(5deg);
 }
 .inventory {
   display: flex;
@@ -114,33 +164,94 @@
   gap: 0.5rem;
 }
 .itemList {
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+  padding: 2.2rem 2.5rem 1.2rem 2.5rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  max-height: 60vh;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  gap: 1.1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #7B6857 #E8DDD4;
+}
+
+.itemList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.itemList::-webkit-scrollbar-track {
+  background: #E8DDD4;
+  border-radius: 4px;
+}
+
+.itemList::-webkit-scrollbar-thumb {
+  background: #7B6857;
+  border-radius: 4px;
+}
+
+.itemList::-webkit-scrollbar-thumb:hover {
+  background: #8B7A6B;
 }
 
 .itemRow {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.9rem;
+  background: rgba(245, 239, 224, 0.1);
+  border-radius: 12px;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.13rem;
+  font-family: "Cinzel", serif;
+  color: #F5EFE0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.itemRow:hover {
+  background: rgba(245, 239, 224, 0.2);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .itemName {
   font-weight: 700;
   font-size: 1.08rem;
-  color: #ffe066;
+  color: #F5EFE0;
   letter-spacing: 0.01em;
   margin-right: 0.3rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.itemQty {
+  color: #D4C4A8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+}
+
+.itemEffect {
+  color: #4CAF50;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .empty {
-  color: #b0aac2;
+  color: #D4C4A8;
   font-style: italic;
+  padding: 2.2rem 2.5rem 1.2rem 2.5rem;
+  font-size: 1.1rem;
+  text-align: center;
 }
 
 .inventoryBtn {
-  background: #a084e8;
+  background: #7B6857;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -153,58 +264,102 @@
   transition: background 0.2s;
 }
 .inventoryBtn:hover {
-  background: #7c5fe6;
+  background: #8B7A6B;
 }
 
 .inventoryPopup {
   position: fixed;
-  top: 60px;
-  right: 30px;
+  top: 0;
+  left: 0;
   z-index: 2000;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(44, 44, 44, 0.85);
   width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
 }
 .inventoryPopupContent {
-  background: #23232b;
-  color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 0 18px 4px #b0aac2;
-  padding: 2rem 2.5rem 1.5rem 2.5rem;
-  margin-top: 1.5rem;
-  margin-right: 2.5rem;
-  min-width: 260px;
-  max-width: 350px;
-  min-height: 120px;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 2px solid #7B6857;
+  padding: 0;
+  max-width: 500px;
+  width: 92vw;
+  position: relative;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+.inventoryPopupContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #7B6857 0%, #8B7A6B 50%, #7B6857 100%);
+  z-index: 1;
+}
+
+.inventoryPopupContent h4 {
+  font-family: "Cinzel", serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #F5EFE0;
+  margin: 0;
+  padding: 1.5rem 2.5rem 0.5rem 2.5rem;
+  background: none;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 .closeBtn {
-  margin-top: 1.2rem;
-  background: #a084e8;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 1.1rem;
-  font-weight: 600;
-  font-size: 1rem;
+  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  color: #F5EFE0;
+  font-weight: 700;
+  font-family: "Cinzel", serif;
+  letter-spacing: 1px;
+  padding: 0.8rem 2.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  font-size: 1.13rem;
+  transition: all 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 2px 8px #0002;
-  transition: background 0.2s;
+  margin: 0 auto 2.1rem auto;
+  display: block;
+  position: sticky;
+  bottom: 0;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .closeBtn:hover {
-  background: #7c5fe6;
+  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 .giftBtn {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1.2em;
-  transition: transform 0.1s;
+  transition: all 0.3s ease;
+  color: #F5EFE0;
+  padding: 0.2rem;
+  border-radius: 4px;
 }
 .giftBtn:hover {
   transform: scale(1.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #F5EFE0;
 }
 .giftModalOverlay {
   position: fixed;

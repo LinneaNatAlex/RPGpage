@@ -3,11 +3,14 @@
 .navbar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: #23232b;
+  justify-content: space-between;
+  background-color: #3A2F26;
   width: 100%;
-  height: var(--navbar-height);
+  height: 70px;
   box-sizing: border-box;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 10001;
 }
 /* -----------------MENU ITEMS--------------------------- */
 .menuItems {
@@ -15,11 +18,12 @@
   justify-content: center;
   align-items: center;
   gap: 2rem;
+  flex: 1;
 }
 
 .navbar a {
   text-decoration: none;
-  color: #b0aac2;
+  color: #F5EFE0;
   font-size: 1rem;
   font-weight: 600;
   transition: color 0.3s ease;
@@ -27,17 +31,18 @@
 
 /* Make the main site title larger and bolder */
 .menuItems > a:first-child {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  color: #F5EFE0;
 }
 
 .navbar a:hover {
-  color: #e0e0e0;
+  color: #D4C4A8;
 }
 /* -----------------SIGN OUT BUTTON--------------------------- */
 .signOutBtn {
-  background-color: #444455;
-  color: #e0e0e0;
+  background-color: #7B6857;
+  color: #F5EFE0;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -47,47 +52,64 @@
 }
 
 .signOutBtn:hover {
-  background-color: var(--button-hover-background);
+  background-color: #8B7A6B;
 }
 
 /* CLASSROOMS DROPDOWN MENU */
 .dropdown {
   position: relative;
   display: inline-block;
+  z-index: 10002;
 }
 
 .dropdownContent {
   display: none;
   position: absolute;
-  background-color: var(--navbar-rolldown-background, #3a373a);
-  min-width: 160px;
+  background-color: #7B6857;
+  min-width: 180px;
   flex-direction: column;
   padding: 0.5rem 0;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
+  z-index: 10000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  top: 100%;
+  left: 0;
+  /* Force visibility */
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .dropdownContent a {
   display: block;
-  padding: 0.5rem 1.5rem;
-  color: #d0cbe1;
+  padding: 0.6rem 1.5rem;
+  color: #F5EFE0;
   text-align: left;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  margin: 0 0.5rem;
 }
 
 .dropdownContent a:hover {
-  background: #28262b;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  color: #F5EFE0;
+  transform: translateX(4px);
 }
 
 .dropdown:hover .dropdownContent {
-  display: block;
-  background-color: var(--navbar-rolldown-background);
+  display: block !important;
+  background-color: #7B6857;
+  z-index: 10000 !important;
 }
+/* Force dropdown to be on top */
+.dropdownContent {
+  z-index: 10000 !important;
+  position: absolute !important;
+}
+
 /*------------------RESPONSIVE---------------------- */
 
 @media (max-width: 1000px) {
@@ -117,5 +139,72 @@
   }
   .signOutBtn {
     padding: 0.2rem;
+  }
+}
+
+/* Additional mobile responsiveness */
+@media screen and (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+    height: 60px;
+  }
+  
+  .menuItems {
+    gap: 0.8rem;
+  }
+  
+  .menuItems > a:first-child {
+    font-size: 1.2rem;
+  }
+  
+  .navbar a {
+    font-size: 0.9rem;
+  }
+  
+  .signOutBtn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .dropdownContent {
+    min-width: 160px;
+  }
+  
+  .dropdownContent a {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar {
+    padding: 0 0.5rem;
+    height: 55px;
+  }
+  
+  .menuItems {
+    gap: 0.5rem;
+  }
+  
+  .menuItems > a:first-child {
+    font-size: 1.1rem;
+  }
+  
+  .navbar a {
+    font-size: 0.8rem;
+  }
+  
+  .signOutBtn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .dropdownContent {
+    min-width: 140px;
+  }
+  
+  .dropdownContent a {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 }

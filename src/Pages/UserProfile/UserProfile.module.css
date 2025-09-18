@@ -5,19 +5,19 @@
 }
 .headmasterName {
   color: #fff !important;
-  text-shadow: 0 0 8px #fff, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .teacherName {
   color: gold !important;
-  text-shadow: 0 0 8px gold, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .shadowPatrolName {
   color: #1ecb8c !important;
-  text-shadow: 0 0 8px #1ecb8c, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .adminName {
   color: #ff5e5e !important;
-  text-shadow: 0 0 8px #ff5e5e, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 /* --- ROLE AVATAR BORDERS --- */
 .headmasterAvatar {
@@ -34,12 +34,13 @@
 }
 /* ---------- */
 .profileWrapper {
-  background-color: #23232b;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
   width: 100vw;
   min-height: 100vh;
   margin: 0;
-  padding: 0;
+  padding: 2rem;
   overflow-x: hidden;
+  font-family: 'Cinzel', serif;
 }
 
 .profileContainer {
@@ -48,21 +49,27 @@
   align-items: center;
   height: auto;
   max-height: 100vh;
-  border: 2px solid #b0aac2;
-  background: #23232b;
+  border: 2px solid #7B6857;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
   margin: 0;
-  padding: 0;
+  padding: 1.5rem;
   overflow-x: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+  max-width: 95%;
 }
 
 /* -------------------------IMAGE CONTAINER------------------------- */
 .imageContainer {
+  width: 40%;
+  padding: 1.5rem;
+  height: 50%;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
-  padding: 20px;
-  height: 50%;
 }
 
 .profileImage {
@@ -70,8 +77,8 @@
   height: 300px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #7c5ebf;
-  box-shadow: 0 0 12px #b0aac2;
+  border: 4px solid #7B6857;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* -------------------------ADMIN AVATAR ------------------------- */
@@ -91,17 +98,20 @@
 }
 
 .characterDetailsContainer {
-  margin: 0 20px;
-  padding: 20px 24px 20px 20px;
+  margin: 2rem 0;
+  padding: 1.5rem;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   height: auto;
-  border: 2px solid #7c5ebf;
-  background: #23232b;
-  color: #b0aac2;
-  gap: 5rem;
-  width: calc(100% - 24px);
+  border: 2px solid #7B6857;
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
+  gap: 2rem;
+  max-width: 70%;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
 .chatBar {
@@ -118,23 +128,70 @@
 
 /* -------------------------PROFILE HTML CONTAINER------------------------- */
 .profileHtmlContainer {
-  display: grid;
-  grid-template-columns: 4fr 1fr;
-  gap: 1rem;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 300vh;
-  padding: 1rem;
+  max-width: 95%;
+  margin: 2rem 0;
+  height: auto;
+  padding: 0;
 }
 .profileIframe {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   border: none;
   overflow-y: auto;
-  border-radius: 10px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  border: 2px solid #D4C4A8;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 .profileTextContainer {
-  color: #b0aac2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 70%;
+  margin: 2rem auto 0 auto;
+  gap: 20px;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 2px solid #D4C4A8;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.profileTextContainer h2 {
+  color: #7B6857;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profileTextContainer p {
+  color: #2C2C2C;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.profileText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #2C2C2C;
+  width: 100%;
+  max-width: 70%;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 2px solid #D4C4A8;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 /* -------------------------RESPONSIVE------------------------- */
 @media screen and (max-width: 1000px) {
@@ -157,6 +214,9 @@
   }
   .profileHtmlContainer {
     display: flex;
+    flex-direction: column;
+    max-width: 95%;
+    margin: 2rem 0;
   }
   .chatContainer {
     width: 320px;

@@ -80,7 +80,7 @@ const Navbar = () => {
               >
                 Roleplay
               </span>
-              <div className={styles.dropdownContent}>
+              <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
                 <NavLink to="/Rpg/GreatHall">Starshade Hall</NavLink>
                 <NavLink to="/forum/commonroom">Commonroom</NavLink>
                 <NavLink to="/forum/ritualroom">Ritual Room</NavLink>

@@ -1,23 +1,23 @@
 .userName {
   font-weight: bold;
-  color: #a084e8;
+  color: #7B6857;
   margin-right: 8px;
 }
 .headmasterName {
   color: #fff !important;
-  text-shadow: 0 0 8px #fff, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .teacherName {
   color: gold !important;
-  text-shadow: 0 0 8px gold, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .shadowPatrolName {
   color: #1ecb8c !important;
-  text-shadow: 0 0 8px #1ecb8c, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .adminName {
   color: #ff5e5e !important;
-  text-shadow: 0 0 8px #ff5e5e, 0 0 4px #b0aac2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .gearButton {
   background: none;
@@ -44,7 +44,7 @@
 .timeoutModal {
   background: #23232b;
   border-radius: 14px;
-  border: 2px solid #a084e8;
+  border: 2px solid #7B6857;
   color: #b0aac2;
   padding: 2rem 2.5rem 1.5rem 2.5rem;
   box-shadow: 0 4px 32px rgba(160, 132, 232, 0.25);
@@ -53,7 +53,7 @@
   text-align: center;
 }
 .timeoutBtn {
-  background: linear-gradient(90deg, #a084e8 60%, #7c5ebf 100%);
+  background: linear-gradient(90deg, #7B6857 60%, #8B7A6B 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -65,7 +65,7 @@
   transition: background 0.2s, color 0.2s;
 }
 .timeoutBtn:hover {
-  background: linear-gradient(90deg, #7c5ebf 60%, #a084e8 100%);
+  background: linear-gradient(90deg, #8B7A6B 60%, #7B6857 100%);
 }
 .headmasterAvatar {
   border: 3px solid #fff !important;
@@ -80,21 +80,20 @@
   box-shadow: 0 0 18px 4px #1ecb8c, 0 0 12px #b0aac2 !important;
 }
 .onlineUsersContainer {
-  box-shadow: 0 4px 24px rgba(124, 94, 191, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  margin: 16px 0;
+  padding: 1.5rem;
+  margin: 0;
   max-height: 100vh;
   height: 100vh;
-  margin: 0;
-  background-color: #23232b;
+  background-color: #E8DDD4;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-color) var(--secondary-color);
-  border-radius: 16px;
-  border: 2px solid #7c5ebf;
-  color: #b0aac2;
+  scrollbar-color: #7B6857 #E8DDD4;
+  border-radius: 12px;
+  border: 1px solid #D4C4A8;
+  color: #2C2C2C;
 }
 /* ---------------Online users list styles -------------------*/
 
@@ -114,9 +113,9 @@
   height: 48px;
   margin-right: 12px;
   border-radius: 50%;
-  border: 3px solid #7c5ebf;
-  box-shadow: 0 0 12px #b0aac2;
-  background: linear-gradient(135deg, #23232b 60%, #7c5ebf 100%);
+  border: 3px solid #7B6857;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #E8DDD4 60%, #7B6857 100%);
   object-fit: cover;
   aspect-ratio: 1/1;
   display: block;

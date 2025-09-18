@@ -149,38 +149,11 @@ const PrivateChat = () => {
   const chatBoxRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
-  if (!currentUser) return null;
-
-  // Filter users for search (exclude self and allerede synlige aktive chats, men IKKE skjulte)
-  const filteredUsers = search
-    ? users.filter(
-        (u) =>
-          u.uid !== currentUser.uid &&
-          (u.displayName || u.name || u.uid)
-            .toLowerCase()
-            .includes(search.toLowerCase()) &&
-          // Ikke vis brukere som allerede er synlige i activeChats (men vis skjulte)
-          !activeChats.some(
-            (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid)
-          )
-      )
-    : [];
-
-  // Update localStorage when isCollapsed changes
-  useEffect(() => {
-    localStorage.setItem("privateChatCollapsed", isCollapsed);
-  }, [isCollapsed]);
-
-  // Scroll to bottom on new message
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }, [activeChats, selectedUser]);
+  
 
   // Load active chats from Firestore on mount
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || !users) return;
     const fetchChats = async () => {
       const userChatsRef = doc(db, "userChats", currentUser.uid);
       const userChatsSnap = await getDoc(userChatsRef);
@@ -225,50 +198,27 @@ const PrivateChat = () => {
           prevMessages = newMessages;
           return;
         }
-        // Sjekk om det faktisk har kommet en ny melding til brukeren
-        const newToMe = newMessages.filter(
-          (m) => m.to === currentUser.uid && m.from !== currentUser.uid
-        );
-        const prevToMe = prevMessages.filter(
-          (m) => m.to === currentUser.uid && m.from !== currentUser.uid
-        );
-        // Ping/varsel kun hvis chatten IKKE er synlig (enten collapsed eller annen bruker valgt)
-        const isChatVisible =
-          selectedUserRef.current &&
-          selectedUserRef.current.uid === chat.user.uid &&
-          !isCollapsedRef.current;
-        if (
-          newToMe.length > prevToMe.length &&
-          !mutedRef.current &&
-          !isChatVisible
-        ) {
-          playPing();
-          const lastMsg = newToMe[newToMe.length - 1];
-          showNotification(
-            `Ny melding fra ${chat.user.displayName || chat.user.email}`,
-            lastMsg.text || "Du har fått en ny melding!"
-          );
+        if (newMessages.length > prevMessages.length) {
+          const latestMessage = newMessages[newMessages.length - 1];
+          if (
+            latestMessage.from !== currentUser.uid &&
+            !mutedRef.current &&
+            selectedUserRef.current?.uid !== chat.user.uid
+          ) {
+            playPing();
+            showNotification(
+              `New message from ${chat.user.displayName || chat.user.name}`,
+              latestMessage.text
+            );
+          }
         }
         prevMessages = newMessages;
-        // Hvis det er nye uleste meldinger fra denne brukeren, fjern fra hiddenChats
-        if (newMessages.some((m) => m.to === currentUser.uid && !m.read)) {
-          setHiddenChats((prev) => {
-            if (prev.includes(chat.user.uid)) {
-              const updated = prev.filter((uid) => uid !== chat.user.uid);
-              localStorage.setItem(
-                "hiddenPrivateChats",
-                JSON.stringify(updated)
-              );
-              return updated;
-            }
-            return prev;
-          });
-        }
       });
     });
-    return () => unsubscribes.forEach((unsub) => unsub());
-    // eslint-disable-next-line
-  }, [activeChats.length, currentUser, chatLoaded]);
+    return () => {
+      unsubscribes.forEach((unsub) => unsub());
+    };
+  }, [currentUser, chatLoaded, activeChats]);
 
   // Always listen for messages for the selected user
   useEffect(() => {
@@ -281,11 +231,37 @@ const PrivateChat = () => {
       collection(db, "privateMessages", chatId, "messages"),
       orderBy("timestamp")
     );
-    const unsub = onSnapshot(q, (snapshot) => {
-      setSelectedMessages(snapshot.docs.map((doc) => doc.data()));
+    return onSnapshot(q, (snapshot) => {
+      const messages = snapshot.docs.map((doc) => doc.data());
+      setSelectedMessages(messages);
     });
-    return () => unsub();
   }, [currentUser, selectedUser]);
+  
+  // NOW conditional returns after ALL hooks
+  if (!currentUser) return null;
+  if (loading) return <div>Loading...</div>;
+  
+  // Find the current user's full data from users array
+  const currentUserData = users ? users.find(u => u.uid === currentUser.uid) : null;
+
+  // Filter users for search (exclude self and allerede synlige aktive chats, men IKKE skjulte)
+  const filteredUsers = search && users
+    ? users.filter(
+        (u) =>
+          u.uid !== currentUser.uid &&
+          (u.displayName || u.name || u.uid)
+            .toLowerCase()
+            .includes(search.toLowerCase()) &&
+          // Ikke vis brukere som allerede er synlige i activeChats (men vis skjulte)
+          !activeChats.some(
+            (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid)
+          )
+      )
+    : [];
+
+
+
+
 
   // Add new private chat
   const addChat = async (user) => {
@@ -390,156 +366,179 @@ const PrivateChat = () => {
   return (
     <div
       style={{
-        position: "fixed",
-        bottom: 0,
-        right: 370,
-        width: 350,
-        zIndex: 2000,
-        boxShadow: "0 0 12px #0008",
+        position: window.innerWidth <= 768 ? "relative" : "fixed",
+        bottom: window.innerWidth <= 768 ? "auto" : 0,
+        right: window.innerWidth <= 768 ? "auto" : 370,
+        width: window.innerWidth <= 768 ? "100%" : 350,
+        zIndex: window.innerWidth <= 768 ? 1 : 10005,
+        boxShadow: window.innerWidth <= 768 ? "none" : "0 0 12px #0008",
       }}
     >
-      <div
-        style={{
-          background: "#23232b",
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
-          padding: "0.5rem 1rem",
-          display: "flex",
-          alignItems: "center",
-          border: "2px solid #a084e8",
-          borderBottom: "none",
-        }}
-      >
-        <span
+      {window.innerWidth > 768 && (
+        <div
           style={{
-            flex: 1,
-            color: "#a084e8",
-            fontWeight: 600,
-            position: "relative",
-          }}
-        >
-          Private Chat
-          {hasUnread && (
-            <span
-              style={{
-                position: "absolute",
-                top: -6,
-                right: -18,
-                background: "#ff4d4f",
-                color: "#fff",
-                borderRadius: "50%",
-                width: 18,
-                height: 18,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 14,
-                fontWeight: 700,
-                boxShadow: "0 0 2px #000",
-              }}
-            >
-              !
-            </span>
-          )}
-        </span>
-        {/* Mute/unmute icon button */}
-        <button
-          onClick={() => setMuted((m) => !m)}
-          style={{
-            background: "none",
-            border: "none",
-            marginLeft: 8,
-            cursor: "pointer",
+            background: "#5D4E37",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            padding: "0.5rem 1rem",
             display: "flex",
             alignItems: "center",
-            padding: 0,
-            outline: "none",
+            border: "1px solid #7B6857",
+            borderBottom: "none",
           }}
-          title={muted ? "Slå på varsler" : "Slå av varsler"}
         >
-          {muted ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="#a084e8"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ filter: "drop-shadow(0 0 2px #a084e8)" }}
-            >
-              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              <line
-                x1="1"
-                y1="1"
-                x2="23"
-                y2="23"
-                stroke="#a084e8"
+          <span
+            style={{
+              flex: 1,
+              color: "#F5EFE0",
+              fontWeight: 600,
+              position: "relative",
+            }}
+          >
+            Private Chat
+            {hasUnread && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: -6,
+                  right: -18,
+                  background: "#ff4d4f",
+                  color: "#fff",
+                  borderRadius: "50%",
+                  width: 18,
+                  height: 18,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  boxShadow: "0 0 2px #000",
+                }}
+              >
+                !
+              </span>
+            )}
+          </span>
+          {/* Mute/unmute icon button */}
+          <button
+            onClick={() => setMuted((m) => !m)}
+            style={{
+              background: "none",
+              border: "none",
+              marginLeft: 8,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              padding: 0,
+              outline: "none",
+            }}
+            title={muted ? "Slå på varsler" : "Slå av varsler"}
+          >
+            {muted ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="#7B6857"
                 strokeWidth="2"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="#a084e8"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ filter: "drop-shadow(0 0 2px #a084e8)" }}
-            >
-              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          )}
-        </button>
-        <button
-          style={{
-            background: "none",
-            border: "none",
-            color: "#a084e8",
-            fontSize: 18,
-            cursor: "pointer",
-          }}
-          onClick={() => setIsCollapsed((prev) => !prev)}
-        >
-          {isCollapsed ? "▲" : "▼"}
-        </button>
-        <button
-          style={{
-            background: "none",
-            border: "none",
-            color: "#a084e8",
-            fontSize: 18,
-            marginLeft: 8,
-            cursor: "pointer",
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsCollapsed(false);
-            setSearch("");
-          }}
-        >
-          <FaPlus />
-        </button>
-      </div>
-      {!isCollapsed && (
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ filter: "drop-shadow(0 0 2px #7B6857)" }}
+              >
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                <line
+                  x1="1"
+                  y1="1"
+                  x2="23"
+                  y2="23"
+                  stroke="#7B6857"
+                  strokeWidth="2"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="#7B6857"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ filter: "drop-shadow(0 0 2px #7B6857)" }}
+              >
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            )}
+          </button>
+          <button
+            style={{
+              background: "none",
+              border: "none",
+              color: "#F5EFE0",
+              fontSize: 18,
+              cursor: "pointer",
+            }}
+            onClick={() => setIsCollapsed((prev) => !prev)}
+          >
+            {isCollapsed ? "▲" : "▼"}
+          </button>
+          <button
+            style={{
+              background: "none",
+              border: "none",
+              color: "#F5EFE0",
+              fontSize: 18,
+              marginLeft: 8,
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsCollapsed(false);
+              setSearch("");
+            }}
+          >
+            <FaPlus />
+          </button>
+        </div>
+      )}
+      {(window.innerWidth > 768 ? !isCollapsed : true) && (
         <div
           className={styles.chatContainer}
           style={{
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-            borderTop: "none",
+            borderTopLeftRadius: window.innerWidth <= 768 ? 12 : 0,
+            borderTopRightRadius: window.innerWidth <= 768 ? 12 : 0,
+            borderTop: window.innerWidth <= 768 ? "1px solid #7B6857" : "none",
             height: 500,
             minHeight: 200,
           }}
         >
+          {window.innerWidth <= 768 && (
+            <div
+              style={{
+                background: "#5D4E37",
+                padding: "0.8rem 1rem",
+                borderTopLeftRadius: 12,
+                borderTopRightRadius: 12,
+                borderBottom: "1px solid #7B6857",
+                marginBottom: "1rem",
+              }}
+            >
+              <h3 style={{
+                color: "#F5EFE0",
+                fontSize: "1.2rem",
+                fontWeight: 600,
+                margin: 0,
+                fontFamily: '"Cinzel", serif',
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+              }}>Private Chat</h3>
+            </div>
+          )}
           <div style={{ padding: "0.5rem 1rem" }}>
             <input
               type="text"
@@ -550,15 +549,19 @@ const PrivateChat = () => {
                 width: "100%",
                 padding: 6,
                 borderRadius: 6,
-                border: "1px solid #a084e8",
+                border: "1px solid #7B6857",
                 marginBottom: 8,
+                background: "#6B5B47",
+                color: "#F5EFE0",
+                outline: "none",
+                transition: "border-color 0.2s ease",
               }}
             />
             {filteredUsers.length > 0 && (
               <div
                 style={{
-                  background: "#23232b",
-                  border: "1px solid #a084e8",
+                  background: "#5D4E37",
+                  border: "1px solid #7B6857",
                   borderRadius: 6,
                   maxHeight: 120,
                   overflowY: "auto",
@@ -567,7 +570,7 @@ const PrivateChat = () => {
                 {filteredUsers.map((u) => (
                   <div
                     key={u.uid}
-                    style={{ padding: 8, cursor: "pointer", color: "#a084e8" }}
+                    style={{ padding: 8, cursor: "pointer", color: "#F5EFE0" }}
                     onClick={() => {
                       // Hvis brukeren er skjult, fjern fra hiddenChats og vis igjen
                       setHiddenChats((prev) => {
@@ -618,16 +621,16 @@ const PrivateChat = () => {
                         <button
                           style={{
                             background: isSelected
-                              ? "#a084e8"
+                              ? "#7B6857"
                               : unread > 0
-                              ? "#3a2e5c"
-                              : "#23232b",
+                              ? "#6B5B47"
+                              : "#5D4E37",
                             color: isSelected
-                              ? "#23232b"
+                              ? "#F5EFE0"
                               : unread > 0
                               ? "#ff4d4f"
-                              : "#a084e8",
-                            border: "1px solid #a084e8",
+                              : "#F5EFE0",
+                            border: "1px solid #7B6857",
                             borderRadius: 6,
                             padding: "4px 10px",
                             cursor: "pointer",
@@ -752,56 +755,67 @@ const PrivateChat = () => {
                       }
                     >
                       <div className={styles.privateMessageBubble}>
-                        <div className={styles.privateMessageSender}>
-                          {m.from === currentUser?.uid
-                            ? "You"
-                            : selectedUser.displayName ||
-                              selectedUser.name ||
-                              selectedUser.uid}
-                        </div>
-                        <div style={{ position: "relative" }}>
-                          {m.from === currentUser?.uid && (
-                            <div
+                        <img
+                          src={
+                            m.from === currentUser?.uid
+                              ? currentUserData?.profileImageUrl || "/icons/avatar.svg"
+                              : selectedUser.profileImageUrl || "/icons/avatar.svg"
+                          }
+                          alt="Profile"
+                          className={styles.privateMessageProfilePic}
+                        />
+                        <div className={styles.privateMessageContent}>
+                          <div className={styles.privateMessageSender}>
+                            {m.from === currentUser?.uid
+                              ? "You"
+                              : selectedUser.displayName ||
+                                selectedUser.name ||
+                                selectedUser.uid}
+                          </div>
+                          <div style={{ position: "relative" }}>
+                            {m.from === currentUser?.uid && (
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  top: -28,
+                                  right: -10,
+                                  zIndex: 3,
+                                }}
+                              >
+                                <MessageMenu
+                                  message={m}
+                                  currentUser={currentUser}
+                                  selectedUser={selectedUser}
+                                  db={db}
+                                  onEdit={(msg) => {
+                                    setEditingMessage(msg);
+                                    setMessage(msg.text);
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <span
                               style={{
-                                position: "absolute",
-                                top: -28,
-                                right: -10,
-                                zIndex: 3,
+                                display: "block",
+                                wordBreak: "break-word",
                               }}
                             >
-                              <MessageMenu
-                                message={m}
-                                currentUser={currentUser}
-                                selectedUser={selectedUser}
-                                db={db}
-                                onEdit={(msg) => {
-                                  setEditingMessage(msg);
-                                  setMessage(msg.text);
-                                }}
-                              />
-                            </div>
-                          )}
-                          <span
-                            style={{
-                              display: "block",
-                              wordBreak: "break-word",
-                            }}
-                          >
-                            {m.text}
-                          </span>
-                        </div>
-                        <div className={styles.privateMessageTimestamp}>
-                          {m.timestamp && m.timestamp.seconds
-                            ? new Date(
-                                m.timestamp.seconds * 1000
-                              ).toLocaleString("no-NO", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "2-digit",
-                              })
-                            : ""}
+                              {m.text}
+                            </span>
+                          </div>
+                          <div className={styles.privateMessageTimestamp}>
+                            {m.timestamp && m.timestamp.seconds
+                              ? new Date(
+                                  m.timestamp.seconds * 1000
+                                ).toLocaleString("no-NO", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                              : ""}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -834,7 +848,7 @@ const PrivateChat = () => {
                       border: "none",
                       fontSize: 22,
                       cursor: "pointer",
-                      color: "#a084e8",
+                      color: "#F5EFE0",
                     }}
                     onClick={() => setShowEmoji((v) => !v)}
                     aria-label="Add emoji"

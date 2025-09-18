@@ -22,7 +22,6 @@ function App() {
         <header className={styles.header}>
           <Navbar />
         </header>
-        {user && <TopBar />}
         {/* Global admin popup for age verification requests (only for logged-in users) */}
         {user && <AdminGlobalAgeVerificationModal />}
         <main className={styles.main}>

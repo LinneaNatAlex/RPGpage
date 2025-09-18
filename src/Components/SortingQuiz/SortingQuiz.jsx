@@ -71,7 +71,8 @@ const SortingQuiz = ({ onClose, onResult }) => {
   // Modal med quiz eller resultat
   return (
     <div className={styles.SortingQuizModal}>
-      <div className={styles.SortingQuizContent}>
+      <div className={styles.SortingQuizModalContent}>
+        <div className={styles.SortingQuizContent}>
         {!resultRace ? (
           <>
             <div className={styles.questionText}>
@@ -106,6 +107,7 @@ const SortingQuiz = ({ onClose, onResult }) => {
             </Button>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

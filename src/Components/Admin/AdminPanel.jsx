@@ -159,6 +159,9 @@ export default function AdminPanel() {
         points: increment(Number(pointsAmount)),
       });
       setPointsMessage("Points updated!");
+      // Tøm feltene etter vellykket oppdatering
+      setPointsUser("");
+      setPointsAmount("");
     } catch (err) {
       setPointsMessage("Feil: " + err.message);
     }
@@ -167,32 +170,87 @@ export default function AdminPanel() {
   return (
     <div
       style={{
-        maxWidth: 400,
+        maxWidth: 800,
         margin: "2rem auto",
-        background: "#23232b",
-        color: "#fff",
-        padding: 24,
-        borderRadius: 12,
+        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+        color: "#F5EFE0",
+        padding: 40,
+        borderRadius: 20,
+        boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+        border: "3px solid #7B6857",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <h2>Admin Panel</h2>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "4px",
+          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
+          borderRadius: "20px 20px 0 0",
+        }}
+      />
+      <h2 style={{
+        fontFamily: '"Cinzel", serif',
+        fontSize: "2.2rem",
+        fontWeight: 700,
+        letterSpacing: "1.5px",
+        textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+        marginBottom: "2rem",
+        textAlign: "center"
+      }}>Admin Panel</h2>
       {(roles.includes("admin") || roles.includes("teacher")) && <ShopProductAdmin />}
       <button
         onClick={() => setShowBanned((v) => !v)}
-        style={{ marginBottom: 8 }}
+        style={{
+          background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+          color: "#F5EFE0",
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          borderRadius: 12,
+          padding: "12px 24px",
+          fontWeight: 600,
+          fontSize: "1rem",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+          fontFamily: '"Cinzel", serif',
+          letterSpacing: "0.5px",
+          marginBottom: 20
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = "translateY(-2px)";
+          e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = "translateY(0)";
+          e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+        }}
       >
         {showBanned ? "Hide banned users/IPs" : "Show banned users/IPs"}
       </button>
       {showBanned && (
         <div
           style={{
-            background: "#181820",
-            padding: 12,
-            borderRadius: 8,
-            marginBottom: 16,
+            background: "rgba(245, 239, 224, 0.1)",
+            padding: 20,
+            borderRadius: 16,
+            marginBottom: 24,
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
           }}
         >
-          <h3>Banned users & IPs</h3>
+          <h3 style={{
+            color: "#D4C4A8",
+            fontSize: "1.3rem",
+            fontFamily: '"Cinzel", serif',
+            fontWeight: 600,
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+            marginBottom: 16
+          }}>Banned users & IPs</h3>
           <ul style={{ maxHeight: 100, overflowY: "auto" }}>
             {bannedUsers.length === 0 && <li>No banned users/IPs.</li>}
             {bannedUsers.map((u) => (
@@ -230,23 +288,70 @@ export default function AdminPanel() {
         placeholder="Search user..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{ width: "100%", marginBottom: 8, padding: 6, borderRadius: 6 }}
+        style={{
+          width: "100%",
+          marginBottom: 16,
+          padding: "12px 16px",
+          borderRadius: 12,
+          border: "2px solid #D4C4A8",
+          background: "#F5EFE0",
+          color: "#2C2C2C",
+          fontSize: "1rem",
+          fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
+          outline: "none",
+          transition: "all 0.3s ease"
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = "#7B6857";
+          e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "#D4C4A8";
+          e.target.style.boxShadow = "none";
+        }}
       />
-      <ul style={{ maxHeight: 120, overflowY: "auto", marginBottom: 8 }}>
+      <ul style={{ 
+        maxHeight: 150, 
+        overflowY: "auto", 
+        marginBottom: 16,
+        background: "rgba(245, 239, 224, 0.1)",
+        borderRadius: 12,
+        padding: 12,
+        border: "2px solid rgba(255, 255, 255, 0.2)",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
+      }}>
         {filtered.map((u) => (
           <li
             key={u.uid}
             style={{
               cursor: "pointer",
-              background: selected?.uid === u.uid ? "#a084e8" : "#23232b",
-              color: selected?.uid === u.uid ? "#23232b" : "#fff",
-              padding: 6,
-              borderRadius: 6,
-              marginBottom: 2,
+              background: selected?.uid === u.uid ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)" : "rgba(245, 239, 224, 0.1)",
+              color: selected?.uid === u.uid ? "#F5EFE0" : "#F5EFE0",
+              padding: "12px 16px",
+              borderRadius: 8,
+              marginBottom: 8,
+              border: selected?.uid === u.uid ? "2px solid rgba(255, 255, 255, 0.3)" : "1px solid rgba(255, 255, 255, 0.1)",
+              transition: "all 0.3s ease",
+              fontWeight: selected?.uid === u.uid ? 600 : 400,
+              boxShadow: selected?.uid === u.uid ? "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)" : "none"
             }}
             onClick={() => {
               setSelected(u);
               setPointsUser(u.displayName || u.email || "");
+            }}
+            onMouseEnter={(e) => {
+              if (selected?.uid !== u.uid) {
+                e.target.style.background = "rgba(245, 239, 224, 0.2)";
+                e.target.style.transform = "translateY(-1px)";
+                e.target.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.2)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (selected?.uid !== u.uid) {
+                e.target.style.background = "rgba(245, 239, 224, 0.1)";
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "none";
+              }
             }}
           >
             {u.displayName || u.email || u.uid} ({u.currency ?? 0} nits)
@@ -254,20 +359,105 @@ export default function AdminPanel() {
         ))}
       </ul>
       {selected && roles.includes("admin") && (
-        <div style={{ marginBottom: 12 }}>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            style={{ width: 80, marginRight: 8 }}
-          />
-          <button
-            onClick={() => handleNitsChange(amount)}
-            style={{ marginRight: 8 }}
-          >
-            + Nits
-          </button>
-          <button onClick={() => handleNitsChange(-amount)}>- Nits</button>
+        <div style={{ 
+          marginBottom: 24,
+          background: "rgba(245, 239, 224, 0.1)",
+          padding: 20,
+          borderRadius: 16,
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
+        }}>
+          <h3 style={{
+            color: "#D4C4A8",
+            fontSize: "1.3rem",
+            fontFamily: '"Cinzel", serif',
+            fontWeight: 600,
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+            marginBottom: 16
+          }}>Currency Management</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+              style={{
+                width: 100,
+                padding: "8px 12px",
+                borderRadius: 8,
+                border: "2px solid #D4C4A8",
+                background: "#F5EFE0",
+                color: "#2C2C2C",
+                fontSize: "1rem",
+                fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
+                outline: "none",
+                transition: "all 0.3s ease"
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#7B6857";
+                e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "#D4C4A8";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            <button
+              onClick={() => handleNitsChange(amount)}
+              style={{
+                background: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              + Nits
+            </button>
+            <button 
+              onClick={() => handleNitsChange(-amount)}
+              style={{
+                background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              - Nits
+            </button>
+          </div>
           <div style={{ marginTop: 12 }}>
             <h4>Suspend / ban controls</h4>
             <label>
@@ -303,33 +493,127 @@ export default function AdminPanel() {
                 borderRadius: 4,
               }}
             />
-            <button style={{ marginLeft: 8 }} onClick={handleSuspendUser}>
-              Set suspension
-            </button>
-            <button
-              style={{ marginLeft: 8 }}
-              onClick={() => {
-                setSuspendHours(0);
-                setSuspendMinutes(0);
-                setSuspendReason("");
-                handleSuspendUser();
-              }}
-            >
-              Clear suspension
-            </button>
-            <br />
-            <button
-              style={{ marginTop: 8, background: "#e53935", color: "#fff" }}
-              onClick={handleBanUser}
-            >
-              Ban user
-            </button>
-            <button
-              style={{ marginLeft: 8, background: "#4caf50", color: "#fff" }}
-              onClick={handleUnbanUser}
-            >
-              Unban user
-            </button>
+            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+              <button 
+                onClick={handleSuspendUser}
+                style={{
+                  background: "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
+                  color: "#F5EFE0",
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: 12,
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  fontFamily: '"Cinzel", serif',
+                  letterSpacing: "0.5px"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                }}
+              >
+                Set suspension
+              </button>
+              <button
+                onClick={() => {
+                  setSuspendHours(0);
+                  setSuspendMinutes(0);
+                  setSuspendReason("");
+                  handleSuspendUser();
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #D4C4A8 0%, #B8A082 100%)",
+                  color: "#2C2C2C",
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: 12,
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  fontFamily: '"Cinzel", serif',
+                  letterSpacing: "0.5px"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                }}
+              >
+                Clear suspension
+              </button>
+            </div>
+            <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+              <button
+                onClick={handleBanUser}
+                style={{
+                  background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                  color: "#F5EFE0",
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: 12,
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  fontFamily: '"Cinzel", serif',
+                  letterSpacing: "0.5px"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                }}
+              >
+                Ban user
+              </button>
+              <button
+                onClick={handleUnbanUser}
+                style={{
+                  background: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
+                  color: "#F5EFE0",
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: 12,
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  fontFamily: '"Cinzel", serif',
+                  letterSpacing: "0.5px"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                }}
+              >
+                Unban user
+              </button>
+            </div>
             {banStatus && <div style={{ color: "#ffd86b" }}>{banStatus}</div>}
             {selected.pausedUntil && selected.pausedUntil > Date.now() && (
               <div style={{ color: "#ffd86b" }}>
@@ -355,29 +639,120 @@ export default function AdminPanel() {
 
       {/* Points management section */}
       {(roles.includes("admin") || roles.includes("teacher")) && (
-        <div className="admin-section">
-          <h3>Add / subtract points</h3>
-          <input
-            type="text"
-            placeholder="Brukernavn eller e-post"
-            value={pointsUser}
-            onChange={(e) => setPointsUser(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Number of points (+/-)"
-            value={pointsAmount}
-            onChange={(e) => setPointsAmount(e.target.value)}
-          />
-          <button onClick={handlePointsUpdate}>Update points</button>
-          {pointsMessage && (
-            <div
-              className="admin-message"
-              style={{ color: "#ff0", marginTop: 8 }}
+        <div style={{ 
+          marginTop: 24,
+          background: "rgba(245, 239, 224, 0.1)",
+          padding: 20,
+          borderRadius: 16,
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
+        }}>
+          <h3 style={{
+            color: "#D4C4A8",
+            fontSize: "1.3rem",
+            fontFamily: '"Cinzel", serif',
+            fontWeight: 600,
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+            marginBottom: 16
+          }}>Add / subtract points</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <input
+              type="text"
+              placeholder="Brukernavn eller e-post"
+              value={pointsUser}
+              onChange={(e) => setPointsUser(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: 12,
+                border: "2px solid #D4C4A8",
+                background: "#F5EFE0",
+                color: "#2C2C2C",
+                fontSize: "1rem",
+                fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
+                outline: "none",
+                transition: "all 0.3s ease"
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#7B6857";
+                e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "#D4C4A8";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            <input
+              type="number"
+              placeholder="Number of points (+/-)"
+              value={pointsAmount}
+              onChange={(e) => setPointsAmount(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: 12,
+                border: "2px solid #D4C4A8",
+                background: "#F5EFE0",
+                color: "#2C2C2C",
+                fontSize: "1rem",
+                fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
+                outline: "none",
+                transition: "all 0.3s ease"
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#7B6857";
+                e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "#D4C4A8";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            <button 
+              onClick={handlePointsUpdate}
+              style={{
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "12px 24px",
+                fontWeight: 600,
+                fontSize: "1rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
             >
-              {pointsMessage}
-            </div>
-          )}
+              Update points
+            </button>
+            {pointsMessage && (
+              <div
+                style={{ 
+                  color: "#ffd86b", 
+                  marginTop: 8,
+                  padding: "8px 12px",
+                  background: "rgba(255, 216, 107, 0.1)",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255, 216, 107, 0.3)",
+                  fontSize: "0.9rem",
+                  fontWeight: 500
+                }}
+              >
+                {pointsMessage}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
