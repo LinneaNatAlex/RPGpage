@@ -481,6 +481,7 @@ const TopBar = () => {
         {/* Love Potion: in love text */}
         {inLoveUntil && inLoveUntil > Date.now() && inLoveWith && (
           <span
+            className={styles.inLoveText}
             style={{
               marginLeft: 16,
               color: "#ff69b4",

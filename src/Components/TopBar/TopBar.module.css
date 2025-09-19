@@ -443,6 +443,14 @@
   color: #18161e;
 }
 
+/* In Love Text */
+.inLoveText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .topBar {
@@ -457,6 +465,12 @@
     border: 1px solid #7B6857;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  .inLoveText {
+    max-width: 120px;
+    font-size: 0.9rem !important;
+    margin-left: 8px !important;
   }
   
   .topBar > div:first-child {

@@ -59,6 +59,15 @@ const MobileLayout = ({ children }) => {
   }, [location.pathname]);
 
   const handleTabClick = (tab) => {
+    // Close all overlays first
+    setShowChat(false);
+    setShowPrivateChat(false);
+    setShowForumList(false);
+    setShowNewsFeed(false);
+    setShowRPGCalendar(false);
+    setShowOnlineUsers(false);
+    setShowInventory(false);
+    
     setActiveTab(tab);
     switch(tab) {
       case 'home':
@@ -152,7 +161,11 @@ const MobileLayout = ({ children }) => {
               <h2>News & Announcements</h2>
               <button 
                 className="mobile-overlay-close"
-                onClick={() => setShowNewsFeed(false)}
+                onClick={() => {
+                  setShowNewsFeed(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
               >
                 ✕
               </button>
@@ -170,7 +183,11 @@ const MobileLayout = ({ children }) => {
               <h2>Online Students</h2>
               <button 
                 className="mobile-overlay-close"
-                onClick={() => setShowOnlineUsers(false)}
+                onClick={() => {
+                  setShowOnlineUsers(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
               >
                 ✕
               </button>
@@ -188,7 +205,11 @@ const MobileLayout = ({ children }) => {
               <h2>RPG Calendar</h2>
               <button 
                 className="mobile-overlay-close"
-                onClick={() => setShowRPGCalendar(false)}
+                onClick={() => {
+                  setShowRPGCalendar(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
               >
                 ✕
               </button>
@@ -206,7 +227,11 @@ const MobileLayout = ({ children }) => {
               <h2>Forums</h2>
               <button 
                 className="mobile-overlay-close"
-                onClick={() => setShowForumList(false)}
+                onClick={() => {
+                  setShowForumList(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
               >
                 ✕
               </button>
@@ -356,7 +381,11 @@ const MobileLayout = ({ children }) => {
               <h2>Inventory</h2>
               <button 
                 className="mobile-overlay-close"
-                onClick={() => setShowInventory(false)}
+                onClick={() => {
+                  setShowInventory(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
               >
                 ✕
               </button>
@@ -383,7 +412,11 @@ const MobileLayout = ({ children }) => {
               </button>
               <button 
                 className="mobile-chat-close"
-                onClick={() => setShowChat(false)}
+                onClick={() => {
+                  setShowChat(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
               >
                 ✕
               </button>
@@ -420,7 +453,11 @@ const MobileLayout = ({ children }) => {
             <h2>Navigation</h2>
             <button 
               className="mobile-dashboard-close"
-              onClick={() => setShowDashboard(false)}
+              onClick={() => {
+                setShowDashboard(false);
+                navigate('/');
+                setActiveTab('home');
+              }}
             >
               ✕
             </button>
@@ -517,6 +554,13 @@ const MobileLayout = ({ children }) => {
             <button 
               className={`mobile-dashboard-item ${showInventory ? 'active' : ''}`}
               onClick={() => {
+                // Close all other overlays first
+                setShowChat(false);
+                setShowPrivateChat(false);
+                setShowForumList(false);
+                setShowNewsFeed(false);
+                setShowRPGCalendar(false);
+                setShowOnlineUsers(false);
                 setShowInventory(true);
                 setShowDashboard(false);
               }}
@@ -528,7 +572,14 @@ const MobileLayout = ({ children }) => {
             <button 
               className={`mobile-dashboard-item ${showNewsFeed ? 'active' : ''}`}
               onClick={() => {
+                // Close all other overlays first
+                setShowChat(false);
+                setShowPrivateChat(false);
+                setShowForumList(false);
                 setShowNewsFeed(true);
+                setShowRPGCalendar(false);
+                setShowOnlineUsers(false);
+                setShowInventory(false);
                 setShowDashboard(false);
               }}
             >
@@ -539,7 +590,14 @@ const MobileLayout = ({ children }) => {
             <button 
               className={`mobile-dashboard-item ${showRPGCalendar ? 'active' : ''}`}
               onClick={() => {
+                // Close all other overlays first
+                setShowChat(false);
+                setShowPrivateChat(false);
+                setShowForumList(false);
+                setShowNewsFeed(false);
                 setShowRPGCalendar(true);
+                setShowOnlineUsers(false);
+                setShowInventory(false);
                 setShowDashboard(false);
               }}
             >
@@ -550,7 +608,14 @@ const MobileLayout = ({ children }) => {
             <button 
               className={`mobile-dashboard-item ${showOnlineUsers ? 'active' : ''}`}
               onClick={() => {
+                // Close all other overlays first
+                setShowChat(false);
+                setShowPrivateChat(false);
+                setShowForumList(false);
+                setShowNewsFeed(false);
+                setShowRPGCalendar(false);
                 setShowOnlineUsers(true);
+                setShowInventory(false);
                 setShowDashboard(false);
               }}
             >
