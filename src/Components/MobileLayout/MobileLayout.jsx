@@ -435,8 +435,13 @@ const MobileLayout = ({ children }) => {
         )}
       </main>
 
-      {/* Mobile Dashboard Button - Only show on home page */}
-      {location.pathname === '/' && (
+      {/* Mobile Dashboard Button - Show on home page and other main pages */}
+      {(location.pathname === '/' || 
+        location.pathname === '/Profile' || 
+        location.pathname === '/ClassRooms' || 
+        location.pathname === '/userMap' ||
+        location.pathname.startsWith('/forum/') ||
+        location.pathname.startsWith('/user/')) && (
         <div className="mobile-dashboard-button">
           <button 
             className="mobile-dashboard-btn"
