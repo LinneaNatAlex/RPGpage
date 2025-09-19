@@ -3,8 +3,9 @@ import { Outlet } from "react-router-dom";
 import { useAuth } from "./context/authContext.jsx";
 import styles from "./App.module.css";
 import { useState, useEffect } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, collection, query, orderBy, limit } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { playPing, requestNotificationPermission } from "./Components/Chat/ping_alt";
 
 import Navbar from "./Navbar/Navbar";
 import PrivateChat from "./Components/Chat/PrivateChat";
@@ -24,7 +25,136 @@ function App() {
   const [speedUntil, setSpeedUntil] = useState(null);
   const [slowMotionUntil, setSlowMotionUntil] = useState(null);
   const [sparkleUntil, setSparkleUntil] = useState(null);
+  const [lastMessageId, setLastMessageId] = useState(null);
+  const [lastPrivateMessageId, setLastPrivateMessageId] = useState(null);
+  const [lastPingTime, setLastPingTime] = useState(0);
   
+  // Request notification permission on app load
+  useEffect(() => {
+    const requestPermission = async () => {
+      await requestNotificationPermission();
+    };
+    requestPermission();
+  }, []);
+
+  // Global mention detection - listens to chat messages even when chat is not open
+  useEffect(() => {
+    if (!user) return;
+    
+    const messagesRef = collection(db, "messages");
+    const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+    
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) return;
+      
+      const latestMessage = snapshot.docs[0];
+      const messageData = latestMessage.data();
+      
+      // Only check if this is a new message (not the same as last one)
+      if (latestMessage.id === lastMessageId) return;
+      
+      // Only ping if this is a very recent message (within last 30 seconds)
+      const messageTime = messageData.timestamp?.seconds ? 
+        new Date(messageData.timestamp.seconds * 1000) : 
+        new Date(messageData.timestamp);
+      const now = new Date();
+      const timeDiff = (now - messageTime) / 1000; // seconds
+      
+      if (timeDiff > 30) {
+        // This is an old message, just set the ID and don't ping
+        setLastMessageId(latestMessage.id);
+        return;
+      }
+      
+      setLastMessageId(latestMessage.id);
+      
+        // Check if user is mentioned
+        const myName = user.displayName?.toLowerCase();
+        if (
+          messageData.text &&
+          messageData.sender?.toLowerCase() !== myName &&
+          (messageData.text.toLowerCase().includes(`@${myName}`) ||
+            messageData.text.toLowerCase().includes("@all"))
+        ) {
+          // Debounce pings - only ping once every 2 seconds
+          const now = Date.now();
+          if (now - lastPingTime > 2000) {
+            setLastPingTime(now);
+            playPing();
+          }
+        }
+    });
+    
+    return () => unsub();
+  }, [user, lastMessageId, lastPingTime]);
+
+  // Global private chat mention detection
+  useEffect(() => {
+    if (!user) return;
+    
+    // Get user's chat list first
+    const userChatsRef = doc(db, "userChats", user.uid);
+    const unsubUserChats = onSnapshot(userChatsRef, async (userChatsSnap) => {
+      if (!userChatsSnap.exists()) return;
+      
+      const chatUids = userChatsSnap.data().chats || [];
+      const unsubscribes = [];
+      
+      // Listen to each private chat
+      chatUids.forEach((otherUid) => {
+        const chatId = [user.uid, otherUid].sort().join("_");
+        const messagesRef = collection(db, "privateMessages", chatId, "messages");
+        const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+        
+        const unsub = onSnapshot(q, (snapshot) => {
+          if (snapshot.empty) return;
+          
+          const latestMessage = snapshot.docs[0];
+          const messageData = latestMessage.data();
+          
+          // Check if this is a new message
+          const messageId = `${chatId}-${latestMessage.id}`;
+          if (messageId === lastPrivateMessageId) return;
+          
+          // Only ping if this is a very recent message (within last 30 seconds)
+          const messageTime = messageData.timestamp?.seconds ? 
+            new Date(messageData.timestamp.seconds * 1000) : 
+            new Date(messageData.timestamp);
+          const now = new Date();
+          const timeDiff = (now - messageTime) / 1000; // seconds
+          
+          if (timeDiff > 30) {
+            // This is an old message, just set the ID and don't ping
+            setLastPrivateMessageId(messageId);
+            return;
+          }
+          
+          // Only ping if message is from someone else
+          if (messageData.from !== user.uid) {
+            setLastPrivateMessageId(messageId);
+            // Debounce pings - only ping once every 2 seconds
+            const now = Date.now();
+            if (now - lastPingTime > 2000) {
+              setLastPingTime(now);
+              playPing();
+            }
+          }
+        });
+        
+        unsubscribes.push(unsub);
+      });
+      
+      // Cleanup function
+      return () => {
+        unsubscribes.forEach(unsub => unsub());
+      };
+    });
+    
+    return () => {
+      unsubUserChats();
+    };
+  }, [user, lastPrivateMessageId, lastPingTime]);
+
   // Load user's potion effects
   useEffect(() => {
     if (!user) return;

@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { playPing } from "./ping_alt";
+// Note: Ping functionality moved to global App.jsx
 
 const Chat = () => {
   const { messages } = useChatMessages();
@@ -30,6 +30,7 @@ const Chat = () => {
   const [showEmoji, setShowEmoji] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [mentionActiveIdx, setMentionActiveIdx] = useState(0);
+  // Note: Notification permission handled globally in App.jsx
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = localStorage.getItem("mainChatCollapsed");
@@ -65,6 +66,8 @@ const Chat = () => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
   }, [isCollapsed]);
   
+  // Note: Notification permission handled globally in App.jsx
+
   // Load user's potion effects
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -176,22 +179,7 @@ const Chat = () => {
     }
   }, [messages, isCollapsed]);
 
-  // Spill lyd hvis du blir nevnt med @navn eller @all
-  useEffect(() => {
-    if (!isCollapsed && messages.length > 0) {
-      const lastMsg = messages[messages.length - 1];
-      const myName = auth.currentUser?.displayName?.toLowerCase();
-      // Spill lyd kun hvis meldingen er fra en annen bruker
-      if (
-        lastMsg.text &&
-        lastMsg.sender?.toLowerCase() !== myName &&
-        (lastMsg.text.toLowerCase().includes(`@${myName}`) ||
-          lastMsg.text.toLowerCase().includes("@all"))
-      ) {
-        playPing();
-      }
-    }
-  }, [messages, isCollapsed]);
+  // Note: Ping logic is now handled globally in App.jsx
 
   // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {

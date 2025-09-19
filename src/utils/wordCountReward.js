@@ -14,18 +14,20 @@ export const countWords = (text) => {
   return cleanText.split(' ').filter(word => word.length > 0).length;
 };
 
-// Function to award nits for every 500-word milestone
+// Function to award nits for every 100-word milestone (starting at 300 words)
+// Reward system: 300 words = 50 nits, 400 words = 100 nits, 500 words = 150 nits, etc.
 export const checkWordCountReward = async (userId, wordCount, previousWordCount = 0) => {
-  if (!userId || wordCount < 500) return { awarded: false, nits: 0 };
+  if (!userId || wordCount < 300) return { awarded: false, nits: 0 };
   
-  // Calculate how many 500-word milestones have been reached
-  const currentMilestones = Math.floor(wordCount / 500);
-  const previousMilestones = Math.floor(previousWordCount / 500);
+  // Calculate how many 100-word milestones have been reached (starting from 300)
+  const currentMilestones = Math.floor((wordCount - 300) / 100) + 1; // +1 for the initial 300-word reward
+  const previousMilestones = Math.floor((previousWordCount - 300) / 100) + 1;
   const newMilestones = currentMilestones - previousMilestones;
   
   if (newMilestones <= 0) return { awarded: false, nits: 0 };
   
-  const nitsToAward = newMilestones * 10;
+  // Award 50 nits for every 100 words (starting at 300 words)
+  const nitsToAward = newMilestones * 50;
   
   try {
     const userRef = doc(db, 'users', userId);

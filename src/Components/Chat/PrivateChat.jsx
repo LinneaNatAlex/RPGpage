@@ -1,17 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { playPing } from "./ping_alt";
-// Varslingsfunksjon for desktop notification
-const showNotification = (title, body) => {
-  if (window.Notification && Notification.permission === "granted") {
-    new Notification(title, { body });
-  } else if (window.Notification && Notification.permission !== "denied") {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        new Notification(title, { body });
-      }
-    });
-  }
-};
+// Note: Ping functionality moved to global App.jsx
 // MessageMenu component for edit/delete menu
 // ...existing code...
 // ...existing code...
@@ -269,17 +257,7 @@ const PrivateChat = () => {
         }
         if (newMessages.length > prevMessages.length) {
           const latestMessage = newMessages[newMessages.length - 1];
-          if (
-            latestMessage.from !== currentUser.uid &&
-            !mutedRef.current &&
-            selectedUserRef.current?.uid !== chat.user.uid
-          ) {
-            playPing();
-            showNotification(
-              `New message from ${chat.user.displayName || chat.user.name}`,
-              latestMessage.text
-            );
-          }
+          // Note: Ping functionality moved to global App.jsx
         }
         prevMessages = newMessages;
       });
