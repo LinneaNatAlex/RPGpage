@@ -37,7 +37,7 @@ export function getRPGCalendar(now = new Date()) {
   // Beregn antall uker siden start
   const weeksSinceStart = Math.floor((monday - startMonday) / (7 * 24 * 60 * 60 * 1000));
   
-  // Hver uke = 1 måned, hver 12 uker = 1 år
+  // Hver uke = 1 måned, hver 12 måneder = 1 år
   const rpgYear = Math.floor(weeksSinceStart / 12) + 1;
   const rpgMonth = (weeksSinceStart % 12) + 1;
   
@@ -67,7 +67,7 @@ export function getRPGCalendar(now = new Date()) {
   }
   return {
     rpgYear,
-    rpgMonth: rpgMonth, // rpgMonth er allerede 1-indexed
+    rpgMonth, // rpgMonth er allerede 1-indexed
     rpgDayOfMonth: dayOfMonth,
     rpgDayNum,
     weekDates,

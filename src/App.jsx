@@ -11,6 +11,8 @@ import PrivateChat from "./Components/Chat/PrivateChat";
 import Chat from "./Components/Chat/Chat";
 import TopBar from "./Components/TopBar/TopBar";
 import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
+import MobileLayout from "./Components/MobileLayout/MobileLayout";
+import "./App.mobile.css";
 
 function App() {
   const { user, loading } = useAuth();
@@ -158,22 +160,24 @@ function App() {
         ` : ''}
       `}</style>
       
-      <div className={styles.rootContainer}>
-        {/* Navbar and TopBar always visible */}
-        <header className={styles.header}>
-          <Navbar />
-        </header>
-        {/* Global admin popup for age verification requests (only for logged-in users) */}
-        {user && <AdminGlobalAgeVerificationModal />}
-        <main className={styles.main}>
-          {/* TopBar for logged-in users */}
-          {user && <TopBar />}
-          <Outlet />
-        </main>
-        {/* Main chat and PrivateChat only for logged-in users */}
-        {user && <Chat />}
-        {user && <PrivateChat />}
-      </div>
+      <MobileLayout>
+        <div className={styles.rootContainer}>
+          {/* Navbar and TopBar always visible */}
+          <header className={styles.header}>
+            <Navbar />
+          </header>
+          {/* Global admin popup for age verification requests (only for logged-in users) */}
+          {user && <AdminGlobalAgeVerificationModal />}
+          <main className={styles.main}>
+            {/* TopBar for logged-in users */}
+            {user && <TopBar />}
+            <Outlet />
+          </main>
+          {/* Main chat and PrivateChat only for logged-in users */}
+          {user && <Chat />}
+          {user && <PrivateChat />}
+        </div>
+      </MobileLayout>
     </>
   );
 }

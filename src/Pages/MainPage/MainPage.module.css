@@ -1,8 +1,30 @@
 /* Main page container */
 .introductionPage {
   background-color: #E8DDD4;
-  min-height: 100vh;
+  min-height: auto;
   padding: 0;
+}
+
+/* Main content containers */
+.mainContentHome {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.onlineUsersContainer {
+  order: 1;
+}
+
+.newsFeedContainer {
+  order: 2;
+}
+
+.rpgCalendarSidebarContainer {
+  order: 3;
 }
 
 /* Floating action button for chat (mobile) */
@@ -142,28 +164,13 @@
   overflow-y: auto;
   padding: 1rem;
 }
-
-/* Desktop Chat Container */
-.desktopChatContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-/* Hide desktop chat on mobile */
-@media screen and (max-width: 768px) {
-  .desktopChatContainer {
-    display: none;
-  }
-}
 .ctaBtnContainer {
   display: flex;
   justify-content: left;
   gap: 5.5rem;
   width: 40%;
   height: 3rem;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
 }
 /* --------------------BUTTON -------------------- */
 .ctaBtn {
@@ -186,12 +193,12 @@
 /* --------------------INTRODUCTION HEADER -------------------- */
 .introductionHeader {
   background-color: #E8DDD4;
-  padding: 2rem;
+  padding: 1.5rem;
   color: #2C2C2C;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #D4C4A8;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .introductionTitle {
@@ -206,7 +213,7 @@
   color: #2C2C2C;
   font-size: 1.1rem;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .mainContentHome {
@@ -257,10 +264,10 @@
     flex-direction: column;
     align-items: stretch;
     width: 100vw;
-    min-height: 100vh;
-    padding: 1rem 0.5rem 6rem 0.5rem;
+    min-height: auto;
+    padding: 1rem 0.5rem 2rem 0.5rem;
     box-sizing: border-box;
-    gap: 1.5rem;
+    gap: 1rem;
   }
   .newsFeedContainer {
     flex: 1 1 0%;
@@ -296,7 +303,7 @@
     width: 100%;
     justify-content: center;
     gap: 1.5rem;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
 
   .ctaBtn {
@@ -305,7 +312,7 @@
   }
 
   .introductionHeader {
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
     font-size: 1.1rem;
   }
 
@@ -315,7 +322,7 @@
 
   .introductionText {
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -325,9 +332,21 @@
     padding: 1rem;
   }
   
+  /* Hide desktop components on mobile */
+  .onlineUsersContainer,
+  .newsFeedContainer,
+  .rpgCalendarSidebarContainer {
+    display: none !important;
+  }
+  
+  .mainContentHome {
+    padding: 0;
+    margin: 0;
+  }
+  
   .introductionHeader {
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
   }
   
   .introductionHeader h1 {
@@ -368,7 +387,7 @@
   
   .introductionHeader {
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
   }
   
   .introductionHeader h1 {

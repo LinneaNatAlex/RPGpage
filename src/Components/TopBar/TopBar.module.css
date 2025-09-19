@@ -442,3 +442,85 @@
   background: #00e6a8;
   color: #18161e;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .topBar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.6rem;
+    height: auto;
+    min-height: 50px;
+    background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+    border: 1px solid #7B6857;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  .topBar > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex: 1;
+  }
+  
+  .currency {
+    font-size: 0.7rem;
+    gap: 0.3rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .coinIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .profilePic {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #7B6857;
+  }
+  
+  .healthBarWrapper {
+    font-size: 0.6rem;
+    min-width: 80px;
+    gap: 0.3rem;
+  }
+  
+  .healthBarOuter {
+    width: 60px;
+    height: 8px;
+    border-radius: 4px;
+  }
+  
+  .healthBarInner {
+    border-radius: 4px;
+  }
+  
+  .healthText {
+    font-size: 0.6rem;
+    font-weight: 600;
+  }
+  
+  .inventoryIconBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+  
+  .chestIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* Hide inventory button on mobile */
+  .hideOnMobile {
+    display: none !important;
+  }
+}

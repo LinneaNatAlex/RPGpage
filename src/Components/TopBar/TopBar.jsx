@@ -90,58 +90,64 @@ const TopBar = () => {
     if (!user) return;
     const userRef = doc(db, "users", user.uid);
     const unsub = onSnapshot(userRef, async (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setBalance(data.currency ?? 1000);
-        setInventory(data.inventory ?? []);
-        setHealth(data.health ?? 100);
-        setPoints(data.points ?? 0);
-        setRoles(data.roles ?? []);
-        setProfileImageUrl(data.profileImageUrl || null);
-        // Sett lastHealthUpdate første gang hvis mangler
-        if (!data.lastHealthUpdate) {
-          await updateDoc(userRef, { lastHealthUpdate: Date.now() });
+      try {
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setBalance(data.currency ?? 1000);
+          setInventory(data.inventory ?? []);
+          setHealth(data.health ?? 100);
+          setPoints(data.points ?? 0);
+          setRoles(data.roles ?? []);
+          setProfileImageUrl(data.profileImageUrl || null);
+          // Sett lastHealthUpdate første gang hvis mangler
+          if (!data.lastHealthUpdate) {
+            await updateDoc(userRef, { lastHealthUpdate: Date.now() });
+          }
+          // Love Potion effect
+          if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
+            setInLoveWith(data.inLoveWith || "Someone");
+            setInLoveUntil(data.inLoveUntil);
+          } else {
+            setInLoveWith(null);
+            setInLoveUntil(null);
+          }
+          
+          // New potion effects
+          setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
+          setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
+          setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
+          setSparkleUntil(data.sparkleUntil && data.sparkleUntil > Date.now() ? data.sparkleUntil : null);
+          setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
+          setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
+          setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
+          setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
+          setDarkModeUntil(data.darkModeUntil && data.darkModeUntil > Date.now() ? data.darkModeUntil : null);
+          setRetroUntil(data.retroUntil && data.retroUntil > Date.now() ? data.retroUntil : null);
+          setMirrorUntil(data.mirrorUntil && data.mirrorUntil > Date.now() ? data.mirrorUntil : null);
+          setSpeedUntil(data.speedUntil && data.speedUntil > Date.now() ? data.speedUntil : null);
+          setSlowMotionUntil(data.slowMotionUntil && data.slowMotionUntil > Date.now() ? data.slowMotionUntil : null);
+          setLuckyUntil(data.luckyUntil && data.luckyUntil > Date.now() ? data.luckyUntil : null);
+          setWisdomUntil(data.wisdomUntil && data.wisdomUntil > Date.now() ? data.wisdomUntil : null);
+          setSurveillanceUntil(data.surveillanceUntil && data.surveillanceUntil > Date.now() ? data.surveillanceUntil : null);
+          setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
+          setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
+          
+          // Infirmary state
+          if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
+            setInfirmary(true);
+            setInfirmaryEnd(data.infirmaryEnd);
+          } else {
+            setInfirmary(false);
+            setInfirmaryEnd(null);
+          }
+          if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
+            setInvisibleUntil(data.invisibleUntil);
+          } else {
+            setInvisibleUntil(null);
+          }
         }
-        // Love Potion effect
-        if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
-          setInLoveWith(data.inLoveWith || "Someone");
-          setInLoveUntil(data.inLoveUntil);
-        } else {
-          setInLoveWith(null);
-          setInLoveUntil(null);
-        }
-        
-        // New potion effects
-        setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
-        setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
-        setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
-        setSparkleUntil(data.sparkleUntil && data.sparkleUntil > Date.now() ? data.sparkleUntil : null);
-        setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
-        setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
-        setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
-        setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
-        setDarkModeUntil(data.darkModeUntil && data.darkModeUntil > Date.now() ? data.darkModeUntil : null);
-        setRetroUntil(data.retroUntil && data.retroUntil > Date.now() ? data.retroUntil : null);
-        setMirrorUntil(data.mirrorUntil && data.mirrorUntil > Date.now() ? data.mirrorUntil : null);
-        setSpeedUntil(data.speedUntil && data.speedUntil > Date.now() ? data.speedUntil : null);
-        setSlowMotionUntil(data.slowMotionUntil && data.slowMotionUntil > Date.now() ? data.slowMotionUntil : null);
-        setLuckyUntil(data.luckyUntil && data.luckyUntil > Date.now() ? data.luckyUntil : null);
-        setWisdomUntil(data.wisdomUntil && data.wisdomUntil > Date.now() ? data.wisdomUntil : null);
-        setSurveillanceUntil(data.surveillanceUntil && data.surveillanceUntil > Date.now() ? data.surveillanceUntil : null);
-        setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
-        setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
-        if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
-          setInfirmary(true);
-          setInfirmaryEnd(data.infirmaryEnd);
-        } else {
-          setInfirmary(false);
-          setInfirmaryEnd(null);
-        }
-        if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
-          setInvisibleUntil(data.invisibleUntil);
-        } else {
-          setInvisibleUntil(null);
-        }
+      } catch (error) {
+        console.error("Error in TopBar useEffect:", error);
       }
     });
     return () => unsub && unsub();
@@ -170,19 +176,20 @@ const TopBar = () => {
     const userRef = doc(db, "users", user.uid);
 
     async function decayHealth() {
-      const userDoc = await getDoc(userRef);
-      if (!userDoc.exists()) return;
-      const data = userDoc.data();
-      // Fjern lockout på decayHealth, så vi alltid kan tvinge fainting og resette infirmaryEnd
+      try {
+        const userDoc = await getDoc(userRef);
+        if (!userDoc.exists()) return;
+        const data = userDoc.data();
+        // Fjern lockout på decayHealth, så vi alltid kan tvinge fainting og resette infirmaryEnd
 
-      // Finn hvor lenge siden sist decay
-      const now = Date.now();
-      let lastUpdate = data.lastHealthUpdate || now;
-      let health = data.health ?? 100;
-      const elapsed = now - lastUpdate;
-      const hpToLose = Math.floor(elapsed / msPerHp);
-      if (hpToLose > 0) {
-        let newHealth = health - hpToLose * healthPerDecay;
+        // Finn hvor lenge siden sist decay
+        const now = Date.now();
+        let lastUpdate = data.lastHealthUpdate || now;
+        let health = data.health ?? 100;
+        const elapsed = now - lastUpdate;
+        const hpToLose = Math.floor(elapsed / msPerHp);
+        if (hpToLose > 0) {
+          let newHealth = health - hpToLose * healthPerDecay;
         let update = { lastHealthUpdate: now };
         if (newHealth <= 0) {
           newHealth = 0;
@@ -197,6 +204,9 @@ const TopBar = () => {
         // Sett første gang
         await updateDoc(userRef, { lastHealthUpdate: now });
       }
+    } catch (error) {
+      console.error("Error in decayHealth:", error);
+    }
     }
 
     decayHealth();
@@ -209,16 +219,20 @@ const TopBar = () => {
     if (!infirmary || !infirmaryEnd) return;
     setCountdown(Math.max(0, Math.floor((infirmaryEnd - Date.now()) / 1000)));
     const timer = setInterval(() => {
-      const secs = Math.max(0, Math.floor((infirmaryEnd - Date.now()) / 1000));
-      setCountdown(secs);
-      if (secs <= 0) {
-        // Ferdig, gjenopprett health
-        if (user) {
-          const userRef = doc(db, "users", user.uid);
-          updateDoc(userRef, { health: 100, infirmaryEnd: null });
+      try {
+        const secs = Math.max(0, Math.floor((infirmaryEnd - Date.now()) / 1000));
+        setCountdown(secs);
+        if (secs <= 0) {
+          // Ferdig, gjenopprett health
+          if (user) {
+            const userRef = doc(db, "users", user.uid);
+            updateDoc(userRef, { health: 100, infirmaryEnd: null });
+          }
+          setInfirmary(false);
+          setInfirmaryEnd(null);
         }
-        setInfirmary(false);
-        setInfirmaryEnd(null);
+      } catch (error) {
+        console.error("Error in infirmary countdown:", error);
       }
     }, 1000);
     return () => clearInterval(timer);
@@ -252,7 +266,11 @@ const TopBar = () => {
       where("read", "==", false)
     );
     const unsub = onSnapshot(q, (snap) => {
-      setNotifications(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      try {
+        setNotifications(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      } catch (error) {
+        console.error("Error in notifications useEffect:", error);
+      }
     });
     return () => unsub();
   }, [user]);
@@ -436,7 +454,7 @@ const TopBar = () => {
             )}
           </div>
         <button
-            className={styles.inventoryIconBtn}
+            className={`${styles.inventoryIconBtn} ${styles.hideOnMobile}`}
             onClick={() => setShowInventory((v) => !v)}
             title="Inventory"
             disabled={infirmary}

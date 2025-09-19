@@ -56,7 +56,7 @@ const UserList = ({ userQuery }) => {
                 idx === 0 ? { background: "rgba(245, 239, 224, 0.2)", fontWeight: "bold" } : {}
               }
             >
-              <td>
+              <td data-label="Name">
                 {(() => {
                   let nameClass = styles.userName;
                   if (user.roles?.some((r) => r.toLowerCase() === "headmaster"))
@@ -74,14 +74,15 @@ const UserList = ({ userQuery }) => {
                   return <span className={nameClass}>{user.displayName}</span>;
                 })()}
               </td>
-              <td>
+              <td data-label="Race">
                 {user.race &&
                 ["Witch", "witch", "witches", "Witches"].includes(user.race)
                   ? "Wizard"
                   : user.race}
               </td>
-              <td>{user.class}</td>
+              <td data-label="Class">{user.class}</td>
               <td
+                data-label="Points"
                 style={{
                   fontWeight: "bold",
                   color: idx === 0 ? "#2C2C2C" : "#2C2C2C",
@@ -91,7 +92,7 @@ const UserList = ({ userQuery }) => {
               >
                 {user.points || 0}
               </td>
-              <td>
+              <td data-label="Profile">
                 <Link to={`/user/${user.uid}`} className={styles.profileLink}>
                   View Profile
                 </Link>
@@ -102,6 +103,7 @@ const UserList = ({ userQuery }) => {
       </table>
       {/* Race points summary - Enhanced Design */}
       <div
+        className={styles.racePointsContainer}
         style={{
           marginTop: 40,
           background: "linear-gradient(135deg, #2C1810 0%, #3D2817 50%, #4A2F1A 100%)",

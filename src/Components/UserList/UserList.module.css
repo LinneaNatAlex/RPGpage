@@ -68,3 +68,129 @@ td {
   border-bottom: 1px solid rgba(123, 104, 87, 0.2);
   color: #2C2C2C;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .userListWrapper {
+    padding: 10px;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .userListContainer {
+    width: 100%;
+    font-size: 0.9rem;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+  
+  .userListContainer thead,
+  .userListContainer tbody,
+  .userListContainer tr {
+    display: block;
+  }
+  
+  .userListContainer thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .userListContainer tr {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .userListContainer td {
+    border: none;
+    position: relative;
+    padding: 8px 8px 8px 50%;
+    white-space: normal;
+    text-align: left;
+    display: block;
+  }
+  
+  .userListContainer td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #7B6857;
+  }
+  
+  .userListContainer td:first-child:before {
+    content: "Name:";
+  }
+  
+  .userListContainer td:nth-child(2):before {
+    content: "Race:";
+  }
+  
+  .userListContainer td:nth-child(3):before {
+    content: "Class:";
+  }
+  
+  .userListContainer td:nth-child(4):before {
+    content: "Points:";
+  }
+  
+  .userListContainer td:nth-child(5):before {
+    content: "Profile:";
+  }
+  
+  .profileLink {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #7B6857;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+  
+  .profileLink:hover {
+    background: #5D4E37;
+  }
+  
+  /* Race points mobile styles */
+  .racePointsContainer {
+    margin: 20px 10px !important;
+    padding: 20px !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+  }
+  
+  .racePointsContainer h3 {
+    font-size: 1.5rem !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .racePointsContainer > div {
+    gap: 12px !important;
+  }
+  
+  .racePointsContainer > div > div {
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+  }
+  
+  .racePointsContainer > div > div > div {
+    margin-left: 30px !important;
+  }
+  
+  .racePointsContainer > div > div > div > span:first-child {
+    font-size: 1rem !important;
+  }
+  
+  .racePointsContainer > div > div > div > span:last-child {
+    font-size: 1.1rem !important;
+  }
+}
