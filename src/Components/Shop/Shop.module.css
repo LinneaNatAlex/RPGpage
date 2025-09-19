@@ -150,3 +150,61 @@
   margin-left: 0.7rem;
   font-style: italic;
 }
+
+/* Mobile responsive */
+@media screen and (max-width: 768px) {
+  .shopWrapper {
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 12px;
+    max-width: 100%;
+  }
+  
+  .balance {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tabs {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    border-radius: 12px;
+  }
+  
+  .itemName {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .itemDesc {
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+  
+  .itemEffect {
+    font-size: 0.9rem;
+    margin-left: 0.3rem;
+  }
+  
+  .item button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .message {
+    padding: 8px 12px;
+    margin: 0.3rem 0 1rem 0;
+    font-size: 0.9rem;
+  }
+}

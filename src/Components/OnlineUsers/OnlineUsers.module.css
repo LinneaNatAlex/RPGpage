@@ -125,3 +125,27 @@
   border: 3px solid #ff2a2a;
   box-shadow: 0 0 18px 4px #ff2a2a, 0 0 12px #b0aac2;
 }
+
+/* Mobile responsive */
+@media screen and (max-width: 768px) {
+  .onlineUsersContainer {
+    padding: 1rem;
+    margin: 0.5rem;
+    border-radius: 12px;
+    max-height: 80vh;
+    height: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .onlineUsersList {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .userAvatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+}
