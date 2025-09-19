@@ -70,12 +70,33 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
         if (currentUser) {
-          // Get user data from Firestore
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
+          // Get user data from Firestore with retry logic
+          let userDoc;
+          let retries = 3;
+          while (retries > 0) {
+            try {
+              const userDocRef = doc(db, "users", currentUser.uid);
+              userDoc = await getDoc(userDocRef);
+              break;
+            } catch (firestoreError) {
+              console.warn(`Firestore error (${4-retries}):`, firestoreError);
+              retries--;
+              if (retries === 0) {
+                console.error("Failed to fetch user data after 3 attempts");
+                // Set user anyway with basic data
+                setUser(currentUser);
+                setEmailVerified(currentUser.emailVerified);
+                setBlocked({ blocked: false, reason: "", until: null, bannedType: null });
+                setLoading(false);
+                return;
+              }
+              // Wait before retry
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
 
           let userData = currentUser;
-          if (userDoc.exists()) {
+          if (userDoc && userDoc.exists()) {
             userData = { ...currentUser, ...userDoc.data() };
             setUser(userData);
           } else {
@@ -107,25 +128,35 @@ export const AuthProvider = ({ children }) => {
           }
           setBlocked({ blocked, reason, until, description, bannedType });
 
-          // Update online status
-          await setDoc(
-            doc(db, "users", currentUser.uid),
-            {
-              displayName: currentUser.displayName || currentUser.email,
-              online: true,
-            },
-            { merge: true }
-          );
-
-          // Handle offline status
-          const handleUnload = async () => {
+          // Update online status with error handling
+          try {
             await setDoc(
               doc(db, "users", currentUser.uid),
               {
-                online: false,
+                displayName: currentUser.displayName || currentUser.email,
+                online: true,
+                lastLogin: new Date(),
               },
               { merge: true }
             );
+          } catch (onlineError) {
+            console.warn("Failed to update online status:", onlineError);
+            // Don't fail the entire auth process for this
+          }
+
+          // Handle offline status
+          const handleUnload = async () => {
+            try {
+              await setDoc(
+                doc(db, "users", currentUser.uid),
+                {
+                  online: false,
+                },
+                { merge: true }
+              );
+            } catch (error) {
+              console.warn("Failed to update offline status:", error);
+            }
           };
           window.addEventListener("beforeunload", handleUnload);
         } else {
@@ -140,6 +171,8 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error in auth state change:", error);
+        // Set loading to false even on error to prevent infinite loading
+        setLoading(false);
       } finally {
         setLoading(false);
       }

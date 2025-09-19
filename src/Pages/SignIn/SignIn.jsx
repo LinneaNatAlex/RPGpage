@@ -47,6 +47,7 @@ const SignIn = () => {
     e.preventDefault();
     setError(null);
     if (!validateForm()) return;
+    
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -54,17 +55,38 @@ const SignIn = () => {
         formData.password
       );
       const user = userCredential.user;
+      
       //  Check if the user's email is verified BEFORE allowing them to navigate to the home page.
       await user.reload();
       console.log(user.emailVerified);
+      
       if (!user.emailVerified) {
         setError("Please verify your email before signing in.");
         return;
       }
+      
+      // Wait a moment for auth state to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // navigate to the home page after successful sign-in
       navigate("/");
     } catch (error) {
-      setError("Witch and Wizard, something went wrong! Please try again.");
+      console.error("Sign in error:", error);
+      
+      // More specific error messages
+      if (error.code === 'auth/user-not-found') {
+        setError("No account found with this email address.");
+      } else if (error.code === 'auth/wrong-password') {
+        setError("Incorrect password. Please try again.");
+      } else if (error.code === 'auth/invalid-email') {
+        setError("Invalid email address format.");
+      } else if (error.code === 'auth/too-many-requests') {
+        setError("Too many failed attempts. Please try again later.");
+      } else if (error.code === 'auth/network-request-failed') {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError("Witch and Wizard, something went wrong! Please try again.");
+      }
     }
   };
 

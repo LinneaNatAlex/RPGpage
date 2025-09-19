@@ -174,7 +174,37 @@ function App() {
   }, [user]);
   
   if (loading) {
-    return <div>Loading...</div>; // Show a loading state while auth is being checked
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #5D4E37 0%, #8B7A6B 100%)',
+        color: '#F5EFE0',
+        fontSize: '1.2rem',
+        fontFamily: 'serif'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ 
+            width: '50px', 
+            height: '50px', 
+            border: '3px solid #F5EFE0',
+            borderTop: '3px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 20px'
+          }}></div>
+          <div>Loading Veyloria...</div>
+        </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
   }
   // the main app that renders navbar and the main contents
   return (
