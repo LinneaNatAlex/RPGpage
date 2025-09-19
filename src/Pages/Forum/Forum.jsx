@@ -320,30 +320,46 @@ const Forum = () => {
         <div style={{
           background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
           color: "#F5EFE0",
-          padding: "20px 30px",
+          padding: "25px 50px 25px 25px",
           borderRadius: "16px",
           marginBottom: "25px",
           border: "3px solid #D4C4A8",
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
           textAlign: "center",
           fontWeight: 700,
-          fontSize: "1.3rem",
+          fontSize: "1.2rem",
           position: "relative",
-          animation: "pulse 2s infinite"
+          animation: "pulse 2s infinite",
+          maxWidth: "100%",
+          width: "100%",
+          boxSizing: "border-box",
+          overflow: "visible",
+          wordWrap: "break-word",
+          minHeight: "80px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}>
-          {nitsReward}
+          <div style={{
+            paddingRight: "40px",
+            paddingLeft: "10px",
+            lineHeight: "1.4",
+            maxWidth: "100%"
+          }}>
+            {nitsReward}
+          </div>
           <button
             onClick={() => setNitsReward(null)}
             style={{
               position: "absolute",
-              top: "8px",
+              top: "12px",
               right: "12px",
               background: "rgba(255, 255, 255, 0.2)",
               border: "none",
               color: "#F5EFE0",
               borderRadius: "50%",
-              width: "24px",
-              height: "24px",
+              width: "28px",
+              height: "28px",
               cursor: "pointer",
               fontSize: "16px",
               fontWeight: "bold",
@@ -382,10 +398,10 @@ const Forum = () => {
                 fontWeight: 600,
               }}
             >
-              {`Ord: ${newTopicWordCount} / 300`}
-              {newTopicWordCount < 300 && " (minimum 300 ord for å poste)"}
+              {`Words: ${newTopicWordCount} / 300`}
+              {newTopicWordCount < 300 && " (minimum 300 words to post)"}
               <div style={{ fontSize: "0.8rem", color: "#8B7A6B", marginTop: "4px" }}>
-                Earn 10 nits for every 500 words written!
+                Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
             </div>
             <Button
@@ -617,10 +633,10 @@ const Forum = () => {
                 fontWeight: 600,
               }}
             >
-              {`Ord: ${replyWordCount} / 300`}
-              {replyWordCount < 300 && " (minimum 300 ord for å poste)"}
+              {`Words: ${replyWordCount} / 300`}
+              {replyWordCount < 300 && " (minimum 300 words to post)"}
               <div style={{ fontSize: "0.8rem", color: "#8B7A6B", marginTop: "4px" }}>
-                Earn 10 nits for every 500 words written!
+                Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
             </div>
             <Button

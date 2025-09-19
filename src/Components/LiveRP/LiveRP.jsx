@@ -518,7 +518,7 @@ const LiveRP = () => {
                 marginTop: "4px",
                 textAlign: "center"
               }}>
-                Earn 10 nits for every 500 words written!
+                Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
               <Button
                 type="submit"
