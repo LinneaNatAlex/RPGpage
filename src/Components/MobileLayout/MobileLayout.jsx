@@ -435,16 +435,18 @@ const MobileLayout = ({ children }) => {
         )}
       </main>
 
-      {/* Mobile Dashboard Button */}
-      <div className="mobile-dashboard-button">
-        <button 
-          className="mobile-dashboard-btn"
-          onClick={() => setShowDashboard(true)}
-        >
-          <span className="mobile-dashboard-icon">☰</span>
-          <span className="mobile-dashboard-label">Menu</span>
-        </button>
-      </div>
+      {/* Mobile Dashboard Button - Only show on home page */}
+      {location.pathname === '/' && (
+        <div className="mobile-dashboard-button">
+          <button 
+            className="mobile-dashboard-btn"
+            onClick={() => setShowDashboard(true)}
+          >
+            <span className="mobile-dashboard-icon">☰</span>
+            <span className="mobile-dashboard-label">Menu</span>
+          </button>
+        </div>
+      )}
 
       {/* Mobile Dashboard Overlay */}
       {showDashboard && (
