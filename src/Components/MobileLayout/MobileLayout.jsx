@@ -26,6 +26,7 @@ const MobileLayout = ({ children }) => {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showForumList, setShowForumList] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
+  const [showPageRules, setShowPageRules] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -67,6 +68,7 @@ const MobileLayout = ({ children }) => {
     setShowRPGCalendar(false);
     setShowOnlineUsers(false);
     setShowInventory(false);
+    setShowPageRules(false);
     
     setActiveTab(tab);
     switch(tab) {
@@ -194,6 +196,216 @@ const MobileLayout = ({ children }) => {
             </div>
             <div className="mobile-overlay-content">
               <OnlineUsers />
+            </div>
+          </div>
+        )}
+
+        {/* Page Rules Overlay */}
+        {showPageRules && (
+          <div className="mobile-overlay">
+            <div className="mobile-overlay-header">
+              <h2>Page Rules</h2>
+              <button 
+                className="mobile-overlay-close"
+                onClick={() => {
+                  setShowPageRules(false);
+                  navigate('/');
+                  setActiveTab('home');
+                }}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="mobile-overlay-content">
+              <div className="mobile-rules-list">
+                <div className="mobile-rules-category">
+                  <h3>Website Rules</h3>
+                  <div className="mobile-rules-grid">
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/generalrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">📜</span>
+                      <span className="mobile-rules-name">General Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/aiusagerules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">🤖</span>
+                      <span className="mobile-rules-name">AI Usage Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/contentmediarules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">📷</span>
+                      <span className="mobile-rules-name">Content & Media Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/privacysafetyrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">🔒</span>
+                      <span className="mobile-rules-name">Privacy & Safety Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/accountidentityrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">👤</span>
+                      <span className="mobile-rules-name">Account & Identity Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/communitybehaviorrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">🤝</span>
+                      <span className="mobile-rules-name">Community & Behavior Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/technicalsiterules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">⚙️</span>
+                      <span className="mobile-rules-name">Technical & Site Rules</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mobile-rules-category">
+                  <h3>Communication Rules</h3>
+                  <div className="mobile-rules-grid">
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/forumrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">📖</span>
+                      <span className="mobile-rules-name">Forum Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/chatrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">💬</span>
+                      <span className="mobile-rules-name">Chat Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/profilecontentrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">📝</span>
+                      <span className="mobile-rules-name">Profile Content Rules</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mobile-rules-category">
+                  <h3>Roleplay & Game Rules</h3>
+                  <div className="mobile-rules-grid">
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/roleplaycharacterrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">🎭</span>
+                      <span className="mobile-rules-name">Roleplay & Character Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/rpgrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">⚔️</span>
+                      <span className="mobile-rules-name">RPG Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/livechatrpgrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">💬</span>
+                      <span className="mobile-rules-name">Live Chat RPG Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/magicspellrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">✨</span>
+                      <span className="mobile-rules-name">Magic & Spell Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/raceschoolrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">🏫</span>
+                      <span className="mobile-rules-name">Race & School Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item"
+                      onClick={() => {
+                        navigate('/datingrelationshiprules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">💕</span>
+                      <span className="mobile-rules-name">Dating & Relationship Rules</span>
+                    </button>
+                    <button 
+                      className="mobile-rules-item special"
+                      onClick={() => {
+                        navigate('/18forumrules');
+                        setShowPageRules(false);
+                      }}
+                    >
+                      <span className="mobile-rules-icon">🔞</span>
+                      <span className="mobile-rules-name">18+ Forum Rules</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -435,23 +647,16 @@ const MobileLayout = ({ children }) => {
         )}
       </main>
 
-      {/* Mobile Dashboard Button - Show on home page and other main pages */}
-      {(location.pathname === '/' || 
-        location.pathname === '/Profile' || 
-        location.pathname === '/ClassRooms' || 
-        location.pathname === '/userMap' ||
-        location.pathname.startsWith('/forum/') ||
-        location.pathname.startsWith('/user/')) && (
-        <div className="mobile-dashboard-button">
-          <button 
-            className="mobile-dashboard-btn"
-            onClick={() => setShowDashboard(true)}
-          >
-            <span className="mobile-dashboard-icon">☰</span>
-            <span className="mobile-dashboard-label">Menu</span>
-          </button>
-        </div>
-      )}
+      {/* Mobile Dashboard Button - Always visible on mobile */}
+      <div className="mobile-dashboard-button">
+        <button 
+          className="mobile-dashboard-btn"
+          onClick={() => setShowDashboard(true)}
+        >
+          <span className="mobile-dashboard-icon">☰</span>
+          <span className="mobile-dashboard-label">Menu</span>
+        </button>
+      </div>
 
       {/* Mobile Dashboard Overlay */}
       {showDashboard && (
@@ -504,14 +709,22 @@ const MobileLayout = ({ children }) => {
             </button>
             
             <button 
-              className={`mobile-dashboard-item ${activeTab === 'rpg' ? 'active' : ''}`}
+              className={`mobile-dashboard-item ${showPageRules ? 'active' : ''}`}
               onClick={() => {
-                handleTabClick('rpg');
+                // Close all other overlays first
+                setShowChat(false);
+                setShowPrivateChat(false);
+                setShowForumList(false);
+                setShowNewsFeed(false);
+                setShowRPGCalendar(false);
+                setShowOnlineUsers(false);
+                setShowInventory(false);
+                setShowPageRules(true);
                 setShowDashboard(false);
               }}
             >
-              <span className="mobile-dashboard-item-icon">⚔️</span>
-              <span className="mobile-dashboard-item-label">RPG</span>
+              <span className="mobile-dashboard-item-icon">📋</span>
+              <span className="mobile-dashboard-item-label">Page Rules</span>
             </button>
             
             <button 
@@ -587,6 +800,7 @@ const MobileLayout = ({ children }) => {
                 setShowRPGCalendar(false);
                 setShowOnlineUsers(false);
                 setShowInventory(false);
+                setShowPageRules(false);
                 setShowDashboard(false);
               }}
             >
@@ -605,6 +819,7 @@ const MobileLayout = ({ children }) => {
                 setShowRPGCalendar(true);
                 setShowOnlineUsers(false);
                 setShowInventory(false);
+                setShowPageRules(false);
                 setShowDashboard(false);
               }}
             >

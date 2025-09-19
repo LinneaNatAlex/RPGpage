@@ -7,6 +7,22 @@ import {
 
 import App from "../App.jsx";
 import ForumRules from "../Pages/ForumRules.jsx";
+import GeneralRules from "../Pages/GeneralRules.jsx";
+import AIUsageRules from "../Pages/AIUsageRules.jsx";
+import ContentMediaRules from "../Pages/ContentMediaRules.jsx";
+import PrivacySafetyRules from "../Pages/PrivacySafetyRules.jsx";
+import AccountIdentityRules from "../Pages/AccountIdentityRules.jsx";
+import CommunityBehaviorRules from "../Pages/CommunityBehaviorRules.jsx";
+import TechnicalSiteRules from "../Pages/TechnicalSiteRules.jsx";
+import ChatRules from "../Pages/ChatRules.jsx";
+import RPGRules from "../Pages/RPGRules.jsx";
+import ProfileContentRules from "../Pages/ProfileContentRules.jsx";
+import RoleplayCharacterRules from "../Pages/RoleplayCharacterRules.jsx";
+import LiveChatRPGRules from "../Pages/LiveChatRPGRules.jsx";
+import MagicSpellRules from "../Pages/MagicSpellRules.jsx";
+import RaceSchoolRules from "../Pages/RaceSchoolRules.jsx";
+import DatingRelationshipRules from "../Pages/DatingRelationshipRules.jsx";
+import Forum18Rules from "../Pages/18ForumRules.jsx";
 import Profile from "../Pages/Profile/Profile.jsx";
 import SignIn from "../Pages/SignIn/SignIn.jsx";
 import SignUp from "../Pages/SignUp/SignUp.jsx";
@@ -121,6 +137,22 @@ export const router = createBrowserRouter(
         }
       />
       <Route path="forumrules" element={<ForumRules />} />
+      <Route path="generalrules" element={<GeneralRules />} />
+      <Route path="aiusagerules" element={<AIUsageRules />} />
+      <Route path="contentmediarules" element={<ContentMediaRules />} />
+      <Route path="privacysafetyrules" element={<PrivacySafetyRules />} />
+      <Route path="accountidentityrules" element={<AccountIdentityRules />} />
+      <Route path="communitybehaviorrules" element={<CommunityBehaviorRules />} />
+      <Route path="technicalsiterules" element={<TechnicalSiteRules />} />
+      <Route path="chatrules" element={<ChatRules />} />
+      <Route path="rpgrules" element={<RPGRules />} />
+      <Route path="profilecontentrules" element={<ProfileContentRules />} />
+      <Route path="roleplaycharacterrules" element={<RoleplayCharacterRules />} />
+      <Route path="livechatrpgrules" element={<LiveChatRPGRules />} />
+      <Route path="magicspellrules" element={<MagicSpellRules />} />
+      <Route path="raceschoolrules" element={<RaceSchoolRules />} />
+      <Route path="datingrelationshiprules" element={<DatingRelationshipRules />} />
+      <Route path="18forumrules" element={<Forum18Rules />} />
       <Route
         path="Rpg/GreatHall"
         element={
