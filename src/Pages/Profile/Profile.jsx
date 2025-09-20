@@ -6,6 +6,7 @@ import { useImageUpload } from "../../hooks/useImageUpload";
 import { useAuth } from "../../context/authContext";
 import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
+import parseBBCode from "../../Components/ProfileTextEditor/parseBBCode.js";
 import Chat from "../../Components/Chat/Chat";
 import FriendsList from "../../Components/FriendsList/FriendsList";
 import { isBirthdayToday } from "../../utils/rpgCalendar";
@@ -329,7 +330,16 @@ const Profile = () => {
       </div>
       {/* -----------------------------PROFILE TEXT----------------------------- */}
       <div className={styles.profileTextContainer}>
-        {userData.profileMode === "html" &&
+        {userData.profileMode === "bbcode" && userData.profileBBCode ? (
+          <div className={styles.profileText}>
+            <h2>Profile Text</h2>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: parseBBCode(userData.profileBBCode),
+              }}
+            />
+          </div>
+        ) : userData.profileMode === "html" &&
         userData.profileHtml &&
         userData.profileCss ? (
           <div className={styles.profileHtmlContainer}>
@@ -338,9 +348,12 @@ const Profile = () => {
               className={styles.profileIframe}
               srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
               sandbox=""
-              height="100vh"
-              width="100%"
             />
+          </div>
+        ) : userData.profileMode === "text" && userData.profileText ? (
+          <div className={styles.profileText}>
+            <h2>Profile Text</h2>
+            <p>{userData.profileText}</p>
           </div>
         ) : (
           <div className={styles.profileText}>

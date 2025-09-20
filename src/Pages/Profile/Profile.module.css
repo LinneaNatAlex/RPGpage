@@ -203,6 +203,18 @@ body,
   z-index: 1;
 }
 
+.profileIframe {
+  width: 97%;
+  height: auto;
+  min-height: 80pc;
+  max-height: 100pc;
+  overflow-y: auto;
+  display: block;
+  border: none;
+  border-radius: 8px;
+  background: #1A1A1A;
+}
+
 
 /* Responsive design for mobile */
 @media screen and (max-width: 1000px) {
@@ -360,8 +372,12 @@ body,
   }
 
   .profileIframe {
-    width: 100%;
-    height: 400px;
+    width: 97%;
+    height: auto;
+    min-height: 80pc;
+    max-height: 100pc;
+    overflow-y: auto;
+    display: block;
     border: none;
     border-radius: 8px;
     background: #1A1A1A;
