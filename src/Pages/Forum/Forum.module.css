@@ -279,3 +279,136 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .forumWrapper {
+    margin: 0;
+    padding: 10px;
+    border-radius: 0;
+    max-width: 100vw;
+    width: 100vw;
+    box-sizing: border-box;
+  }
+  
+  .newTopicForm {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .newTopicInput {
+    font-size: 1rem;
+    padding: 10px 14px;
+  }
+  
+  .topicBox {
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+  
+  .topicLinkButton {
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+  
+  .topicTitle {
+    overflow: visible;
+    white-space: normal;
+    max-width: 70%;
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.3;
+  }
+  
+  .topicAuthor {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 25%;
+    min-width: 80px;
+  }
+  
+  .topicTime {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 15%;
+    min-width: 60px;
+    font-size: 0.8rem;
+  }
+  
+  .postBox {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: #F5EFE0;
+    border-radius: 8px;
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .postContent {
+    background: #F5EFE0 !important;
+    color: #2C1810 !important;
+    padding: 2rem !important;
+    min-height: 200px;
+    border-radius: 8px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-family: 'Georgia', 'Times New Roman', 'Book Antiqua', serif;
+    text-align: left;
+    letter-spacing: 0.3px;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  .postContent * {
+    color: #2C1810 !important;
+  }
+  
+  .postContent p {
+    color: #2C1810 !important;
+    margin-bottom: 1rem;
+  }
+  
+  .postContent span {
+    color: #2C1810 !important;
+  }
+  
+  .postContent li {
+    color: #2C1810 !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  .postContent ul {
+    color: #2C1810 !important;
+    padding-left: 1.5rem;
+  }
+  
+  /* Mobile button sizing */
+  .editButton,
+  .deleteButton,
+  .saveButton,
+  .cancelButton {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.8rem !important;
+    margin: 0.2rem 0.3rem 0.2rem 0 !important;
+    min-width: auto !important;
+    height: auto !important;
+  }
+  
+  .postButton {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem !important;
+    margin-top: 1rem !important;
+  }
+}

@@ -48,6 +48,7 @@ const TopBar = () => {
   const [roles, setRoles] = useState([]);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [infirmary, setInfirmary] = useState(false);
+  const [detentionUntil, setDetentionUntil] = useState(null);
   const [infirmaryEnd, setInfirmaryEnd] = useState(null);
   const [countdown, setCountdown] = useState(0);
   const [invisibleUntil, setInvisibleUntil] = useState(null);
@@ -140,6 +141,13 @@ const TopBar = () => {
             setInfirmary(false);
             setInfirmaryEnd(null);
           }
+          
+          // Detention state
+          if (data.detentionUntil && Date.now() < data.detentionUntil) {
+            setDetentionUntil(data.detentionUntil);
+          } else {
+            setDetentionUntil(null);
+          }
           if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
             setInvisibleUntil(data.invisibleUntil);
           } else {
@@ -150,7 +158,13 @@ const TopBar = () => {
         console.error("Error in TopBar useEffect:", error);
       }
     });
-    return () => unsub && unsub();
+    return () => {
+      try {
+        unsub && unsub();
+      } catch (error) {
+        console.warn("Error unsubscribing from user data:", error);
+      }
+    };
   }, [user]);
 
   // Love Potion countdown
@@ -272,7 +286,13 @@ const TopBar = () => {
         console.error("Error in notifications useEffect:", error);
       }
     });
-    return () => unsub();
+    return () => {
+      try {
+        unsub();
+      } catch (error) {
+        console.warn("Error unsubscribing from notifications:", error);
+      }
+    };
   }, [user]);
 
   return (
@@ -450,6 +470,14 @@ const TopBar = () => {
                 Invisible:{" "}
                 {String(Math.floor(invisibleCountdown / 60)).padStart(2, "0")}:
                 {String(invisibleCountdown % 60).padStart(2, "0")}
+              </span>
+            )}
+            {detentionUntil && (
+              <span style={{ marginLeft: 16, color: "#ff6b6b", fontWeight: 700 }}>
+                ⏰ Detention:{" "}
+                {String(Math.floor((detentionUntil - Date.now()) / (1000 * 60 * 60))).padStart(2, "0")}:
+                {String(Math.floor(((detentionUntil - Date.now()) % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0")}:
+                {String(Math.floor(((detentionUntil - Date.now()) % (1000 * 60)) / 1000)).padStart(2, "0")}
               </span>
             )}
           </div>

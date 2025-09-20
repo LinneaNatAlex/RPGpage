@@ -92,6 +92,7 @@ const Navbar = () => {
                 <NavLink to="/forum/greenhouse">The Greenhouse</NavLink>
                 <NavLink to="/forum/artstudio">The Art Studio</NavLink>
                 <NavLink to="/forum/kitchen">Kitchen</NavLink>
+                <NavLink to="/forum/detentionclassroom">Detention Classroom</NavLink>
                 <NavLink to="/forum/16plus">18+ Forum</NavLink>
                 <NavLink to="/werewolf">Werewolf</NavLink>
               </div>

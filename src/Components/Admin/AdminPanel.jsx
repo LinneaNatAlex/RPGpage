@@ -31,6 +31,9 @@ export default function AdminPanel() {
   const [ipBanStatus, setIpBanStatus] = useState("");
   const [showBanned, setShowBanned] = useState(false);
 
+  // Detention state
+  const [detentionStatus, setDetentionStatus] = useState("");
+
   const [pointsUser, setPointsUser] = useState("");
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsMessage, setPointsMessage] = useState("");
@@ -111,6 +114,38 @@ export default function AdminPanel() {
     const ref = doc(db, "users", selected.uid);
     await updateDoc(ref, { banned: false });
     setBanStatus("User unbanned.");
+  }
+
+  // Detention functions
+  async function handleDetentionUser() {
+    if (!selected) return;
+    if (!roles.includes("admin") && !roles.includes("teacher") && !roles.includes("shadowpatrol") && !roles.includes("headmaster")) {
+      setDetentionStatus("Only admin, teacher, shadow patrol, or headmaster can assign detention.");
+      return;
+    }
+    setDetentionStatus("Working...");
+    const ref = doc(db, "users", selected.uid);
+    const detentionUntil = Date.now() + (60 * 60 * 1000); // 1 hour from now
+    await updateDoc(ref, { 
+      detentionUntil: detentionUntil,
+      detentionReason: "Curfew violation or rule breaking"
+    });
+    setDetentionStatus(`User sent to detention until ${new Date(detentionUntil).toLocaleString()}`);
+  }
+
+  async function handleClearDetention() {
+    if (!selected) return;
+    if (!roles.includes("admin") && !roles.includes("teacher") && !roles.includes("shadowpatrol") && !roles.includes("headmaster")) {
+      setDetentionStatus("Only admin, teacher, shadow patrol, or headmaster can clear detention.");
+      return;
+    }
+    setDetentionStatus("Working...");
+    const ref = doc(db, "users", selected.uid);
+    await updateDoc(ref, { 
+      detentionUntil: null,
+      detentionReason: null
+    });
+    setDetentionStatus("Detention cleared.");
   }
 
   // Ban IP
@@ -632,6 +667,76 @@ export default function AdminPanel() {
             {selected.bannedIp && (
               <div style={{ color: "#ffd86b" }}>User's IP is banned</div>
             )}
+            
+            {/* Detention Controls */}
+            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.2)" }}>
+              <h4>Detention Controls</h4>
+              <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+                <button 
+                  onClick={handleDetentionUser}
+                  style={{
+                    background: "linear-gradient(135deg, #ff5722 0%, #d84315 100%)",
+                    color: "#F5EFE0",
+                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: 12,
+                    padding: "8px 16px",
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                    fontFamily: '"Cinzel", serif',
+                    letterSpacing: "0.5px"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                  }}
+                >
+                  Send to Detention
+                </button>
+                <button
+                  onClick={handleClearDetention}
+                  style={{
+                    background: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
+                    color: "#F5EFE0",
+                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: 12,
+                    padding: "8px 16px",
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                    fontFamily: '"Cinzel", serif',
+                    letterSpacing: "0.5px"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                  }}
+                >
+                  Clear Detention
+                </button>
+              </div>
+              {detentionStatus && <div style={{ color: "#ffd86b", marginTop: 8 }}>{detentionStatus}</div>}
+              {selected.detentionUntil && selected.detentionUntil > Date.now() && (
+                <div style={{ color: "#ffd86b", marginTop: 8 }}>
+                  In detention until:{" "}
+                  {new Date(selected.detentionUntil).toLocaleString()}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

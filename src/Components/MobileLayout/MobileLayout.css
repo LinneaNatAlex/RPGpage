@@ -540,6 +540,10 @@
   align-items: center;
   gap: 8px;
   -webkit-tap-highlight-color: rgba(255,255,255,0.1);
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
 }
 
 .mobile-dashboard-btn:active {
@@ -719,7 +723,8 @@
   
   .mobile-rules-list {
     gap: 15px;
-    padding-bottom: 40px;
+    padding-bottom: 120px; /* Extra space for menu button on tall screens */
+    max-height: calc(100vh - 150px);
   }
   
   .mobile-rules-grid {
@@ -742,14 +747,39 @@
   }
 }
 
+/* Samsung S25 Ultra and similar ultra-tall screens */
+@media (min-height: 1400px) {
+  .mobile-rules-list {
+    padding-bottom: 180px; /* Maximum space for ultra-tall screens */
+    max-height: calc(100vh - 250px);
+  }
+  
+  .mobile-dashboard-btn {
+    bottom: 30px;
+    right: 30px;
+  }
+}
+
+/* Mobile Forum List */
+.mobile-forum-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 100px; /* More space for menu button */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: 400px; /* Fixed height to show ~5 items at once */
+}
+
 /* Mobile Rules List */
 .mobile-rules-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding-bottom: 30px;
+  gap: 15px;
+  padding-bottom: 100px; /* More space for menu button */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  max-height: 400px; /* Fixed height to show ~5 items at once */
 }
 
 .mobile-rules-category h3 {
@@ -915,14 +945,16 @@
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(20px);
   border-radius: 16px;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 20px;
+  margin: 10px;
   border: 1px solid rgba(255,255,255,0.2);
   min-height: auto;
   overflow: visible;
-  max-width: 100%;
-  width: 100%;
+  max-width: calc(100vw - 20px);
+  width: calc(100vw - 20px);
   box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Mobile Home Sections */
@@ -1329,8 +1361,73 @@
 
 .mobile-page-content p,
 .mobile-page-content span,
-.mobile-page-content div {
-  color: rgba(255,255,255,0.9) !important;
+.mobile-page-content div,
+.mobile-page-content * {
+  color: #2C1810 !important;
+}
+
+/* Specific mobile forum content styling */
+@media (max-width: 768px) {
+  .mobile-page-content {
+    background: #F5EFE0 !important;
+    color: #2C1810 !important;
+    padding: 30px !important;
+    margin: 0 !important;
+    max-width: 100vw !important;
+    width: 100vw !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    min-height: 100vh !important;
+  }
+  
+  .mobile-page-content * {
+    color: #2C1810 !important;
+    font-family: 'Georgia', 'Times New Roman', serif !important;
+    line-height: 1.8 !important;
+    font-size: 1.2rem !important;
+    text-align: left !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+  }
+  
+  .mobile-page-content p {
+    color: #2C1810 !important;
+    margin-bottom: 1.5rem !important;
+    padding: 0 !important;
+  }
+  
+  .mobile-page-content span {
+    color: #2C1810 !important;
+  }
+  
+  .mobile-page-content div {
+    color: #2C1810 !important;
+  }
+  
+  .mobile-page-content h1,
+  .mobile-page-content h2,
+  .mobile-page-content h3,
+  .mobile-page-content h4,
+  .mobile-page-content h5,
+  .mobile-page-content h6 {
+    color: #2C1810 !important;
+    font-family: 'Georgia', 'Times New Roman', serif !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .mobile-page-content ul,
+  .mobile-page-content ol {
+    padding-left: 2rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .mobile-page-content li {
+    margin-bottom: 0.8rem !important;
+    color: #2C1810 !important;
+    line-height: 1.8 !important;
+  }
 }
 
 .mobile-page-content button {

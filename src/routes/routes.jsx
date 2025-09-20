@@ -43,6 +43,7 @@ import { Navigate } from "react-router-dom";
 import Admin from "../Pages/Admin.jsx";
 import Teacher from "../Pages/Teacher.jsx";
 import AgeRestrictedForum from "../Components/Forum/AgeRestrictedForum";
+import DetentionGuard from "../Components/Forum/DetentionGuard";
 const TeacherRouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
   const { roles, rolesLoading } = useUserRoles();
@@ -122,7 +123,9 @@ export const router = createBrowserRouter(
         path="forum/:forumId"
         element={
           <RouteGuard>
-            <Forum />
+            <DetentionGuard>
+              <Forum />
+            </DetentionGuard>
           </RouteGuard>
         }
       />
@@ -130,9 +133,11 @@ export const router = createBrowserRouter(
         path="forum/16plus"
         element={
           <RouteGuard>
-            <AgeRestrictedForum>
-              <Forum />
-            </AgeRestrictedForum>
+            <DetentionGuard>
+              <AgeRestrictedForum>
+                <Forum />
+              </AgeRestrictedForum>
+            </DetentionGuard>
           </RouteGuard>
         }
       />

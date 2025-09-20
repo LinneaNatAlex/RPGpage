@@ -1,7 +1,8 @@
 /* ----------------------------profile box wrapper---------------------------- */
 .profileFrame {
-  height: 300vh;
-  width: 300%;
+  height: auto;
+  width: 100%;
+  max-width: 100%;
   border: var(--border-size) solid var(--border-color);
   background-color: var(--secondary-color);
   border-radius: 10px;
@@ -19,7 +20,8 @@
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 1rem;
-  width: 900px;
+  width: 100%;
+  max-width: 100%;
 }
 /* -------------------------------edit button------------------------------- */
 .editButton {

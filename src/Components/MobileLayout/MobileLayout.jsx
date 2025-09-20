@@ -553,6 +553,16 @@ const MobileLayout = ({ children }) => {
                       <span className="mobile-forum-icon">🍳</span>
                       <span className="mobile-forum-name">Kitchen</span>
                     </button>
+                    <button 
+                      className="mobile-forum-item"
+                      onClick={() => {
+                        navigate('/forum/detentionclassroom');
+                        setShowForumList(false);
+                      }}
+                    >
+                      <span className="mobile-forum-icon">⏰</span>
+                      <span className="mobile-forum-name">Detention Classroom</span>
+                    </button>
                   </div>
                 </div>
                 

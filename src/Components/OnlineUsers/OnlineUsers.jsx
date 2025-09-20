@@ -13,6 +13,7 @@ const OnlineUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeoutMinutes, setTimeoutMinutes] = useState(10);
   const [suspendReason, setSuspendReason] = useState("");
+  const [detentionStatus, setDetentionStatus] = useState("");
   const intervalRef = useRef();
 
   // Robust online-status: Oppdater lastActive hvert 20. sekund
@@ -35,9 +36,9 @@ const OnlineUsers = () => {
     };
   }, [user]);
 
-  // Sjekk om innlogget bruker har admin eller teacher rolle
+  // Sjekk om innlogget bruker har admin, teacher, shadowpatrol eller headmaster rolle
   const isPrivileged = user?.roles?.some((r) =>
-    ["admin", "teacher"].includes(r.toLowerCase())
+    ["admin", "teacher", "shadowpatrol", "headmaster"].includes(r.toLowerCase())
   );
 
   const handleTimeoutClick = (targetUser) => {
@@ -67,6 +68,40 @@ const OnlineUsers = () => {
     setShowTimeoutModal(false);
     setSelectedUser(null);
     setSuspendReason("");
+  };
+
+  // Detention functions
+  const handleDetentionUser = async () => {
+    if (!selectedUser) return;
+    setDetentionStatus("Working...");
+    const userRef = doc(db, "users", selectedUser.id);
+    const detentionUntil = Date.now() + (60 * 60 * 1000); // 1 hour from now
+    await updateDoc(userRef, { 
+      detentionUntil: detentionUntil,
+      detentionReason: "Curfew violation or rule breaking"
+    });
+    setDetentionStatus(`User sent to detention until ${new Date(detentionUntil).toLocaleString()}`);
+    setTimeout(() => {
+      setShowTimeoutModal(false);
+      setSelectedUser(null);
+      setDetentionStatus("");
+    }, 2000);
+  };
+
+  const handleClearDetention = async () => {
+    if (!selectedUser) return;
+    setDetentionStatus("Working...");
+    const userRef = doc(db, "users", selectedUser.id);
+    await updateDoc(userRef, { 
+      detentionUntil: null,
+      detentionReason: null
+    });
+    setDetentionStatus("Detention cleared.");
+    setTimeout(() => {
+      setShowTimeoutModal(false);
+      setSelectedUser(null);
+      setDetentionStatus("");
+    }, 2000);
   };
 
   if (!users.length) return null;
@@ -174,7 +209,7 @@ const OnlineUsers = () => {
               {isPrivileged && u.id !== user?.uid && (
                 <button
                   className={style.gearButton}
-                  title="Set timeout"
+                  title="Admin controls (timeout/detention)"
                   onClick={() => handleTimeoutClick(u)}
                   style={{
                     background: "none",
@@ -185,7 +220,7 @@ const OnlineUsers = () => {
                 >
                   <img
                     src={GearIcon}
-                    alt="Set timeout"
+                    alt="Admin controls"
                     style={{ width: 20, height: 20 }}
                   />
                 </button>
@@ -233,6 +268,67 @@ const OnlineUsers = () => {
                 >
                   Cancel
                 </button>
+              </div>
+              
+              {/* Detention Controls */}
+              <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.2)" }}>
+                <h4 style={{ color: "#ff6b6b", marginBottom: 12 }}>Detention Controls</h4>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button 
+                    type="button"
+                    onClick={handleDetentionUser}
+                    style={{
+                      background: "linear-gradient(135deg, #ff5722 0%, #d84315 100%)",
+                      color: "#F5EFE0",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: 8,
+                      padding: "8px 12px",
+                      fontWeight: 600,
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    Send to Detention
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleClearDetention}
+                    style={{
+                      background: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
+                      color: "#F5EFE0",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: 8,
+                      padding: "8px 12px",
+                      fontWeight: 600,
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    Clear Detention
+                  </button>
+                </div>
+                {detentionStatus && (
+                  <div style={{ 
+                    color: "#ffd86b", 
+                    marginTop: 8, 
+                    fontSize: "0.9rem",
+                    textAlign: "center"
+                  }}>
+                    {detentionStatus}
+                  </div>
+                )}
+                {selectedUser?.detentionUntil && selectedUser.detentionUntil > Date.now() && (
+                  <div style={{ 
+                    color: "#ff6b6b", 
+                    marginTop: 8, 
+                    fontSize: "0.9rem",
+                    textAlign: "center"
+                  }}>
+                    Currently in detention until: {new Date(selectedUser.detentionUntil).toLocaleString()}
+                  </div>
+                )}
               </div>
             </form>
           </div>

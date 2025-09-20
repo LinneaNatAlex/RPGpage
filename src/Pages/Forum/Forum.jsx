@@ -54,6 +54,7 @@ const forumNames = {
   greenhouse: "The Greenhouse",
   artstudio: "The Art Studio",
   kitchen: "Kitchen",
+  detentionclassroom: "Detention Classroom",
 };
 
 const raceCommonrooms = {
@@ -82,7 +83,6 @@ const Forum = () => {
   const [replyWordCount, setReplyWordCount] = useState(0);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
-  const [nitsReward, setNitsReward] = useState(null);
   const navigate = useNavigate();
 
   // Hent forumId fra URL
@@ -316,62 +316,6 @@ const Forum = () => {
   return (
     <div className={styles.forumWrapper}>
       <h2>{forumTitle}</h2>
-      {nitsReward && (
-        <div style={{
-          background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-          color: "#F5EFE0",
-          padding: "25px 50px 25px 25px",
-          borderRadius: "16px",
-          marginBottom: "25px",
-          border: "3px solid #D4C4A8",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-          textAlign: "center",
-          fontWeight: 700,
-          fontSize: "1.2rem",
-          position: "relative",
-          animation: "pulse 2s infinite",
-          maxWidth: "100%",
-          width: "100%",
-          boxSizing: "border-box",
-          overflow: "visible",
-          wordWrap: "break-word",
-          minHeight: "80px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }}>
-          <div style={{
-            paddingRight: "40px",
-            paddingLeft: "10px",
-            lineHeight: "1.4",
-            maxWidth: "100%"
-          }}>
-            {nitsReward}
-          </div>
-          <button
-            onClick={() => setNitsReward(null)}
-            style={{
-              position: "absolute",
-              top: "12px",
-              right: "12px",
-              background: "rgba(255, 255, 255, 0.2)",
-              border: "none",
-              color: "#F5EFE0",
-              borderRadius: "50%",
-              width: "28px",
-              height: "28px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
       {/* Topic list view */}
       {!selectedTopic && (
         <>
