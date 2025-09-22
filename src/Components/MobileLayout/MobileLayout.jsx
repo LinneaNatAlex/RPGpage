@@ -15,7 +15,7 @@ import "./MobileLayout.css";
 
 const MobileLayout = ({ children }) => {
   const { roles, rolesLoading } = useUserRoles();
-  // Helper to close all overlays
+  // Helper to close all overlays (mobil-optimalisert)
   const closeAllOverlays = () => {
     setShowChat(false);
     setShowPrivateChat(false);
@@ -26,6 +26,12 @@ const MobileLayout = ({ children }) => {
     setShowInventory(false);
     setShowPageRules(false);
     setShowDashboard(false);
+  };
+
+  // Kun én overlay åpen om gangen på mobil
+  const openOverlay = (overlaySetter) => {
+    closeAllOverlays();
+    overlaySetter(true);
   };
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -74,23 +80,14 @@ const MobileLayout = ({ children }) => {
   }, [location.pathname]);
 
   const handleTabClick = (tab) => {
-    // Close all overlays first
-    setShowChat(false);
-    setShowPrivateChat(false);
-    setShowForumList(false);
-    setShowNewsFeed(false);
-    setShowRPGCalendar(false);
-    setShowOnlineUsers(false);
-    setShowInventory(false);
-    setShowPageRules(false);
-
+    closeAllOverlays();
     setActiveTab(tab);
     switch (tab) {
       case "home":
         navigate("/");
         break;
       case "forum":
-        setShowForumList(true);
+        openOverlay(setShowForumList);
         break;
       case "classes":
         navigate("/ClassRooms");
@@ -108,7 +105,7 @@ const MobileLayout = ({ children }) => {
         navigate("/shop");
         break;
       case "chat":
-        setShowChat(true);
+        openOverlay(setShowChat);
         break;
       case "online":
         setShowChat(false);
