@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styles from './BookViewer.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./BookViewer.module.css";
 
 const BookViewer = ({ open, book, onClose }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -7,12 +7,12 @@ const BookViewer = ({ open, book, onClose }) => {
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
   // Don't render if not open
@@ -72,41 +72,47 @@ const BookViewer = ({ open, book, onClose }) => {
             ×
           </button>
         </div>
-        
+
         <div className={styles.bookInfo}>
-          <p><strong>Author:</strong> {book.author}</p>
+          <p>
+            <strong>Author:</strong> {book.author}
+          </p>
           {book.description && (
-            <p><strong>Description:</strong> {book.description}</p>
+            <p>
+              <strong>Description:</strong> {book.description}
+            </p>
           )}
         </div>
 
         <div className={styles.pageContent}>
           <div className={styles.pageHeader}>
-            <span>Page {currentPage + 1} of {book.pages.length}</span>
+            <span>
+              Page {currentPage + 1} of {book.pages.length}
+            </span>
           </div>
-          
+
           <div className={styles.pageText}>
-            {currentPageData.content.split('\n').map((line, index) => (
-              <p key={index}>{line}</p>
-            ))}
+            <div
+              dangerouslySetInnerHTML={{ __html: currentPageData.content }}
+            />
           </div>
         </div>
 
         <div className={styles.pageNavigation}>
-          <button 
-            onClick={prevPage} 
+          <button
+            onClick={prevPage}
             disabled={currentPage === 0}
             className={styles.navBtn}
           >
             ← Previous
           </button>
-          
+
           <span className={styles.pageIndicator}>
             {currentPage + 1} / {book.pages.length}
           </span>
-          
-          <button 
-            onClick={nextPage} 
+
+          <button
+            onClick={nextPage}
             disabled={currentPage === book.pages.length - 1}
             className={styles.navBtn}
           >

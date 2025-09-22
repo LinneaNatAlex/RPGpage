@@ -13,10 +13,10 @@
 }
 
 .bookContent {
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
   border-radius: 12px;
-  border: 3px solid #7B6857;
+  border: 3px solid #7b6857;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
   max-width: 800px;
   max-height: 90vh;
@@ -32,21 +32,21 @@
   align-items: center;
   padding: 1.5rem;
   border-bottom: 2px solid rgba(123, 104, 87, 0.3);
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
+  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
 }
 
 .bookHeader h2 {
-  font-family: 'Cinzel', serif;
+  font-family: "Cinzel", serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2C2C2C;
+  color: #2c2c2c;
   margin: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .closeBtn {
-  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+  color: #f5efe0;
   border: none;
   width: 40px;
   height: 40px;
@@ -62,7 +62,7 @@
 }
 
 .closeBtn:hover {
-  background: linear-gradient(135deg, #A0522D 0%, #CD853F 100%);
+  background: linear-gradient(135deg, #a0522d 0%, #cd853f 100%);
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -75,7 +75,7 @@
 
 .bookInfo p {
   margin: 0.5rem 0;
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-size: 0.9rem;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .pageHeader span {
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -105,11 +105,14 @@
   overflow-y: auto;
   line-height: 1.6;
   font-size: 1rem;
+  background: #f5efe0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .pageText p {
   margin: 0 0 1rem 0;
-  color: #F5EFE0;
+  color: #f5efe0;
   text-align: justify;
 }
 
@@ -127,8 +130,8 @@
 }
 
 .navBtn {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -139,7 +142,7 @@
 }
 
 .navBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -152,7 +155,7 @@
 }
 
 .pageIndicator {
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-weight: 600;
   font-size: 1rem;
   padding: 0.5rem 1rem;
@@ -166,20 +169,20 @@
   .bookViewer {
     padding: 1rem;
   }
-  
+
   .bookContent {
     max-height: 95vh;
   }
-  
+
   .bookHeader h2 {
     font-size: 1.2rem;
   }
-  
+
   .pageText {
     padding: 1rem;
     font-size: 0.9rem;
   }
-  
+
   .navBtn {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;

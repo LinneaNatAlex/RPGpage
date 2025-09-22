@@ -1,23 +1,37 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/authContext.jsx';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import Chat from '../Chat/Chat';
-import PrivateChat from '../Chat/PrivateChat';
-import OnlineUsers from '../OnlineUsers/OnlineUsers';
-import TopBar from '../TopBar/TopBar';
-import Navbar from '../../Navbar/Navbar';
-import NewsFeed from '../NewsFeed/NewsFeed';
-import RPGCalendarSidebar from '../RPGCalendarSidebar';
-import RPGClock from '../RPGClock/RPGClock';
-import InventoryModal from '../InventoryModal/InventoryModal';
-import './MobileLayout.css';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/authContext.jsx";
+import useUserRoles from "../../hooks/useUserRoles";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import Chat from "../Chat/Chat";
+import PrivateChat from "../Chat/PrivateChat";
+import OnlineUsers from "../OnlineUsers/OnlineUsers";
+import TopBar from "../TopBar/TopBar";
+import Navbar from "../../Navbar/Navbar";
+import NewsFeed from "../NewsFeed/NewsFeed";
+import RPGCalendarSidebar from "../RPGCalendarSidebar";
+import RPGClock from "../RPGClock/RPGClock";
+import InventoryModal from "../InventoryModal/InventoryModal";
+import "./MobileLayout.css";
 
 const MobileLayout = ({ children }) => {
+  const { roles, rolesLoading } = useUserRoles();
+  // Helper to close all overlays
+  const closeAllOverlays = () => {
+    setShowChat(false);
+    setShowPrivateChat(false);
+    setShowForumList(false);
+    setShowNewsFeed(false);
+    setShowRPGCalendar(false);
+    setShowOnlineUsers(false);
+    setShowInventory(false);
+    setShowPageRules(false);
+    setShowDashboard(false);
+  };
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState("home");
   const [showChat, setShowChat] = useState(false);
   const [showPrivateChat, setShowPrivateChat] = useState(false);
   const [showOnlineUsers, setShowOnlineUsers] = useState(false);
@@ -35,27 +49,27 @@ const MobileLayout = ({ children }) => {
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Update active tab based on current route
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/') {
-      setActiveTab('home');
-    } else if (path.startsWith('/forum')) {
-      setActiveTab('forum');
-    } else if (path === '/ClassRooms') {
-      setActiveTab('classes');
-    } else if (path === '/rpg') {
-      setActiveTab('rpg');
-    } else if (path === '/Profile') {
-      setActiveTab('profile');
-    } else if (path === '/userMap') {
-      setActiveTab('map');
-    } else if (path === '/shop') {
-      setActiveTab('shop');
+    if (path === "/") {
+      setActiveTab("home");
+    } else if (path.startsWith("/forum")) {
+      setActiveTab("forum");
+    } else if (path === "/ClassRooms") {
+      setActiveTab("classes");
+    } else if (path === "/rpg") {
+      setActiveTab("rpg");
+    } else if (path === "/Profile") {
+      setActiveTab("profile");
+    } else if (path === "/userMap") {
+      setActiveTab("map");
+    } else if (path === "/shop") {
+      setActiveTab("shop");
     }
   }, [location.pathname]);
 
@@ -69,34 +83,34 @@ const MobileLayout = ({ children }) => {
     setShowOnlineUsers(false);
     setShowInventory(false);
     setShowPageRules(false);
-    
+
     setActiveTab(tab);
-    switch(tab) {
-      case 'home':
-        navigate('/');
+    switch (tab) {
+      case "home":
+        navigate("/");
         break;
-      case 'forum':
+      case "forum":
         setShowForumList(true);
         break;
-      case 'classes':
-        navigate('/ClassRooms');
+      case "classes":
+        navigate("/ClassRooms");
         break;
-      case 'rpg':
-        navigate('/rpg');
+      case "rpg":
+        navigate("/rpg");
         break;
-      case 'profile':
-        navigate('/Profile');
+      case "profile":
+        navigate("/Profile");
         break;
-      case 'map':
-        navigate('/userMap');
+      case "map":
+        navigate("/userMap");
         break;
-      case 'shop':
-        navigate('/shop');
+      case "shop":
+        navigate("/shop");
         break;
-      case 'chat':
+      case "chat":
         setShowChat(true);
         break;
-      case 'online':
+      case "online":
         setShowChat(false);
         break;
       default:
@@ -107,6 +121,42 @@ const MobileLayout = ({ children }) => {
   // Don't render mobile layout on desktop
   if (!isMobile) {
     return children;
+  }
+
+  // Show warning modal for non-admins on mobile
+  const isAdmin = Array.isArray(roles) && roles.includes("admin");
+  if (!rolesLoading && !isAdmin) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(30,30,40,0.97)",
+          zIndex: 99999,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+        }}
+      >
+        <h1 style={{ color: "#ffd86b", fontSize: "2rem" }}>
+          Mobiltilgang midlertidig deaktivert
+        </h1>
+        <p style={{ fontSize: 18, marginBottom: 16 }}>
+          På grunn av tekniske problemer er mobilversjonen midlertidig
+          utilgjengelig.
+          <br />
+          Vennligst bruk PC for å få full tilgang til siden.
+          <br />
+          <br />
+          (Admin-brukere har fortsatt tilgang på mobil)
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -144,29 +194,32 @@ const MobileLayout = ({ children }) => {
         </div>
 
         {/* Mobile Home Page - Welcome message only */}
-        {activeTab === 'home' && (
+        {activeTab === "home" && (
           <div className="mobile-home-sections">
             <div className="mobile-welcome-card">
               <div className="mobile-welcome-icon">🏰</div>
               <div className="mobile-welcome-content">
                 <h3>Welcome to Veyloria</h3>
-                <p>Your magical journey awaits! Use the menu to explore all features.</p>
+                <p>
+                  Your magical journey awaits! Use the menu to explore all
+                  features.
+                </p>
               </div>
             </div>
           </div>
         )}
-        
+
         {/* News Feed Overlay */}
         {showNewsFeed && (
           <div className="mobile-overlay">
             <div className="mobile-overlay-header">
               <h2>News & Announcements</h2>
-              <button 
+              <button
                 className="mobile-overlay-close"
                 onClick={() => {
                   setShowNewsFeed(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
@@ -183,12 +236,12 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-overlay">
             <div className="mobile-overlay-header">
               <h2>Online Students</h2>
-              <button 
+              <button
                 className="mobile-overlay-close"
                 onClick={() => {
                   setShowOnlineUsers(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
@@ -205,12 +258,12 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-overlay">
             <div className="mobile-overlay-header">
               <h2>Page Rules</h2>
-              <button 
+              <button
                 className="mobile-overlay-close"
                 onClick={() => {
                   setShowPageRules(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
@@ -221,182 +274,204 @@ const MobileLayout = ({ children }) => {
                 <div className="mobile-rules-category">
                   <h3>Website Rules</h3>
                   <div className="mobile-rules-grid">
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/generalrules');
+                        navigate("/generalrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">📜</span>
                       <span className="mobile-rules-name">General Rules</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/aiusagerules');
+                        navigate("/aiusagerules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">🤖</span>
                       <span className="mobile-rules-name">AI Usage Rules</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/contentmediarules');
+                        navigate("/contentmediarules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">📷</span>
-                      <span className="mobile-rules-name">Content & Media Rules</span>
+                      <span className="mobile-rules-name">
+                        Content & Media Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/privacysafetyrules');
+                        navigate("/privacysafetyrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">🔒</span>
-                      <span className="mobile-rules-name">Privacy & Safety Rules</span>
+                      <span className="mobile-rules-name">
+                        Privacy & Safety Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/accountidentityrules');
+                        navigate("/accountidentityrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">👤</span>
-                      <span className="mobile-rules-name">Account & Identity Rules</span>
+                      <span className="mobile-rules-name">
+                        Account & Identity Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/communitybehaviorrules');
+                        navigate("/communitybehaviorrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">🤝</span>
-                      <span className="mobile-rules-name">Community & Behavior Rules</span>
+                      <span className="mobile-rules-name">
+                        Community & Behavior Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/technicalsiterules');
+                        navigate("/technicalsiterules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">⚙️</span>
-                      <span className="mobile-rules-name">Technical & Site Rules</span>
+                      <span className="mobile-rules-name">
+                        Technical & Site Rules
+                      </span>
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="mobile-rules-category">
                   <h3>Communication Rules</h3>
                   <div className="mobile-rules-grid">
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/forumrules');
+                        navigate("/forumrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">📖</span>
                       <span className="mobile-rules-name">Forum Rules</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/chatrules');
+                        navigate("/chatrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">💬</span>
                       <span className="mobile-rules-name">Chat Rules</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/profilecontentrules');
+                        navigate("/profilecontentrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">📝</span>
-                      <span className="mobile-rules-name">Profile Content Rules</span>
+                      <span className="mobile-rules-name">
+                        Profile Content Rules
+                      </span>
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="mobile-rules-category">
                   <h3>Roleplay & Game Rules</h3>
                   <div className="mobile-rules-grid">
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/roleplaycharacterrules');
+                        navigate("/roleplaycharacterrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">🎭</span>
-                      <span className="mobile-rules-name">Roleplay & Character Rules</span>
+                      <span className="mobile-rules-name">
+                        Roleplay & Character Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/rpgrules');
+                        navigate("/rpgrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">⚔️</span>
                       <span className="mobile-rules-name">RPG Rules</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/livechatrpgrules');
+                        navigate("/livechatrpgrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">💬</span>
-                      <span className="mobile-rules-name">Live Chat RPG Rules</span>
+                      <span className="mobile-rules-name">
+                        Live Chat RPG Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/magicspellrules');
+                        navigate("/magicspellrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">✨</span>
-                      <span className="mobile-rules-name">Magic & Spell Rules</span>
+                      <span className="mobile-rules-name">
+                        Magic & Spell Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/raceschoolrules');
+                        navigate("/raceschoolrules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">🏫</span>
-                      <span className="mobile-rules-name">Race & School Rules</span>
+                      <span className="mobile-rules-name">
+                        Race & School Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item"
                       onClick={() => {
-                        navigate('/datingrelationshiprules');
+                        navigate("/datingrelationshiprules");
                         setShowPageRules(false);
                       }}
                     >
                       <span className="mobile-rules-icon">💕</span>
-                      <span className="mobile-rules-name">Dating & Relationship Rules</span>
+                      <span className="mobile-rules-name">
+                        Dating & Relationship Rules
+                      </span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-rules-item special"
                       onClick={() => {
-                        navigate('/18forumrules');
+                        navigate("/18forumrules");
                         setShowPageRules(false);
                       }}
                     >
@@ -415,12 +490,12 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-overlay">
             <div className="mobile-overlay-header">
               <h2>RPG Calendar</h2>
-              <button 
+              <button
                 className="mobile-overlay-close"
                 onClick={() => {
                   setShowRPGCalendar(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
@@ -437,12 +512,12 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-overlay">
             <div className="mobile-overlay-header">
               <h2>Forums</h2>
-              <button 
+              <button
                 className="mobile-overlay-close"
                 onClick={() => {
                   setShowForumList(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
@@ -453,136 +528,138 @@ const MobileLayout = ({ children }) => {
                 <div className="mobile-forum-category">
                   <h3>Main Forums</h3>
                   <div className="mobile-forum-grid">
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/commonroom');
+                        navigate("/forum/commonroom");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🏠</span>
                       <span className="mobile-forum-name">Commonroom</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/ritualroom');
+                        navigate("/forum/ritualroom");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🕯️</span>
                       <span className="mobile-forum-name">Ritual Room</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/moongarden');
+                        navigate("/forum/moongarden");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🌙</span>
                       <span className="mobile-forum-name">Moon Garden</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/bloodbank');
+                        navigate("/forum/bloodbank");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🩸</span>
                       <span className="mobile-forum-name">Blood Bank</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/nightlibrary');
+                        navigate("/forum/nightlibrary");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">📚</span>
                       <span className="mobile-forum-name">Night Library</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/gymnasium');
+                        navigate("/forum/gymnasium");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">💪</span>
                       <span className="mobile-forum-name">The Gymnasium</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/infirmary');
+                        navigate("/forum/infirmary");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🏥</span>
                       <span className="mobile-forum-name">The Infirmary</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/greenhouse');
+                        navigate("/forum/greenhouse");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🌱</span>
                       <span className="mobile-forum-name">The Greenhouse</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/artstudio');
+                        navigate("/forum/artstudio");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🎨</span>
                       <span className="mobile-forum-name">The Art Studio</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/kitchen');
+                        navigate("/forum/kitchen");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🍳</span>
                       <span className="mobile-forum-name">Kitchen</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forum/detentionclassroom');
+                        navigate("/forum/detentionclassroom");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">⏰</span>
-                      <span className="mobile-forum-name">Detention Classroom</span>
+                      <span className="mobile-forum-name">
+                        Detention Classroom
+                      </span>
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="mobile-forum-category">
                   <h3>Special Forums</h3>
                   <div className="mobile-forum-grid">
-                    <button 
+                    <button
                       className="mobile-forum-item special"
                       onClick={() => {
-                        navigate('/forum/16plus');
+                        navigate("/forum/16plus");
                         setShowForumList(false);
                       }}
                     >
                       <span className="mobile-forum-icon">🔞</span>
                       <span className="mobile-forum-name">18+ Forum</span>
                     </button>
-                    <button 
+                    <button
                       className="mobile-forum-item"
                       onClick={() => {
-                        navigate('/forumrules');
+                        navigate("/forumrules");
                         setShowForumList(false);
                       }}
                     >
@@ -601,19 +678,19 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-overlay">
             <div className="mobile-overlay-header">
               <h2>Inventory</h2>
-              <button 
+              <button
                 className="mobile-overlay-close"
                 onClick={() => {
                   setShowInventory(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
               </button>
             </div>
             <div className="mobile-overlay-content">
-              <InventoryModal 
+              <InventoryModal
                 open={true}
                 onClose={() => setShowInventory(false)}
               />
@@ -626,24 +703,24 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-chat-overlay">
             <div className="mobile-chat-header">
               <h2>Chat</h2>
-              <button 
+              <button
                 className="mobile-chat-switch"
                 onClick={() => setShowPrivateChat(!showPrivateChat)}
               >
-                {showPrivateChat ? 'Global' : 'Private'}
+                {showPrivateChat ? "Global" : "Private"}
               </button>
-              <button 
+              <button
                 className="mobile-chat-close"
                 onClick={() => {
                   setShowChat(false);
-                  navigate('/');
-                  setActiveTab('home');
+                  navigate("/");
+                  setActiveTab("home");
                 }}
               >
                 ✕
               </button>
             </div>
-            
+
             {showPrivateChat ? (
               <div className="mobile-private-chat-container">
                 <PrivateChat />
@@ -659,7 +736,7 @@ const MobileLayout = ({ children }) => {
 
       {/* Mobile Dashboard Button - Always visible on mobile */}
       <div className="mobile-dashboard-button">
-        <button 
+        <button
           className="mobile-dashboard-btn"
           onClick={() => setShowDashboard(true)}
         >
@@ -673,116 +750,124 @@ const MobileLayout = ({ children }) => {
         <div className="mobile-dashboard-overlay">
           <div className="mobile-dashboard-header">
             <h2>Navigation</h2>
-            <button 
+            <button
               className="mobile-dashboard-close"
               onClick={() => {
                 setShowDashboard(false);
-                navigate('/');
-                setActiveTab('home');
+                navigate("/");
+                setActiveTab("home");
               }}
             >
               ✕
             </button>
           </div>
           <div className="mobile-dashboard-grid">
-            <button 
-              className={`mobile-dashboard-item ${activeTab === 'home' ? 'active' : ''}`}
+            <button
+              className={`mobile-dashboard-item ${
+                activeTab === "home" ? "active" : ""
+              }`}
               onClick={() => {
-                handleTabClick('home');
+                handleTabClick("home");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">🏠</span>
               <span className="mobile-dashboard-item-label">Home</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${activeTab === 'forum' ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                activeTab === "forum" ? "active" : ""
+              }`}
               onClick={() => {
-                handleTabClick('forum');
+                handleTabClick("forum");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">📖</span>
               <span className="mobile-dashboard-item-label">Forum</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${activeTab === 'classes' ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                activeTab === "classes" ? "active" : ""
+              }`}
               onClick={() => {
-                handleTabClick('classes');
+                handleTabClick("classes");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">📚</span>
               <span className="mobile-dashboard-item-label">Classes</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${showPageRules ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                showPageRules ? "active" : ""
+              }`}
               onClick={() => {
-                // Close all other overlays first
-                setShowChat(false);
-                setShowPrivateChat(false);
-                setShowForumList(false);
-                setShowNewsFeed(false);
-                setShowRPGCalendar(false);
-                setShowOnlineUsers(false);
-                setShowInventory(false);
+                closeAllOverlays();
                 setShowPageRules(true);
-                setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">📋</span>
               <span className="mobile-dashboard-item-label">Page Rules</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${activeTab === 'shop' ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                activeTab === "shop" ? "active" : ""
+              }`}
               onClick={() => {
-                handleTabClick('shop');
+                handleTabClick("shop");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">🏪</span>
               <span className="mobile-dashboard-item-label">Shop</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${activeTab === 'profile' ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                activeTab === "profile" ? "active" : ""
+              }`}
               onClick={() => {
-                handleTabClick('profile');
+                handleTabClick("profile");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">👤</span>
               <span className="mobile-dashboard-item-label">Profile</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${activeTab === 'map' ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                activeTab === "map" ? "active" : ""
+              }`}
               onClick={() => {
-                handleTabClick('map');
+                handleTabClick("map");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">🗺️</span>
               <span className="mobile-dashboard-item-label">Map</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${showChat ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${showChat ? "active" : ""}`}
               onClick={() => {
-                handleTabClick('chat');
+                handleTabClick("chat");
                 setShowDashboard(false);
               }}
             >
               <span className="mobile-dashboard-item-icon">💬</span>
               <span className="mobile-dashboard-item-label">Chat</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${showInventory ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                showInventory ? "active" : ""
+              }`}
               onClick={() => {
                 // Close all other overlays first
                 setShowChat(false);
@@ -798,9 +883,11 @@ const MobileLayout = ({ children }) => {
               <span className="mobile-dashboard-item-icon">🎒</span>
               <span className="mobile-dashboard-item-label">Inventory</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${showNewsFeed ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                showNewsFeed ? "active" : ""
+              }`}
               onClick={() => {
                 // Close all other overlays first
                 setShowChat(false);
@@ -815,11 +902,15 @@ const MobileLayout = ({ children }) => {
               }}
             >
               <span className="mobile-dashboard-item-icon">📰</span>
-              <span className="mobile-dashboard-item-label">News & Announcements</span>
+              <span className="mobile-dashboard-item-label">
+                News & Announcements
+              </span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${showRPGCalendar ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                showRPGCalendar ? "active" : ""
+              }`}
               onClick={() => {
                 // Close all other overlays first
                 setShowChat(false);
@@ -836,9 +927,11 @@ const MobileLayout = ({ children }) => {
               <span className="mobile-dashboard-item-icon">📅</span>
               <span className="mobile-dashboard-item-label">RPG Calendar</span>
             </button>
-            
-            <button 
-              className={`mobile-dashboard-item ${showOnlineUsers ? 'active' : ''}`}
+
+            <button
+              className={`mobile-dashboard-item ${
+                showOnlineUsers ? "active" : ""
+              }`}
               onClick={() => {
                 // Close all other overlays first
                 setShowChat(false);
@@ -852,7 +945,9 @@ const MobileLayout = ({ children }) => {
               }}
             >
               <span className="mobile-dashboard-item-icon">👥</span>
-              <span className="mobile-dashboard-item-label">Online Students</span>
+              <span className="mobile-dashboard-item-label">
+                Online Students
+              </span>
             </button>
           </div>
         </div>

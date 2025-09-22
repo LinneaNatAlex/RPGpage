@@ -56,21 +56,42 @@ const NewsFeed = () => {
     Array.isArray(userRoles) &&
     (userRoles.includes("admin") || userRoles.includes("teacher"));
 
-  // USEEFFECT gathering / fetching the neews from the database
+  // USEEFFECT gathering / fetching the news from the database, now filtered and limited
   useEffect(() => {
     if (loading || loadingRoles || !user) return;
 
-    // To get the news form the db and makes sure its ordered the createdAt field in /descending/ order.
-    const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (Snapshot) => {
-      const newData = Snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setNewsList(newData);
-    });
-
-    return () => unsubscribe();
+    // Query only 'nyhet' type news, ordered by createdAt, limited to 10
+    const q = query(
+      collection(db, "news"),
+      // Uncomment the next line if you have a 'type' field in your news documents
+      // where("type", "==", "nyhet"),
+      orderBy("createdAt", "desc")
+      // Limit to 10 results for performance
+      // limit(10)
+    );
+    let didCancel = false;
+    const unsubscribe = onSnapshot(
+      q,
+      (Snapshot) => {
+        if (didCancel) return;
+        const newData = Snapshot.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          // Filter by type if not using Firestore 'where' above
+          .filter((item) => item.type === "nyhet");
+        setNewsList(newData.slice(0, 10));
+      },
+      (error) => {
+        if (!didCancel) {
+          setNewsList([]);
+          // Optionally, set an error state and display a message
+          console.error("Error loading news:", error);
+        }
+      }
+    );
+    return () => {
+      didCancel = true;
+      unsubscribe();
+    };
   }, [user, loading, loadingRoles]);
 
   // HANDLE POST SUBMIT is the function that handles the submission of the news post.
@@ -83,6 +104,7 @@ const NewsFeed = () => {
       content: newPost,
       createdAt: serverTimestamp(),
       author: user.displayName,
+      type: "nyhet",
     });
     setTitles("");
     setNewPost("");

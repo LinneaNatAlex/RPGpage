@@ -19,17 +19,37 @@ import shopItems from "./itemsList";
 const categories = ["Books", "Potions", "Ingredients", "Equipment", "Food"];
 
 const Shop = () => {
+  // Helper to pay author nits if teacher/archivist/admin
+  const payAuthorNits = async (book) => {
+    if (!book.authorId || !book.price) return;
+    const authorRef = doc(db, "users", book.authorId);
+    const authorDoc = await getDoc(authorRef);
+    if (!authorDoc.exists()) return;
+    const authorData = authorDoc.data();
+    const authorRoles = authorData.roles || [];
+    if (
+      authorRoles.includes("teacher") ||
+      authorRoles.includes("archivist") ||
+      authorRoles.includes("admin")
+    ) {
+      const currentNits = authorData.nits || 0;
+      await updateDoc(authorRef, { nits: currentNits + book.price });
+    }
+  };
   const { user } = useAuth();
   // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
   const isAdmin =
-    user && (user.roles?.includes("admin") || user.roles?.includes("teacher") || user.roles?.includes("archivist"));
+    user &&
+    (user.roles?.includes("admin") ||
+      user.roles?.includes("teacher") ||
+      user.roles?.includes("archivist"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("Books");
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [books, setBooks] = useState([]);
-  
+
   // Hent varer fra Firestore
   useEffect(() => {
     const q = query(collection(db, "shopItems"), orderBy("createdAt", "desc"));
@@ -54,7 +74,7 @@ const Shop = () => {
         firestore: true,
         category: "Books",
         name: doc.data().title,
-        type: "book"
+        type: "book",
       }));
       setBooks(arr);
     });
@@ -78,6 +98,10 @@ const Shop = () => {
     if (balance < item.price) {
       setMessage("Not enough Nits!");
       return;
+    }
+    // If buying a book, pay author nits if teacher/archivist
+    if (item.type === "book") {
+      await payAuthorNits(item);
     }
     const userRef = doc(db, "users", user.uid);
     const userDoc = await getDoc(userRef);
@@ -124,16 +148,20 @@ const Shop = () => {
 
   return (
     <div className={styles.shopWrapper}>
-      <h2 style={{
-        fontFamily: '"Cinzel", serif',
-        fontSize: "2.2rem",
-        fontWeight: 700,
-        letterSpacing: "1.5px",
-        textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-        marginBottom: "2rem",
-        textAlign: "center",
-        color: "#F5EFE0"
-      }}>School Shop</h2>
+      <h2
+        style={{
+          fontFamily: '"Cinzel", serif',
+          fontSize: "2.2rem",
+          fontWeight: 700,
+          letterSpacing: "1.5px",
+          textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+          marginBottom: "2rem",
+          textAlign: "center",
+          color: "#F5EFE0",
+        }}
+      >
+        School Shop
+      </h2>
       <div className={styles.balance}>Balance: {balance} Nits</div>
       <div className={styles.tabs}>
         {categories.map((cat) => (
@@ -209,21 +237,31 @@ const Shop = () => {
                     onClick={async () => {
                       if (!window.confirm(`Slette produktet "${item.name}"?`))
                         return;
-                      
+
                       console.log("Attempting to delete:", item);
                       setMessage("Deleting product...");
-                      
+
                       try {
-                        const collection = item.type === "book" ? "books" : "shopItems";
-                        console.log("Deleting from collection:", collection, "with id:", item.id);
-                        
+                        const collection =
+                          item.type === "book" ? "books" : "shopItems";
+                        console.log(
+                          "Deleting from collection:",
+                          collection,
+                          "with id:",
+                          item.id
+                        );
+
                         await deleteDoc(doc(db, collection, item.id));
-                        
+
                         console.log("Successfully deleted from Firestore");
-                        setMessage(`✅ Product "${item.name}" deleted successfully!`);
+                        setMessage(
+                          `✅ Product "${item.name}" deleted successfully!`
+                        );
                       } catch (error) {
                         console.error("Error deleting product:", error);
-                        setMessage(`❌ Error deleting product: ${error.message}`);
+                        setMessage(
+                          `❌ Error deleting product: ${error.message}`
+                        );
                       }
                     }}
                   >

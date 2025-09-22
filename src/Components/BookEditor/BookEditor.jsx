@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/authContext';
-import useBooks from '../../hooks/useBooks';
-import styles from './BookEditor.module.css';
+import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useAuth } from "../../context/authContext";
+import useBooks from "../../hooks/useBooks";
+import styles from "./BookEditor.module.css";
 
 const BookEditor = ({ book = null, onSave, onCancel }) => {
   const { user } = useAuth();
   const { addBook, updateBook } = useBooks();
-  
-  const [title, setTitle] = useState(book?.title || '');
-  const [description, setDescription] = useState(book?.description || '');
+
+  const [title, setTitle] = useState(book?.title || "");
+  const [description, setDescription] = useState(book?.description || "");
   const [price, setPrice] = useState(book?.price || 0);
-  const [pages, setPages] = useState(book?.pages || [{ content: '', pageNumber: 1 }]);
+  const [pages, setPages] = useState(
+    book?.pages || [{ content: "", pageNumber: 1, htmlMode: false }]
+  );
   const [saving, setSaving] = useState(false);
 
   const addPage = () => {
-    setPages([...pages, { content: '', pageNumber: pages.length + 1 }]);
+    setPages([
+      ...pages,
+      { content: "", pageNumber: pages.length + 1, htmlMode: false },
+    ]);
   };
 
   const removePage = (index) => {
@@ -23,7 +30,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
       // Re-number pages
       const renumberedPages = newPages.map((page, i) => ({
         ...page,
-        pageNumber: i + 1
+        pageNumber: i + 1,
       }));
       setPages(renumberedPages);
     }
@@ -37,12 +44,12 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      alert('Please enter a book title');
+      alert("Please enter a book title");
       return;
     }
 
     if (!user) {
-      alert('You must be logged in to save a book');
+      alert("You must be logged in to save a book");
       return;
     }
 
@@ -52,24 +59,24 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         title: title.trim(),
         description: description.trim(),
         price: parseInt(price) || 0,
-        pages: pages.filter(page => page.content.trim()),
+        pages: pages.filter((page) => page.content.trim()),
         author: user.displayName || user.email,
         authorId: user.uid,
-        type: 'book'
+        type: "book",
       };
 
-      console.log('Saving book data:', bookData);
+      console.log("Saving book data:", bookData);
 
       if (book) {
         await updateBook(book.id, bookData);
       } else {
         await addBook(bookData);
       }
-      
+
       onSave?.();
     } catch (error) {
-      console.error('Error saving book:', error);
-      alert(`Error saving book: ${error.message || 'Please try again.'}`);
+      console.error("Error saving book:", error);
+      alert(`Error saving book: ${error.message || "Please try again."}`);
     } finally {
       setSaving(false);
     }
@@ -77,8 +84,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
   return (
     <div className={styles.bookEditor}>
-      <h2>{book ? 'Edit Book' : 'Create New Book'}</h2>
-      
+      <h2>{book ? "Edit Book" : "Create New Book"}</h2>
+
       <div className={styles.formGroup}>
         <label>Book Title:</label>
         <input
@@ -126,21 +133,76 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
             <div className={styles.pageHeader}>
               <h4>Page {page.pageNumber}</h4>
               {pages.length > 1 && (
-                <button 
+                <button
                   onClick={() => removePage(index)}
                   className={styles.removePageBtn}
                 >
                   Remove Page
                 </button>
               )}
+              <button
+                className={styles.toggleHtmlBtn}
+                onClick={() => {
+                  const newPages = [...pages];
+                  newPages[index].htmlMode = !newPages[index].htmlMode;
+                  setPages(newPages);
+                }}
+                style={{ marginLeft: 12 }}
+              >
+                {page.htmlMode ? "WYSIWYG-modus" : "HTML/CSS-modus"}
+              </button>
             </div>
-            <textarea
-              value={page.content}
-              onChange={(e) => updatePage(index, e.target.value)}
-              placeholder="Enter page content..."
-              className={styles.pageContent}
-              rows={8}
-            />
+            {page.htmlMode ? (
+              <>
+                <textarea
+                  value={page.content}
+                  onChange={(e) => updatePage(index, e.target.value)}
+                  placeholder="Skriv HTML/CSS..."
+                  className={styles.pageContent}
+                  rows={8}
+                  style={{ fontFamily: "monospace" }}
+                />
+                <div
+                  className={styles.htmlPreviewLabel}
+                  style={{ marginTop: 8, fontWeight: "bold" }}
+                >
+                  Preview:
+                </div>
+                <div
+                  className={styles.htmlPreview}
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: 8,
+                    marginBottom: 8,
+                    background: "#fff",
+                  }}
+                >
+                  <iframe
+                    title={`Preview-${index}`}
+                    style={{ width: "100%", minHeight: 120, border: "none" }}
+                    sandbox="allow-scripts allow-same-origin"
+                    srcDoc={page.content}
+                  />
+                </div>
+              </>
+            ) : (
+              <ReactQuill
+                value={page.content}
+                onChange={(content) => updatePage(index, content)}
+                theme="snow"
+                modules={{
+                  toolbar: [
+                    [{ font: [] }],
+                    [{ header: [1, 2, false] }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ["link", "image"],
+                    ["clean"],
+                  ],
+                }}
+                className={styles.pageContent}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -149,12 +211,12 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         <button onClick={onCancel} className={styles.cancelBtn}>
           Cancel
         </button>
-        <button 
-          onClick={handleSave} 
+        <button
+          onClick={handleSave}
           className={styles.saveBtn}
           disabled={saving}
         >
-          {saving ? 'Saving...' : (book ? 'Update Book' : 'Create Book')}
+          {saving ? "Saving..." : book ? "Update Book" : "Create Book"}
         </button>
       </div>
     </div>

@@ -125,8 +125,12 @@ const Profile = () => {
                   src={userData?.profileImageUrl || "/icons/avatar.svg"}
                   alt="Image"
                   className={roleClass}
+                  loading="lazy"
                 />
-                <label className={styles.editBtn} style={{ marginTop: 20, display: "block" }}>
+                <label
+                  className={styles.editBtn}
+                  style={{ marginTop: 20, display: "block" }}
+                >
                   <input
                     type="file"
                     accept="image/*"
@@ -137,7 +141,9 @@ const Profile = () => {
                   <span
                     style={{
                       display: "inline-block",
-                      background: uploading ? "#ccc" : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                      background: uploading
+                        ? "#ccc"
+                        : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                       color: uploading ? "#888" : "#F5EFE0",
                       borderRadius: 8,
                       padding: "8px 20px",
@@ -145,7 +151,8 @@ const Profile = () => {
                       fontSize: 15,
                       cursor: uploading ? "not-allowed" : "pointer",
                       border: "2px solid rgba(255, 255, 255, 0.2)",
-                      boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                      boxShadow:
+                        "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                       textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     }}
                   >
@@ -332,101 +339,112 @@ const Profile = () => {
       {/* -----------------------------PROFILE TEXT----------------------------- */}
       <div className={styles.profileTextContainer}>
         {/* Show existing profile text only when NOT editing */}
-        {!showEditor && userData.profileMode === "bbcode" && userData.profileBBCode && (
-          <div className={styles.profileText}>
-            <h2>Profile Text</h2>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: parseBBCode(userData.profileBBCode),
-              }}
-            />
-            <button
-              onClick={() => setShowEditor(true)}
-              style={{
-                marginTop: "1rem",
-                padding: "0.5rem 1rem",
-                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                color: "#F5EFE0",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-                fontWeight: "600"
-              }}
-            >
-              Edit Profile Text
-            </button>
-          </div>
-        )}
-        
-        {!showEditor && userData.profileMode === "html" &&
-        userData.profileHtml && (
-          <div className={styles.profileHtmlContainer}>
-            <h2>Profile Text</h2>
-            <iframe
-              className={styles.profileIframe}
-              srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
-              sandbox=""
-            />
-            <button
-              onClick={() => setShowEditor(true)}
-              style={{
-                marginTop: "1rem",
-                padding: "0.5rem 1rem",
-                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                color: "#F5EFE0",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-                fontWeight: "600"
-              }}
-            >
-              Edit Profile Text
-            </button>
-          </div>
-        )}
-        
-        {!showEditor && userData.profileMode === "text" && userData.profileText && (
-          <div className={styles.profileText}>
-            <h2>Profile Text</h2>
-            <p>{userData.profileText}</p>
-            <button
-              onClick={() => setShowEditor(true)}
-              style={{
-                marginTop: "1rem",
-                padding: "0.5rem 1rem",
-                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                color: "#F5EFE0",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-                fontWeight: "600"
-              }}
-            >
-              Edit Profile Text
-            </button>
-          </div>
-        )}
-        
-        {/* Show ProfileTextEditor when no profile text exists OR when editing */}
-        {(!userData.profileMode || (!userData.profileText && !userData.profileBBCode && !userData.profileHtml)) && !showEditor && (
-          <div className={styles.profileText}>
-            <h2>Profile Text</h2>
-            <div className={styles.contentContainer}>
-              <ProfileTextEditor />
+        {!showEditor &&
+          userData.profileMode === "bbcode" &&
+          userData.profileBBCode && (
+            <div className={styles.profileText}>
+              <h2>Profile Text</h2>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: parseBBCode(userData.profileBBCode),
+                }}
+              />
+              <button
+                onClick={() => setShowEditor(true)}
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.5rem 1rem",
+                  background:
+                    "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                  color: "#F5EFE0",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: "600",
+                }}
+              >
+                Edit Profile Text
+              </button>
             </div>
-          </div>
-        )}
-        
-        
+          )}
+
+        {!showEditor &&
+          userData.profileMode === "html" &&
+          userData.profileHtml && (
+            <div className={styles.profileHtmlContainer}>
+              <h2>Profile Text</h2>
+              <iframe
+                className={styles.profileIframe}
+                srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
+                sandbox=""
+              />
+              <button
+                onClick={() => setShowEditor(true)}
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.5rem 1rem",
+                  background:
+                    "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                  color: "#F5EFE0",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: "600",
+                }}
+              >
+                Edit Profile Text
+              </button>
+            </div>
+          )}
+
+        {!showEditor &&
+          userData.profileMode === "text" &&
+          userData.profileText && (
+            <div className={styles.profileText}>
+              <h2>Profile Text</h2>
+              <p>{userData.profileText}</p>
+              <button
+                onClick={() => setShowEditor(true)}
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.5rem 1rem",
+                  background:
+                    "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                  color: "#F5EFE0",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: "600",
+                }}
+              >
+                Edit Profile Text
+              </button>
+            </div>
+          )}
+
+        {/* Show ProfileTextEditor when no profile text exists OR when editing */}
+        {(!userData.profileMode ||
+          (!userData.profileText &&
+            !userData.profileBBCode &&
+            !userData.profileHtml)) &&
+          !showEditor && (
+            <div className={styles.profileText}>
+              <h2>Profile Text</h2>
+              <div className={styles.contentContainer}>
+                <ProfileTextEditor />
+              </div>
+            </div>
+          )}
+
         {/* Show ProfileTextEditor when edit button is clicked */}
         {showEditor && (
           <div className={styles.profileText}>
             <h2>Edit Profile Text</h2>
             <div className={styles.contentContainer}>
-              <ProfileTextEditor 
+              <ProfileTextEditor
                 initialMode={userData.profileMode}
                 initialText={userData.profileText}
                 initialHtml={userData.profileHtml}
@@ -461,7 +479,7 @@ const Profile = () => {
                 borderRadius: "8px",
                 cursor: "pointer",
                 fontSize: "0.9rem",
-                fontWeight: "600"
+                fontWeight: "600",
               }}
             >
               Cancel
@@ -469,7 +487,6 @@ const Profile = () => {
           </div>
         )}
         {/* -----------------------------CHAT BAR----------------------------- */}
-     
       </div>
     </div>
   );

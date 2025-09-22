@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext.jsx";
-import { 
-  collection, 
-  onSnapshot, 
-  addDoc, 
-  serverTimestamp, 
-  query, 
-  orderBy, 
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
   limit,
   where,
-  getDocs
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import "./Chat.mobile.css";
@@ -27,10 +27,10 @@ const Chat = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Don't render on mobile - handled by MobileLayout
@@ -41,19 +41,21 @@ const Chat = () => {
   // Load messages
   useEffect(() => {
     if (!user) return;
-    
+    let unsub = null;
     const messagesRef = collection(db, "messages");
     const q = query(messagesRef, orderBy("timestamp", "desc"), limit(50));
-    
-    const unsub = onSnapshot(q, (snapshot) => {
-      const messagesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })).reverse();
+    unsub = onSnapshot(q, (snapshot) => {
+      const messagesData = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .reverse();
       setMessages(messagesData);
     });
-
-    return () => unsub();
+    return () => {
+      if (unsub) unsub();
+    };
   }, [user]);
 
   // Auto scroll to bottom
@@ -80,26 +82,29 @@ const Chat = () => {
   if (!user) return null;
 
   return (
-    <div className={`mobile-chat-container ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`mobile-chat-container ${isCollapsed ? "collapsed" : ""}`}>
       <div className="mobile-chat-header">
         <h3 className="mobile-chat-title">Global Chat</h3>
-        <button 
+        <button
           className="mobile-chat-toggle"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          {isCollapsed ? '▲' : '▼'}
+          {isCollapsed ? "▲" : "▼"}
         </button>
       </div>
-      
+
       {!isCollapsed && (
         <>
           <div className="mobile-chat-messages">
             {messages.map((message) => (
               <div key={message.id} className="mobile-message">
                 <div className="mobile-message-header">
-                  <span className="mobile-message-sender">{message.sender}</span>
+                  <span className="mobile-message-sender">
+                    {message.sender}
+                  </span>
                   <span className="mobile-message-time">
-                    {message.timestamp?.toDate?.()?.toLocaleTimeString() || 'Now'}
+                    {message.timestamp?.toDate?.()?.toLocaleTimeString() ||
+                      "Now"}
                   </span>
                 </div>
                 <div className="mobile-message-text">{message.text}</div>
@@ -107,7 +112,7 @@ const Chat = () => {
             ))}
             <div ref={messagesEndRef} />
           </div>
-          
+
           <form onSubmit={sendMessage} className="mobile-chat-form">
             <div className="mobile-chat-input-container">
               <input
@@ -118,8 +123,8 @@ const Chat = () => {
                 className="mobile-chat-input"
                 maxLength={500}
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="mobile-chat-send"
                 disabled={!newMessage.trim()}
               >
