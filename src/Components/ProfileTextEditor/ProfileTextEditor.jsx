@@ -1,5 +1,5 @@
 // imports the necessary modules and components.
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../Button/Button";
 import useProfileText from "../../hooks/useProfileText";
 import Editor from "@monaco-editor/react";
@@ -7,9 +7,9 @@ import styles from "./ProfileTextEditor.module.css";
 import { useAuth } from "../../context/authContext";
 // state variables and hooks to manage user profile text editing
 
-const ProfileTextEditor = () => {
+const ProfileTextEditor = ({ initialMode, initialText, initialHtml, initialCss, initialBBCode, autoEdit, onSave }) => {
   // State and hooks
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(autoEdit || false);
   const [editMode, setEditMode] = useState(null);
   const [tempText, setTempText] = useState("");
   const [tempHtml, setTempHtml] = useState("");
@@ -18,9 +18,31 @@ const ProfileTextEditor = () => {
 
   // Get profile data and helpers from custom hook
   const { mode, text, html, css, bbcode, storeText } = useProfileText();
+  
+  // Use props if provided, otherwise use hook values
+  const currentMode = initialMode || mode;
+  const currentText = initialText !== undefined ? initialText : text;
+  const currentHtml = initialHtml !== undefined ? initialHtml : html;
+  const currentCss = initialCss !== undefined ? initialCss : css;
+  const currentBBCode = initialBBCode !== undefined ? initialBBCode : bbcode;
+
+  // Auto-enter edit mode if autoEdit is true
+  useEffect(() => {
+    if (autoEdit && currentMode) {
+      setEditMode(currentMode);
+      if (currentMode === "text") {
+        setTempText(currentText || "");
+      } else if (currentMode === "html") {
+        setTempHtml(currentHtml || "");
+        setTempCss(currentCss || "");
+      } else if (currentMode === "bbcode") {
+        setTempBBCode(currentBBCode || "");
+      }
+    }
+  }, [autoEdit, currentMode, currentText, currentHtml, currentCss, currentBBCode]);
 
   // Helper for HTML preview
-  const srcDoc = `<!DOCTYPE html><html><head><style>${html}</style></head><body>${html}</body></html>`;
+  const srcDoc = `<!DOCTYPE html><html><head><style>${currentCss}</style></head><body>${currentHtml}</body></html>`;
 
   // Utvidet BBCode-parser
   function parseBBCode(str) {
@@ -161,14 +183,16 @@ const ProfileTextEditor = () => {
   // Save handler
   const handleStoreText = async () => {
     if (editMode === "text") {
-      await storeText("text", tempText, html, css, bbcode);
+      await storeText("text", tempText, currentHtml, currentCss, currentBBCode);
     } else if (editMode === "html") {
-      await storeText("html", text, tempHtml, tempCss, bbcode);
+      await storeText("html", currentText, tempHtml, tempCss, currentBBCode);
     } else if (editMode === "bbcode") {
-      await storeText("bbcode", text, html, css, tempBBCode);
+      await storeText("bbcode", currentText, currentHtml, currentCss, tempBBCode);
     }
     setEditing(false);
     setEditMode(null);
+    // Call onSave callback if provided
+    if (onSave) onSave();
   };
 
   // If editing, show the editor UI
@@ -183,11 +207,11 @@ const ProfileTextEditor = () => {
                   type="radio"
                   name="profileMode"
                   value="text"
-                  checked={editMode === "text"}
-                  onChange={() => {
-                    setEditMode("text");
-                    setTempText(text || "");
-                  }}
+                    checked={editMode === "text"}
+                    onChange={() => {
+                      setEditMode("text");
+                      setTempText(currentText || "");
+                    }}
                 />{" "}
                 Text
               </label>
@@ -196,12 +220,12 @@ const ProfileTextEditor = () => {
                   type="radio"
                   name="profileMode"
                   value="html"
-                  checked={editMode === "html"}
-                  onChange={() => {
-                    setEditMode("html");
-                    setTempHtml(html || "");
-                    setTempCss(css || "");
-                  }}
+                    checked={editMode === "html"}
+                    onChange={() => {
+                      setEditMode("html");
+                      setTempHtml(currentHtml || "");
+                      setTempCss(currentCss || "");
+                    }}
                 />{" "}
                 HTML/CSS
               </label>
@@ -210,11 +234,11 @@ const ProfileTextEditor = () => {
                   type="radio"
                   name="profileMode"
                   value="bbcode"
-                  checked={editMode === "bbcode"}
-                  onChange={() => {
-                    setEditMode("bbcode");
-                    setTempBBCode(bbcode || "");
-                  }}
+                    checked={editMode === "bbcode"}
+                    onChange={() => {
+                      setEditMode("bbcode");
+                      setTempBBCode(currentBBCode || "");
+                    }}
                 />{" "}
                 BBCode
               </label>
@@ -272,14 +296,14 @@ const ProfileTextEditor = () => {
     <div className={styles.profileContainer}>
       <div className={styles.profilePreview}>
         <div className={styles.profileText}>
-          {mode === "text" && (
+          {currentMode === "text" && (
             <div
               dangerouslySetInnerHTML={{
-                __html: (text || "").replace(/\n/g, "<br>"),
+                __html: (currentText || "").replace(/\n/g, "<br>"),
               }}
             />
           )}
-          {mode === "html" && (
+          {currentMode === "html" && (
             <iframe
               className={styles.profileFrame}
               srcDoc={srcDoc}
@@ -289,9 +313,9 @@ const ProfileTextEditor = () => {
               height="100%"
             />
           )}
-          {mode === "bbcode" &&
-            (bbcode ? (
-              <div dangerouslySetInnerHTML={{ __html: parseBBCode(bbcode) }} />
+          {currentMode === "bbcode" &&
+            (currentBBCode ? (
+              <div dangerouslySetInnerHTML={{ __html: parseBBCode(currentBBCode) }} />
             ) : (
               <div
                 style={{ color: "#888", fontStyle: "italic", margin: "1rem 0" }}
@@ -305,14 +329,16 @@ const ProfileTextEditor = () => {
         className={styles.editButton}
         onClick={() => {
           setEditing(true);
-          if (mode === "text") {
+          if (currentMode === "text") {
             setEditMode("text");
-            setTempText(text || "");
-          } else if (mode === "html") {
+            setTempText(currentText || "");
+          } else if (currentMode === "html") {
             setEditMode("html");
-          } else if (mode === "bbcode") {
+            setTempHtml(currentHtml || "");
+            setTempCss(currentCss || "");
+          } else if (currentMode === "bbcode") {
             setEditMode("bbcode");
-            setTempBBCode(bbcode || "");
+            setTempBBCode(currentBBCode || "");
           }
         }}
         style={{ marginTop: "2rem", width: "100%" }}

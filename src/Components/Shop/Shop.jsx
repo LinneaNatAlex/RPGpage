@@ -7,6 +7,7 @@ import {
   onSnapshot,
   query,
   orderBy,
+  deleteDoc,
 } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
@@ -21,12 +22,14 @@ const Shop = () => {
   const { user } = useAuth();
   // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
   const isAdmin =
-    user && (user.roles?.includes("admin") || user.roles?.includes("teacher"));
+    user && (user.roles?.includes("admin") || user.roles?.includes("teacher") || user.roles?.includes("archivist"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("Books");
   const [firestoreItems, setFirestoreItems] = useState([]);
+  const [books, setBooks] = useState([]);
+  
   // Hent varer fra Firestore
   useEffect(() => {
     const q = query(collection(db, "shopItems"), orderBy("createdAt", "desc"));
@@ -37,6 +40,23 @@ const Shop = () => {
         firestore: true,
       }));
       setFirestoreItems(arr);
+    });
+    return () => unsub();
+  }, []);
+
+  // Hent bøker fra Firestore
+  useEffect(() => {
+    const q = query(collection(db, "books"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const arr = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        firestore: true,
+        category: "Books",
+        name: doc.data().title,
+        type: "book"
+      }));
+      setBooks(arr);
     });
     return () => unsub();
   }, []);
@@ -90,7 +110,9 @@ const Shop = () => {
         inventory[existingIdx] = { ...item, qty: inventory[existingIdx].qty };
       } else {
         // Legg til ALLE felter fra item (også type, health, osv.)
-        inventory.push({ ...item, qty: 1 });
+        const newItem = { ...item, qty: 1 };
+        console.log("Adding item to inventory:", newItem);
+        inventory.push(newItem);
       }
     }
     await updateDoc(userRef, { currency: newBalance, inventory });
@@ -126,7 +148,7 @@ const Shop = () => {
       </div>
       {message && <div className={styles.message}>{message}</div>}
       <ul className={styles.itemList}>
-        {[...shopItems, ...firestoreItems]
+        {[...shopItems, ...firestoreItems, ...books]
           .filter((item) => item.category === activeCategory)
           .map((item) => (
             <li
@@ -187,11 +209,22 @@ const Shop = () => {
                     onClick={async () => {
                       if (!window.confirm(`Slette produktet "${item.name}"?`))
                         return;
-                      await import("firebase/firestore").then(
-                        async ({ deleteDoc, doc }) => {
-                          await deleteDoc(doc(db, "shopItems", item.id));
-                        }
-                      );
+                      
+                      console.log("Attempting to delete:", item);
+                      setMessage("Deleting product...");
+                      
+                      try {
+                        const collection = item.type === "book" ? "books" : "shopItems";
+                        console.log("Deleting from collection:", collection, "with id:", item.id);
+                        
+                        await deleteDoc(doc(db, collection, item.id));
+                        
+                        console.log("Successfully deleted from Firestore");
+                        setMessage(`✅ Product "${item.name}" deleted successfully!`);
+                      } catch (error) {
+                        console.error("Error deleting product:", error);
+                        setMessage(`❌ Error deleting product: ${error.message}`);
+                      }
                     }}
                   >
                     Slett

@@ -16,17 +16,25 @@ const OnlineUsers = () => {
   const [detentionStatus, setDetentionStatus] = useState("");
   const intervalRef = useRef();
 
-  // Robust online-status: Oppdater lastActive hvert 20. sekund
+  // Optimized online-status: Oppdater lastActive hvert 2. minutt (redusert fra 20 sek)
   useEffect(() => {
     if (!user || !user.uid) return;
     let isOnline = true;
+    let lastUpdate = 0;
+    const UPDATE_INTERVAL = 2 * 60 * 1000; // 2 minutter
+    
     const setActive = async () => {
-      try {
-        await updateDoc(doc(db, "users", user.uid), { lastActive: Date.now() });
-      } catch {}
+      const now = Date.now();
+      // Only update if enough time has passed
+      if (now - lastUpdate >= UPDATE_INTERVAL) {
+        try {
+          await updateDoc(doc(db, "users", user.uid), { lastActive: now });
+          lastUpdate = now;
+        } catch {}
+      }
     };
     setActive();
-    intervalRef.current = setInterval(setActive, 20000);
+    intervalRef.current = setInterval(setActive, 30000); // Check every 30 seconds
     // Sett lastActive én siste gang ved tab close
     const handleUnload = () => setActive();
     window.addEventListener("beforeunload", handleUnload);

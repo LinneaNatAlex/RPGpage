@@ -49,7 +49,7 @@ const TeacherRouteGuard = ({ children }) => {
   const { roles, rolesLoading } = useUserRoles();
   if (loading || rolesLoading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/sign-in" />;
-  if (!(roles.includes("teacher") || roles.includes("admin")))
+  if (!(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist")))
     return <Navigate to="/" />;
   return children;
 };

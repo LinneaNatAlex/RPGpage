@@ -14,6 +14,7 @@ import { isBirthdayToday } from "../../utils/rpgCalendar";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { user, loading } = useAuth();
+  const [showEditor, setShowEditor] = useState(false);
   // Birthday state
   const [birthdayMonth, setBirthdayMonth] = useState(1);
   const [birthdayDay, setBirthdayDay] = useState(1);
@@ -330,7 +331,8 @@ const Profile = () => {
       </div>
       {/* -----------------------------PROFILE TEXT----------------------------- */}
       <div className={styles.profileTextContainer}>
-        {userData.profileMode === "bbcode" && userData.profileBBCode ? (
+        {/* Show existing profile text only when NOT editing */}
+        {!showEditor && userData.profileMode === "bbcode" && userData.profileBBCode && (
           <div className={styles.profileText}>
             <h2>Profile Text</h2>
             <div
@@ -338,10 +340,27 @@ const Profile = () => {
                 __html: parseBBCode(userData.profileBBCode),
               }}
             />
+            <button
+              onClick={() => setShowEditor(true)}
+              style={{
+                marginTop: "1rem",
+                padding: "0.5rem 1rem",
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                fontWeight: "600"
+              }}
+            >
+              Edit Profile Text
+            </button>
           </div>
-        ) : userData.profileMode === "html" &&
-        userData.profileHtml &&
-        userData.profileCss ? (
+        )}
+        
+        {!showEditor && userData.profileMode === "html" &&
+        userData.profileHtml && (
           <div className={styles.profileHtmlContainer}>
             <h2>Profile Text</h2>
             <iframe
@@ -349,18 +368,104 @@ const Profile = () => {
               srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
               sandbox=""
             />
+            <button
+              onClick={() => setShowEditor(true)}
+              style={{
+                marginTop: "1rem",
+                padding: "0.5rem 1rem",
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                fontWeight: "600"
+              }}
+            >
+              Edit Profile Text
+            </button>
           </div>
-        ) : userData.profileMode === "text" && userData.profileText ? (
+        )}
+        
+        {!showEditor && userData.profileMode === "text" && userData.profileText && (
           <div className={styles.profileText}>
             <h2>Profile Text</h2>
             <p>{userData.profileText}</p>
+            <button
+              onClick={() => setShowEditor(true)}
+              style={{
+                marginTop: "1rem",
+                padding: "0.5rem 1rem",
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                fontWeight: "600"
+              }}
+            >
+              Edit Profile Text
+            </button>
           </div>
-        ) : (
+        )}
+        
+        {/* Show ProfileTextEditor when no profile text exists OR when editing */}
+        {(!userData.profileMode || (!userData.profileText && !userData.profileBBCode && !userData.profileHtml)) && !showEditor && (
           <div className={styles.profileText}>
             <h2>Profile Text</h2>
             <div className={styles.contentContainer}>
               <ProfileTextEditor />
             </div>
+          </div>
+        )}
+        
+        
+        {/* Show ProfileTextEditor when edit button is clicked */}
+        {showEditor && (
+          <div className={styles.profileText}>
+            <h2>Edit Profile Text</h2>
+            <div className={styles.contentContainer}>
+              <ProfileTextEditor 
+                initialMode={userData.profileMode}
+                initialText={userData.profileText}
+                initialHtml={userData.profileHtml}
+                initialCss={userData.profileCss}
+                initialBBCode={userData.profileBBCode}
+                autoEdit={true}
+                onSave={async () => {
+                  setShowEditor(false);
+                  // Fetch updated user data from Firestore
+                  try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                      const data = userDoc.data();
+                      console.log("Updated user data:", data);
+                      setUserData(data);
+                    }
+                  } catch (error) {
+                    console.error("Error fetching updated user data:", error);
+                  }
+                }}
+              />
+            </div>
+            <button
+              onClick={() => setShowEditor(false)}
+              style={{
+                marginTop: "1rem",
+                padding: "0.5rem 1rem",
+                background: "linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%)",
+                color: "#F5EFE0",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                fontWeight: "600"
+              }}
+            >
+              Cancel
+            </button>
           </div>
         )}
         {/* -----------------------------CHAT BAR----------------------------- */}

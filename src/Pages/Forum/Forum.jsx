@@ -171,10 +171,11 @@ const Forum = () => {
     const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
     const reward = await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
     
-    if (reward.awarded) {
-      setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
-      setTimeout(() => setNitsReward(null), 10000);
-    }
+    // Reward system still works, but no popup message
+    // if (reward.awarded) {
+    //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
+    //   setTimeout(() => setNitsReward(null), 10000);
+    // }
     
     setNewTopicTitle("");
     setNewTopicContent("");
@@ -266,10 +267,11 @@ const Forum = () => {
     const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
     const reward = await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
     
-    if (reward.awarded) {
-      setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
-      setTimeout(() => setNitsReward(null), 10000);
-    }
+    // Reward system still works, but no popup message
+    // if (reward.awarded) {
+    //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
+    //   setTimeout(() => setNitsReward(null), 10000);
+    // }
     
     setReplyContent("");
     setReplyWordCount(0);

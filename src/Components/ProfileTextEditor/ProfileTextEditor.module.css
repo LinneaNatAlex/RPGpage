@@ -22,6 +22,7 @@
   margin-bottom: 1rem;
   width: 100%;
   max-width: 100%;
+  min-width: 600px;
 }
 /* -------------------------------edit button------------------------------- */
 .editButton {
@@ -55,7 +56,8 @@
 /* -------------SAVE BUTTON STYLES------------- */
 @media screen and (max-width: 768px) {
   .editorWrapper {
-    width: 40vh;
+    width: 90vw;
+    min-width: 300px;
   }
   .profileFrame {
     height: 100vh;

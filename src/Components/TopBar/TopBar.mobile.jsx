@@ -118,6 +118,21 @@ const TopBar = () => {
                     <span className="mobile-item-qty">x{item.qty || 1}</span>
                   </div>
                   <div className="mobile-item-actions">
+                    {/* Read button for books - only show if book has proper content */}
+                    {(item.type === "book" && 
+                      item.pages && 
+                      Array.isArray(item.pages) && 
+                      item.pages.length > 0) && (
+                      <button 
+                        className="mobile-item-btn"
+                        onClick={() => {
+                          // Open book viewer - you'll need to implement this
+                          console.log("Read book:", item);
+                        }}
+                      >
+                        📖 Read
+                      </button>
+                    )}
                     <button className="mobile-item-btn">Use</button>
                     <button className="mobile-item-btn">Gift</button>
                     <button className="mobile-item-btn">Delete</button>

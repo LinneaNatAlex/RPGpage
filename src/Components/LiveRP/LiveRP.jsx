@@ -38,7 +38,7 @@ const LiveRP = () => {
   const [isPrivilegedUser, setIsPrivilegedUser] = useState(false);
   const [showRulesPopup, setShowRulesPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
-  const [nitsReward, setNitsReward] = useState(null);
+  // const [nitsReward, setNitsReward] = useState(null); // Removed - no more popup messages
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -109,10 +109,11 @@ const LiveRP = () => {
       const newTotalWordCount = await updateUserWordCount(auth.currentUser.uid, wordCount);
       const reward = await checkWordCountReward(auth.currentUser.uid, newTotalWordCount, newTotalWordCount - wordCount);
       
-      if (reward.awarded) {
-        setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
-        setTimeout(() => setNitsReward(null), 10000);
-      }
+      // Reward system still works, but no popup message
+      // if (reward.awarded) {
+      //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
+      //   setTimeout(() => setNitsReward(null), 10000);
+      // }
     }
     
     setNewMess("");
@@ -274,46 +275,7 @@ const LiveRP = () => {
   // --------------------CHAT FORM AND MESSAGE COMONENT / RENDERING-------------------
   return (
     <>
-      {nitsReward && (
-        <div style={{
-          background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-          color: "#F5EFE0",
-          padding: "20px 30px",
-          borderRadius: "16px",
-          marginBottom: "25px",
-          border: "3px solid #D4C4A8",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-          textAlign: "center",
-          fontWeight: 700,
-          fontSize: "1.3rem",
-          position: "relative",
-          animation: "pulse 2s infinite"
-        }}>
-          {nitsReward}
-          <button
-            onClick={() => setNitsReward(null)}
-            style={{
-              position: "absolute",
-              top: "8px",
-              right: "12px",
-              background: "rgba(255, 255, 255, 0.2)",
-              border: "none",
-              color: "#F5EFE0",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
+      {/* Removed nitsReward popup - no more popup messages */}
       {isMobile && showRulesPopup && (
         <RulesPopup
           onClose={handleCloseRulesPopup}

@@ -4,12 +4,14 @@ import { db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import GiftModal from "../TopBar/GiftModal";
+import BookViewer from "../BookViewer/BookViewer";
 import styles from "./InventoryModal.module.css";
 
 const InventoryModal = ({ open, onClose }) => {
   const { user } = useAuth();
   const { users } = useUsers();
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
+  const [bookViewer, setBookViewer] = useState({ open: false, book: null });
   const [infirmary, setInfirmary] = useState(false);
   const [inventory, setInventory] = useState([]);
 
@@ -29,6 +31,8 @@ const InventoryModal = ({ open, onClose }) => {
 
   if (!open) return null;
   
+  console.log("InventoryModal opened, inventory:", inventory);
+  
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
@@ -36,6 +40,14 @@ const InventoryModal = ({ open, onClose }) => {
         {Array.isArray(inventory) && inventory.length > 0 ? (
           <ul className={styles.inventoryList}>
             {inventory.map((item, idx) => {
+              // Debug: Log ALL items to see what's in inventory
+              console.log("Inventory item:", item);
+              
+              // Debug: Log item data
+              if (item.name?.toLowerCase().includes("book") || item.type === "book") {
+                console.log("Book item found:", item);
+              }
+              
               // Mat og potions kan spises/drikkes
               const isEdible = item.type === "food" || item.type === "potion";
               let healAmount = 0;
@@ -47,7 +59,7 @@ const InventoryModal = ({ open, onClose }) => {
               }
               
               return (
-                <li key={idx} className={styles.inventoryItem}>
+                <li key={idx} className={styles.inventoryItem} data-item-type={item.type}>
                   <div className={styles.itemInfo}>
                     <span className={styles.itemName}>{item.name}</span> x
                     {item.qty || 1}
@@ -212,6 +224,36 @@ const InventoryModal = ({ open, onClose }) => {
                           : "Eat"}
                       </button>
                     )}
+                    {/* Read button for books - only show if book has proper content */}
+                    {(item.type === "book" && 
+                      item.pages && 
+                      Array.isArray(item.pages) && 
+                      item.pages.length > 0) && (
+                      <button
+                        className={styles.readBtn}
+                        title="Read this book"
+                        onClick={() => {
+                          console.log("Read button clicked for:", item);
+                          setBookViewer({ open: true, book: item });
+                        }}
+                        style={{ 
+                          background: '#8B4513', 
+                          color: 'white', 
+                          border: '2px solid #D4C4A8',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        📖 Read
+                      </button>
+                    )}
+                    {/* Debug: Show item type */}
+                    {process.env.NODE_ENV === 'development' && (
+                      <span style={{ fontSize: '10px', color: '#888', marginLeft: '4px' }}>
+                        Type: {item.type || 'undefined'}
+                      </span>
+                    )}
                   </div>
                 </li>
               );
@@ -316,6 +358,15 @@ const InventoryModal = ({ open, onClose }) => {
           setGiftModal({ open: false, item: null });
         }}
       />
+      {/* Book Viewer Modal */}
+      {bookViewer.open && (
+        <div className={styles.bookViewerOverlay}>
+          <BookViewer
+            book={bookViewer.book}
+            onClose={() => setBookViewer({ open: false, book: null })}
+          />
+        </div>
+      )}
     </div>
   );
 };

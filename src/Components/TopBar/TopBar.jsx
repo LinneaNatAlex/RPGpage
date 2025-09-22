@@ -16,6 +16,7 @@ import {
 } from "firebase/firestore";
 import { useRef } from "react";
 import GiftModal from "./GiftModal";
+import BookViewer from "../BookViewer/BookViewer";
 import useUsers from "../../hooks/useUser";
 import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
 
@@ -54,6 +55,7 @@ const TopBar = () => {
   const [invisibleUntil, setInvisibleUntil] = useState(null);
   const [invisibleCountdown, setInvisibleCountdown] = useState(0);
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
+  const [bookViewer, setBookViewer] = useState({ open: false, book: null });
   const [notifications, setNotifications] = useState([]);
   const [inLoveWith, setInLoveWith] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
@@ -763,6 +765,41 @@ const TopBar = () => {
                               : "Eat"}
                           </button>
                           )}
+                          {/* Read button for books - only show if book has proper content */}
+                          {(item.type === "book" && 
+                            item.pages && 
+                            Array.isArray(item.pages) && 
+                            item.pages.length > 0) && (
+                            <button
+                              title="Read this book"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log("Read button clicked for:", item);
+                                console.log("Book data:", item);
+                                
+                                // Only open BookViewer if book has proper content
+                                if (item.pages && Array.isArray(item.pages) && item.pages.length > 0) {
+                                  setBookViewer({ open: true, book: item });
+                                } else {
+                                  alert("This book has no content to display.");
+                                }
+                              }}
+                              style={{ 
+                                background: '#8B4513', 
+                                color: 'white', 
+                                border: '2px solid #D4C4A8',
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                marginLeft: '4px',
+                                zIndex: 1000,
+                                position: 'relative'
+                              }}
+                            >
+                              📖 Read
+                            </button>
+                          )}
                         </div>
                       </li>
                     );
@@ -903,6 +940,13 @@ const TopBar = () => {
           </div>
         )}
       </div>
+      
+      {/* Book Viewer Modal */}
+      <BookViewer
+        open={bookViewer.open}
+        onClose={() => setBookViewer({ open: false, book: null })}
+        book={bookViewer.book}
+      />
     </>
   );
 };

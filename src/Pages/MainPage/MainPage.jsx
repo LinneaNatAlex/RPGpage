@@ -7,7 +7,6 @@ import { useAuth } from "../../context/authContext";
 import RPGCalendarSidebar from "../../Components/RPGCalendarSidebar";
 import AnnouncementBanner from "../../Components/AnnouncementBanner/AnnouncementBanner";
 import AnnouncementAdmin from "../../Components/AnnouncementBanner/AnnouncementAdmin";
-import RPGClock from "../../Components/RPGClock/RPGClock";
 
 const MainPage = () => {
   const { user } = useAuth();
@@ -106,7 +105,6 @@ const MainPage = () => {
          {user && (
            <div className={styles.rpgCalendarSidebarContainer}>
              <RPGCalendarSidebar />
-             <RPGClock isMobile={false} />
            </div>
          )}
       </main>

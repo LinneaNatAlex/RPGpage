@@ -174,27 +174,7 @@ const shopItems = [
     description: "A cauldron made of pure silver, required for advanced brews.",
     effect: "Required for brewing truth serums.",
   },
-  // BOOKS
-  {
-    id: 201,
-    name: "Standard Book of Spells",
-    price: 80,
-    type: "book",
-    category: "Books",
-    description:
-      "A must-have for every young witch or wizard. Unlocks new spells.",
-    effect: "Unlocks basic spells.",
-  },
-  {
-    id: 202,
-    name: "Magical Theory",
-    price: 60,
-    type: "book",
-    category: "Books",
-    description:
-      "Learn the theory behind magic. Required for advanced classes.",
-    effect: "Required for advanced classes.",
-  },
+  // BOOKS - Removed old books that cannot be read
   // INGREDIENTS
   {
     id: 301,

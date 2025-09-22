@@ -1,0 +1,196 @@
+.bookEditor {
+  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  color: #F5EFE0;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 2px solid #7B6857;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.bookEditor h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #D4C4A8;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #D4C4A8;
+}
+
+.input, .textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #7B6857;
+  border-radius: 8px;
+  background: rgba(245, 239, 224, 0.1);
+  color: #F5EFE0;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: #D4C4A8;
+  background: rgba(245, 239, 224, 0.2);
+  box-shadow: 0 0 8px rgba(212, 196, 168, 0.3);
+}
+
+.input::placeholder, .textarea::placeholder {
+  color: rgba(245, 239, 224, 0.6);
+}
+
+.pagesSection {
+  margin-top: 2rem;
+  border-top: 2px solid rgba(123, 104, 87, 0.3);
+  padding-top: 1.5rem;
+}
+
+.pagesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.pagesHeader h3 {
+  color: #D4C4A8;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.addPageBtn {
+  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  color: #F5EFE0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addPageBtn:hover {
+  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.pageEditor {
+  background: rgba(245, 239, 224, 0.05);
+  border: 1px solid rgba(123, 104, 87, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.pageHeader h4 {
+  color: #D4C4A8;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.removePageBtn {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  color: #F5EFE0;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.removePageBtn:hover {
+  background: linear-gradient(135deg, #A0522D 0%, #CD853F 100%);
+  transform: translateY(-1px);
+}
+
+.pageContent {
+  width: 100%;
+  min-height: 200px;
+  padding: 0.75rem;
+  border: 1px solid #7B6857;
+  border-radius: 6px;
+  background: rgba(245, 239, 224, 0.1);
+  color: #F5EFE0;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.pageContent:focus {
+  outline: none;
+  border-color: #D4C4A8;
+  background: rgba(245, 239, 224, 0.15);
+  box-shadow: 0 0 8px rgba(212, 196, 168, 0.2);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid rgba(123, 104, 87, 0.3);
+}
+
+.cancelBtn {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  color: #F5EFE0;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelBtn:hover {
+  background: linear-gradient(135deg, #A0522D 0%, #CD853F 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  color: #F5EFE0;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

@@ -188,6 +188,64 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Read button for books */
+.readBtn {
+  background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+  color: #F5EFE0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  min-width: 40px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.readBtn:hover {
+  background: linear-gradient(135deg, #42A5F5 0%, #64B5F6 100%);
+  color: #F5EFE0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Book viewer overlay */
+.bookViewerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(44, 44, 44, 0.9);
+  z-index: 2200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Special styling for book items */
+.inventoryItem[data-item-type="book"] {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  border: 2px solid #D4C4A8;
+  box-shadow: 0 4px 16px rgba(139, 69, 19, 0.3);
+}
+
+.inventoryItem[data-item-type="book"] .itemName {
+  color: #F5EFE0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.inventoryItem[data-item-type="book"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+}
+
 /* Delete button in inventory */
 .deleteBtn {
   background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
