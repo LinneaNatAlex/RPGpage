@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext.jsx";
 import useUserRoles from "../../hooks/useUserRoles";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import Chat from "../Chat/Chat";
-import PrivateChat from "../Chat/PrivateChat";
-import OnlineUsers from "../OnlineUsers/OnlineUsers";
-import TopBar from "../TopBar/TopBar";
-import Navbar from "../../Navbar/Navbar";
-import NewsFeed from "../NewsFeed/NewsFeed";
-import RPGCalendarSidebar from "../RPGCalendarSidebar";
-import RPGClock from "../RPGClock/RPGClock";
-import InventoryModal from "../InventoryModal/InventoryModal";
+import React, { Suspense } from "react";
+const Chat = React.lazy(() => import("../Chat/Chat"));
+const PrivateChat = React.lazy(() => import("../Chat/PrivateChat"));
+const OnlineUsers = React.lazy(() => import("../OnlineUsers/OnlineUsers"));
+const TopBar = React.lazy(() => import("../TopBar/TopBar"));
+const Navbar = React.lazy(() => import("../../Navbar/Navbar"));
+const NewsFeed = React.lazy(() => import("../NewsFeed/NewsFeed"));
+const RPGCalendarSidebar = React.lazy(() => import("../RPGCalendarSidebar"));
+const RPGClock = React.lazy(() => import("../RPGClock/RPGClock"));
+const InventoryModal = React.lazy(() =>
+  import("../InventoryModal/InventoryModal")
+);
 import "./MobileLayout.css";
 
 const MobileLayout = ({ children }) => {
@@ -182,7 +185,9 @@ const MobileLayout = ({ children }) => {
       <main className="mobile-main">
         {/* Mobile TopBar - Always visible */}
         <div className="mobile-topbar-container">
-          <TopBar />
+          <Suspense fallback={null}>
+            <TopBar />
+          </Suspense>
         </div>
 
         {/* Render actual page content based on route */}
@@ -208,46 +213,50 @@ const MobileLayout = ({ children }) => {
 
         {/* News Feed Overlay */}
         {showNewsFeed && (
-          <div className="mobile-overlay">
-            <div className="mobile-overlay-header">
-              <h2>News & Announcements</h2>
-              <button
-                className="mobile-overlay-close"
-                onClick={() => {
-                  setShowNewsFeed(false);
-                  navigate("/");
-                  setActiveTab("home");
-                }}
-              >
-                ✕
-              </button>
+          <Suspense fallback={null}>
+            <div className="mobile-overlay">
+              <div className="mobile-overlay-header">
+                <h2>News & Announcements</h2>
+                <button
+                  className="mobile-overlay-close"
+                  onClick={() => {
+                    setShowNewsFeed(false);
+                    navigate("/");
+                    setActiveTab("home");
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="mobile-overlay-content">
+                <NewsFeed />
+              </div>
             </div>
-            <div className="mobile-overlay-content">
-              <NewsFeed />
-            </div>
-          </div>
+          </Suspense>
         )}
 
         {/* Online Users Overlay */}
         {showOnlineUsers && (
-          <div className="mobile-overlay">
-            <div className="mobile-overlay-header">
-              <h2>Online Students</h2>
-              <button
-                className="mobile-overlay-close"
-                onClick={() => {
-                  setShowOnlineUsers(false);
-                  navigate("/");
-                  setActiveTab("home");
-                }}
-              >
-                ✕
-              </button>
+          <Suspense fallback={null}>
+            <div className="mobile-overlay">
+              <div className="mobile-overlay-header">
+                <h2>Online Students</h2>
+                <button
+                  className="mobile-overlay-close"
+                  onClick={() => {
+                    setShowOnlineUsers(false);
+                    navigate("/");
+                    setActiveTab("home");
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="mobile-overlay-content">
+                <OnlineUsers />
+              </div>
             </div>
-            <div className="mobile-overlay-content">
-              <OnlineUsers />
-            </div>
-          </div>
+          </Suspense>
         )}
 
         {/* Page Rules Overlay */}
@@ -672,62 +681,66 @@ const MobileLayout = ({ children }) => {
 
         {/* Inventory Overlay */}
         {showInventory && (
-          <div className="mobile-overlay">
-            <div className="mobile-overlay-header">
-              <h2>Inventory</h2>
-              <button
-                className="mobile-overlay-close"
-                onClick={() => {
-                  setShowInventory(false);
-                  navigate("/");
-                  setActiveTab("home");
-                }}
-              >
-                ✕
-              </button>
+          <Suspense fallback={null}>
+            <div className="mobile-overlay">
+              <div className="mobile-overlay-header">
+                <h2>Inventory</h2>
+                <button
+                  className="mobile-overlay-close"
+                  onClick={() => {
+                    setShowInventory(false);
+                    navigate("/");
+                    setActiveTab("home");
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="mobile-overlay-content">
+                <InventoryModal
+                  open={true}
+                  onClose={() => setShowInventory(false)}
+                />
+              </div>
             </div>
-            <div className="mobile-overlay-content">
-              <InventoryModal
-                open={true}
-                onClose={() => setShowInventory(false)}
-              />
-            </div>
-          </div>
+          </Suspense>
         )}
 
         {/* Chat overlay when chat tab is active */}
         {showChat && (
-          <div className="mobile-chat-overlay">
-            <div className="mobile-chat-header">
-              <h2>Chat</h2>
-              <button
-                className="mobile-chat-switch"
-                onClick={() => setShowPrivateChat(!showPrivateChat)}
-              >
-                {showPrivateChat ? "Global" : "Private"}
-              </button>
-              <button
-                className="mobile-chat-close"
-                onClick={() => {
-                  setShowChat(false);
-                  navigate("/");
-                  setActiveTab("home");
-                }}
-              >
-                ✕
-              </button>
-            </div>
+          <Suspense fallback={null}>
+            <div className="mobile-chat-overlay">
+              <div className="mobile-chat-header">
+                <h2>Chat</h2>
+                <button
+                  className="mobile-chat-switch"
+                  onClick={() => setShowPrivateChat(!showPrivateChat)}
+                >
+                  {showPrivateChat ? "Global" : "Private"}
+                </button>
+                <button
+                  className="mobile-chat-close"
+                  onClick={() => {
+                    setShowChat(false);
+                    navigate("/");
+                    setActiveTab("home");
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
 
-            {showPrivateChat ? (
-              <div className="mobile-private-chat-container">
-                <PrivateChat />
-              </div>
-            ) : (
-              <div className="mobile-global-chat-container">
-                <Chat />
-              </div>
-            )}
-          </div>
+              {showPrivateChat ? (
+                <div className="mobile-private-chat-container">
+                  <PrivateChat />
+                </div>
+              ) : (
+                <div className="mobile-global-chat-container">
+                  <Chat />
+                </div>
+              )}
+            </div>
+          </Suspense>
         )}
       </main>
 
