@@ -192,7 +192,13 @@ const MobileLayout = ({ children }) => {
 
         {/* Render actual page content based on route */}
         <div className="mobile-page-content">
-          <Outlet />
+          {activeTab === "shop" ? (
+            <Suspense fallback={null}>
+              <Shop open={activeTab === "shop"} />
+            </Suspense>
+          ) : (
+            <Outlet />
+          )}
         </div>
 
         {/* Mobile Home Page - Welcome message only */}
@@ -508,7 +514,7 @@ const MobileLayout = ({ children }) => {
               </button>
             </div>
             <div className="mobile-overlay-content">
-              <RPGCalendarSidebar />
+              <RPGCalendarSidebar open={showRPGCalendar} />
             </div>
           </div>
         )}

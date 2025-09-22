@@ -18,7 +18,7 @@ import shopItems from "./itemsList";
 
 const categories = ["Books", "Potions", "Ingredients", "Equipment", "Food"];
 
-const Shop = () => {
+const Shop = ({ open = true }) => {
   // Helper to pay author nits if teacher/archivist/admin
   const payAuthorNits = async (book) => {
     if (!book.authorId || !book.price) return;
@@ -50,8 +50,9 @@ const Shop = () => {
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [books, setBooks] = useState([]);
 
-  // Hent varer fra Firestore
+  // Hent varer fra Firestore KUN når Shop er synlig
   useEffect(() => {
+    if (!open) return;
     const q = query(collection(db, "shopItems"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, (snapshot) => {
       const arr = snapshot.docs.map((doc) => ({
@@ -62,10 +63,11 @@ const Shop = () => {
       setFirestoreItems(arr);
     });
     return () => unsub();
-  }, []);
+  }, [open]);
 
-  // Hent bøker fra Firestore
+  // Hent bøker fra Firestore KUN når Shop er synlig
   useEffect(() => {
+    if (!open) return;
     const q = query(collection(db, "books"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, (snapshot) => {
       const arr = snapshot.docs.map((doc) => ({
@@ -79,7 +81,7 @@ const Shop = () => {
       setBooks(arr);
     });
     return () => unsub();
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     const fetchBalance = async () => {
