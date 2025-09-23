@@ -362,6 +362,7 @@ const InventoryModal = ({ open, onClose }) => {
       {bookViewer.open && (
         <div className={styles.bookViewerOverlay}>
           <BookViewer
+            open={bookViewer.open}
             book={bookViewer.book}
             onClose={() => setBookViewer({ open: false, book: null })}
           />

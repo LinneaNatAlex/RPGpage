@@ -140,6 +140,9 @@ const OnlineUsers = () => {
           } else if (u.roles?.some((r) => r.toLowerCase() === "admin")) {
             roleClass += ` ${style.adminAvatar}`;
             nameClass += ` ${style.adminName}`;
+          } else if (u.roles?.some((r) => r.toLowerCase() === "archivist")) {
+            roleClass += ` ${style.archivistAvatar}`;
+            nameClass += ` ${style.archivistName}`;
           }
           // Love Potion effect: pink glow and text if inLoveUntil in future
           const inLove = u.inLoveUntil && u.inLoveUntil > Date.now();

@@ -1,30 +1,30 @@
 .shopWrapper {
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
   padding: 40px;
   border-radius: 20px;
   max-width: 900px;
   margin: 2.5rem auto;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7B6857;
+  border: 3px solid #7b6857;
   position: relative;
   overflow: hidden;
 }
 
 .shopWrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
+  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
   border-radius: 20px 20px 0 0;
 }
 .balance {
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-weight: 600;
   font-family: '"Cinzel", serif';
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -52,13 +52,15 @@
   border-radius: 16px;
   gap: 2.2rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .itemInfo {
   display: flex;
@@ -69,7 +71,7 @@
 .itemName {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #F5EFE0;
+  color: #f5efe0;
   margin-bottom: 0.5rem;
   letter-spacing: 0.5px;
   font-family: '"Cinzel", serif';
@@ -77,7 +79,7 @@
 }
 .itemDesc {
   font-size: 1rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   margin-bottom: 0.3rem;
   font-weight: 500;
   font-style: italic;
@@ -89,23 +91,25 @@
   margin-left: 0.5rem;
 }
 .item button {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 0.6rem 1.4rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   font-family: '"Cinzel", serif';
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .item button:hover {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .tabs {
@@ -118,7 +122,7 @@
 }
 .tab {
   background: rgba(245, 239, 224, 0.1);
-  color: #D4C4A8;
+  color: #d4c4a8;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 0.8rem 1.5rem;
@@ -133,20 +137,21 @@
 }
 .tab:hover {
   background: rgba(245, 239, 224, 0.2);
-  color: #F5EFE0;
+  color: #f5efe0;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 .activeTab {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   transform: translateY(-1px);
 }
 .ingredients {
   font-size: 0.95rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   margin-left: 0.7rem;
   font-style: italic;
 }
@@ -159,52 +164,64 @@
     border-radius: 12px;
     max-width: 100%;
   }
-  
+
   .balance {
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
-  
+
   .tabs {
     gap: 0.5rem;
     margin-bottom: 1rem;
   }
-  
+
   .tab {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .item {
     padding: 1rem;
     margin-bottom: 1rem;
     gap: 1rem;
     border-radius: 12px;
   }
-  
+
   .itemName {
     font-size: 1.1rem;
     margin-bottom: 0.3rem;
   }
-  
+
   .itemDesc {
     font-size: 0.9rem;
     margin-bottom: 0.2rem;
   }
-  
+
   .itemEffect {
     font-size: 0.9rem;
     margin-left: 0.3rem;
   }
-  
+
   .item button {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .message {
     padding: 8px 12px;
     margin: 0.3rem 0 1rem 0;
     font-size: 0.9rem;
+  }
+}
+
+/* Animation for success/error messages */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10002;
   padding: 2rem;
 }
 
@@ -19,8 +19,9 @@
   border: 3px solid #7b6857;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
   max-width: 800px;
-  max-height: 90vh;
+  max-height: 99vh;
   width: 100%;
+  height: 50pc;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -167,11 +168,12 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .bookViewer {
-    padding: 1rem;
+    padding: 0.25rem;
   }
 
   .bookContent {
-    max-height: 95vh;
+    max-width: 98vw;
+    max-height: 99.5vh;
   }
 
   .bookHeader h2 {

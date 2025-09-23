@@ -79,19 +79,24 @@ export const AuthProvider = ({ children }) => {
               userDoc = await getDoc(userDocRef);
               break;
             } catch (firestoreError) {
-              console.warn(`Firestore error (${4-retries}):`, firestoreError);
+              console.warn(`Firestore error (${4 - retries}):`, firestoreError);
               retries--;
               if (retries === 0) {
                 console.error("Failed to fetch user data after 3 attempts");
                 // Set user anyway with basic data
                 setUser(currentUser);
                 setEmailVerified(currentUser.emailVerified);
-                setBlocked({ blocked: false, reason: "", until: null, bannedType: null });
+                setBlocked({
+                  blocked: false,
+                  reason: "",
+                  until: null,
+                  bannedType: null,
+                });
                 setLoading(false);
                 return;
               }
               // Wait before retry
-              await new Promise(resolve => setTimeout(resolve, 1000));
+              await new Promise((resolve) => setTimeout(resolve, 1000));
             }
           }
 
@@ -120,7 +125,12 @@ export const AuthProvider = ({ children }) => {
             blocked = true;
             reason = "Your account is permanently banned.";
             bannedType = "account";
-          } else if (userData.pausedUntil && userData.pausedUntil > now) {
+          } else if (
+            false &&
+            userData.pausedUntil &&
+            userData.pausedUntil > now
+          ) {
+            // TEMPORARILY DISABLED - suspend check
             blocked = true;
             reason = "Your account is temporarily suspended.";
             until = userData.pausedUntil;
@@ -183,6 +193,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <authContext.Provider value={{ user, loading, emailVerified }}>
+      {/* TEMPORARILY DISABLED - ALL BLOCKING LOGIC 
       {blocked.blocked ? (
         blocked.bannedType ? (
           <BanOverlay reason={blocked.reason} bannedType={blocked.bannedType} />
@@ -196,6 +207,8 @@ export const AuthProvider = ({ children }) => {
       ) : (
         children
       )}
+      */}
+      {children}
     </authContext.Provider>
   );
 };

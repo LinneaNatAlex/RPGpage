@@ -15,7 +15,7 @@
   color: #F5EFE0;
   border-radius: 16px;
   padding: 0;
-  max-width: 500px;
+  max-width: 50pc;
   width: 92vw;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   border: 2px solid #7B6857;
@@ -23,7 +23,7 @@
   text-align: left;
   display: flex;
   flex-direction: column;
-  max-height: 92vh;
+  max-height: 98vh;
   overflow: hidden;
 }
 
@@ -223,7 +223,7 @@
   width: 100vw;
   height: 100vh;
   background: rgba(44, 44, 44, 0.9);
-  z-index: 2200;
+  z-index: 10003;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,7 +305,7 @@
   .modalContent {
     width: 100%;
     max-width: 100%;
-    max-height: 90vh;
+    max-height: 98vh;
     margin: 0;
     border-radius: 12px;
   }
@@ -317,7 +317,7 @@
   
   .inventoryList {
     padding: 0 1rem;
-    max-height: 60vh;
+    max-height: 75vh;
     overflow-y: auto;
   }
   

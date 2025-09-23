@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BBCode Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .test-result {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px 0;
+      }
+      .test-input {
+        background: #f5f5f5;
+        padding: 5px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>BBCode Parser Test</h1>
+
+    <div class="test-result">
+      <h3>Test 1: Basic formatting</h3>
+      <div class="test-input">[b]hey[/b]</div>
+      <div id="test1"></div>
+    </div>
+
+    <div class="test-result">
+      <h3>Test 2: Color</h3>
+      <div class="test-input">[color=red]test[/color]</div>
+      <div id="test2"></div>
+    </div>
+
+    <div class="test-result">
+      <h3>Test 3: Center alignment</h3>
+      <div class="test-input">[align=center]hey[/align]</div>
+      <div id="test3"></div>
+    </div>
+
+    <script>
+      // Copy parseBBCode function here for testing
+      function parseBBCode(str) {
+        if (!str) return "";
+        let plainBlocks = [];
+        let html = str.replace(
+          /\[plain\]([\s\S]*?)\[\/plain\]/gi,
+          function (_, code) {
+            const key = `__PLAIN_BLOCK_${plainBlocks.length}__`;
+            plainBlocks.push(
+              '<span class="bbcode-plain">' +
+                code
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/\n/g, "<br>") +
+                "</span>"
+            );
+            return key;
+          }
+        );
+        html = html
+          .replace(
+            /\[ALIGN=CENTER\](.*?)\[\/ALIGN\]/gis,
+            '<div style="text-align:center">$1</div>'
+          )
+          .replace(
+            /\[align=center\](.*?)\[\/align\]/gis,
+            '<div class="bbcode-center" style="text-align:center !important">$1</div>'
+          )
+          .replace(/\[b\](.*?)\[\/b\]/gis, "<strong>$1</strong>")
+          .replace(/\[i\](.*?)\[\/i\]/gis, "<em>$1</em>")
+          .replace(/\[u\](.*?)\[\/u\]/gis, "<u>$1</u>")
+          .replace(/\[s\](.*?)\[\/s\]/gis, "<s>$1</s>")
+          .replace(
+            /\[color=(.*?)\](.*?)\[\/color\]/gis,
+            '<span style="color:$1">$2</span>'
+          )
+          .replace(
+            /\[center\](.*?)\[\/center\]/gis,
+            '<div style="text-align:center">$1</div>'
+          );
+
+        // Convert line breaks to <br>
+        html = html.replace(/\n/g, "<br>");
+
+        // Restore plain blocks
+        html = html.replace(
+          /__PLAIN_BLOCK_(\d+)__/g,
+          (_, idx) => plainBlocks[Number(idx)]
+        );
+        return html;
+      }
+
+      // Run tests
+      document.getElementById("test1").innerHTML = parseBBCode("[b]hey[/b]");
+      document.getElementById("test2").innerHTML = parseBBCode(
+        "[color=red]test[/color]"
+      );
+      document.getElementById("test3").innerHTML = parseBBCode(
+        "[align=center]hey[/align]"
+      );
+
+      // Log results to console
+      console.log("Test 1 result:", parseBBCode("[b]hey[/b]"));
+      console.log("Test 2 result:", parseBBCode("[color=red]test[/color]"));
+      console.log("Test 3 result:", parseBBCode("[align=center]hey[/align]"));
+    </script>
+  </body>
+</html>

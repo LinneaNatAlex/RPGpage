@@ -1,10 +1,8 @@
-@import "../assets/Variables/Variables.css";
-
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #3A2F26;
+  background-color: #3a2f26;
   width: 100%;
   height: 70px;
   box-sizing: border-box;
@@ -23,7 +21,7 @@
 
 .navbar a {
   text-decoration: none;
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1rem;
   font-weight: 600;
   transition: color 0.3s ease;
@@ -33,16 +31,16 @@
 .menuItems > a:first-child {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #F5EFE0;
+  color: #f5efe0;
 }
 
 .navbar a:hover {
-  color: #D4C4A8;
+  color: #d4c4a8;
 }
 /* -----------------SIGN OUT BUTTON--------------------------- */
 .signOutBtn {
-  background-color: #7B6857;
-  color: #F5EFE0;
+  background-color: #7b6857;
+  color: #f5efe0;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -52,7 +50,7 @@
 }
 
 .signOutBtn:hover {
-  background-color: #8B7A6B;
+  background-color: #8b7a6b;
 }
 
 /* CLASSROOMS DROPDOWN MENU */
@@ -65,7 +63,7 @@
 .dropdownContent {
   display: none;
   position: absolute;
-  background-color: #7B6857;
+  background-color: #7b6857;
   min-width: 180px;
   flex-direction: column;
   padding: 0.5rem 0;
@@ -78,12 +76,37 @@
   /* Force visibility */
   visibility: visible !important;
   opacity: 1 !important;
+  /* Scroll functionality for long lists */
+  max-height: 280px; /* Approximately 5 items */
+  overflow-y: auto;
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #d4c4a8 #5d4e37;
+}
+
+/* Webkit scrollbar styling */
+.dropdownContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdownContent::-webkit-scrollbar-track {
+  background: #5d4e37;
+  border-radius: 3px;
+}
+
+.dropdownContent::-webkit-scrollbar-thumb {
+  background: #d4c4a8;
+  border-radius: 3px;
+}
+
+.dropdownContent::-webkit-scrollbar-thumb:hover {
+  background: #f5efe0;
 }
 
 .dropdownContent a {
   display: block;
   padding: 0.6rem 1.5rem;
-  color: #F5EFE0;
+  color: #f5efe0;
   text-align: left;
   font-size: 1rem;
   font-weight: 500;
@@ -95,13 +118,13 @@
 
 .dropdownContent a:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #F5EFE0;
+  color: #f5efe0;
   transform: translateX(4px);
 }
 
 .dropdown:hover .dropdownContent {
   display: block !important;
-  background-color: #7B6857;
+  background-color: #7b6857;
   z-index: 10000 !important;
 }
 /* Force dropdown to be on top */
@@ -148,28 +171,29 @@
     padding: 0 1rem;
     height: 60px;
   }
-  
+
   .menuItems {
     gap: 0.8rem;
   }
-  
+
   .menuItems > a:first-child {
     font-size: 1.2rem;
   }
-  
+
   .navbar a {
     font-size: 0.9rem;
   }
-  
+
   .signOutBtn {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }
-  
+
   .dropdownContent {
     min-width: 160px;
+    max-height: 250px; /* Slightly smaller on tablet */
   }
-  
+
   .dropdownContent a {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
@@ -181,28 +205,29 @@
     padding: 0 0.5rem;
     height: 55px;
   }
-  
+
   .menuItems {
     gap: 0.5rem;
   }
-  
+
   .menuItems > a:first-child {
     font-size: 1.1rem;
   }
-  
+
   .navbar a {
     font-size: 0.8rem;
   }
-  
+
   .signOutBtn {
     padding: 0.3rem 0.6rem;
     font-size: 0.8rem;
   }
-  
+
   .dropdownContent {
     min-width: 140px;
+    max-height: 220px; /* Even smaller on mobile */
   }
-  
+
   .dropdownContent a {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;

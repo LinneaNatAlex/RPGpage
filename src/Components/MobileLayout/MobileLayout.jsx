@@ -14,6 +14,7 @@ const RPGClock = React.lazy(() => import("../RPGClock/RPGClock"));
 const InventoryModal = React.lazy(() =>
   import("../InventoryModal/InventoryModal")
 );
+const Shop = React.lazy(() => import("../Shop/Shop"));
 import "./MobileLayout.css";
 
 const MobileLayout = ({ children }) => {
@@ -497,27 +498,6 @@ const MobileLayout = ({ children }) => {
           </div>
         )}
 
-        {/* RPG Calendar Overlay */}
-        {showRPGCalendar && (
-          <div className="mobile-overlay">
-            <div className="mobile-overlay-header">
-              <h2>RPG Calendar</h2>
-              <button
-                className="mobile-overlay-close"
-                onClick={() => {
-                  setShowRPGCalendar(false);
-                  navigate("/");
-                  setActiveTab("home");
-                }}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="mobile-overlay-content">
-              <RPGCalendarSidebar open={showRPGCalendar} />
-            </div>
-          </div>
-        )}
 
         {/* Forum List Overlay */}
         {showForumList && (
@@ -923,26 +903,6 @@ const MobileLayout = ({ children }) => {
               </span>
             </button>
 
-            <button
-              className={`mobile-dashboard-item ${
-                showRPGCalendar ? "active" : ""
-              }`}
-              onClick={() => {
-                // Close all other overlays first
-                setShowChat(false);
-                setShowPrivateChat(false);
-                setShowForumList(false);
-                setShowNewsFeed(false);
-                setShowRPGCalendar(true);
-                setShowOnlineUsers(false);
-                setShowInventory(false);
-                setShowPageRules(false);
-                setShowDashboard(false);
-              }}
-            >
-              <span className="mobile-dashboard-item-icon">📅</span>
-              <span className="mobile-dashboard-item-label">RPG Calendar</span>
-            </button>
 
             <button
               className={`mobile-dashboard-item ${

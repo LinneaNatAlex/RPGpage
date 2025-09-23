@@ -379,6 +379,10 @@ const LiveRP = () => {
                   userObj?.roles?.some((r) => r.toLowerCase() === "admin")
                 )
                   nameClass += ` ${styles.adminName}`;
+                else if (
+                  userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
+                )
+                  nameClass += ` ${styles.archivistName}`;
                 return (
                   <div key={message.id} className={styles.message}>
                     <div

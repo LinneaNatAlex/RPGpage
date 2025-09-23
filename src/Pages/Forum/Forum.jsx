@@ -312,6 +312,8 @@ const Forum = () => {
       nameClass += ` ${styles.shadowPatrolName}`;
     else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
       nameClass += ` ${styles.adminName}`;
+    else if (userObj?.roles?.some((r) => r.toLowerCase() === "archivist"))
+      nameClass += ` ${styles.archivistName}`;
     return nameClass;
   };
 

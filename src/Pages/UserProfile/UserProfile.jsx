@@ -1,8 +1,7 @@
 // import the necessary libraries and components
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import InventoryModal from "../../Components/InventoryModal/InventoryModal";
 import { isBirthdayToday } from "../../utils/rpgCalendar";
-import parseBBCode from "../../Components/ProfileTextEditor/parseBBCode.js";
 import useUsers from "../../hooks/useUser";
 import { useParams } from "react-router-dom";
 import {
@@ -17,6 +16,9 @@ import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
 import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
+import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
+import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
+import { Suspense } from "react";
 
 // state variables and hooks to manage user profile data
 const UserProfile = () => {
@@ -49,14 +51,20 @@ const UserProfile = () => {
         if (!querySnapshot.empty) {
           const docSnap = querySnapshot.docs[0];
           const data = docSnap.data();
-          setUserData(data);
+          startTransition(() => {
+            setUserData(data);
+          });
           console.log("Fetched user:", data);
         } else {
-          setNotFound(true);
+          startTransition(() => {
+            setNotFound(true);
+          });
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        setNotFound(true);
+        startTransition(() => {
+          setNotFound(true);
+        });
       }
     };
     if (uid) fetchUserData();
@@ -85,21 +93,117 @@ const UserProfile = () => {
         lastBirthdayYear: currentYear,
       })
         .then(() => {
-          setUserData({
-            ...userData,
-            age: newAge,
-            lastBirthdayYear: currentYear,
+          startTransition(() => {
+            setUserData({
+              ...userData,
+              age: newAge,
+              lastBirthdayYear: currentYear,
+            });
           });
-          setAgeChecked(true);
+          startTransition(() => {
+            setAgeChecked(true);
+          });
         })
         .catch((err) => console.error("Failed to update age:", err));
     } else {
-      setAgeChecked(true);
+      startTransition(() => {
+        setAgeChecked(true);
+      });
     }
   }, [userData, ageChecked, user]);
 
-  if (notFound) return <div>User not found</div>;
-  if (!userData) return <div>Loading...</div>;
+  if (notFound)
+    return (
+      <ErrorBoundary>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "50vh",
+            padding: "2rem",
+            background: "linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%)",
+            borderRadius: "16px",
+            border: "2px solid #7B6857",
+            margin: "2rem auto",
+            textAlign: "center",
+            maxWidth: "500px",
+          }}
+        >
+          <h2 style={{ color: "#7B6857", marginBottom: "1rem" }}>
+            User not found
+          </h2>
+          <p style={{ color: "#2C2C2C", marginBottom: "1rem" }}>
+            The user you're looking for doesn't exist or has been removed.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            style={{
+              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              color: "#F5EFE0",
+              border: "none",
+              borderRadius: "8px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+              fontSize: "0.9rem",
+              fontWeight: "600",
+            }}
+          >
+            Go Back
+          </button>
+        </div>
+      </ErrorBoundary>
+    );
+
+  if (!userData)
+    return (
+      <ErrorBoundary>
+        <Suspense
+          fallback={
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "50vh",
+                padding: "2rem",
+                background: "linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%)",
+                borderRadius: "16px",
+                border: "2px solid #7B6857",
+                margin: "2rem auto",
+                textAlign: "center",
+                maxWidth: "500px",
+              }}
+            >
+              <div
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  border: "3px solid #7B6857",
+                  borderTop: "3px solid transparent",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite",
+                  margin: "0 auto 20px",
+                }}
+              ></div>
+              <h2 style={{ color: "#7B6857", marginBottom: "1rem" }}>
+                Loading Profile...
+              </h2>
+              <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+            </div>
+          }
+        >
+          <div>Loading...</div>
+        </Suspense>
+      </ErrorBoundary>
+    );
 
   // Rolle-farge for navn
   let nameClass = styles.userName;
@@ -129,6 +233,10 @@ const UserProfile = () => {
               roleClass += ` ${styles.shadowPatrolAvatar}`;
             else if (userData.roles?.some((r) => r.toLowerCase() === "admin"))
               roleClass += ` ${styles.adminAvatar}`;
+            else if (
+              userData.roles?.some((r) => r.toLowerCase() === "archivist")
+            )
+              roleClass += ` ${styles.archivistAvatar}`;
             // Love Potion effect: pink glow if inLoveUntil in future
             const inLove =
               userData.inLoveUntil && userData.inLoveUntil > Date.now();
@@ -168,52 +276,118 @@ const UserProfile = () => {
         {/* --------------------------------CHARACTER DETAILS-------------------------------- */}
         <div className={styles.characterDetailsContainer}>
           <div className={styles.charactinfo}>
-            <h2 style={{
-              color: "#F5EFE0",
-              fontSize: "2rem",
-              fontWeight: 700,
-              margin: "0 0 1.5rem 0",
-              textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
-              textAlign: "center",
-              position: "relative",
-              zIndex: 1
-            }}>Character Details</h2>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
+            <h2
+              style={{
+                color: "#FFFFFF",
+                fontSize: "2rem",
                 fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Full Name:</strong>{" "}
-              <span className={nameClass}>{userData.displayName}</span>
+                margin: "0 0 1.5rem 0",
+                textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+                textAlign: "center",
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
+              Character Details
+            </h2>
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Full Name:
+              </strong>{" "}
+              {(() => {
+                let roleNameClass = nameClass;
+                let nameColor = "#FFFFFF"; // Default color
+
+                if (
+                  userData.roles?.some((r) => r.toLowerCase() === "headmaster")
+                )
+                  roleNameClass += ` ${styles.headmasterName}`;
+                else if (
+                  userData.roles?.some((r) => r.toLowerCase() === "teacher")
+                )
+                  roleNameClass += ` ${styles.teacherName}`;
+                else if (
+                  userData.roles?.some(
+                    (r) => r.toLowerCase() === "shadowpatrol"
+                  )
+                )
+                  roleNameClass += ` ${styles.shadowPatrolName}`;
+                else if (
+                  userData.roles?.some((r) => r.toLowerCase() === "admin")
+                )
+                  roleNameClass += ` ${styles.adminName}`;
+                else if (
+                  userData.roles?.some((r) => r.toLowerCase() === "archivist")
+                )
+                  roleNameClass += ` ${styles.archivistName}`;
+                else {
+                  // Use race color for students without roles
+                  nameColor = getRaceColor(userData?.race);
+                }
+
+                return (
+                  <span
+                    className={roleNameClass}
+                    style={{
+                      color: nameColor,
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    {userData.displayName}
+                  </span>
+                );
+              })()}
             </p>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Class:</strong> {userData.class}
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Class:
+              </strong>{" "}
+              {userData.class}
             </p>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Age:</strong> {userData.age}
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Age:
+              </strong>{" "}
+              {userData.age}
             </p>
             {/* Bursdag kun i Character Details, med valgskjema hvis ikke satt */}
             {userData.birthdayMonth && userData.birthdayDay ? (
@@ -250,7 +424,9 @@ const UserProfile = () => {
                 </span>
                 {user?.uid === userData.uid && !birthdaySaved && (
                   <button
-                    onClick={() => setEditingBirthday(true)}
+                    onClick={() =>
+                      startTransition(() => setEditingBirthday(true))
+                    }
                     style={{ marginLeft: 8, fontSize: 11 }}
                   >
                     Edit
@@ -263,8 +439,10 @@ const UserProfile = () => {
                   onSubmit={(e) => {
                     e.preventDefault();
                     // TODO: Save to Firestore her
-                    setBirthdaySaved(true);
-                    setEditingBirthday(false);
+                    startTransition(() => {
+                      setBirthdaySaved(true);
+                      setEditingBirthday(false);
+                    });
                   }}
                   style={{ display: "flex", alignItems: "center", gap: 8 }}
                 >
@@ -279,7 +457,11 @@ const UserProfile = () => {
                     Month:
                     <select
                       value={birthdayMonth}
-                      onChange={(e) => setBirthdayMonth(Number(e.target.value))}
+                      onChange={(e) =>
+                        startTransition(() =>
+                          setBirthdayMonth(Number(e.target.value))
+                        )
+                      }
                       style={{ marginLeft: 4 }}
                     >
                       {Array.from({ length: 12 }, (_, i) => (
@@ -293,7 +475,11 @@ const UserProfile = () => {
                     Day:
                     <select
                       value={birthdayDay}
-                      onChange={(e) => setBirthdayDay(Number(e.target.value))}
+                      onChange={(e) =>
+                        startTransition(() =>
+                          setBirthdayDay(Number(e.target.value))
+                        )
+                      }
                       style={{ marginLeft: 4 }}
                     >
                       {Array.from({ length: 31 }, (_, i) => (
@@ -337,8 +523,10 @@ const UserProfile = () => {
                 onSubmit={(e) => {
                   e.preventDefault();
                   // TODO: Save to Firestore here
-                  setBirthdaySaved(true);
-                  setEditingBirthday(false);
+                  startTransition(() => {
+                    setBirthdaySaved(true);
+                    setEditingBirthday(false);
+                  });
                 }}
                 style={{ margin: "8px 0" }}
               >
@@ -346,7 +534,11 @@ const UserProfile = () => {
                   Month:
                   <select
                     value={birthdayMonth}
-                    onChange={(e) => setBirthdayMonth(Number(e.target.value))}
+                    onChange={(e) =>
+                      startTransition(() =>
+                        setBirthdayMonth(Number(e.target.value))
+                      )
+                    }
                     style={{ marginLeft: 4 }}
                   >
                     {Array.from({ length: 12 }, (_, i) => (
@@ -360,7 +552,11 @@ const UserProfile = () => {
                   Day:
                   <select
                     value={birthdayDay}
-                    onChange={(e) => setBirthdayDay(Number(e.target.value))}
+                    onChange={(e) =>
+                      startTransition(() =>
+                        setBirthdayDay(Number(e.target.value))
+                      )
+                    }
                     style={{ marginLeft: 4 }}
                   >
                     {Array.from({ length: 31 }, (_, i) => (
@@ -376,51 +572,72 @@ const UserProfile = () => {
                 <button
                   type="button"
                   style={{ fontSize: 12, marginLeft: 4 }}
-                  onClick={() => setEditingBirthday(false)}
+                  onClick={() =>
+                    startTransition(() => setEditingBirthday(false))
+                  }
                 >
                   Cancel
                 </button>
               </form>
             )}
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Magical Race:</strong>{" "}
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Magical Race:
+              </strong>{" "}
               {userData.race &&
               ["Witch", "witch", "witches", "Witches"].includes(userData.race)
                 ? "Wizard"
                 : userData.race}
             </p>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Balance:</strong> {userData.currency ?? 1000} Nits
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Balance:
+              </strong>{" "}
+              {userData.currency ?? 1000} Nits
             </p>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Inventory:</strong>
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Inventory:
+              </strong>
               <img
                 src="/icons/chest.svg"
                 alt="Open inventory"
@@ -449,83 +666,108 @@ const UserProfile = () => {
           </div>
 
           <div className={styles.charactinfo}>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Account Created:</strong>
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Account Created:
+              </strong>
               {userData.createdAt && userData.createdAt.toDate
                 ? userData.createdAt.toDate().toLocaleDateString()
                 : "N/A"}
             </p>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Last Login:</strong>
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Last Login:
+              </strong>
               {auth.currentUser?.metadata?.lastLoginAt
                 ? new Date(
                     Number(auth.currentUser.metadata.lastLoginAt)
                   ).toLocaleDateString()
                 : "N/A"}
             </p>
-            <p style={{
-              color: "#F5EFE0",
-              fontSize: "1.1rem",
-              margin: "0.5rem 0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>
-              <strong style={{
-                color: "#D4C4A8",
-                fontWeight: 700,
-                marginRight: "0.5rem"
-              }}>Roles:</strong> {userData.roles?.join(", ")}
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Roles:
+              </strong>{" "}
+              {userData.roles?.join(", ")}
             </p>
           </div>
         </div>
       </div>
       {/* -----------------------------PROFILE BIO----------------------------- */}
-      {/* BIO: HTML eller tekst */}
-      {userData.profileMode === "bbcode" && userData.profileBBCode ? (
+      {userData.profileText ? (
         <div className={styles.profileTextContainer}>
           <h2>Profile Text</h2>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: parseBBCode(userData.profileBBCode),
-            }}
-          />
-        </div>
-      ) : userData.profileMode === "html" &&
-        userData.profileHtml &&
-        userData.profileCss ? (
-        <div className={styles.profileHtmlContainer}>
           <iframe
-            className={styles.profileIframe}
-            srcDoc={`<style>${userData.profileCss}</style>${userData.profileHtml}`}
-            sandbox=""
-            height="100vh"
-            width="100%"
+            srcDoc={`
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <style>
+                  body { 
+                    margin: 0; 
+                    padding: 1rem; 
+                    font-family: "Cinzel", serif;
+                    color: #2c2c2c;
+                    line-height: 1.6;
+                  }
+                </style>
+              </head>
+              <body>
+                ${userData.profileText}
+              </body>
+              </html>
+            `}
+            style={{
+              width: "100%",
+              minHeight: "200px",
+              border: "none",
+              borderRadius: "8px",
+              background: "#fff",
+            }}
+            title="Profile Text"
           />
-        </div>
-      ) : userData.profileMode === "text" && userData.profileText ? (
-        <div className={styles.profileTextContainer}>
-          <h2>Profile Text</h2>
-          <p>{userData.profileText}</p>
         </div>
       ) : (
-        // IF USER HASN NO BIO
+        // IF USER HAS NO BIO
         <div>No profile bio available</div>
       )}
     </div>
