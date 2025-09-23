@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, memoryLocalCache } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { collection, getDocs } from "firebase/firestore";
 
@@ -17,7 +17,12 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Use memory cache to avoid Chrome IndexedDB persistence issues
+export const db = initializeFirestore(app, {
+  localCache: memoryLocalCache(),
+});
+
 export const storage = getStorage(app);
 
 console.log("DB:", db);

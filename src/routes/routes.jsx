@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import App from "../App.jsx";
+import ErrorBoundary from "../Components/ErrorBoundary/ErrorBoundary.jsx";
 import ForumRules from "../Pages/ForumRules.jsx";
 import GeneralRules from "../Pages/GeneralRules.jsx";
 import AIUsageRules from "../Pages/AIUsageRules.jsx";
@@ -49,7 +50,13 @@ const TeacherRouteGuard = ({ children }) => {
   const { roles, rolesLoading } = useUserRoles();
   if (loading || rolesLoading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/sign-in" />;
-  if (!(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist")))
+  if (
+    !(
+      roles.includes("teacher") ||
+      roles.includes("admin") ||
+      roles.includes("archivist")
+    )
+  )
     return <Navigate to="/" />;
   return children;
 };
@@ -78,7 +85,7 @@ const AdminRouteGuard = ({ children }) => {
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route path="/" element={<App />} errorElement={<ErrorBoundary />}>
       {/*----------------------------- Public routes -----------------------------*/}
       <Route index element={<MainPage />} />
       <Route path="sign-in" element={<SignIn />} />
@@ -147,16 +154,25 @@ export const router = createBrowserRouter(
       <Route path="contentmediarules" element={<ContentMediaRules />} />
       <Route path="privacysafetyrules" element={<PrivacySafetyRules />} />
       <Route path="accountidentityrules" element={<AccountIdentityRules />} />
-      <Route path="communitybehaviorrules" element={<CommunityBehaviorRules />} />
+      <Route
+        path="communitybehaviorrules"
+        element={<CommunityBehaviorRules />}
+      />
       <Route path="technicalsiterules" element={<TechnicalSiteRules />} />
       <Route path="chatrules" element={<ChatRules />} />
       <Route path="rpgrules" element={<RPGRules />} />
       <Route path="profilecontentrules" element={<ProfileContentRules />} />
-      <Route path="roleplaycharacterrules" element={<RoleplayCharacterRules />} />
+      <Route
+        path="roleplaycharacterrules"
+        element={<RoleplayCharacterRules />}
+      />
       <Route path="livechatrpgrules" element={<LiveChatRPGRules />} />
       <Route path="magicspellrules" element={<MagicSpellRules />} />
       <Route path="raceschoolrules" element={<RaceSchoolRules />} />
-      <Route path="datingrelationshiprules" element={<DatingRelationshipRules />} />
+      <Route
+        path="datingrelationshiprules"
+        element={<DatingRelationshipRules />}
+      />
       <Route path="18forumrules" element={<Forum18Rules />} />
       <Route
         path="Rpg/GreatHall"

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext.jsx";
 import useUserRoles from "../../hooks/useUserRoles";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
 import React, { Suspense } from "react";
 const Chat = React.lazy(() => import("../Chat/Chat"));
 const PrivateChat = React.lazy(() => import("../Chat/PrivateChat"));
@@ -119,12 +121,63 @@ const MobileLayout = ({ children }) => {
     }
   };
 
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setShowDashboard(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   // Don't render mobile layout on desktop
   if (!isMobile) {
     return children;
   }
 
-  // Show warning modal for non-admins on mobile
+  // BLOCK ALL MOBILE USERS - Direct them to desktop
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        background: "linear-gradient(135deg, #1a0b08 0%, #2d1a15 100%)",
+        zIndex: 99999,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#f5efe0",
+        padding: "2rem",
+        textAlign: "center",
+      }}
+    >
+      <h1 style={{ color: "#ffd86b", fontSize: "2.5rem", marginBottom: "1rem" }}>
+        🖥️ Desktop Required
+      </h1>
+      <p style={{ fontSize: "1.2rem", marginBottom: "1.5rem", lineHeight: "1.6" }}>
+        Mobile layout is currently under development.
+        <br />
+        Please use a desktop or laptop to access Arcane School.
+      </p>
+      <div style={{ 
+        background: "rgba(255, 216, 107, 0.1)", 
+        padding: "1rem", 
+        borderRadius: "8px",
+        border: "1px solid rgba(255, 216, 107, 0.3)",
+        fontSize: "1rem"
+      }}>
+        For the best magical experience, visit us on your computer! ✨
+      </div>
+    </div>
+  );
+
+  // Show warning modal for non-admins on mobile (after login check)
   const isAdmin = Array.isArray(roles) && roles.includes("admin");
   if (!rolesLoading && !isAdmin) {
     return (
@@ -497,7 +550,6 @@ const MobileLayout = ({ children }) => {
             </div>
           </div>
         )}
-
 
         {/* Forum List Overlay */}
         {showForumList && (
@@ -903,7 +955,6 @@ const MobileLayout = ({ children }) => {
               </span>
             </button>
 
-
             <button
               className={`mobile-dashboard-item ${
                 showOnlineUsers ? "active" : ""
@@ -924,6 +975,15 @@ const MobileLayout = ({ children }) => {
               <span className="mobile-dashboard-item-label">
                 Online Students
               </span>
+            </button>
+
+            {/* Logout Button */}
+            <button
+              className="mobile-dashboard-item logout-btn"
+              onClick={handleLogout}
+            >
+              <span className="mobile-dashboard-item-icon">🚪</span>
+              <span className="mobile-dashboard-item-label">Log Out</span>
             </button>
           </div>
         </div>
