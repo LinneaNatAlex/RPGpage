@@ -150,26 +150,34 @@ const PrivateChat = () => {
     }).join(' ');
   };
 
-  // Load user's potion effects
+  // Load user's potion effects - fetch once instead of listening
   useEffect(() => {
     if (!auth.currentUser) return;
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    const unsub = onSnapshot(userRef, (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
-        setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
-        setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
-        setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
-        setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
-        setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
-        setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
-        setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
-        setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
-        setInLoveUntil(data.inLoveUntil && data.inLoveUntil > Date.now() ? data.inLoveUntil : null);
+    const fetchPotionEffects = async () => {
+      try {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
+          setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
+          setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
+          setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
+          setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
+          setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
+          setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
+          setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
+          setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
+          setInLoveUntil(data.inLoveUntil && data.inLoveUntil > Date.now() ? data.inLoveUntil : null);
+        }
+      } catch (error) {
+        console.error("Error fetching potion effects:", error);
       }
-    });
-    return () => unsub();
+    };
+    fetchPotionEffects();
+    // Refresh every 5 minutes instead of real-time listening
+    const interval = setInterval(fetchPotionEffects, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // Rainbow Potion effect - change color every 10 seconds
@@ -225,51 +233,12 @@ const PrivateChat = () => {
     fetchChats();
   }, [currentUser, users]);
 
-  // Listen for messages for each active chat (for unread badges etc)
-  useEffect(() => {
-    if (!currentUser || !chatLoaded) return;
-    const unsubscribes = activeChats.map((chat, idx) => {
-      const chatId = [currentUser.uid, chat.user.uid].sort().join("_");
-      const q = query(
-        collection(db, "privateMessages", chatId, "messages"),
-        orderBy("timestamp")
-      );
-      let prevMessages = chat.messages || [];
-      let firstRun = true;
-      return onSnapshot(q, (snapshot) => {
-        const newMessages = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setActiveChats((prev) => {
-          const updated = [...prev];
-          updated[idx] = {
-            ...chat,
-            messages: newMessages,
-          };
-          return updated;
-        });
-        // Skip notifications on the initial snapshot to avoid login-time pings
-        if (firstRun) {
-          firstRun = false;
-          prevMessages = newMessages;
-          return;
-        }
-        if (newMessages.length > prevMessages.length) {
-          const latestMessage = newMessages[newMessages.length - 1];
-          // Note: Ping functionality moved to global App.jsx
-        }
-        prevMessages = newMessages;
-      });
-    });
-    return () => {
-      unsubscribes.forEach((unsub) => unsub());
-    };
-  }, [currentUser, chatLoaded, activeChats]);
+  // Optimized: Only listen for messages from the currently selected chat
+  // Remove the multiple listeners for all active chats to reduce Firebase quota usage
 
-  // Always listen for messages for the selected user
+  // Only listen for messages for the selected user when chat is open
   useEffect(() => {
-    if (!currentUser || !selectedUser) {
+    if (!currentUser || !selectedUser || isCollapsed) {
       setSelectedMessages([]);
       return;
     }
@@ -283,10 +252,10 @@ const PrivateChat = () => {
         id: doc.id,
         ...doc.data()
       }));
-      console.log("Private chat messages updated:", messages.length, "messages", messages.map(m => ({ id: m.id, text: m.text })));
+      console.log("Private chat messages updated:", messages.length, "messages");
       setSelectedMessages(messages);
     });
-  }, [currentUser, selectedUser]);
+  }, [currentUser, selectedUser, isCollapsed]);
   
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;

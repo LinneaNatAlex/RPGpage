@@ -379,8 +379,7 @@ function App() {
           </main>
           {/* Main chat and PrivateChat only for logged-in users */}
           {user && <Chat />}
-          {/* TEMPORARILY DISABLED: PrivateChat creates excessive Firebase listeners */}
-          {/* {user && <PrivateChat />} */}
+          {user && <PrivateChat />}
         </div>
       </MobileLayout>
     </>
