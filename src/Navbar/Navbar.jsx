@@ -66,7 +66,7 @@ const Navbar = () => {
       {isLoggedIn && user?.emailVerified ? ( // <-- Endret her
         <>
           <div className={styles.menuItems}>
-            <NavLink to="/">Veyloria Arcane School</NavLink>
+            <NavLink to="/">Vayloria Arcane School</NavLink>
             <NavLink to="/Profile">My Character</NavLink>
             <NavLink to="/userMap">Student Map</NavLink>
             <NavLink to="/shop">Shop</NavLink>

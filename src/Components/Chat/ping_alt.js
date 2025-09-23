@@ -23,7 +23,7 @@ export const playPing = () => {
   
   // Show browser notification if permission granted and tab is not focused
   if (document.hidden && Notification.permission === 'granted') {
-    new Notification('Veyloria Chat', {
+    new Notification('Vayloria Chat', {
       body: 'You were mentioned in chat!',
       icon: '/favicon.ico',
       tag: 'chat-mention',

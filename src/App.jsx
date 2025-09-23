@@ -264,7 +264,7 @@ function App() {
               margin: "0 auto 20px",
             }}
           ></div>
-          <div>Loading Veyloria...</div>
+          <div>Loading Vayloria...</div>
         </div>
         <style>{`
           @keyframes spin {

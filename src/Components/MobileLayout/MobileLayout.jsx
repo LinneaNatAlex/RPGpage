@@ -240,7 +240,7 @@ const MobileLayout = ({ children }) => {
         <div className="mobile-header-content">
           <div className="mobile-logo-section">
             <div className="mobile-logo-icon">⚡</div>
-            <h1 className="mobile-logo-text">Veyloria</h1>
+            <h1 className="mobile-logo-text">Vayloria</h1>
           </div>
         </div>
       </header>
@@ -271,7 +271,7 @@ const MobileLayout = ({ children }) => {
             <div className="mobile-welcome-card">
               <div className="mobile-welcome-icon">🏰</div>
               <div className="mobile-welcome-content">
-                <h3>Welcome to Veyloria</h3>
+                <h3>Welcome to Vayloria</h3>
                 <p>
                   Your magical journey awaits! Use the menu to explore all
                   features.

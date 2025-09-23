@@ -1,4 +1,4 @@
-// imports the necessary modules and components.
+// imports the necess            feel, speak, and act in the world of Vayloria Arcane School. You'llry modules and components.
 import styles from "./Rpg.module.css";
 const Rpg = () => {
   return (
@@ -9,7 +9,7 @@ const Rpg = () => {
           <h1>RPG Gaming Rules</h1>
           <p>
             How Roleplay Works – The Starshade Hall RPG Guide. Welcome to the
-            mystical world of Veyloria Arcane School! This is a text-based
+            mystical world of Vayloria Arcane School! This is a text-based
             roleplaying game (RPG) where you take on the role of a student at a
             magical school for werewolves, witches, vampires, and fairies. For
             now, we use the live chat called Starshade Hall as our shared space
@@ -33,7 +33,7 @@ const Rpg = () => {
             students can talk, meet, and play together in real time.
           </p>
           <h2>How to Roleplay in the Grand Hall</h2>
-          <strong>Always stay in-character </strong>You're a student at Veyloria
+          <strong>Always stay in-character </strong>You're a student at Vayloria
           Arcane School. Type your messages as if you're speaking or acting in
           the magical world. Example: Mira glides into Starshade Hall, her cloak
           shimmering. "Did anyone else sense the full moon's magic last night?"

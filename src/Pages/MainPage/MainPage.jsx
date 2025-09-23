@@ -37,7 +37,7 @@ const MainPage = () => {
                 Are you ready to begin your journey as a werewolf, witch,
                 vampire, or fairy? Here you can discover your magical race,
                 attend mystical classes like Alchemy and Enchantments, and write
-                your own Veyloria Arcane School story. Join a thriving community
+                your own Vayloria Arcane School story. Join a thriving community
                 and experience the magic like never before.
               </>
             )}
@@ -74,7 +74,7 @@ const MainPage = () => {
                 Are you ready to begin your journey as a werewolf, witch,
                 vampire, or fairy? Here you can discover your magical race,
                 attend mystical classes like Alchemy and Enchantments, and write
-                your own Veyloria Arcane School story. Join a thriving community
+                your own Vayloria Arcane School story. Join a thriving community
                 and experience the magic like never before.
               </>
             )}
