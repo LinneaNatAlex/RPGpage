@@ -61,7 +61,9 @@ const SignIn = () => {
       console.log(user.emailVerified);
       
       if (!user.emailVerified) {
-        setError("Please verify your email before signing in.");
+        setError("Please verify your email before signing in. Check your inbox for the verification email.");
+        // Optionally redirect to verify email page
+        navigate("/verify-email");
         return;
       }
       

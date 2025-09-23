@@ -147,10 +147,14 @@ const SignUp = () => {
       await updateProfile(user, {
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
       });
+      
+      // Upload image but don't save to Firestore yet
       const uploadedImageUrl = formData.profilePicture
         ? await uploadImage(formData.profilePicture)
         : "";
-      await setDoc(doc(db, "users", user.uid), {
+      
+      // Store user data in localStorage temporarily until email is verified
+      const tempUserData = {
         uid: user.uid,
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
         roles: ["user"],
@@ -159,12 +163,12 @@ const SignUp = () => {
         age: 11,
         race: formData.race,
         class: formData.class,
-        createdAt: serverTimestamp(),
-        lastLogin: serverTimestamp(),
-        online: true,
         currency: 1000, // Start with 1000 Nits
         inventory: [], // Legg til inventory-feltet fra start
-      });
+      };
+      
+      localStorage.setItem('tempUserData', JSON.stringify(tempUserData));
+      
       await auth.currentUser.reload();
       navigate("/verify-email");
       setFormData(initialFormData);

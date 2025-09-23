@@ -105,6 +105,20 @@ export const AuthProvider = ({ children }) => {
             userData = { ...currentUser, ...userDoc.data() };
             setUser(userData);
           } else {
+            // If user document doesn't exist and email is not verified, 
+            // don't set the user (they need to complete verification first)
+            if (!currentUser.emailVerified) {
+              setUser(null);
+              setEmailVerified(false);
+              setBlocked({
+                blocked: false,
+                reason: "",
+                until: null,
+                bannedType: null,
+              });
+              setLoading(false);
+              return;
+            }
             setUser(currentUser);
           }
 
@@ -138,17 +152,19 @@ export const AuthProvider = ({ children }) => {
           }
           setBlocked({ blocked, reason, until, description, bannedType });
 
-          // Update online status with error handling
+          // Update online status with error handling (only for verified users with Firestore data)
           try {
-            await setDoc(
-              doc(db, "users", currentUser.uid),
-              {
-                displayName: currentUser.displayName || currentUser.email,
-                online: true,
-                lastLogin: new Date(),
-              },
-              { merge: true }
-            );
+            if (currentUser.emailVerified && userDoc && userDoc.exists()) {
+              await setDoc(
+                doc(db, "users", currentUser.uid),
+                {
+                  displayName: currentUser.displayName || currentUser.email,
+                  online: true,
+                  lastLogin: new Date(),
+                },
+                { merge: true }
+              );
+            }
           } catch (onlineError) {
             console.warn("Failed to update online status:", onlineError);
             // Don't fail the entire auth process for this
@@ -157,13 +173,15 @@ export const AuthProvider = ({ children }) => {
           // Handle offline status
           const handleUnload = async () => {
             try {
-              await setDoc(
-                doc(db, "users", currentUser.uid),
-                {
-                  online: false,
-                },
-                { merge: true }
-              );
+              if (currentUser.emailVerified && userDoc && userDoc.exists()) {
+                await setDoc(
+                  doc(db, "users", currentUser.uid),
+                  {
+                    online: false,
+                  },
+                  { merge: true }
+                );
+              }
             } catch (error) {
               console.warn("Failed to update offline status:", error);
             }
