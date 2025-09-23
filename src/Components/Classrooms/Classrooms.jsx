@@ -135,7 +135,8 @@ export default function Classrooms() {
         color: "#F5EFE0",
         padding: 40,
         borderRadius: 20,
-        boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+        boxShadow:
+          "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
         border: "3px solid #7B6857",
         position: "relative",
         overflow: "hidden",
@@ -148,31 +149,37 @@ export default function Classrooms() {
           left: 0,
           right: 0,
           height: "4px",
-          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
+          background:
+            "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
           borderRadius: "20px 20px 0 0",
         }}
       />
-      <h2 style={{
-        fontFamily: '"Cinzel", serif',
-        fontSize: "2.5rem",
-        fontWeight: 700,
-        letterSpacing: "2px",
-        textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-        marginBottom: "1rem",
-        textAlign: "center"
-      }}>Classrooms</h2>
-      <p style={{ 
-        color: "#D4C4A8",
-        fontSize: "1.2rem",
-        textAlign: "center",
-        fontStyle: "italic",
-        marginBottom: "2rem"
-      }}>
+      <h2
+        style={{
+          fontFamily: '"Cinzel", serif',
+          fontSize: "2.5rem",
+          fontWeight: 700,
+          letterSpacing: "2px",
+          textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+          marginBottom: "1rem",
+          textAlign: "center",
+        }}
+      >
+        Classrooms
+      </h2>
+      <p
+        style={{
+          color: "#D4C4A8",
+          fontSize: "1.2rem",
+          textAlign: "center",
+          fontStyle: "italic",
+          marginBottom: "2rem",
+        }}
+      >
         Select a class to attend. You will only see students from your own year
         in each class session.
       </p>
       {classesList.map((cls) => {
-        if (cls.name === "Alchemy & Potions") return null; // Skip 'Alchemy & Potions'
         const students = attendance[cls.id] || [];
         const isAttending = attending && attending.classId === cls.id;
         return (
@@ -184,30 +191,45 @@ export default function Classrooms() {
               background: "rgba(245, 239, 224, 0.1)",
               borderRadius: 16,
               border: "2px solid rgba(255, 255, 255, 0.2)",
-              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              boxShadow:
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
             }}
           >
-            <h3 style={{ 
-              margin: "0 0 12px 0",
-              fontFamily: '"Cinzel", serif',
-              fontSize: "1.5rem",
-              color: "#F5EFE0",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-            }}>{cls.name}</h3>
-            <p style={{ 
-              margin: "0 0 16px 0", 
-              color: "#D4C4A8",
-              fontSize: "1.1rem",
-              lineHeight: 1.5
-            }}>
+            <h3
+              style={{
+                margin: "0 0 12px 0",
+                fontFamily: '"Cinzel", serif',
+                fontSize: "1.5rem",
+                color: "#F5EFE0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              {cls.name}
+            </h3>
+            <p
+              style={{
+                margin: "0 0 16px 0",
+                color: "#D4C4A8",
+                fontSize: "1.1rem",
+                lineHeight: 1.5,
+              }}
+            >
               {cls.description}
             </p>
-            <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
+            <div
+              style={{
+                marginBottom: 16,
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
               {isAttending ? (
                 <button
                   onClick={() => handleLeave(cls)}
                   style={{
-                    background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                    background:
+                      "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                     borderRadius: 12,
@@ -216,18 +238,21 @@ export default function Classrooms() {
                     fontSize: "1rem",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    boxShadow:
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                     textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     fontFamily: '"Cinzel", serif',
-                    letterSpacing: "0.5px"
+                    letterSpacing: "0.5px",
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                    e.target.style.boxShadow =
+                      "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                    e.target.style.boxShadow =
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                   }}
                 >
                   Leave
@@ -236,7 +261,8 @@ export default function Classrooms() {
                 <button
                   onClick={() => handleAttend(cls)}
                   style={{
-                    background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    background:
+                      "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                     borderRadius: 12,
@@ -245,29 +271,34 @@ export default function Classrooms() {
                     fontSize: "1rem",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    boxShadow:
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                     textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     fontFamily: '"Cinzel", serif',
-                    letterSpacing: "0.5px"
+                    letterSpacing: "0.5px",
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                    e.target.style.boxShadow =
+                      "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                    e.target.style.boxShadow =
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                   }}
                 >
                   Attend (+{cls.points} points)
                 </button>
               )}
-              <span style={{ 
-                color: "#D4C4A8",
-                fontSize: "1.1rem",
-                fontWeight: 600,
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-              }}>
+              <span
+                style={{
+                  color: "#D4C4A8",
+                  fontSize: "1.1rem",
+                  fontWeight: 600,
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                }}
+              >
                 {students.length} attending
               </span>
             </div>
@@ -281,32 +312,45 @@ export default function Classrooms() {
                   border: "1px solid rgba(212, 196, 168, 0.3)",
                 }}
               >
-                <b style={{
-                  color: "#D4C4A8",
-                  fontSize: "1.1rem",
-                  fontFamily: '"Cinzel", serif',
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-                }}>Students in this session (Year {userYear}):</b>
-                <ul style={{ 
-                  margin: "12px 0 0 0", 
-                  paddingLeft: 20,
-                  listStyle: "none"
-                }}>
+                <b
+                  style={{
+                    color: "#D4C4A8",
+                    fontSize: "1.1rem",
+                    fontFamily: '"Cinzel", serif',
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  }}
+                >
+                  Students in this session (Year {userYear}):
+                </b>
+                <ul
+                  style={{
+                    margin: "12px 0 0 0",
+                    paddingLeft: 20,
+                    listStyle: "none",
+                  }}
+                >
                   {students.map((s) => (
-                    <li key={s.uid} style={{
-                      marginBottom: 8,
-                      padding: "8px 12px",
-                      background: "rgba(245, 239, 224, 0.1)",
-                      borderRadius: 8,
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      color: "#F5EFE0",
-                      fontSize: "1rem"
-                    }}>
+                    <li
+                      key={s.uid}
+                      style={{
+                        marginBottom: 8,
+                        padding: "8px 12px",
+                        background: "rgba(245, 239, 224, 0.1)",
+                        borderRadius: 8,
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        color: "#F5EFE0",
+                        fontSize: "1rem",
+                      }}
+                    >
                       {s.displayName}{" "}
-                      <span style={{ 
-                        color: "#D4C4A8",
-                        fontStyle: "italic"
-                      }}>({s.house})</span>
+                      <span
+                        style={{
+                          color: "#D4C4A8",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        ({s.house})
+                      </span>
                     </li>
                   ))}
                 </ul>

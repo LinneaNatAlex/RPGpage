@@ -27,10 +27,10 @@ import "./App.mobile.css";
 
 function App() {
   const { user, loading } = useAuth();
-  
+
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
-  
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);

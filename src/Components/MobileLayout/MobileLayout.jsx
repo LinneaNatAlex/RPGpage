@@ -157,21 +157,31 @@ const MobileLayout = ({ children }) => {
         textAlign: "center",
       }}
     >
-      <h1 style={{ color: "#ffd86b", fontSize: "2.5rem", marginBottom: "1rem" }}>
+      <h1
+        style={{ color: "#ffd86b", fontSize: "2.5rem", marginBottom: "1rem" }}
+      >
         🖥️ Desktop Required
       </h1>
-      <p style={{ fontSize: "1.2rem", marginBottom: "1.5rem", lineHeight: "1.6" }}>
+      <p
+        style={{
+          fontSize: "1.2rem",
+          marginBottom: "1.5rem",
+          lineHeight: "1.6",
+        }}
+      >
         Mobile layout is currently under development.
         <br />
         Please use a desktop or laptop to access Arcane School.
       </p>
-      <div style={{ 
-        background: "rgba(255, 216, 107, 0.1)", 
-        padding: "1rem", 
-        borderRadius: "8px",
-        border: "1px solid rgba(255, 216, 107, 0.3)",
-        fontSize: "1rem"
-      }}>
+      <div
+        style={{
+          background: "rgba(255, 216, 107, 0.1)",
+          padding: "1rem",
+          borderRadius: "8px",
+          border: "1px solid rgba(255, 216, 107, 0.3)",
+          fontSize: "1rem",
+        }}
+      >
         For the best magical experience, visit us on your computer! ✨
       </div>
     </div>

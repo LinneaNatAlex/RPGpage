@@ -64,13 +64,15 @@ export const classesList = [
   {
     id: "potions",
     name: "Potions",
-    description: "Master the art of brewing magical potions, elixirs, and healing draughts.",
+    description:
+      "Master the art of brewing magical potions, elixirs, and healing draughts.",
     points: 10,
   },
   {
     id: "alchemy",
     name: "Alchemy",
-    description: "Transform matter through mystical processes and ancient chemical knowledge.",
+    description:
+      "Transform matter through mystical processes and ancient chemical knowledge.",
     points: 10,
   },
 ];

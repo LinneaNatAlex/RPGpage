@@ -5,7 +5,8 @@
   background: rgba(245, 239, 224, 0.1);
   border-radius: 16px;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -15,16 +16,16 @@
   font-size: 1.1rem;
   padding: 12px 16px;
   border-radius: 12px;
-  border: 2px solid #D4C4A8;
-  background: #F5EFE0;
-  color: #2C2C2C;
+  border: 2px solid #d4c4a8;
+  background: #f5efe0;
+  color: #2c2c2c;
   margin-bottom: 0.7rem;
   outline: none;
   transition: all 0.3s ease;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
 }
 .newTopicInput:focus {
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   box-shadow: 0 0 16px rgba(123, 104, 87, 0.4);
   transform: translateY(-1px);
 }
@@ -33,8 +34,8 @@
   margin-bottom: 0.7rem;
   border-radius: 12px;
   overflow: hidden;
-  background: #F5EFE0;
-  border: 2px solid #D4C4A8;
+  background: #f5efe0;
+  border: 2px solid #d4c4a8;
 }
 
 .newTopicButton {
@@ -45,24 +46,24 @@
   width: 100%;
   max-width: 1000px;
   margin: 2rem auto;
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   border-radius: 20px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7B6857;
+  border: 3px solid #7b6857;
   padding: 40px;
-  color: #F5EFE0;
+  color: #f5efe0;
   position: relative;
   overflow: hidden;
 }
 
 .forumWrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
+  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
   border-radius: 20px 20px 0 0;
 }
 
@@ -78,13 +79,15 @@
   justify-content: flex-start;
   padding: 0;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .topicBox:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .topicLinkButton {
   width: 100%;
@@ -106,13 +109,14 @@
 .topicLinkButton:hover,
 .topicLinkButton:focus {
   background: rgba(245, 239, 224, 0.2);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
 .topicTitle {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #F5EFE0;
+  color: #f5efe0;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   font-family: '"Cinzel", serif';
@@ -120,13 +124,13 @@
 
 .topicAuthor {
   font-size: 1rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   margin-left: 1.5rem;
   font-style: italic;
 }
 .topicTime {
   font-size: 1rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-style: normal;
   letter-spacing: 0.5px;
   margin-left: auto;
@@ -146,13 +150,15 @@
   padding: 2rem;
   margin-bottom: 2rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .postBox:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .postHeader {
   display: flex;
@@ -163,13 +169,13 @@
 .postTitle {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #F5EFE0;
+  color: #f5efe0;
   font-family: '"Cinzel", serif';
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .posterName {
   font-weight: 600;
-  color: #7B6857;
+  color: #7b6857;
 }
 .headmasterName {
   color: #fff !important;
@@ -213,56 +219,61 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   outline: none;
   font-family: '"Cinzel", serif';
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .editButton {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
 }
 .editButton:hover,
 .editButton:focus {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .deleteButton {
   background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-  color: #F5EFE0;
+  color: #f5efe0;
 }
 .deleteButton:hover,
 .deleteButton:focus {
   background: linear-gradient(135deg, #ff5722 0%, #e53935 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .saveButton {
   background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
-  color: #F5EFE0;
+  color: #f5efe0;
 }
 .saveButton:hover,
 .saveButton:focus {
   background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .cancelButton {
-  background: linear-gradient(135deg, #D4C4A8 0%, #B8A082 100%);
-  color: #2C2C2C;
+  background: linear-gradient(135deg, #d4c4a8 0%, #b8a082 100%);
+  color: #2c2c2c;
 }
 .cancelButton:hover,
 .cancelButton:focus {
-  background: linear-gradient(135deg, #E8DDD4 0%, #D4C4A8 100%);
+  background: linear-gradient(135deg, #e8ddd4 0%, #d4c4a8 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .postButton {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 0.8rem 2rem;
@@ -271,7 +282,8 @@
   margin-top: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   outline: none;
   font-family: '"Cinzel", serif';
   letter-spacing: 0.5px;
@@ -279,9 +291,10 @@
 }
 .postButton:hover,
 .postButton:focus {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 /* Mobile responsive styles */
@@ -294,31 +307,31 @@
     width: calc(100% - 20px);
     box-sizing: border-box;
   }
-  
+
   .newTopicForm {
     padding: 1rem;
     margin-bottom: 1rem;
   }
-  
+
   .newTopicInput {
     font-size: 1rem;
     padding: 10px 14px;
   }
-  
+
   .topicBox {
     overflow: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
   }
-  
+
   .topicLinkButton {
     overflow: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
   }
-  
+
   .topicTitle {
     overflow: visible;
     white-space: normal;
@@ -328,7 +341,7 @@
     overflow-wrap: break-word;
     line-height: 1.3;
   }
-  
+
   .topicAuthor {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -336,7 +349,7 @@
     max-width: 25%;
     min-width: 80px;
   }
-  
+
   .topicTime {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -345,20 +358,20 @@
     min-width: 60px;
     font-size: 0.8rem;
   }
-  
+
   .postBox {
     padding: 0.5rem;
     margin-bottom: 1rem;
-    background: #F5EFE0;
+    background: #f5efe0;
     border-radius: 8px;
     overflow: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-  
+
   .postContent {
-    background: #F5EFE0 !important;
-    color: #2C1810 !important;
+    background: #f5efe0 !important;
+    color: #2c1810 !important;
     padding: 2rem !important;
     min-height: 200px;
     border-radius: 8px;
@@ -366,7 +379,7 @@
     font-size: 1.1rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: 'Georgia', 'Times New Roman', 'Book Antiqua', serif;
+    font-family: "Georgia", "Times New Roman", "Book Antiqua", serif;
     text-align: left;
     letter-spacing: 0.3px;
     max-width: 100%;
@@ -374,30 +387,30 @@
     margin: 0;
     box-sizing: border-box;
   }
-  
+
   .postContent * {
-    color: #2C1810 !important;
+    color: #2c1810 !important;
   }
-  
+
   .postContent p {
-    color: #2C1810 !important;
+    color: #2c1810 !important;
     margin-bottom: 1rem;
   }
-  
+
   .postContent span {
-    color: #2C1810 !important;
+    color: #2c1810 !important;
   }
-  
+
   .postContent li {
-    color: #2C1810 !important;
+    color: #2c1810 !important;
     margin-bottom: 0.5rem;
   }
-  
+
   .postContent ul {
-    color: #2C1810 !important;
+    color: #2c1810 !important;
     padding-left: 1.5rem;
   }
-  
+
   /* Mobile button sizing */
   .editButton,
   .deleteButton,
@@ -409,7 +422,7 @@
     min-width: auto !important;
     height: auto !important;
   }
-  
+
   .postButton {
     padding: 0.6rem 1.2rem !important;
     font-size: 0.9rem !important;

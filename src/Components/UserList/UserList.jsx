@@ -177,20 +177,20 @@ const UserList = ({ userQuery }) => {
                 key={race}
                 style={{
                   background: isFirst
-                    ? "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
+                    ? "linear-gradient(135deg, #E8DDD4 0%, #D4C4A8 100%)"
                     : isSecond
-                    ? "linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%)"
+                    ? "linear-gradient(135deg, #D4C4A8 0%, #C4B29B 100%)"
                     : isThird
-                    ? "linear-gradient(135deg, #CD7F32 0%, #B8860B 100%)"
+                    ? "linear-gradient(135deg, #C4B29B 0%, #B5A48E 100%)"
                     : "linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%)",
                   borderRadius: 8,
                   padding: "12px 16px",
                   border: isFirst
-                    ? "2px solid #FF8C00"
+                    ? "2px solid #B5A48E"
                     : isSecond
-                    ? "2px solid #808080"
+                    ? "2px solid #A59488"
                     : isThird
-                    ? "2px solid #8B4513"
+                    ? "2px solid #95847B"
                     : "1px solid #7B6857",
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                   display: "flex",
