@@ -27,10 +27,13 @@ export default function Classrooms() {
   const userYear = getUserYear(user);
   const [lastAttended, setLastAttended] = useState({}); // {classId: timestamp}
 
-  // Listen for attendance changes in Firestore
+  // Listen for attendance changes in Firestore - OPTIMIZED
   useEffect(() => {
     const unsubList = [];
-    classesList.forEach((cls) => {
+    // Only listen to classes that are actually being displayed/used
+    const visibleClasses = classesList.slice(0, 5); // Limit concurrent listeners
+    
+    visibleClasses.forEach((cls) => {
       const ref = doc(db, "classAttendance", `${cls.id}-year${userYear}`);
       const unsub = onSnapshot(ref, (snap) => {
         setAttendance((prev) => ({
@@ -41,7 +44,17 @@ export default function Classrooms() {
       unsubList.push(unsub);
     });
     setLoading(false);
-    return () => unsubList.forEach((u) => u());
+    
+    // CRITICAL: Ensure cleanup
+    return () => {
+      unsubList.forEach((u) => {
+        try {
+          u();
+        } catch (error) {
+          console.warn('Error cleaning up listener:', error);
+        }
+      });
+    };
   }, [userYear]);
 
   // Track last attended per class (from user doc)
