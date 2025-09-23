@@ -1,7 +1,13 @@
 // Imports necessary libraries and hooks, to handle live updates of chat messages from Firebase Firestore.
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  limit,
+} from "firebase/firestore";
 
 // making this custom hook to fetch messages from the db, can be used in any part of the app!
 
@@ -12,9 +18,11 @@ const useChatMessages = () => {
   // ---------------------------Live Chat---------------------------
   useEffect(() => {
     // Listen to the "messages" collection stored in firestore, in real-time.
+    // QUOTA OPTIMIZATION: Limit to recent 150 messages to reduce Firebase reads
     const querry = query(
       collection(db, "messages"),
-      orderBy("timestamp", "asc")
+      orderBy("timestamp", "desc"),
+      limit(150)
     );
     // onSnapshot used to make real-time uppdates in firestore. Making it possible for messages to be sendt back and fourth in real-time
     const unsubscribe = onSnapshot(querry, (snapshot) => {
@@ -22,7 +30,8 @@ const useChatMessages = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      setMessages(message);
+      // Reverse to show oldest first in UI
+      setMessages(message.reverse());
     });
     return () => unsubscribe();
   }, []);
@@ -30,16 +39,19 @@ const useChatMessages = () => {
   // -------------------------RPG Grate Hall-------------------------
   useEffect(() => {
     // Listen to the "rpgGrateHall" collection stored in firestore, in real-time.
+    // QUOTA OPTIMIZATION: Limit to recent 150 messages to reduce Firebase reads
     const querry = query(
       collection(db, "rpgGrateHall"),
-      orderBy("timestamp", "asc")
+      orderBy("timestamp", "desc"),
+      limit(150)
     );
     const unsubscribe = onSnapshot(querry, (snapshot) => {
-      const rpgGrateHall = snapshot.docs.map((doc) => ({
+      const rpgGrateHallMsgs = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setRpgGrateHall(rpgGrateHall);
+      // Reverse to show oldest first in UI
+      setRpgGrateHall(rpgGrateHallMsgs.reverse());
     });
     return () => unsubscribe();
   }, []);

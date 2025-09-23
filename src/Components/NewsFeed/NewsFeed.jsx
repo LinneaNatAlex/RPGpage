@@ -10,6 +10,7 @@ import {
   onSnapshot,
   addDoc,
   serverTimestamp,
+  limit,
 } from "firebase/firestore";
 import styles from "./NewsFeed.module.css";
 import useUsers from "../../hooks/useUser";
@@ -60,14 +61,11 @@ const NewsFeed = () => {
   useEffect(() => {
     if (loading || loadingRoles || !user) return;
 
-    // Query only 'nyhet' type news, ordered by createdAt, limited to 10
+    // QUOTA OPTIMIZATION: Add limit to reduce Firebase reads
     const q = query(
       collection(db, "news"),
-      // Uncomment the next line if you have a 'type' field in your news documents
-      // where("type", "==", "nyhet"),
-      orderBy("createdAt", "desc")
-      // Limit to 10 results for performance
-      // limit(10)
+      orderBy("createdAt", "desc"),
+      limit(25) // Limit to 25 results to reduce quota usage, then filter to 10
     );
     let didCancel = false;
     const unsubscribe = onSnapshot(
@@ -159,7 +157,9 @@ const NewsFeed = () => {
               nameClass += ` ${styles.shadowPatrolName}`;
             else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
               nameClass += ` ${styles.adminName}`;
-            else if (userObj?.roles?.some((r) => r.toLowerCase() === "archivist"))
+            else if (
+              userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
+            )
               nameClass += ` ${styles.archivistName}`;
             return (
               <div key={item.id}>

@@ -9,9 +9,11 @@ import {
   orderBy,
   deleteDoc,
   getDocs,
+  limit,
 } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
+import { cacheHelpers } from "../../utils/firebaseCache";
 import styles from "./Shop.module.css";
 import shopItems from "./itemsList";
 
@@ -85,7 +87,12 @@ const Shop = ({ open = true }) => {
   // Hent bøker fra Firestore KUN når Shop er synlig
   useEffect(() => {
     if (!open) return;
-    const q = query(collection(db, "books"), orderBy("createdAt", "desc"));
+    // QUOTA OPTIMIZATION: Limit books to reduce Firebase reads
+    const q = query(
+      collection(db, "books"),
+      orderBy("createdAt", "desc"),
+      limit(50) // Limit to 50 newest books
+    );
     const unsub = onSnapshot(q, (snapshot) => {
       const arr = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -176,6 +183,10 @@ const Shop = ({ open = true }) => {
       }
 
       await updateDoc(userRef, { currency: newBalance, inventory });
+
+      // Clear cache after successful purchase to force UI update
+      cacheHelpers.clearUserCache(user.uid);
+
       setBalance(newBalance);
       setSuccessMessage(
         `✅ Successfully bought ${item.name} for ${item.price} Nits!`
