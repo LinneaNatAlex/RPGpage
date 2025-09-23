@@ -61,4 +61,16 @@ export const classesList = [
     description: "Celebrate the customs, music, and art of all fantasy races.",
     points: 10,
   },
+  {
+    id: "potions",
+    name: "Potions",
+    description: "Master the art of brewing magical potions, elixirs, and healing draughts.",
+    points: 10,
+  },
+  {
+    id: "alchemy",
+    name: "Alchemy",
+    description: "Transform matter through mystical processes and ancient chemical knowledge.",
+    points: 10,
+  },
 ];
