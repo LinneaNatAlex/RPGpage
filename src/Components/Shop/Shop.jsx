@@ -55,11 +55,14 @@ const Shop = ({ open = true }) => {
   // Hent varer fra Firestore KUN når Shop er synlig - OPTIMIZED
   useEffect(() => {
     if (!open) return;
-    
+
     // Use getDocs instead of onSnapshot to reduce quota usage
     const fetchItems = async () => {
       try {
-        const q = query(collection(db, "shopItems"), orderBy("createdAt", "desc"));
+        const q = query(
+          collection(db, "shopItems"),
+          orderBy("createdAt", "desc")
+        );
         const snapshot = await getDocs(q);
         const arr = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -68,14 +71,14 @@ const Shop = ({ open = true }) => {
         }));
         setFirestoreItems(arr);
       } catch (error) {
-        console.error('Error fetching shop items:', error);
+        console.error("Error fetching shop items:", error);
       }
     };
-    
+
     fetchItems();
     // Refresh every 30 seconds instead of realtime
     const interval = setInterval(fetchItems, 30000);
-    
+
     return () => clearInterval(interval);
   }, [open]);
 

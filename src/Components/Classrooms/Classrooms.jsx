@@ -32,7 +32,7 @@ export default function Classrooms() {
     const unsubList = [];
     // Only listen to classes that are actually being displayed/used
     const visibleClasses = classesList.slice(0, 5); // Limit concurrent listeners
-    
+
     visibleClasses.forEach((cls) => {
       const ref = doc(db, "classAttendance", `${cls.id}-year${userYear}`);
       const unsub = onSnapshot(ref, (snap) => {
@@ -44,14 +44,14 @@ export default function Classrooms() {
       unsubList.push(unsub);
     });
     setLoading(false);
-    
+
     // CRITICAL: Ensure cleanup
     return () => {
       unsubList.forEach((u) => {
         try {
           u();
         } catch (error) {
-          console.warn('Error cleaning up listener:', error);
+          console.warn("Error cleaning up listener:", error);
         }
       });
     };

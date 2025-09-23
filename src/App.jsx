@@ -64,7 +64,9 @@ function App() {
     // DISABLED: This creates excessive Firebase reads
     // if (!user) return;
     // TODO: Implement with batch reads instead of realtime listeners
-    console.log('Global mention detection temporarily disabled to reduce Firebase quota usage');
+    console.log(
+      "Global mention detection temporarily disabled to reduce Firebase quota usage"
+    );
   }, [user, lastMessageId, lastPingTime]);
 
   // Global private chat mention detection
