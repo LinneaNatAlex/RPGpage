@@ -308,7 +308,7 @@ export default function Classrooms() {
                   Attend (+{cls.points} points)
                 </button>
               )}
-{/* Attendance count removed - only show active users in class */}
+              {/* Attendance count removed - only show active users in class */}
             </div>
             {/* Students list removed as requested - duplicates were showing */}
           </div>
