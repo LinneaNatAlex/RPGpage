@@ -10,58 +10,38 @@ import {
   query,
   where,
   getDocs,
-  onSnapshot,
 } from "firebase/firestore";
 import { cacheHelpers } from "../../utils/firebaseCache";
 import useUsers from "../../hooks/useUser";
+import useUserData from "../../hooks/useUserData";
 import GiftModal from "../../Components/TopBar/GiftModal";
 import BookViewer from "../../Components/BookViewer/BookViewer";
 import styles from "./Inventory.module.css";
 
 const Inventory = () => {
   const { user } = useAuth();
+  const { userData } = useUserData();
   const { users } = useUsers();
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
   const [bookViewer, setBookViewer] = useState({ open: false, book: null });
   const [infirmary, setInfirmary] = useState(false);
-  const [inventory, setInventory] = useState([]);
 
-  // Load user data including inventory and infirmary status
-  // Use real-time listener for immediate updates
+  // Update infirmary state when userData changes
   useEffect(() => {
-    if (!user) return;
+    if (userData) {
+      setInfirmary(userData.infirmaryEnd && userData.infirmaryEnd > Date.now());
+    }
+  }, [userData]);
 
-    const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(
-      userRef,
-      (userDoc) => {
-        try {
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            setInventory(data.inventory || []);
-            setInfirmary(data.infirmaryEnd && data.infirmaryEnd > Date.now());
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      },
-      (error) => {
-        console.error("Error listening to user data:", error);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [user]);
-
-  console.log("Inventory page loaded, inventory:", inventory);
+  console.log("Inventory page loaded, inventory:", userData?.inventory || []);
 
   return (
     <div className={styles.inventoryPage}>
       <div className={styles.inventoryContainer}>
         <h1 className={styles.inventoryTitle}>Inventory</h1>
-        {Array.isArray(inventory) && inventory.length > 0 ? (
+        {Array.isArray(userData?.inventory) && userData.inventory.length > 0 ? (
           <ul className={styles.inventoryList}>
-            {inventory.map((item, idx) => {
+            {userData.inventory.map((item, idx) => {
               // Debug: Log ALL items to see what's in inventory
               console.log("Inventory item:", item);
 
@@ -351,7 +331,7 @@ const Inventory = () => {
         onClose={() => setGiftModal({ open: false, item: null })}
         item={giftModal.item}
         users={users}
-        inventory={inventory}
+        inventory={userData?.inventory || []}
         onGift={async (toUser, disguise) => {
           if (!user || !giftModal.item) return;
           // Remove one from sender

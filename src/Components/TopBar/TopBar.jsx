@@ -7,7 +7,6 @@ import { db } from "../../firebaseConfig";
 import {
   doc,
   getDoc,
-  onSnapshot,
   updateDoc,
   serverTimestamp,
   collection,
@@ -19,6 +18,7 @@ import {
 import { useRef } from "react";
 import GiftModal from "./GiftModal";
 import useUsers from "../../hooks/useUser";
+import useUserData from "../../hooks/useUserData";
 import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
 import { cacheHelpers } from "../../utils/firebaseCache";
 
@@ -49,13 +49,8 @@ function HealthBar({ health = 100, maxHealth = 100 }) {
 
 const TopBar = () => {
   const { user } = useAuth();
+  const { userData, loading: userDataLoading } = useUserData();
   const navigate = useNavigate();
-  const [balance, setBalance] = useState(0);
-  const [inventory, setInventory] = useState([]);
-  const [points, setPoints] = useState(0);
-  const [health, setHealth] = useState(100);
-  const [roles, setRoles] = useState([]);
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [infirmary, setInfirmary] = useState(false);
   const [detentionUntil, setDetentionUntil] = useState(null);
   const [infirmaryEnd, setInfirmaryEnd] = useState(null);
@@ -96,166 +91,132 @@ const TopBar = () => {
     toggleMagicalCursor();
   };
 
+  // Update local state when userData changes
   useEffect(() => {
-    if (!user) return;
+    if (!userData || userDataLoading) return;
 
-    // Use real-time listener for immediate updates
-    const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(
-      userRef,
-      (userDoc) => {
-        try {
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-
-            // Cache the data
-            cacheHelpers.setUserData(user.uid, data);
-
-            setBalance(data.currency ?? 1000);
-            setInventory(data.inventory ?? []);
-            setHealth(data.health ?? 100);
-            setPoints(data.points ?? 0);
-            setRoles(data.roles ?? []);
-            setProfileImageUrl(data.profileImageUrl || null);
-
-            // Sett lastHealthUpdate første gang hvis mangler
-            if (!data.lastHealthUpdate) {
-              updateDoc(userRef, { lastHealthUpdate: Date.now() });
-            }
-
-            // Love Potion effect
-            if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
-              setInLoveWith(data.inLoveWith || "Someone");
-              setInLoveUntil(data.inLoveUntil);
-            } else {
-              setInLoveWith(null);
-              setInLoveUntil(null);
-            }
-
-            // New potion effects
-            setHairColorUntil(
-              data.hairColorUntil && data.hairColorUntil > Date.now()
-                ? data.hairColorUntil
-                : null
-            );
-            setRainbowUntil(
-              data.rainbowUntil && data.rainbowUntil > Date.now()
-                ? data.rainbowUntil
-                : null
-            );
-            setGlowUntil(
-              data.glowUntil && data.glowUntil > Date.now()
-                ? data.glowUntil
-                : null
-            );
-            setSparkleUntil(
-              data.sparkleUntil && data.sparkleUntil > Date.now()
-                ? data.sparkleUntil
-                : null
-            );
-            setTranslationUntil(
-              data.translationUntil && data.translationUntil > Date.now()
-                ? data.translationUntil
-                : null
-            );
-            setEchoUntil(
-              data.echoUntil && data.echoUntil > Date.now()
-                ? data.echoUntil
-                : null
-            );
-            setWhisperUntil(
-              data.whisperUntil && data.whisperUntil > Date.now()
-                ? data.whisperUntil
-                : null
-            );
-            setShoutUntil(
-              data.shoutUntil && data.shoutUntil > Date.now()
-                ? data.shoutUntil
-                : null
-            );
-            setDarkModeUntil(
-              data.darkModeUntil && data.darkModeUntil > Date.now()
-                ? data.darkModeUntil
-                : null
-            );
-            setRetroUntil(
-              data.retroUntil && data.retroUntil > Date.now()
-                ? data.retroUntil
-                : null
-            );
-            setMirrorUntil(
-              data.mirrorUntil && data.mirrorUntil > Date.now()
-                ? data.mirrorUntil
-                : null
-            );
-            setSpeedUntil(
-              data.speedUntil && data.speedUntil > Date.now()
-                ? data.speedUntil
-                : null
-            );
-            setSlowMotionUntil(
-              data.slowMotionUntil && data.slowMotionUntil > Date.now()
-                ? data.slowMotionUntil
-                : null
-            );
-            setLuckyUntil(
-              data.luckyUntil && data.luckyUntil > Date.now()
-                ? data.luckyUntil
-                : null
-            );
-            setWisdomUntil(
-              data.wisdomUntil && data.wisdomUntil > Date.now()
-                ? data.wisdomUntil
-                : null
-            );
-            setSurveillanceUntil(
-              data.surveillanceUntil && data.surveillanceUntil > Date.now()
-                ? data.surveillanceUntil
-                : null
-            );
-            setCharmUntil(
-              data.charmUntil && data.charmUntil > Date.now()
-                ? data.charmUntil
-                : null
-            );
-            setMysteryUntil(
-              data.mysteryUntil && data.mysteryUntil > Date.now()
-                ? data.mysteryUntil
-                : null
-            );
-
-            // Infirmary state
-            if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
-              setInfirmary(true);
-              setInfirmaryEnd(data.infirmaryEnd);
-            } else {
-              setInfirmary(false);
-              setInfirmaryEnd(null);
-            }
-
-            // Detention state
-            if (data.detentionUntil && Date.now() < data.detentionUntil) {
-              setDetentionUntil(data.detentionUntil);
-            } else {
-              setDetentionUntil(null);
-            }
-            if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
-              setInvisibleUntil(data.invisibleUntil);
-            } else {
-              setInvisibleUntil(null);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      },
-      (error) => {
-        console.error("Error listening to user data:", error);
-      }
+    // Update potion effects
+    setHairColorUntil(
+      userData.hairColorUntil && userData.hairColorUntil > Date.now()
+        ? userData.hairColorUntil
+        : null
+    );
+    setRainbowUntil(
+      userData.rainbowUntil && userData.rainbowUntil > Date.now()
+        ? userData.rainbowUntil
+        : null
+    );
+    setGlowUntil(
+      userData.glowUntil && userData.glowUntil > Date.now()
+        ? userData.glowUntil
+        : null
+    );
+    setSparkleUntil(
+      userData.sparkleUntil && userData.sparkleUntil > Date.now()
+        ? userData.sparkleUntil
+        : null
+    );
+    setTranslationUntil(
+      userData.translationUntil && userData.translationUntil > Date.now()
+        ? userData.translationUntil
+        : null
+    );
+    setEchoUntil(
+      userData.echoUntil && userData.echoUntil > Date.now()
+        ? userData.echoUntil
+        : null
+    );
+    setWhisperUntil(
+      userData.whisperUntil && userData.whisperUntil > Date.now()
+        ? userData.whisperUntil
+        : null
+    );
+    setShoutUntil(
+      userData.shoutUntil && userData.shoutUntil > Date.now()
+        ? userData.shoutUntil
+        : null
+    );
+    setDarkModeUntil(
+      userData.darkModeUntil && userData.darkModeUntil > Date.now()
+        ? userData.darkModeUntil
+        : null
+    );
+    setRetroUntil(
+      userData.retroUntil && userData.retroUntil > Date.now()
+        ? userData.retroUntil
+        : null
+    );
+    setMirrorUntil(
+      userData.mirrorUntil && userData.mirrorUntil > Date.now()
+        ? userData.mirrorUntil
+        : null
+    );
+    setSpeedUntil(
+      userData.speedUntil && userData.speedUntil > Date.now()
+        ? userData.speedUntil
+        : null
+    );
+    setSlowMotionUntil(
+      userData.slowMotionUntil && userData.slowMotionUntil > Date.now()
+        ? userData.slowMotionUntil
+        : null
+    );
+    setLuckyUntil(
+      userData.luckyUntil && userData.luckyUntil > Date.now()
+        ? userData.luckyUntil
+        : null
+    );
+    setWisdomUntil(
+      userData.wisdomUntil && userData.wisdomUntil > Date.now()
+        ? userData.wisdomUntil
+        : null
+    );
+    setSurveillanceUntil(
+      userData.surveillanceUntil && userData.surveillanceUntil > Date.now()
+        ? userData.surveillanceUntil
+        : null
+    );
+    setCharmUntil(
+      userData.charmUntil && userData.charmUntil > Date.now()
+        ? userData.charmUntil
+        : null
+    );
+    setMysteryUntil(
+      userData.mysteryUntil && userData.mysteryUntil > Date.now()
+        ? userData.mysteryUntil
+        : null
     );
 
-    return () => unsubscribe();
-  }, [user]);
+    // Love Potion effect
+    if (userData.inLoveUntil && userData.inLoveUntil > Date.now()) {
+      setInLoveWith(userData.inLoveWith || "Someone");
+      setInLoveUntil(userData.inLoveUntil);
+    } else {
+      setInLoveWith(null);
+      setInLoveUntil(null);
+    }
+
+    // Infirmary state
+    if (userData.infirmaryEnd && Date.now() < userData.infirmaryEnd) {
+      setInfirmary(true);
+      setInfirmaryEnd(userData.infirmaryEnd);
+    } else {
+      setInfirmary(false);
+      setInfirmaryEnd(null);
+    }
+
+    // Detention state
+    if (userData.detentionUntil && Date.now() < userData.detentionUntil) {
+      setDetentionUntil(userData.detentionUntil);
+    } else {
+      setDetentionUntil(null);
+    }
+    if (userData.invisibleUntil && Date.now() < userData.invisibleUntil) {
+      setInvisibleUntil(userData.invisibleUntil);
+    } else {
+      setInvisibleUntil(null);
+    }
+  }, [userData]);
 
   // Love Potion countdown
   useEffect(() => {
@@ -536,10 +497,10 @@ const TopBar = () => {
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
           {(() => {
             if (!user) return null;
-            const src = user.photoURL || profileImageUrl || "/icons/avatar.svg";
+            const src = user.photoURL || userData?.profileImageUrl || "/icons/avatar.svg";
             // Compute role-based class
             let roleClass = styles.profilePic;
-            const lower = (roles || []).map((r) => String(r).toLowerCase());
+            const lower = (userData?.roles || []).map((r) => String(r).toLowerCase());
             if (lower.includes("headmaster"))
               roleClass += ` ${styles.headmasterPic}`;
             else if (lower.includes("teacher"))
@@ -569,7 +530,7 @@ const TopBar = () => {
               />
             );
           })()}
-          <HealthBar health={health} maxHealth={100} />
+          <HealthBar health={userData?.health || 100} maxHealth={100} />
         </div>
         <div className={styles.currency}>
           <img
@@ -577,9 +538,9 @@ const TopBar = () => {
             alt="Nits"
             className={styles.coinIcon}
           />
-          {balance} Nits
+          {userData?.currency || 1000} Nits
           <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
-            ◆ {points} points
+            ◆ {userData?.points || 0} points
           </span>
           {invisibleUntil && (
             <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
@@ -667,7 +628,7 @@ const TopBar = () => {
           onClose={() => setGiftModal({ open: false, item: null })}
           item={giftModal.item}
           users={users}
-          inventory={inventory}
+          inventory={userData?.inventory || []}
           onGift={async (toUser, disguise) => {
             if (!user || !giftModal.item) return;
             // Remove one from sender

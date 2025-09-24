@@ -50,7 +50,7 @@ export default function AdminPanel() {
   async function handleNitsChange(delta) {
     if (!selected) return;
     if (!roles.includes("admin")) {
-      setStatus("Bare admin kan endre Nits.");
+      setStatus("Only admin can change Nits.");
       return;
     }
     setStatus("Working...");
@@ -94,7 +94,7 @@ export default function AdminPanel() {
   async function handleBanUser() {
     if (!selected) return;
     if (!roles.includes("admin")) {
-      setBanStatus("Bare admin kan banne brukere.");
+      setBanStatus("Only admin can ban users.");
       return;
     }
     setBanStatus("Working...");
@@ -198,7 +198,7 @@ export default function AdminPanel() {
       setPointsUser("");
       setPointsAmount("");
     } catch (err) {
-      setPointsMessage("Feil: " + err.message);
+      setPointsMessage("Error: " + err.message);
     }
   };
 
@@ -763,7 +763,7 @@ export default function AdminPanel() {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <input
               type="text"
-              placeholder="Brukernavn eller e-post"
+              placeholder="Username or email"
               value={pointsUser}
               onChange={(e) => setPointsUser(e.target.value)}
               style={{

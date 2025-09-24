@@ -299,7 +299,7 @@ export default function ShopProductAdmin() {
         delete docData.health;
       }
       const docRef = await addDoc(collection(db, "shopItems"), docData);
-      setStatus("Produkt lagt til!");
+      setStatus("Product added!");
       
       // Refresh produkter fra Firestore
       await fetchProducts();
@@ -314,7 +314,7 @@ export default function ShopProductAdmin() {
         image: "",
       });
     } catch (err) {
-      setStatus("Feil: " + err.message);
+      setStatus("Error: " + err.message);
     }
   };
 
@@ -328,7 +328,7 @@ export default function ShopProductAdmin() {
         marginTop: 24,
       }}
     >
-      <h3>{editingProduct ? "Rediger produkt" : "Legg til nytt produkt i Shop"}</h3>
+      <h3>{editingProduct ? "Edit product" : "Add new product to Shop"}</h3>
       <form
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: 10 }}
@@ -337,7 +337,7 @@ export default function ShopProductAdmin() {
           name="name"
           value={form.name}
           onChange={handleChange}
-          placeholder="Navn"
+          placeholder="Name"
         />
         <select name="category" value={form.category} onChange={handleChange}>
           {categories.map((cat) => (
@@ -350,7 +350,7 @@ export default function ShopProductAdmin() {
           name="price"
           value={form.price}
           onChange={handleChange}
-          placeholder="Pris (Nits)"
+          placeholder="Price (Nits)"
           type="number"
           min="0"
         />
@@ -358,13 +358,13 @@ export default function ShopProductAdmin() {
           name="description"
           value={form.description}
           onChange={handleChange}
-          placeholder="Beskrivelse"
+          placeholder="Description"
         />
         <input
           name="effect"
           value={form.effect}
           onChange={handleChange}
-          placeholder="Effekt (valgfritt)"
+          placeholder="Effect (optional)"
         />
         <input
           name="health"
@@ -378,7 +378,7 @@ export default function ShopProductAdmin() {
         {/* Image Upload Section */}
         <div style={{ marginTop: "1rem" }}>
           <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
-            Produktbilde:
+            Product Image:
           </label>
           {form.image ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
