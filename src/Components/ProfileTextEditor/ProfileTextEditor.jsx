@@ -204,8 +204,9 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                       margin: 0; 
                       padding: 1rem; 
                       font-family: "Cinzel", serif;
-                      color: #2c2c2c;
+                      color: #cd853f; /* Strong golden brown for unformatted text */
                       line-height: 1.6;
+                      background: transparent;
                     }
                   </style>
                 </head>
@@ -219,7 +220,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                 minHeight: "200px",
                 border: "none",
                 borderRadius: "8px",
-                background: "#fff",
+                background: "transparent",
               }}
               title="Profile Text"
               className={styles.htmlContent}

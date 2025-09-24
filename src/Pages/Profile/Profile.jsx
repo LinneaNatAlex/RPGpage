@@ -11,12 +11,14 @@ import FriendsList from "../../Components/FriendsList/FriendsList";
 import { isBirthdayToday } from "../../utils/rpgCalendar";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
+import useVipStatus from "../../hooks/useVipStatus";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { user, loading } = useAuth();
   const { roles } = useUserRoles();
+  const { isVip, daysRemaining } = useVipStatus();
   const [showEditor, setShowEditor] = useState(false);
   // Birthday state
   const [birthdayMonth, setBirthdayMonth] = useState(1);
@@ -293,6 +295,81 @@ const Profile = () => {
                   </p>{" "}
                   {userData.race}
                 </div>
+
+                {/* VIP Status Display */}
+                <div className={styles.caracterDetails}>
+                  <p>
+                    <strong>Status:</strong>
+                  </p>{" "}
+                  {isVip ? (
+                    <span
+                      style={{
+                        color: "#ffd700",
+                        fontWeight: "bold",
+                        textShadow: "0 0 10px rgba(255, 215, 0, 0.5)",
+                      }}
+                    >
+                      👑 VIP ({daysRemaining || 0} days remaining)
+                    </span>
+                  ) : (
+                    <span style={{ color: "#cccccc" }}>
+                      Regular User
+                      <button
+                        onClick={() => {
+                          try {
+                            window.open(
+                              "https://buy.stripe.com/6oU3cogeV6NWfi3cA33VC00",
+                              "_blank"
+                            );
+                          } catch (error) {
+                            console.error(
+                              "Error opening VIP purchase page:",
+                              error
+                            );
+                            alert(
+                              "Unable to open purchase page. Please visit: https://buy.stripe.com/6oU3cogeV6NWfi3cA33VC00"
+                            );
+                          }
+                        }}
+                        style={{
+                          marginLeft: "10px",
+                          background:
+                            "linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)",
+                          color: "#000",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "20px",
+                          fontSize: "0.85rem",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          try {
+                            e.target.style.transform = "translateY(-2px)";
+                            e.target.style.boxShadow =
+                              "0 4px 16px rgba(255, 215, 0, 0.5)";
+                          } catch (error) {
+                            console.error("Error in button hover:", error);
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          try {
+                            e.target.style.transform = "translateY(0)";
+                            e.target.style.boxShadow =
+                              "0 2px 8px rgba(255, 215, 0, 0.3)";
+                          } catch (error) {
+                            console.error("Error in button hover:", error);
+                          }
+                        }}
+                      >
+                        👑 Buy VIP
+                      </button>
+                    </span>
+                  )}
+                </div>
+
                 {/* Bursdag: vis og la brukeren velge hvis ikke satt */}
                 <div className={styles.caracterDetails}>
                   <p
@@ -466,8 +543,9 @@ const Profile = () => {
                           margin: 0; 
                           padding: 1rem; 
                           font-family: "Cinzel", serif;
-                          color: #2c2c2c;
+                          color: #cd853f; /* Strong golden brown for unformatted text */
                           line-height: 1.6;
+                          background: transparent;
                         }
                       </style>
                     </head>
@@ -481,7 +559,7 @@ const Profile = () => {
                     minHeight: "200px",
                     border: "none",
                     borderRadius: "8px",
-                    background: "#fff",
+                    background: "transparent",
                   }}
                   title="Profile Text"
                 />

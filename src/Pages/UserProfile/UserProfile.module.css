@@ -175,10 +175,10 @@
   max-width: 1200px;
   margin: 2rem auto 0 auto;
   gap: 20px;
-  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
+  background: transparent; /* Transparent background for all themes */
   border-radius: 16px;
   padding: 2rem;
-  border: 2px solid #d4c4a8;
+  border: 2px solid rgba(212, 196, 168, 0.3); /* Semi-transparent border */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
 }
