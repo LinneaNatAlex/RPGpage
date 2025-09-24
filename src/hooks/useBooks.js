@@ -1,17 +1,17 @@
 // Import necessary libraries and hooks
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
-import { 
-  collection, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
   serverTimestamp,
   query,
   orderBy,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 
 const useBooks = () => {
@@ -80,25 +80,33 @@ const useBooks = () => {
   // Listen to books in real-time
   useEffect(() => {
     const q = query(collection(db, "books"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const booksData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setBooks(booksData);
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const booksData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setBooks(booksData);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error in books snapshot listener:", error);
+        // Fallback to fetchBooks if real-time fails
+        fetchBooks();
+      }
+    );
 
     return () => unsubscribe();
   }, []);
 
-  return { 
-    books, 
-    loading, 
-    addBook, 
-    updateBook, 
-    deleteBook, 
-    refetchBooks: fetchBooks 
+  return {
+    books,
+    loading,
+    addBook,
+    updateBook,
+    deleteBook,
+    refetchBooks: fetchBooks,
   };
 };
 

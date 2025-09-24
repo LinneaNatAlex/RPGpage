@@ -67,23 +67,36 @@ export const AuthProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    console.log("AuthProvider: Setting up auth state listener");
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      console.log(
+        "AuthProvider: Auth state changed, currentUser:",
+        currentUser?.uid || "null"
+      );
+
+      // Set a timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.warn("Auth loading timeout - forcing loading to false");
+        setLoading(false);
+      }, 10000); // 10 second timeout
+
       try {
         if (currentUser) {
+          console.log("AuthProvider: Processing authenticated user");
           // Get user data from Firestore with retry logic
           let userDoc;
-          let retries = 3;
+          let retries = 2; // Reduce retries to prevent long loading times
           while (retries > 0) {
             try {
               const userDocRef = doc(db, "users", currentUser.uid);
               userDoc = await getDoc(userDocRef);
               break;
             } catch (firestoreError) {
-              console.warn(`Firestore error (${4 - retries}):`, firestoreError);
+              console.warn(`Firestore error (${3 - retries}):`, firestoreError);
               retries--;
               if (retries === 0) {
-                console.error("Failed to fetch user data after 3 attempts");
-                // Set user anyway with basic data
+                console.error("Failed to fetch user data after 2 attempts");
+                // Set user anyway with basic data to prevent infinite loading
                 setUser(currentUser);
                 setEmailVerified(currentUser.emailVerified);
                 setBlocked({
@@ -95,8 +108,8 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false);
                 return;
               }
-              // Wait before retry
-              await new Promise((resolve) => setTimeout(resolve, 1000));
+              // Reduce wait time between retries
+              await new Promise((resolve) => setTimeout(resolve, 500));
             }
           }
 
@@ -155,7 +168,8 @@ export const AuthProvider = ({ children }) => {
           // Update online status with error handling (only for verified users with Firestore data)
           try {
             if (currentUser.emailVerified && userDoc && userDoc.exists()) {
-              await setDoc(
+              // Use a timeout to prevent this from blocking the auth process
+              const updateOnlinePromise = setDoc(
                 doc(db, "users", currentUser.uid),
                 {
                   displayName: currentUser.displayName || currentUser.email,
@@ -164,10 +178,17 @@ export const AuthProvider = ({ children }) => {
                 },
                 { merge: true }
               );
+
+              // Don't wait more than 3 seconds for online status update
+              Promise.race([
+                updateOnlinePromise,
+                new Promise((resolve) => setTimeout(resolve, 3000)),
+              ]).catch((onlineError) => {
+                console.warn("Failed to update online status:", onlineError);
+              });
             }
           } catch (onlineError) {
             console.warn("Failed to update online status:", onlineError);
-            // Don't fail the entire auth process for this
           }
 
           // Handle offline status
@@ -188,6 +209,7 @@ export const AuthProvider = ({ children }) => {
           };
           window.addEventListener("beforeunload", handleUnload);
         } else {
+          console.log("AuthProvider: No authenticated user, setting null");
           setUser(null);
           setEmailVerified(false);
           setBlocked({
@@ -202,6 +224,8 @@ export const AuthProvider = ({ children }) => {
         // Set loading to false even on error to prevent infinite loading
         setLoading(false);
       } finally {
+        clearTimeout(timeoutId); // Clear timeout when auth process completes
+        console.log("AuthProvider: Setting loading to false");
         setLoading(false);
       }
     });

@@ -12,6 +12,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { cacheHelpers } from "../../utils/firebaseCache";
+import { addImageToItem } from "../../utils/itemImages";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import GiftModal from "../../Components/TopBar/GiftModal";
@@ -25,6 +26,7 @@ const Inventory = () => {
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
   const [bookViewer, setBookViewer] = useState({ open: false, book: null });
   const [infirmary, setInfirmary] = useState(false);
+  const [firestoreItems, setFirestoreItems] = useState([]);
 
   // Update infirmary state when userData changes
   useEffect(() => {
@@ -32,6 +34,24 @@ const Inventory = () => {
       setInfirmary(userData.infirmaryEnd && userData.infirmaryEnd > Date.now());
     }
   }, [userData]);
+
+  // Fetch firestore items to match images
+  useEffect(() => {
+    const fetchFirestoreItems = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "shopItems"));
+        const items = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setFirestoreItems(items);
+      } catch (error) {
+        console.error("Error fetching firestore items for images:", error);
+      }
+    };
+
+    fetchFirestoreItems();
+  }, []);
 
   console.log("Inventory page loaded, inventory:", userData?.inventory || []);
 
@@ -42,53 +62,75 @@ const Inventory = () => {
         {Array.isArray(userData?.inventory) && userData.inventory.length > 0 ? (
           <ul className={styles.inventoryList}>
             {userData.inventory.map((item, idx) => {
-              // Debug: Log ALL items to see what's in inventory
-              console.log("Inventory item:", item);
+              // Add image to item if it doesn't have one
+              const itemWithImage = addImageToItem(item, firestoreItems);
 
-              // Debug: Log item data
+              // Debug: Log ALL items to see what's in inventory
+              console.log("Original item:", item);
+              console.log("Item with image:", itemWithImage);
+              console.log("Image URL:", itemWithImage.image); // Debug: Log item data
               if (
-                item.name?.toLowerCase().includes("book") ||
-                item.type === "book"
+                itemWithImage.name?.toLowerCase().includes("book") ||
+                itemWithImage.type === "book"
               ) {
-                console.log("Book item found:", item);
+                console.log("Book item found:", itemWithImage);
               }
 
               // Mat og potions kan spises/drikkes
-              const isEdible = item.type === "food" || item.type === "potion";
+              const isEdible =
+                itemWithImage.type === "food" ||
+                itemWithImage.type === "potion";
               let healAmount = 0;
-              const isDeathPotion = item.name === "Death Draught";
-              if (item.name === "Chocolate Frog") healAmount = 15;
-              if (item.name === "Healing Potion") healAmount = 1000;
-              if (item.type === "food" && typeof item.health === "number") {
-                healAmount = item.health;
+              const isDeathPotion = itemWithImage.name === "Death Draught";
+              if (itemWithImage.name === "Chocolate Frog") healAmount = 15;
+              if (itemWithImage.name === "Healing Potion") healAmount = 1000;
+              if (
+                itemWithImage.type === "food" &&
+                typeof itemWithImage.health === "number"
+              ) {
+                healAmount = itemWithImage.health;
               }
 
               return (
                 <li
                   key={idx}
                   className={styles.inventoryItem}
-                  data-item-type={item.type}
+                  data-item-type={itemWithImage.type}
                 >
                   <div className={styles.itemInfo}>
-                    {/* Item Image */}
-                    {(item.image || item.coverImage) && (
-                      <div className={styles.itemImageContainer}>
-                        <img
-                          src={item.image || item.coverImage}
-                          alt={item.name}
-                          className={styles.itemImage}
-                          onLoad={() => console.log('Inventory image loaded for:', item.name)}
-                          onError={() => console.log('Inventory image failed to load for:', item.name)}
-                        />
-                      </div>
-                    )}
+                    {/* Item Image - Always show */}
+                    <div className={styles.itemImageContainer}>
+                      <img
+                        src={
+                          itemWithImage.image ||
+                          itemWithImage.coverImage ||
+                          "./icons/chest.svg"
+                        }
+                        alt={itemWithImage.name}
+                        className={styles.itemImage}
+                        onLoad={() =>
+                          console.log(
+                            "Inventory image loaded for:",
+                            itemWithImage.name
+                          )
+                        }
+                        onError={() =>
+                          console.log(
+                            "Inventory image failed to load for:",
+                            itemWithImage.name
+                          )
+                        }
+                      />
+                    </div>
                     <div className={styles.itemTextContent}>
-                      <span className={styles.itemName}>{item.name}</span> x
-                      {item.qty || 1}
-                      {typeof item.health === "number" &&
-                        item.type === "food" && (
+                      <span className={styles.itemName}>
+                        {itemWithImage.name}
+                      </span>{" "}
+                      x{itemWithImage.qty || 1}
+                      {typeof itemWithImage.health === "number" &&
+                        itemWithImage.type === "food" && (
                           <span style={{ color: "#6f6", marginLeft: 6 }}>
-                            (+{item.health} HP)
+                            (+{itemWithImage.health} HP)
                           </span>
                         )}
                     </div>
@@ -320,7 +362,8 @@ const Inventory = () => {
           <div className={styles.emptyInventory}>
             <span className={styles.emptyText}>Your inventory is empty</span>
             <p className={styles.emptySubtext}>
-              Visit the shop to purchase items or receive gifts from other players!
+              Visit the shop to purchase items or receive gifts from other
+              players!
             </p>
           </div>
         )}

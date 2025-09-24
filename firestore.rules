@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // USERS - hver bruker får tilgang til sitt eget dokument,
+    // men alle kan oppdatere inventory-feltet til andre brukere (for gaver)
+    // VIP system kan oppdatere VIP-relaterte felter
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow update: if request.auth != null && (
+        // Admin eller teacher kan oppdatere alle brukere
+        "admin" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles ||
+        "teacher" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles ||
+        // Vanlig bruker kan oppdatere seg selv
+        request.auth.uid == userId ||
+        (
+          // Kun inventory kan endres av andre brukere (for gaver)
+          request.resource.data.keys().hasAll(resource.data.keys()) &&
+          resource.data.keys().hasAll(request.resource.data.keys()) &&
+          (
+            request.resource.data.inventory != resource.data.inventory &&
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['inventory'])
+          )
+        ) ||
+        // VIP system kan oppdatere VIP-relaterte felter for egen bruker
+        (
+          request.auth.uid == userId &&
+          request.resource.data.diff(resource.data).changedKeys().hasAny(['roles', 'vipExpiresAt', 'vipActivatedAt', 'vipTheme', 'vipSettings']) &&
+          // Sikre at bare VIP-relaterte felter endres
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['roles', 'vipExpiresAt', 'vipActivatedAt', 'vipTheme', 'vipSettings', 'inventory', 'lastActive', 'currency', 'points', 'health']) &&
+          // Sikre at VIP rolle bare kan legges til eller fjernes, ikke andre roller
+          (
+            !request.resource.data.diff(resource.data).changedKeys().hasAny(['roles']) ||
+            (
+              request.resource.data.roles is list &&
+              (resource.data.roles is list || resource.data.roles == null) &&
+              (
+                // Legger til VIP rolle
+                (resource.data.roles == null && request.resource.data.roles == ['vip']) ||
+                (resource.data.roles is list && 
+                 request.resource.data.roles.hasAll(resource.data.roles) && 
+                 request.resource.data.roles.removeAll(resource.data.roles).hasOnly(['vip'])) ||
+                // Fjerner VIP rolle
+                (resource.data.roles is list && 
+                 resource.data.roles.hasAll(request.resource.data.roles) && 
+                 resource.data.roles.removeAll(request.resource.data.roles).hasOnly(['vip'])) ||
+                // Beholder samme roller (for andre oppdateringer)
+                request.resource.data.roles == resource.data.roles
+              )
+            )
+          )
+        )
+      );
+      allow create, delete: if request.auth != null && request.auth.uid == userId;
+      
+      // PURCHASES - brukere kan skrive til sin egen purchases subcollection
+      match /purchases/{purchaseId} {
+        allow create: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // CONSUMPTIONS - brukere kan skrive til sin egen consumptions subcollection
+      match /consumptions/{consumptionId} {
+        allow create: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // USERCHATS - hver bruker får tilgang til sitt eget dokument
+    match /userChats/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // MESSAGES - innloggede brukere kan chatte
+    match /messages/{messageId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // PRIVATE MESSAGES - kun de to brukerne i chatten kan lese/skriv
+    match /privateMessages/{chatId}/messages/{messageId} {
+      allow read, write: if request.auth != null && request.auth.uid in chatId.split('_');
+    }
+
+    // RPGGRATEHALL - alle kan lese, bare admin og teacher kan skrive/slette
+    match /rpgGrateHall/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null &&
+        (
+          "admin" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles ||
+          "teacher" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles
+        );
+    }
+
+    // NEWS - alle kan lese, bare admin og teacher kan skrive/slette
+    match /news/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null &&
+        (
+          "admin" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles ||
+          "teacher" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles
+        );
+    }
+
+    // ANNOUNCEMENTS - alle kan lese, bare admin og teacher kan opprette, endre og slette
+    match /announcements/{docId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]));
+    }
+
+    // SHOPITEMS - alle kan lese, bare admin og teacher kan opprette, endre og slette
+    match /shopItems/{docId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]));
+    }
+    
+    // BOOKS - alle innloggede brukere kan lese og skrive (midlertidig)
+    match /books/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // CLASS DESCRIPTIONS - alle kan lese, bare admin og teacher kan redigere
+    match /classDescriptions/{classId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]));
+    }
+
+    // CLASS ATTENDANCE - alle innloggede kan lese og skrive (for å delta i klasser)
+    match /classAttendance/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // FORUM - innloggede brukere kan lese og skrive i alle forum
+    match /forums/{forumRoom}/posts/{postId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // FORUM TOPICS - innloggede brukere kan lese og skrive topics og posts i topics
+    match /forums/{forumRoom}/topics/{topicId} {
+      allow read, write: if request.auth != null;
+      // Nested posts in topics
+      match /posts/{postId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+    
+    // CLASS CHATS - alle innloggede kan lese og skrive
+    match /classChats/{chatId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // ALDERSVERIFISERING - alle innloggede brukere kan sende forespørsel, admin kan lese
+    match /ageVerificationRequests/{docId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

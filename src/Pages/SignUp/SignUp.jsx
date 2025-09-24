@@ -32,35 +32,23 @@ const initialFormData = {
   email: "",
   password: "",
   confirmPassword: "",
+  race: "",
+  class: "",
   profilePicture: null,
   previewUrl: "",
-  terms: false,
-  race: "",
-  class: "1st year",
+  termsAccepted: false,
 };
+
 const SignUp = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState(() => {
-    const saved = localStorage.getItem("signupFormData");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return { ...initialFormData, ...parsed };
-      } catch {
-        return initialFormData;
-      }
-    }
-    return initialFormData;
-  });
-  //input type file reference
-  const fileInputRef = useRef(null);
-  const { validate, errors } = useSignUpValidation();
-  // This is the function that will be used to sign up the user. The the function for redirecting the user to their profile page after they have signed up.
   const navigate = useNavigate();
+  const { validate, errors } = useSignUpValidation();
   const { uploadImage } = useImageUpload();
-  const [showQuiz, setShowQuiz] = useState(false);
-  const [selectedRace, setSelectedRace] = useState("");
-  const [showTerms, setShowTerms] = useState(false);
+  const [formData, setFormData] = useState(initialFormData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSortingQuiz, setShowSortingQuiz] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [selectedRace, setSelectedRace] = useState(null);
+  const fileInputRef = useRef(null);
 
   //error handling. If there is an error, it will show a message.
   const [error, setError] = useState(null);
@@ -112,11 +100,13 @@ const SignUp = () => {
       profilePicture: null,
       previewUrl: "",
     }));
-    // resets name of the file input field.
-    fileInputRef.current.value = null;
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
-  // --------------------HANDLE CHECKBOX CHANGE-------------------
-  // Handeling the checkbox changes. If the user checks the box it wil turn true, and the opposite if the user unchecks it.
+
+  // ---------------------HANDLE CHECKBOX CHANGE---------------------
+  // handling the changes in the checkbox fields.
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setFormData((prevData) => ({
@@ -148,13 +138,11 @@ const SignUp = () => {
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
       });
 
-      // Upload image but don't save to Firestore yet
       const uploadedImageUrl = formData.profilePicture
         ? await uploadImage(formData.profilePicture)
         : "";
 
-      // Store user data in localStorage temporarily until email is verified
-      const tempUserData = {
+      await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
         roles: ["user"],
@@ -163,11 +151,12 @@ const SignUp = () => {
         age: 11,
         race: formData.race,
         class: formData.class,
+        createdAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+        online: true,
         currency: 1000, // Start with 1000 Nits
         inventory: [], // Legg til inventory-feltet fra start
-      };
-
-      localStorage.setItem("tempUserData", JSON.stringify(tempUserData));
+      });
 
       await auth.currentUser.reload();
       navigate("/verify-email");
@@ -183,229 +172,242 @@ const SignUp = () => {
   return (
     <div className={styles.signUpContainer}>
       {/* Bakgrunnsvideo fjernet, bruker kun vanlig bakgrunn */}
-      <div className={styles.raceSorting}>
-        {showQuiz && (
-          <SortingQuiz
-            required
-            onClose={() => setShowQuiz(false)}
-            onResult={(house) => {
-              setSelectedRace(house);
-              setFormData((prevData) => ({
-                ...prevData,
-                race: house,
-              }));
-            }}
-          />
-        )}
-        <form className={styles.signUpForm} onSubmit={handleSignUp}>
-          <h1>Sign up</h1>
-          {error && (
-            <div
-              style={{
-                background: "#ff2a2a",
-                color: "#fff",
-                padding: "0.7rem 1.2rem",
-                borderRadius: "8px",
-                marginBottom: "1rem",
-                fontWeight: "bold",
-                textAlign: "center",
-                boxShadow: "0 2px 8px rgba(255,42,42,0.15)",
-              }}
-            >
-              {error}
-            </div>
-          )}
-          {/* ----------------CARACTER INFORMATION--------------------- */}
-          <fieldset className={styles.formGroup}>
-            <legend className={styles.formGroupTitle}>
-              Character Information
-            </legend>
-            <div className={styles.inputGroup}>
-              <label htmlFor="caracter-firstname">Character First Name</label>
-              <input
-                type="text"
-                id="firstname"
-                name="firstname"
-                placeholder="Your character's first name"
-                maxLength={10}
-                onChange={handleInputChange}
-                value={formData.firstname}
-              />
-              {errors.firstname && <ErrorMessage message={errors.firstname} />}
-            </div>
-            {/* -----------------MIDDLE NAME-------------------- */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="caracter-middlename">Character Middle Name</label>
-              <input
-                type="text"
-                id="middlename"
-                name="middlename"
-                placeholder="Your character's middle name"
-                maxLength={10}
-                onChange={handleInputChange}
-                value={formData.middlename}
-              />
-              {errors.middlename && (
-                <ErrorMessage message={errors.middlename} />
-              )}
-            </div>
-            {/* -------------------LAST NAME------------------ */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="caracter-lastname">Character Last Name</label>
-              <input
-                type="text"
-                id="lastname"
-                name="lastname"
-                placeholder="Your character's last name"
-                maxLength={10}
-                onChange={handleInputChange}
-                value={formData.lastname}
-                required
-              />
-              {errors.lastname && <ErrorMessage message={errors.lastname} />}
-            </div>
-            {/* -------------------PROFILE PICTURE------------------ */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="profilePicture">Profile Picture</label>
-              <input
-                type="file"
-                id="profilePicture"
-                name="profilePicture"
-                accept=".jpg, .jpg, .png"
-                onChange={handleImageChange}
-                ref={fileInputRef}
-                value={formData.ImageChange}
-              />
 
-              {/* -------------------HOUSE------------------ */}
-              <div className={styles.raceSelection}>
-                {!selectedRace && (
-                  <Button
-                    type="button"
-                    className={styles.sortingQuizButton}
-                    onClick={() => setShowQuiz(true)}
-                  >
-                    Reveal your magical race
-                  </Button>
-                )}
-                {selectedRace && (
-                  <p className={styles.selectedRace}>
-                    Your magical race is: {selectedRace}
-                  </p>
+      <div className={styles.signUpContent}>
+        <div className={styles.signUpForm}>
+          <h1>Create Your Character</h1>
+          <form onSubmit={handleSignUp}>
+            {/* ---------------------NAME FIELDSET--------------------- */}
+            <fieldset className={styles.fieldset}>
+              <legend>Character Name</legend>
+              <div className={styles.nameFields}>
+                <div className={styles.inputGroup}>
+                  <label htmlFor="firstname">First Name</label>
+                  <input
+                    type="text"
+                    id="firstname"
+                    name="firstname"
+                    value={formData.firstname}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {errors.firstname && (
+                    <ErrorMessage message={errors.firstname} />
+                  )}
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label htmlFor="middlename">Middle Name</label>
+                  <input
+                    type="text"
+                    id="middlename"
+                    name="middlename"
+                    value={formData.middlename}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {errors.middlename && (
+                    <ErrorMessage message={errors.middlename} />
+                  )}
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label htmlFor="lastname">Last Name</label>
+                  <input
+                    type="text"
+                    id="lastname"
+                    name="lastname"
+                    value={formData.lastname}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {errors.lastname && (
+                    <ErrorMessage message={errors.lastname} />
+                  )}
+                </div>
+              </div>
+            </fieldset>
+
+            {/* ---------------------ACCOUNT FIELDSET--------------------- */}
+            <fieldset className={styles.fieldset}>
+              <legend>Account Information</legend>
+              <div className={styles.inputGroup}>
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+                {errors.email && <ErrorMessage message={errors.email} />}
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+                {errors.password && (
+                  <ErrorMessage message={errors.password} />
                 )}
               </div>
-              {errors.house && <ErrorMessage message={errors.house} />}
-              {/* showing preview url, so you can display it before submitting */}
-              {formData.previewUrl && (
-                <div className={styles.imagePreview}>
-                  <img
-                    src={formData.previewUrl}
-                    alt="Preview"
-                    className={styles.styleImagePreview}
-                  />
-                  <Button
-                    type="button"
-                    className={styles.removeImageBtn}
-                    onClick={handleRemoveImage}
-                  >
-                    Remove Image
-                  </Button>
-                </div>
-              )}
-            </div>
-          </fieldset>
-          {/* INFORMATION THAT IS NOT DISPLAYED */}
 
-          <fieldset className={styles.formGroup}>
-            <legend className={styles.formGroupTitle}>Login Information</legend>
-            {/* ----------------CARACTER INFORMATION--------------------- */}
+              <div className={styles.inputGroup}>
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                />
+                {errors.confirmPassword && (
+                  <ErrorMessage message={errors.confirmPassword} />
+                )}
+              </div>
+            </fieldset>
 
-            {/* -------------------EMAIL------------------ */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="jon.w@example.com"
-                maxLength={50}
-                minLength={8}
-                onChange={handleInputChange}
-                value={formData.email}
-                required
-              />
-              {errors.email && <ErrorMessage message={errors.email} />}
-            </div>
-            {/* -------------------PASSWORD--------------------- */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                onChange={handleInputChange}
-                value={formData.password}
-                required
-              />
-              {errors.password && <ErrorMessage message={errors.password} />}
-            </div>
-            {/* -----------------CONFIRM PASSWORD-------------------- */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="confirm-password">Confirm Password</label>
-              <input
-                type="password"
-                id="confirm-password"
-                name="confirmPassword"
-                onChange={handleInputChange}
-                value={formData.confirmPassword}
-                required
-              />
-              {errors.confirmPassword && (
-                <ErrorMessage message={errors.confirmPassword} />
-              )}
-            </div>
-            {/* -----------------TERMS AND CONDITIONS-------------------- */}
-            <div className={styles.terms}>
-              <input
-                type="checkbox"
-                id="terms"
-                name="terms"
-                onChange={handleCheckboxChange}
-                checked={formData.terms}
-                required
-              />
-              <label htmlFor="terms">
-                I agree to the
-                <button
-                  type="button"
-                  className={styles.termsLink}
-                  onClick={() => setShowTerms(true)}
-                  tabIndex={0}
+            {/* ---------------------CHARACTER FIELDSET--------------------- */}
+            <fieldset className={styles.fieldset}>
+              <legend>Character Details</legend>
+              <div className={styles.inputGroup}>
+                <label htmlFor="race">Race</label>
+                <select
+                  id="race"
+                  name="race"
+                  value={formData.race}
+                  onChange={handleInputChange}
+                  required
                 >
-                  terms and conditions
-                </button>
-              </label>
-            </div>
-            {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
-            {/* Sends an error back if there is issues */}
+                  <option value="">Select your race</option>
+                  <option value="Human">Human</option>
+                  <option value="Elf">Elf</option>
+                  <option value="Dwarf">Dwarf</option>
+                  <option value="Orc">Orc</option>
+                  <option value="Halfling">Halfling</option>
+                  <option value="Gnome">Gnome</option>
+                  <option value="Dragonborn">Dragonborn</option>
+                  <option value="Tiefling">Tiefling</option>
+                </select>
+                {errors.race && <ErrorMessage message={errors.race} />}
+              </div>
 
-            <Button
-              type="submit"
-              className={styles.signUpBtn}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Signing up..." : "Sign up"}
-            </Button>
-            <p>
-              Already have an account? Log in {""}
-              <NavLink to="/sign-in" className={styles.signInLink}>
-                here
-              </NavLink>
-            </p>
-          </fieldset>
-          {/* ------------------------------------- */}
-        </form>
+              <div className={styles.inputGroup}>
+                <label htmlFor="class">Class</label>
+                <select
+                  id="class"
+                  name="class"
+                  value={formData.class}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select your class</option>
+                  <option value="1st year">1st year</option>
+                  <option value="2nd year">2nd year</option>
+                  <option value="3rd year">3rd year</option>
+                  <option value="4th year">4th year</option>
+                  <option value="5th year">5th year</option>
+                  <option value="6th year">6th year</option>
+                  <option value="7th year">7th year</option>
+                </select>
+                {errors.class && <ErrorMessage message={errors.class} />}
+              </div>
+            </fieldset>
+
+            {/* ---------------------PROFILE PICTURE FIELDSET--------------------- */}
+            <fieldset className={styles.fieldset}>
+              <legend>Profile Picture</legend>
+              <div className={styles.inputGroup}>
+                <label htmlFor="profilePicture">Upload Profile Picture</label>
+                <input
+                  type="file"
+                  id="profilePicture"
+                  name="profilePicture"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  ref={fileInputRef}
+                />
+                {formData.previewUrl && (
+                  <div className={styles.imagePreview}>
+                    <img
+                      src={formData.previewUrl}
+                      alt="Profile preview"
+                      className={styles.previewImage}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className={styles.removeImageBtn}
+                    >
+                      Remove Image
+                    </button>
+                  </div>
+                )}
+              </div>
+            </fieldset>
+
+            {/* ---------------------TERMS FIELDSET--------------------- */}
+            <fieldset className={styles.fieldset}>
+              <legend>Terms and Conditions</legend>
+              <div className={styles.inputGroup}>
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="termsAccepted"
+                    checked={formData.termsAccepted}
+                    onChange={handleCheckboxChange}
+                    required
+                  />
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    onClick={() => setShowTermsModal(true)}
+                    className={styles.termsLink}
+                  >
+                    Terms and Conditions
+                  </button>
+                </label>
+                {errors.termsAccepted && (
+                  <ErrorMessage message={errors.termsAccepted} />
+                )}
+              </div>
+            </fieldset>
+
+            {/* ---------------------SUBMIT BUTTON--------------------- */}
+            <div className={styles.submitContainer}>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating Account..." : "Create Account"}
+              </Button>
+            </div>
+
+            {/* ---------------------ERROR MESSAGE--------------------- */}
+            {error && <ErrorMessage message={error} />}
+
+            {/* ---------------------LOGIN LINK--------------------- */}
+            <div className={styles.loginLink}>
+              <p>
+                Already have an account?{" "}
+                <NavLink to="/sign-in" className={styles.link}>
+                  Sign In
+                </NavLink>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
+
+      {/* ---------------------TERMS MODAL--------------------- */}
+      {showTermsModal && (
+        <TermsModal onClose={() => setShowTermsModal(false)} />
+      )}
     </div>
   );
 };

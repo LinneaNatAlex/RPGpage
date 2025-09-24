@@ -28,8 +28,8 @@ export const storage = getStorage(app);
 // Suppress emulator warnings in development
 if (import.meta.env.DEV) {
   // This suppresses the emulator connection warnings
-  console.warn = function(message) {
-    if (typeof message === 'string' && message.includes('emulator')) {
+  console.warn = function (message) {
+    if (typeof message === "string" && message.includes("emulator")) {
       return; // Suppress emulator warnings
     }
     // Call original console.warn for other messages
@@ -41,9 +41,15 @@ if (import.meta.env.DEV) {
 console.log("DB:", db);
 
 export const getUserTerms = async () => {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  return querySnapshot.docs.map((doc) => ({
-    uid: doc.id,
-    ...doc.data(),
-  }));
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    return querySnapshot.docs.map((doc) => ({
+      uid: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    // Return empty array on error to prevent app from crashing
+    return [];
+  }
 };

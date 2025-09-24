@@ -1,0 +1,207 @@
+[33mcommit 0dd51d6eb784e7343f3572fb5465a215aab27076[m
+Author: Linnea Natalia Alexandra Hetty <linnea.n.a.s.hetty@outlook.com>
+Date:   Tue Sep 23 22:02:02 2025 +0200
+
+    Security: Only save users to Firestore after email verification
+    
+    - Move user data saving from signup to email verification completion
+    - Store temporary user data in localStorage during verification process
+    - Prevent unverified users from appearing in usermap and database
+    - Update authContext to only track verified users with Firestore data
+    - Redirect unverified sign-in attempts to verification page
+    - Add proper error handling for failed verification data saving
+
+[1mdiff --git a/src/Pages/SignIn/SignIn.jsx b/src/Pages/SignIn/SignIn.jsx[m
+[1mindex fa6c141..e709a49 100644[m
+[1m--- a/src/Pages/SignIn/SignIn.jsx[m
+[1m+++ b/src/Pages/SignIn/SignIn.jsx[m
+[36m@@ -61,7 +61,9 @@[m [mconst SignIn = () => {[m
+       console.log(user.emailVerified);[m
+       [m
+       if (!user.emailVerified) {[m
+[31m-        setError("Please verify your email before signing in.");[m
+[32m+[m[32m        setError("Please verify your email before signing in. Check your inbox for the verification email.");[m
+[32m+[m[32m        // Optionally redirect to verify email page[m
+[32m+[m[32m        navigate("/verify-email");[m
+         return;[m
+       }[m
+       [m
+[1mdiff --git a/src/Pages/SignUp/SignUp.jsx b/src/Pages/SignUp/SignUp.jsx[m
+[1mindex 7593232..7a30810 100644[m
+[1m--- a/src/Pages/SignUp/SignUp.jsx[m
+[1m+++ b/src/Pages/SignUp/SignUp.jsx[m
+[36m@@ -147,10 +147,14 @@[m [mconst SignUp = () => {[m
+       await updateProfile(user, {[m
+         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,[m
+       });[m
+[32m+[m[41m      [m
+[32m+[m[32m      // Upload image but don't save to Firestore yet[m
+       const uploadedImageUrl = formData.profilePicture[m
+         ? await uploadImage(formData.profilePicture)[m
+         : "";[m
+[31m-      await setDoc(doc(db, "users", user.uid), {[m
+[32m+[m[41m      [m
+[32m+[m[32m      // Store user data in localStorage temporarily until email is verified[m
+[32m+[m[32m      const tempUserData = {[m
+         uid: user.uid,[m
+         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,[m
+         roles: ["user"],[m
+[36m@@ -159,12 +163,12 @@[m [mconst SignUp = () => {[m
+         age: 11,[m
+         race: formData.race,[m
+         class: formData.class,[m
+[31m-        createdAt: serverTimestamp(),[m
+[31m-        lastLogin: serverTimestamp(),[m
+[31m-        online: true,[m
+         currency: 1000, // Start with 1000 Nits[m
+         inventory: [], // Legg til inventory-feltet fra start[m
+[31m-      });[m
+[32m+[m[32m      };[m
+[32m+[m[41m      [m
+[32m+[m[32m      localStorage.setItem('tempUserData', JSON.stringify(tempUserData));[m
+[32m+[m[41m      [m
+       await auth.currentUser.reload();[m
+       navigate("/verify-email");[m
+       setFormData(initialFormData);[m
+[1mdiff --git a/src/Pages/VerifyEmail/VerifyEmail.jsx b/src/Pages/VerifyEmail/VerifyEmail.jsx[m
+[1mindex 347b05f..e74a4f9 100644[m
+[1m--- a/src/Pages/VerifyEmail/VerifyEmail.jsx[m
+[1m+++ b/src/Pages/VerifyEmail/VerifyEmail.jsx[m
+[36m@@ -5,21 +5,49 @@[m [mimport { sendEmailVerification } from "firebase/auth";[m
+ import Button from "../../Components/Button/Button";[m
+ import { useState } from "react";[m
+ import { useNavigate } from "react-router-dom";[m
+[31m-import { auth } from "../../firebaseConfig";[m
+[32m+[m[32mimport { auth, db } from "../../firebaseConfig";[m
+[32m+[m[32mimport { setDoc, doc, serverTimestamp } from "firebase/firestore";[m
+ [m
+ const VerifyEmail = () => {[m
+   const [emailVerified, setEmailVerified] = useState(false);[m
+   const [emailSent, setEmailSent] = useState(false);[m
+   const [error, setError] = useState(null);[m
+[32m+[m[32m  const [userDataSaved, setUserDataSaved] = useState(false);[m
+   const navigate = useNavigate();[m
+ [m
+   // Get the current user from Firebase Auth[m
+   useEffect(() => {[m
+[32m+[m[32m    // Check if user is logged in[m
+[32m+[m[32m    if (!auth.currentUser) {[m
+[32m+[m[32m      navigate("/sign-in");[m
+[32m+[m[32m      return;[m
+[32m+[m[32m    }[m
+[32m+[m
+     const checkVerificationStatus = async () => {[m
+       await auth.currentUser.reload();[m
+       setEmailVerified(auth.currentUser.emailVerified);[m
+ [m
+       if (auth.currentUser.emailVerified) {[m
+[32m+[m[32m        // Save user data to Firestore when email is verified[m
+[32m+[m[32m        const tempUserData = localStorage.getItem('tempUserData');[m
+[32m+[m[32m        if (tempUserData && !userDataSaved) {[m
+[32m+[m[32m          try {[m
+[32m+[m[32m            const userData = JSON.parse(tempUserData);[m
+[32m+[m[32m            await setDoc(doc(db, "users", userData.uid), {[m
+[32m+[m[32m              ...userData,[m
+[32m+[m[32m              createdAt: serverTimestamp(),[m
+[32m+[m[32m              lastLogin: serverTimestamp(),[m
+[32m+[m[32m              online: true,[m
+[32m+[m[32m            });[m
+[32m+[m[32m            // Clear temporary data[m
+[32m+[m[32m            localStorage.removeItem('tempUserData');[m
+[32m+[m[32m            setUserDataSaved(true);[m
+[32m+[m[32m          } catch (error) {[m
+[32m+[m[32m            console.error("Error saving user data:", error);[m
+[32m+[m[32m            setError("Failed to complete registration. Please contact support.");[m
+[32m+[m[32m            return;[m
+[32m+[m[32m          }[m
+[32m+[m[32m        }[m
+         // Issues SENDING USER BACK TO THE HOME PAGE!!!!!!!!!![m
+         navigate("/");[m
+       }[m
+[36m@@ -27,7 +55,7 @@[m [mconst VerifyEmail = () => {[m
+ [m
+     const interval = setInterval(checkVerificationStatus, 5000);[m
+     return () => clearInterval(interval);[m
+[31m-  }, []);[m
+[32m+[m[32m  }, [userDataSaved, navigate]);[m
+ [m
+   const handleResendVerification = async () => {[m
+     setError(null);[m
+[1mdiff --git a/src/context/authContext.jsx b/src/context/authContext.jsx[m
+[1mindex 3493bbd..1fdd04a 100644[m
+[1m--- a/src/context/authContext.jsx[m
+[1m+++ b/src/context/authContext.jsx[m
+[36m@@ -105,6 +105,20 @@[m [mexport const AuthProvider = ({ children }) => {[m
+             userData = { ...currentUser, ...userDoc.data() };[m
+             setUser(userData);[m
+           } else {[m
+[32m+[m[32m            // If user document doesn't exist and email is not verified,[m[41m [m
+[32m+[m[32m            // don't set the user (they need to complete verification first)[m
+[32m+[m[32m            if (!currentUser.emailVerified) {[m
+[32m+[m[32m              setUser(null);[m
+[32m+[m[32m              setEmailVerified(false);[m
+[32m+[m[32m              setBlocked({[m
+[32m+[m[32m                blocked: false,[m
+[32m+[m[32m                reason: "",[m
+[32m+[m[32m                until: null,[m
+[32m+[m[32m                bannedType: null,[m
+[32m+[m[32m              });[m
+[32m+[m[32m              setLoading(false);[m
+[32m+[m[32m              return;[m
+[32m+[m[32m            }[m
+             setUser(currentUser);[m
+           }[m
+ [m
+[36m@@ -138,17 +152,19 @@[m [mexport const AuthProvider = ({ children }) => {[m
+           }[m
+           setBlocked({ blocked, reason, until, description, bannedType });[m
+ [m
+[31m-          // Update online status with error handling[m
+[32m+[m[32m          // Update online status with error handling (only for verified users with Firestore data)[m
+           try {[m
+[31m-            await setDoc([m
+[31m-              doc(db, "users", currentUser.uid),[m
+[31m-              {[m
+[31m-                displayName: currentUser.displayName || currentUser.email,[m
+[31m-                online: true,[m
+[31m-                lastLogin: new Date(),[m
+[31m-              },[m
+[31m-              { merge: true }[m
+[31m-            );[m
+[32m+[m[32m            if (currentUser.emailVerified && userDoc && userDoc.exists()) {[m
+[32m+[m[32m              await setDoc([m
+[32m+[m[32m                doc(db, "users", currentUser.uid),[m
+[32m+[m[32m                {[m
+[32m+[m[32m                  displayName: currentUser.displayName || currentUser.email,[m
+[32m+[m[32m                  online: true,[m
+[32m+[m[32m                  lastLogin: new Date(),[m
+[32m+[m[32m                },[m
+[32m+[m[32m                { merge: true }[m
+[32m+[m[32m              );[m
+[32m+[m[32m            }[m
+           } catch (onlineError) {[m
+             console.warn("Failed to update online status:", onlineError);[m
+             // Don't fail the entire auth process for this[m
+[36m@@ -157,13 +173,15 @@[m [mexport const AuthProvider = ({ children }) => {[m
+           // Handle offline status[m
+           const handleUnload = async () => {[m
+             try {[m
+[31m-              await setDoc([m
+[31m-                doc(db, "users", currentUser.uid),[m
+[31m-                {[m
+[31m-                  online: false,[m
+[31m-                },[m
+[31m-                { merge: true }[m
+[31m-              );[m
+[32m+[m[32m              if (currentUser.emailVerified && userDoc && userDoc.exists()) {[m
+[32m+[m[32m                await setDoc([m
+[32m+[m[32m                  doc(db, "users", currentUser.uid),[m
+[32m+[m[32m                  {[m
+[32m+[m[32m                    online: false,[m
+[32m+[m[32m                  },[m
+[32m+[m[32m                  { merge: true }[m
+[32m+[m[32m                );[m
+[32m+[m[32m              }[m
+             } catch (error) {[m
+               console.warn("Failed to update offline status:", error);[m
+             }[m

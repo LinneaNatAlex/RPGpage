@@ -14,6 +14,7 @@ import {
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import { cacheHelpers } from "../../utils/firebaseCache";
+import { addImageToItem } from "../../utils/itemImages";
 import styles from "./Shop.module.css";
 import shopItems from "./itemsList";
 
@@ -172,11 +173,16 @@ const Shop = ({ open = true }) => {
         );
         if (existingIdx > -1) {
           inventory[existingIdx].qty = (inventory[existingIdx].qty || 1) + 1;
-          // Oppdater alle relevante felter hvis de mangler (f.eks. type, health)
-          inventory[existingIdx] = { ...item, qty: inventory[existingIdx].qty };
+          // Oppdater alle relevante felter hvis de mangler (f.eks. type, health, image)
+          const itemWithImage = addImageToItem(item);
+          inventory[existingIdx] = {
+            ...itemWithImage,
+            qty: inventory[existingIdx].qty,
+          };
         } else {
           // Legg til ALLE felter fra item (også type, health, osv.)
-          const newItem = { ...item, qty: 1 };
+          const itemWithImage = addImageToItem(item);
+          const newItem = { ...itemWithImage, qty: 1 };
           console.log("Adding item to inventory:", newItem);
           inventory.push(newItem);
         }
@@ -285,126 +291,168 @@ const Shop = ({ open = true }) => {
             // Filtrer ut statiske produkter som er konvertert til Firestore
             if (item.firestore) return true; // Firestore-produkter vises alltid
             if (item.type === "book") return true; // Bøker vises alltid
-            
+
             // For statiske produkter, sjekk om de er konvertert
-            const isConverted = firestoreItems.some(fsItem => 
-              fsItem.originalId === item.id || 
-              (fsItem.name === item.name && fsItem.category === item.category)
+            const isConverted = firestoreItems.some(
+              (fsItem) =>
+                fsItem.originalId === item.id ||
+                (fsItem.name === item.name && fsItem.category === item.category)
             );
-            
+
             return !isConverted; // Vis kun ikke-konverterte statiske produkter
           })
           .filter((item) => item.category === activeCategory)
           .map((item) => {
-            console.log('Shop item:', item.name, 'Image:', item.image, 'CoverImage:', item.coverImage, 'Firestore:', item.firestore);
+            const itemWithImage = addImageToItem(item);
+            console.log(
+              "Shop item:",
+              itemWithImage.name,
+              "Image:",
+              itemWithImage.image,
+              "CoverImage:",
+              itemWithImage.coverImage,
+              "Firestore:",
+              itemWithImage.firestore
+            );
             return (
-            <li
-              key={item.id + (item.firestore ? "-fs" : "-static")}
-              className={styles.item}
-            >
-              <div className={styles.itemInfo}>
-                {/* Product Image */}
-                {(item.image || item.coverImage) && (
-                  <div className={styles.itemImageContainer}>
-                    <img
-                      src={item.image || item.coverImage}
-                      alt={item.name}
-                      className={styles.itemImage}
-                      onLoad={() => console.log('Image loaded for:', item.name, 'URL:', item.image || item.coverImage)}
-                      onError={() => console.log('Image failed to load for:', item.name, 'URL:', item.image || item.coverImage)}
-                      style={{
-                        border: '2px solid #7B6857',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                      }}
-                    />
-                  </div>
-                )}
-                <div className={styles.itemTextContent}>
-                  <span className={styles.itemName}>{item.name}</span>
-                {item.ingredients && Array.isArray(item.ingredients) && (
-                  <span className={styles.ingredients}>
-                    [Includes: {item.ingredients.join(", ")}]
-                  </span>
-                )}
-                {item.description && (
-                  <span className={styles.itemDesc}>{item.description}</span>
-                )}
-                {item.effect && (
-                  <span className={styles.itemEffect}>
-                    <strong>Effect:</strong> {item.effect}
-                  </span>
-                )}
-                {typeof item.health === "number" && item.health > 0 && (
-                  <span className={styles.itemEffect}>
-                    <strong>HP:</strong> +{item.health}
-                  </span>
-                )}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end",
-                  gap: "0.7rem",
-                }}
+              <li
+                key={
+                  itemWithImage.id +
+                  (itemWithImage.firestore ? "-fs" : "-static")
+                }
+                className={styles.item}
               >
-                <span
+                <div className={styles.itemInfo}>
+                  {/* Product Image */}
+                  {(itemWithImage.image || itemWithImage.coverImage) && (
+                    <div className={styles.itemImageContainer}>
+                      <img
+                        src={itemWithImage.image || itemWithImage.coverImage}
+                        alt={itemWithImage.name}
+                        className={styles.itemImage}
+                        onLoad={() =>
+                          console.log(
+                            "Image loaded for:",
+                            itemWithImage.name,
+                            "URL:",
+                            itemWithImage.image || itemWithImage.coverImage
+                          )
+                        }
+                        onError={() =>
+                          console.log(
+                            "Image failed to load for:",
+                            itemWithImage.name,
+                            "URL:",
+                            itemWithImage.image || itemWithImage.coverImage
+                          )
+                        }
+                        style={{
+                          border: "2px solid #7B6857",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className={styles.itemTextContent}>
+                    <span className={styles.itemName}>
+                      {itemWithImage.name}
+                    </span>
+                    {itemWithImage.ingredients &&
+                      Array.isArray(itemWithImage.ingredients) && (
+                        <span className={styles.ingredients}>
+                          [Includes: {itemWithImage.ingredients.join(", ")}]
+                        </span>
+                      )}
+                    {itemWithImage.description && (
+                      <span className={styles.itemDesc}>
+                        {itemWithImage.description}
+                      </span>
+                    )}
+                    {itemWithImage.effect && (
+                      <span className={styles.itemEffect}>
+                        <strong>Effect:</strong> {itemWithImage.effect}
+                      </span>
+                    )}
+                    {typeof itemWithImage.health === "number" &&
+                      itemWithImage.health > 0 && (
+                        <span className={styles.itemEffect}>
+                          <strong>HP:</strong> +{itemWithImage.health}
+                        </span>
+                      )}
+                  </div>
+                </div>
+                <div
                   style={{
-                    fontWeight: 600,
-                    fontSize: "1.08rem",
-                    color: "#fff",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    gap: "0.7rem",
                   }}
                 >
-                  {item.price} Nits
-                </span>
-                <button onClick={() => handleBuy(item)}>Buy</button>
-                {/* Slett-knapp for Firestore-varer, kun for admin/teacher */}
-                {item.firestore && isAdmin && (
-                  <button
+                  <span
                     style={{
-                      marginTop: 6,
-                      background: "#c44",
+                      fontWeight: 600,
+                      fontSize: "1.08rem",
                       color: "#fff",
-                      border: "none",
-                      borderRadius: 4,
-                      padding: "0.3rem 0.7rem",
-                      cursor: "pointer",
-                    }}
-                    onClick={async () => {
-                      if (!window.confirm(`Slette produktet "${item.name}"?`))
-                        return;
-
-                      // Clear previous messages
-                      setSuccessMessage("");
-                      setErrorMessage("");
-
-                      try {
-                        const collection =
-                          item.type === "book" ? "books" : "shopItems";
-
-                        await deleteDoc(doc(db, collection, item.id));
-
-                        setSuccessMessage(
-                          `✅ Product "${item.name}" deleted successfully!`
-                        );
-                        setTimeout(() => setSuccessMessage(""), 5000);
-                      } catch (error) {
-                        console.error("Error deleting product:", error);
-                        setErrorMessage(
-                          `Failed to delete product: ${error.message}`
-                        );
-                        setTimeout(() => setErrorMessage(""), 5000);
-                      }
                     }}
                   >
-                    Slett
-                  </button>
-                )}
-              </div>
-            </li>
-          );
-        })}
+                    {itemWithImage.price} Nits
+                  </span>
+                  <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
+                  {/* Slett-knapp for Firestore-varer, kun for admin/teacher */}
+                  {itemWithImage.firestore && isAdmin && (
+                    <button
+                      style={{
+                        marginTop: 6,
+                        background: "#c44",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        padding: "0.3rem 0.7rem",
+                        cursor: "pointer",
+                      }}
+                      onClick={async () => {
+                        if (
+                          !window.confirm(
+                            `Slette produktet "${itemWithImage.name}"?`
+                          )
+                        )
+                          return;
+
+                        // Clear previous messages
+                        setSuccessMessage("");
+                        setErrorMessage("");
+
+                        try {
+                          const collection =
+                            itemWithImage.type === "book"
+                              ? "books"
+                              : "shopItems";
+
+                          await deleteDoc(
+                            doc(db, collection, itemWithImage.id)
+                          );
+
+                          setSuccessMessage(
+                            `✅ Product "${itemWithImage.name}" deleted successfully!`
+                          );
+                          setTimeout(() => setSuccessMessage(""), 5000);
+                        } catch (error) {
+                          console.error("Error deleting product:", error);
+                          setErrorMessage(
+                            `Failed to delete product: ${error.message}`
+                          );
+                          setTimeout(() => setErrorMessage(""), 5000);
+                        }
+                      }}
+                    >
+                      Slett
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
       </ul>
     </div>
   );

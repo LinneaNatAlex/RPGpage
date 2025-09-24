@@ -16,6 +16,7 @@ import {
   playPing,
   requestNotificationPermission,
 } from "./Components/Chat/ping_alt";
+// import useVipThemes from "./hooks/useVipThemes"; // TEMPORARILY DISABLED
 
 import Navbar from "./Navbar/Navbar";
 import PrivateChat from "./Components/Chat/PrivateChat";
@@ -27,6 +28,24 @@ import "./App.mobile.css";
 
 function App() {
   const { user, loading } = useAuth();
+
+  console.log(
+    "App.jsx: Rendering with user:",
+    user?.uid || "null",
+    "loading:",
+    loading
+  );
+
+  // Safe theme CSS with error handling - TEMPORARILY DISABLED
+  let vipThemeCSS = "";
+  // DISABLED: This may be causing import issues
+  // try {
+  //   const { getThemeCSS } = useVipThemes();
+  //   vipThemeCSS = getThemeCSS() || "";
+  // } catch (error) {
+  //   console.error("Error loading VIP themes:", error);
+  //   vipThemeCSS = "";
+  // }
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -69,125 +88,67 @@ function App() {
     );
   }, [user, lastMessageId, lastPingTime]);
 
-  // Global private chat mention detection
+  // Global private chat mention detection - TEMPORARILY DISABLED to prevent quota issues
   useEffect(() => {
-    if (!user) return;
+    // DISABLED: This creates excessive Firebase reads and can cause permission errors
+    // if (!user) return;
+    console.log(
+      "Private chat mention detection temporarily disabled to reduce Firebase quota usage"
+    );
 
-    // Get user's chat list first
-    const userChatsRef = doc(db, "userChats", user.uid);
-    const unsubUserChats = onSnapshot(userChatsRef, async (userChatsSnap) => {
-      if (!userChatsSnap.exists()) return;
-
-      const chatUids = userChatsSnap.data().chats || [];
-      const unsubscribes = [];
-
-      // Listen to each private chat
-      chatUids.forEach((otherUid) => {
-        const chatId = [user.uid, otherUid].sort().join("_");
-        const messagesRef = collection(
-          db,
-          "privateMessages",
-          chatId,
-          "messages"
-        );
-        const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
-
-        const unsub = onSnapshot(q, (snapshot) => {
-          if (snapshot.empty) return;
-
-          const latestMessage = snapshot.docs[0];
-          const messageData = latestMessage.data();
-
-          // Check if this is a new message
-          const messageId = `${chatId}-${latestMessage.id}`;
-          if (messageId === lastPrivateMessageId) return;
-
-          // Only ping if this is a very recent message (within last 30 seconds)
-          const messageTime = messageData.timestamp?.seconds
-            ? new Date(messageData.timestamp.seconds * 1000)
-            : new Date(messageData.timestamp);
-          const now = new Date();
-          const timeDiff = (now - messageTime) / 1000; // seconds
-
-          if (timeDiff > 30) {
-            // This is an old message, just set the ID and don't ping
-            startTransition(() => {
-              setLastPrivateMessageId(messageId);
-            });
-            return;
-          }
-
-          // Only ping if message is from someone else
-          if (messageData.from !== user.uid) {
-            startTransition(() => {
-              setLastPrivateMessageId(messageId);
-            });
-            // Debounce pings - only ping once every 2 seconds
-            const now = Date.now();
-            if (now - lastPingTime > 2000) {
-              startTransition(() => {
-                setLastPingTime(now);
-              });
-              playPing();
-            }
-          }
-        });
-
-        unsubscribes.push(unsub);
-      });
-
-      // Cleanup function
-      return () => {
-        unsubscribes.forEach((unsub) => unsub());
-      };
-    });
-
-    return () => {
-      unsubUserChats();
-    };
+    // TODO: Implement more efficient private chat notifications
+    // Consider using Firebase Cloud Messaging instead of realtime listeners
   }, [user, lastPrivateMessageId, lastPingTime]);
 
   // Load user's potion effects
   useEffect(() => {
-    if (!user) return;
+    if (!user || !user.uid) return;
+
     const userRef = doc(db, "users", user.uid);
-    const unsub = onSnapshot(userRef, (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        startTransition(() => {
-          setDarkModeUntil(
-            data.darkModeUntil && data.darkModeUntil > Date.now()
-              ? data.darkModeUntil
-              : null
-          );
-          setRetroUntil(
-            data.retroUntil && data.retroUntil > Date.now()
-              ? data.retroUntil
-              : null
-          );
-          setMirrorUntil(
-            data.mirrorUntil && data.mirrorUntil > Date.now()
-              ? data.mirrorUntil
-              : null
-          );
-          setSpeedUntil(
-            data.speedUntil && data.speedUntil > Date.now()
-              ? data.speedUntil
-              : null
-          );
-          setSlowMotionUntil(
-            data.slowMotionUntil && data.slowMotionUntil > Date.now()
-              ? data.slowMotionUntil
-              : null
-          );
-          setSparkleUntil(
-            data.sparkleUntil && data.sparkleUntil > Date.now()
-              ? data.sparkleUntil
-              : null
-          );
-        });
+    const unsub = onSnapshot(
+      userRef,
+      (userDoc) => {
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          startTransition(() => {
+            setDarkModeUntil(
+              data.darkModeUntil && data.darkModeUntil > Date.now()
+                ? data.darkModeUntil
+                : null
+            );
+            setRetroUntil(
+              data.retroUntil && data.retroUntil > Date.now()
+                ? data.retroUntil
+                : null
+            );
+            setMirrorUntil(
+              data.mirrorUntil && data.mirrorUntil > Date.now()
+                ? data.mirrorUntil
+                : null
+            );
+            setSpeedUntil(
+              data.speedUntil && data.speedUntil > Date.now()
+                ? data.speedUntil
+                : null
+            );
+            setSlowMotionUntil(
+              data.slowMotionUntil && data.slowMotionUntil > Date.now()
+                ? data.slowMotionUntil
+                : null
+            );
+            setSparkleUntil(
+              data.sparkleUntil && data.sparkleUntil > Date.now()
+                ? data.sparkleUntil
+                : null
+            );
+          });
+        }
+      },
+      (error) => {
+        console.warn("Error loading potion effects:", error);
+        // Don't fail the app if potion effects can't be loaded
       }
-    });
+    );
     return () => unsub();
   }, [user]);
 
@@ -233,6 +194,9 @@ function App() {
     <>
       {/* Global Potion Effects CSS */}
       <style>{`
+        /* VIP Themes */
+        ${vipThemeCSS}
+        
         /* Dark Mode Potion */
         ${
           darkModeUntil && darkModeUntil > Date.now()

@@ -13,25 +13,34 @@ const useUserRoles = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       // wait until user is shown and avalible , and aut has finished loading
-      if (loading || !user) return;
-      console.log("ingen bruker funnet");
+      if (loading) {
+        return; // Still loading auth, wait
+      }
+
+      if (!user) {
+        console.log("No user found, setting empty roles");
+        setRoles([]);
+        setRolesLoading(false);
+        return;
+      }
 
       try {
         const docRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(docRef);
-        const data = userDoc.data();
 
-        //   setUserRoles(data?.roles || []);
-        if (userDoc.exists() && data?.roles) {
-          setRoles(data.roles);
-          console.log("User roles fetched:", data.roles);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          const userRoles = data?.roles || [];
+          setRoles(userRoles);
+          console.log("User roles fetched:", userRoles);
         } else {
-          console.log("No roles found for user");
+          console.log("User document doesn't exist, setting empty roles");
           setRoles([]);
         }
-        //  catches error if there is any ishues fetching roles
       } catch (error) {
         console.error("Error fetching user roles:", error);
+        // Set empty roles on error to prevent app from hanging
+        setRoles([]);
       } finally {
         setRolesLoading(false);
       }
