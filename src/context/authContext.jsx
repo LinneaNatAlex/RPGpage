@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
             userData = { ...currentUser, ...userDoc.data() };
             setUser(userData);
           } else {
-            // If user document doesn't exist and email is not verified, 
+            // If user document doesn't exist and email is not verified,
             // don't set the user (they need to complete verification first)
             if (!currentUser.emailVerified) {
               setUser(null);

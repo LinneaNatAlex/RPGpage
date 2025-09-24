@@ -147,12 +147,12 @@ const SignUp = () => {
       await updateProfile(user, {
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
       });
-      
+
       // Upload image but don't save to Firestore yet
       const uploadedImageUrl = formData.profilePicture
         ? await uploadImage(formData.profilePicture)
         : "";
-      
+
       // Store user data in localStorage temporarily until email is verified
       const tempUserData = {
         uid: user.uid,
@@ -166,9 +166,9 @@ const SignUp = () => {
         currency: 1000, // Start with 1000 Nits
         inventory: [], // Legg til inventory-feltet fra start
       };
-      
-      localStorage.setItem('tempUserData', JSON.stringify(tempUserData));
-      
+
+      localStorage.setItem("tempUserData", JSON.stringify(tempUserData));
+
       await auth.currentUser.reload();
       navigate("/verify-email");
       setFormData(initialFormData);

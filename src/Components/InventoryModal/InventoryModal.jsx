@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
-import { doc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+import { cacheHelpers } from "../../utils/firebaseCache";
 import useUsers from "../../hooks/useUser";
 import GiftModal from "../TopBar/GiftModal";
 import BookViewer from "../BookViewer/BookViewer";
@@ -16,23 +27,37 @@ const InventoryModal = ({ open, onClose }) => {
   const [inventory, setInventory] = useState([]);
 
   // Load user data including inventory and infirmary status
+  // QUOTA OPTIMIZATION: Use polling instead of real-time listener
   useEffect(() => {
     if (!user) return;
-    const userRef = doc(db, "users", user.uid);
-    const unsub = onSnapshot(userRef, (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setInventory(data.inventory || []);
-        setInfirmary(data.infirmaryEnd && data.infirmaryEnd > Date.now());
+
+    const fetchUserData = async () => {
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setInventory(data.inventory || []);
+          setInfirmary(data.infirmaryEnd && data.infirmaryEnd > Date.now());
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
-    });
-    return () => unsub && unsub();
+    };
+
+    // Fetch initially
+    fetchUserData();
+
+    // Poll every 30 seconds instead of real-time listening
+    const interval = setInterval(fetchUserData, 30000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   if (!open) return null;
-  
+
   console.log("InventoryModal opened, inventory:", inventory);
-  
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
@@ -42,12 +67,15 @@ const InventoryModal = ({ open, onClose }) => {
             {inventory.map((item, idx) => {
               // Debug: Log ALL items to see what's in inventory
               console.log("Inventory item:", item);
-              
+
               // Debug: Log item data
-              if (item.name?.toLowerCase().includes("book") || item.type === "book") {
+              if (
+                item.name?.toLowerCase().includes("book") ||
+                item.type === "book"
+              ) {
                 console.log("Book item found:", item);
               }
-              
+
               // Mat og potions kan spises/drikkes
               const isEdible = item.type === "food" || item.type === "potion";
               let healAmount = 0;
@@ -57,17 +85,22 @@ const InventoryModal = ({ open, onClose }) => {
               if (item.type === "food" && typeof item.health === "number") {
                 healAmount = item.health;
               }
-              
+
               return (
-                <li key={idx} className={styles.inventoryItem} data-item-type={item.type}>
+                <li
+                  key={idx}
+                  className={styles.inventoryItem}
+                  data-item-type={item.type}
+                >
                   <div className={styles.itemInfo}>
                     <span className={styles.itemName}>{item.name}</span> x
                     {item.qty || 1}
-                    {typeof item.health === "number" && item.type === "food" && (
-                      <span style={{ color: "#6f6", marginLeft: 6 }}>
-                        (+{item.health} HP)
-                      </span>
-                    )}
+                    {typeof item.health === "number" &&
+                      item.type === "food" && (
+                        <span style={{ color: "#6f6", marginLeft: 6 }}>
+                          (+{item.health} HP)
+                        </span>
+                      )}
                   </div>
                   <div className={styles.itemButtons}>
                     {/* Gift button */}
@@ -88,13 +121,18 @@ const InventoryModal = ({ open, onClose }) => {
                         const userDoc = await getDoc(userRef);
                         if (!userDoc.exists()) return;
                         let inv = userDoc.data().inventory || [];
-                        const invIdx = inv.findIndex((i) => i.name === item.name);
+                        const invIdx = inv.findIndex(
+                          (i) => i.name === item.name
+                        );
                         if (invIdx === -1) return;
                         inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
                         if (inv[invIdx].qty <= 0) {
                           inv.splice(invIdx, 1);
                         }
                         await updateDoc(userRef, { inventory: inv });
+
+                        // Clear cache after inventory update
+                        cacheHelpers.clearUserCache(user.uid);
                       }}
                     >
                       ✕
@@ -109,7 +147,9 @@ const InventoryModal = ({ open, onClose }) => {
                           if (!userDoc.exists()) return;
                           const data = userDoc.data();
                           let inv = data.inventory || [];
-                          const invIdx = inv.findIndex((i) => i.name === item.name);
+                          const invIdx = inv.findIndex(
+                            (i) => i.name === item.name
+                          );
                           if (invIdx === -1) return;
                           inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
                           if (inv[invIdx].qty <= 0) inv.splice(invIdx, 1);
@@ -117,8 +157,9 @@ const InventoryModal = ({ open, onClose }) => {
                             inventory: inv,
                             lastHealthUpdate: Date.now(),
                           };
-                          const realName = item.originalName || item.realItem || item.name;
-                          
+                          const realName =
+                            item.originalName || item.realItem || item.name;
+
                           if (realName === "Death Draught") {
                             update.health = 0;
                             update.infirmaryEnd = Date.now() + 20 * 60 * 1000;
@@ -140,15 +181,21 @@ const InventoryModal = ({ open, onClose }) => {
                                 if (!notifSnap.empty) {
                                   const notifDoc = notifSnap.docs
                                     .map((d) => d)
-                                    .sort((a, b) => b.data().created - a.data().created)[0];
+                                    .sort(
+                                      (a, b) =>
+                                        b.data().created - a.data().created
+                                    )[0];
                                   const notif = notifDoc.data();
                                   if (notif && notif.from) {
                                     giver = notif.from;
-                                    await updateDoc(doc(db, "notifications", notifDoc.id), { read: true });
+                                    await updateDoc(
+                                      doc(db, "notifications", notifDoc.id),
+                                      { read: true }
+                                    );
                                   }
                                 }
                               } catch (e) {
-                                console.error('Error finding notification:', e);
+                                console.error("Error finding notification:", e);
                                 giver = "Unknown";
                               }
                             }
@@ -156,47 +203,60 @@ const InventoryModal = ({ open, onClose }) => {
                             update.inLoveUntil = Date.now() + 60 * 60 * 1000;
                             update.inLoveWith = giver;
                           } else if (realName === "Hair Color Potion") {
-                            update.hairColorUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.hairColorUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Rainbow Potion") {
                             update.rainbowUntil = Date.now() + 60 * 60 * 1000;
                           } else if (realName === "Glow Potion") {
                             update.glowUntil = Date.now() + 3 * 60 * 60 * 1000;
                           } else if (realName === "Sparkle Potion") {
-                            update.sparkleUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.sparkleUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Translation Potion") {
-                            update.translationUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.translationUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Echo Potion") {
                             update.echoUntil = Date.now() + 60 * 60 * 1000;
                           } else if (realName === "Whisper Potion") {
-                            update.whisperUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.whisperUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Shout Potion") {
                             update.shoutUntil = Date.now() + 15 * 60 * 1000;
                           } else if (realName === "Dark Mode Potion") {
-                            update.darkModeUntil = Date.now() + 24 * 60 * 60 * 1000;
+                            update.darkModeUntil =
+                              Date.now() + 24 * 60 * 60 * 1000;
                           } else if (realName === "Retro Potion") {
                             update.retroUntil = Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Mirror Potion") {
-                            update.mirrorUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.mirrorUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Speed Potion") {
                             update.speedUntil = Date.now() + 15 * 60 * 1000;
                           } else if (realName === "Slow Motion Potion") {
-                            update.slowMotionUntil = Date.now() + 60 * 60 * 1000;
+                            update.slowMotionUntil =
+                              Date.now() + 60 * 60 * 1000;
                           } else if (realName === "Lucky Potion") {
                             update.luckyUntil = Date.now() + 3 * 60 * 60 * 1000;
                           } else if (realName === "Wisdom Potion") {
-                            update.wisdomUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.wisdomUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Surveillance Potion") {
-                            update.surveillanceUntil = Date.now() + 60 * 60 * 1000;
+                            update.surveillanceUntil =
+                              Date.now() + 60 * 60 * 1000;
                           } else if (realName === "Charm Potion") {
                             update.charmUntil = Date.now() + 2 * 60 * 60 * 1000;
                           } else if (realName === "Mystery Potion") {
-                            update.mysteryUntil = Date.now() + 2 * 60 * 60 * 1000;
+                            update.mysteryUntil =
+                              Date.now() + 2 * 60 * 60 * 1000;
                           } else {
                             let newHealth = (data.health || 100) + healAmount;
                             if (newHealth > 100) newHealth = 100;
                             update.health = newHealth;
                           }
                           await updateDoc(userRef, update);
+
+                          // Clear cache after user data update
+                          cacheHelpers.clearUserCache(user.uid);
                         }}
                       >
                         {item.name === "Death Draught" ||
@@ -225,33 +285,39 @@ const InventoryModal = ({ open, onClose }) => {
                       </button>
                     )}
                     {/* Read button for books - only show if book has proper content */}
-                    {(item.type === "book" && 
-                      item.pages && 
-                      Array.isArray(item.pages) && 
-                      item.pages.length > 0) && (
-                      <button
-                        className={styles.readBtn}
-                        title="Read this book"
-                        onClick={() => {
-                          console.log("Read button clicked for:", item);
-                          setBookViewer({ open: true, book: item });
-                        }}
-                        style={{ 
-                          background: '#8B4513', 
-                          color: 'white', 
-                          border: '2px solid #D4C4A8',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
+                    {item.type === "book" &&
+                      item.pages &&
+                      Array.isArray(item.pages) &&
+                      item.pages.length > 0 && (
+                        <button
+                          className={styles.readBtn}
+                          title="Read this book"
+                          onClick={() => {
+                            console.log("Read button clicked for:", item);
+                            setBookViewer({ open: true, book: item });
+                          }}
+                          style={{
+                            background: "#8B4513",
+                            color: "white",
+                            border: "2px solid #D4C4A8",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          📖 Read
+                        </button>
+                      )}
+                    {/* Debug: Show item type */}
+                    {process.env.NODE_ENV === "development" && (
+                      <span
+                        style={{
+                          fontSize: "10px",
+                          color: "#888",
+                          marginLeft: "4px",
                         }}
                       >
-                        📖 Read
-                      </button>
-                    )}
-                    {/* Debug: Show item type */}
-                    {process.env.NODE_ENV === 'development' && (
-                      <span style={{ fontSize: '10px', color: '#888', marginLeft: '4px' }}>
-                        Type: {item.type || 'undefined'}
+                        Type: {item.type || "undefined"}
                       </span>
                     )}
                   </div>
@@ -266,7 +332,7 @@ const InventoryModal = ({ open, onClose }) => {
           Close
         </button>
       </div>
-      
+
       <GiftModal
         open={giftModal.open}
         onClose={() => setGiftModal({ open: false, item: null })}
@@ -285,6 +351,10 @@ const InventoryModal = ({ open, onClose }) => {
           inv[idx].qty = (inv[idx].qty || 1) - 1;
           if (inv[idx].qty <= 0) inv.splice(idx, 1);
           await updateDoc(userRef, { inventory: inv });
+
+          // Clear cache after inventory update
+          cacheHelpers.clearUserCache(user.uid);
+
           // Add to recipient
           const toRef = doc(db, "users", toUser.uid);
           const toDoc = await getDoc(toRef);
@@ -346,11 +416,13 @@ const InventoryModal = ({ open, onClose }) => {
           // Add notification
           await addDoc(collection(db, "notifications"), {
             to: toUser.uid,
-            from: user.displayName && user.displayName.trim()
-              ? user.displayName
-              : user.email || "Unknown",
+            from:
+              user.displayName && user.displayName.trim()
+                ? user.displayName
+                : user.email || "Unknown",
             item: disguise?.name || giftModal.item.name,
-            disguised: giftModal.item.name !== (disguise?.name || giftModal.item.name),
+            disguised:
+              giftModal.item.name !== (disguise?.name || giftModal.item.name),
             realItem: giftModal.item.name,
             read: false,
             created: Date.now(),

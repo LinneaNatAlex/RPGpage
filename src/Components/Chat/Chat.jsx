@@ -13,6 +13,7 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
+  getDoc,
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
@@ -36,7 +37,7 @@ const Chat = () => {
     const stored = localStorage.getItem("mainChatCollapsed");
     return stored === null ? true : stored === "true";
   });
-  
+
   // Potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
   const [rainbowUntil, setRainbowUntil] = useState(null);
@@ -48,98 +49,173 @@ const Chat = () => {
   const [mysteryUntil, setMysteryUntil] = useState(null);
   const [charmUntil, setCharmUntil] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
-  const [rainbowColor, setRainbowColor] = useState('#ff6b6b');
-  
+  const [rainbowColor, setRainbowColor] = useState("#ff6b6b");
+
   // Rainbow Potion effect - change color every 10 seconds
   useEffect(() => {
     if (!rainbowUntil || rainbowUntil <= Date.now()) return;
-    
+
     const interval = setInterval(() => {
       setRainbowColor(getRandomColor());
     }, 10000); // Change every 10 seconds
-    
+
     return () => clearInterval(interval);
   }, [rainbowUntil]);
-  
+
   // Oppdater localStorage når isCollapsed endres
   useEffect(() => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
   }, [isCollapsed]);
-  
+
   // Note: Notification permission handled globally in App.jsx
 
   // Load user's potion effects
+  // QUOTA OPTIMIZATION: Use polling instead of real-time listener
   useEffect(() => {
     if (!auth.currentUser) return;
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    const unsub = onSnapshot(userRef, (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
-        setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
-        setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
-        setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
-        setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
-        setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
-        setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
-        setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
-        setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
-        setInLoveUntil(data.inLoveUntil && data.inLoveUntil > Date.now() ? data.inLoveUntil : null);
+
+    const fetchUserPotions = async () => {
+      try {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setHairColorUntil(
+            data.hairColorUntil && data.hairColorUntil > Date.now()
+              ? data.hairColorUntil
+              : null
+          );
+          setRainbowUntil(
+            data.rainbowUntil && data.rainbowUntil > Date.now()
+              ? data.rainbowUntil
+              : null
+          );
+          setGlowUntil(
+            data.glowUntil && data.glowUntil > Date.now()
+              ? data.glowUntil
+              : null
+          );
+          setTranslationUntil(
+            data.translationUntil && data.translationUntil > Date.now()
+              ? data.translationUntil
+              : null
+          );
+          setEchoUntil(
+            data.echoUntil && data.echoUntil > Date.now()
+              ? data.echoUntil
+              : null
+          );
+          setWhisperUntil(
+            data.whisperUntil && data.whisperUntil > Date.now()
+              ? data.whisperUntil
+              : null
+          );
+          setShoutUntil(
+            data.shoutUntil && data.shoutUntil > Date.now()
+              ? data.shoutUntil
+              : null
+          );
+          setMysteryUntil(
+            data.mysteryUntil && data.mysteryUntil > Date.now()
+              ? data.mysteryUntil
+              : null
+          );
+          setCharmUntil(
+            data.charmUntil && data.charmUntil > Date.now()
+              ? data.charmUntil
+              : null
+          );
+          setInLoveUntil(
+            data.inLoveUntil && data.inLoveUntil > Date.now()
+              ? data.inLoveUntil
+              : null
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching user potions:", error);
       }
-    });
-    return () => unsub();
+    };
+
+    // Fetch initially
+    fetchUserPotions();
+
+    // Poll every 60 seconds for potion effects
+    const interval = setInterval(fetchUserPotions, 60000);
+
+    return () => clearInterval(interval);
   }, []);
   const chatBoxRef = useRef(null);
 
   // Helper functions for potion effects
   const getRandomColor = () => {
-    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
+    const colors = [
+      "#ff6b6b",
+      "#4ecdc4",
+      "#45b7d1",
+      "#96ceb4",
+      "#feca57",
+      "#ff9ff3",
+      "#54a0ff",
+      "#5f27cd",
+    ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
   const translateText = (text) => {
     const translations = {
-      'hello': 'hola', 'hi': 'ciao', 'goodbye': 'adios', 'thanks': 'gracias',
-      'yes': 'si', 'no': 'nein', 'maybe': 'peut-être', 'love': 'amour',
-      'friend': 'ami', 'magic': 'magie', 'potion': 'poción', 'wizard': 'mago'
+      hello: "hola",
+      hi: "ciao",
+      goodbye: "adios",
+      thanks: "gracias",
+      yes: "si",
+      no: "nein",
+      maybe: "peut-être",
+      love: "amour",
+      friend: "ami",
+      magic: "magie",
+      potion: "poción",
+      wizard: "mago",
     };
-    return text.split(' ').map(word => {
-      const lower = word.toLowerCase().replace(/[^\w]/g, '');
-      return translations[lower] || word;
-    }).join(' ');
+    return text
+      .split(" ")
+      .map((word) => {
+        const lower = word.toLowerCase().replace(/[^\w]/g, "");
+        return translations[lower] || word;
+      })
+      .join(" ");
   };
 
   const getMessageStyle = (message) => {
     let style = {};
-    
+
     // Check if message has potion effects stored
     if (message.potionEffects) {
       // Hair Color Potion
       if (message.potionEffects.hairColor) {
         style.color = message.potionEffects.hairColor;
       }
-      
+
       // Rainbow Potion
       if (message.potionEffects.rainbow) {
         style.color = message.potionEffects.rainbowColor;
       }
-      
+
       // Shout Potion
       if (message.potionEffects.shout) {
-        style.textTransform = 'uppercase';
-        style.fontWeight = 'bold';
+        style.textTransform = "uppercase";
+        style.fontWeight = "bold";
       }
     }
-    
+
     return style;
   };
 
   const getDisplayName = (message) => {
     // Check if message has potion effects stored
     if (message.potionEffects && message.potionEffects.mystery) {
-      return '???';
+      return "???";
     }
-    
+
     return message.sender;
   };
 
@@ -148,7 +224,7 @@ const Chat = () => {
     if (message.potionEffects && message.potionEffects.translation) {
       return translateText(text);
     }
-    
+
     return text;
   };
 
@@ -185,18 +261,18 @@ const Chat = () => {
   const sendtMessage = async (e) => {
     e.preventDefault();
     if (!newMess.trim()) return;
-    
+
     // Whisper Potion - only allow private messages
     if (whisperUntil && whisperUntil > Date.now()) {
-      if (!newMess.toLowerCase().includes('@')) {
+      if (!newMess.toLowerCase().includes("@")) {
         setError("Whisper Potion active: You can only send private messages!");
         return;
       }
     }
-    
+
     try {
       const messageText = newMess;
-      
+
       // Prepare potion effects for this message
       const potionEffects = {};
       if (hairColorUntil && hairColorUntil > Date.now()) {
@@ -224,28 +300,31 @@ const Chat = () => {
       if (inLoveUntil && inLoveUntil > Date.now()) {
         potionEffects.love = true;
       }
-      
+
       // Echo Potion - send message twice
       if (echoUntil && echoUntil > Date.now()) {
         await addDoc(collection(db, "messages"), {
           text: messageText,
           sender: auth.currentUser?.displayName || "",
           timestamp: serverTimestamp(),
-          potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+          potionEffects:
+            Object.keys(potionEffects).length > 0 ? potionEffects : null,
         });
         // Send echo
         await addDoc(collection(db, "messages"), {
           text: messageText,
           sender: auth.currentUser?.displayName || "",
           timestamp: serverTimestamp(),
-          potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+          potionEffects:
+            Object.keys(potionEffects).length > 0 ? potionEffects : null,
         });
       } else {
         await addDoc(collection(db, "messages"), {
           text: messageText,
           sender: auth.currentUser?.displayName || "",
           timestamp: serverTimestamp(),
-          potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+          potionEffects:
+            Object.keys(potionEffects).length > 0 ? potionEffects : null,
         });
       }
       setNewMess("");
@@ -330,7 +409,9 @@ const Chat = () => {
           }}
           onClick={() => setIsCollapsed((prev) => !prev)}
         >
-          <span style={{ flex: 1, color: "#F5EFE0", fontWeight: 600 }}>Chat</span>
+          <span style={{ flex: 1, color: "#F5EFE0", fontWeight: 600 }}>
+            Chat
+          </span>
           <button
             style={{
               background: "none",
@@ -366,14 +447,18 @@ const Chat = () => {
                 marginBottom: "1rem",
               }}
             >
-              <h3 style={{
-                color: "#F5EFE0",
-                fontSize: "1.2rem",
-                fontWeight: 600,
-                margin: 0,
-                fontFamily: '"Cinzel", serif',
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-              }}>Main Chat</h3>
+              <h3
+                style={{
+                  color: "#F5EFE0",
+                  fontSize: "1.2rem",
+                  fontWeight: 600,
+                  margin: 0,
+                  fontFamily: '"Cinzel", serif',
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                }}
+              >
+                Main Chat
+              </h3>
             </div>
           )}
           <div className={styles.chatMessages} ref={chatBoxRef}>
@@ -449,18 +534,24 @@ const Chat = () => {
                         )}
                       </span>
                     )}
-                    <strong 
+                    <strong
                       className={roleClass}
                       style={{
-                        ...(message.potionEffects && message.potionEffects.glow ? {
-                          textShadow: '0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700',
-                          color: '#ffd700'
-                        } : {}),
-                        ...(message.potionEffects && message.potionEffects.charm ? {
-                          textShadow: '0 0 8px #ff69b4, 0 0 16px #ff1493, 0 0 24px #ff69b4',
-                          color: '#ff69b4',
-                          position: 'relative'
-                        } : {})
+                        ...(message.potionEffects && message.potionEffects.glow
+                          ? {
+                              textShadow:
+                                "0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700",
+                              color: "#ffd700",
+                            }
+                          : {}),
+                        ...(message.potionEffects && message.potionEffects.charm
+                          ? {
+                              textShadow:
+                                "0 0 8px #ff69b4, 0 0 16px #ff1493, 0 0 24px #ff69b4",
+                              color: "#ff69b4",
+                              position: "relative",
+                            }
+                          : {}),
                       }}
                     >
                       {getDisplayName(message)
@@ -473,8 +564,12 @@ const Chat = () => {
                             return "";
                           })()
                         : ""}
-                      {message.potionEffects && message.potionEffects.charm && " 💕"}
-                      {message.potionEffects && message.potionEffects.love && " 💖"}
+                      {message.potionEffects &&
+                        message.potionEffects.charm &&
+                        " 💕"}
+                      {message.potionEffects &&
+                        message.potionEffects.love &&
+                        " 💖"}
                     </strong>
                   </span>
                   {/* Uthev @mentions og @all i meldingen */}
@@ -495,26 +590,28 @@ const Chat = () => {
                     style={getMessageStyle(message)}
                   >
                     :{" "}
-                    {getDisplayText(message.text, message)?.split(/(\s+)/).map((part, i) => {
-                      if (
-                        part.toLowerCase() ===
-                        `@${auth.currentUser?.displayName?.toLowerCase()}`
-                      ) {
-                        return (
-                          <span key={i} className={styles.mentionHighlight}>
-                            {part}
-                          </span>
-                        );
-                      }
-                      if (part.toLowerCase() === "@all") {
-                        return (
-                          <span key={i} className={styles.mentionAll}>
-                            {part}
-                          </span>
-                        );
-                      }
-                      return part;
-                    })}
+                    {getDisplayText(message.text, message)
+                      ?.split(/(\s+)/)
+                      .map((part, i) => {
+                        if (
+                          part.toLowerCase() ===
+                          `@${auth.currentUser?.displayName?.toLowerCase()}`
+                        ) {
+                          return (
+                            <span key={i} className={styles.mentionHighlight}>
+                              {part}
+                            </span>
+                          );
+                        }
+                        if (part.toLowerCase() === "@all") {
+                          return (
+                            <span key={i} className={styles.mentionAll}>
+                              {part}
+                            </span>
+                          );
+                        }
+                        return part;
+                      })}
                   </span>
                 </div>
               );

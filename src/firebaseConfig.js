@@ -25,6 +25,19 @@ export const db = initializeFirestore(app, {
 
 export const storage = getStorage(app);
 
+// Suppress emulator warnings in development
+if (import.meta.env.DEV) {
+  // This suppresses the emulator connection warnings
+  console.warn = function(message) {
+    if (typeof message === 'string' && message.includes('emulator')) {
+      return; // Suppress emulator warnings
+    }
+    // Call original console.warn for other messages
+    console._warn.apply(console, arguments);
+  };
+  console._warn = console.warn;
+}
+
 console.log("DB:", db);
 
 export const getUserTerms = async () => {

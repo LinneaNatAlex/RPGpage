@@ -29,7 +29,7 @@ const VerifyEmail = () => {
 
       if (auth.currentUser.emailVerified) {
         // Save user data to Firestore when email is verified
-        const tempUserData = localStorage.getItem('tempUserData');
+        const tempUserData = localStorage.getItem("tempUserData");
         if (tempUserData && !userDataSaved) {
           try {
             const userData = JSON.parse(tempUserData);
@@ -40,11 +40,13 @@ const VerifyEmail = () => {
               online: true,
             });
             // Clear temporary data
-            localStorage.removeItem('tempUserData');
+            localStorage.removeItem("tempUserData");
             setUserDataSaved(true);
           } catch (error) {
             console.error("Error saving user data:", error);
-            setError("Failed to complete registration. Please contact support.");
+            setError(
+              "Failed to complete registration. Please contact support."
+            );
             return;
           }
         }

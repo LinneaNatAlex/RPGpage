@@ -92,7 +92,9 @@ const Navbar = () => {
                 <NavLink to="/forum/greenhouse">The Greenhouse</NavLink>
                 <NavLink to="/forum/artstudio">The Art Studio</NavLink>
                 <NavLink to="/forum/kitchen">Kitchen</NavLink>
-                <NavLink to="/forum/detentionclassroom">Detention Classroom</NavLink>
+                <NavLink to="/forum/detentionclassroom">
+                  Detention Classroom
+                </NavLink>
                 <NavLink to="/forum/16plus">18+ Forum</NavLink>
                 <NavLink to="/werewolf">Werewolf</NavLink>
               </div>
@@ -111,19 +113,33 @@ const Navbar = () => {
                 <NavLink to="/generalrules">General Rules</NavLink>
                 <NavLink to="/aiusagerules">AI Usage Rules</NavLink>
                 <NavLink to="/contentmediarules">Content & Media Rules</NavLink>
-                <NavLink to="/privacysafetyrules">Privacy & Safety Rules</NavLink>
-                <NavLink to="/accountidentityrules">Account & Identity Rules</NavLink>
-                <NavLink to="/communitybehaviorrules">Community & Behavior Rules</NavLink>
-                <NavLink to="/technicalsiterules">Technical & Site Rules</NavLink>
+                <NavLink to="/privacysafetyrules">
+                  Privacy & Safety Rules
+                </NavLink>
+                <NavLink to="/accountidentityrules">
+                  Account & Identity Rules
+                </NavLink>
+                <NavLink to="/communitybehaviorrules">
+                  Community & Behavior Rules
+                </NavLink>
+                <NavLink to="/technicalsiterules">
+                  Technical & Site Rules
+                </NavLink>
                 <NavLink to="/forumrules">Forum Rules</NavLink>
                 <NavLink to="/chatrules">Chat Rules</NavLink>
-                <NavLink to="/profilecontentrules">Profile Content Rules</NavLink>
-                <NavLink to="/roleplaycharacterrules">Roleplay & Character Rules</NavLink>
+                <NavLink to="/profilecontentrules">
+                  Profile Content Rules
+                </NavLink>
+                <NavLink to="/roleplaycharacterrules">
+                  Roleplay & Character Rules
+                </NavLink>
                 <NavLink to="/rpgrules">RPG Rules</NavLink>
                 <NavLink to="/livechatrpgrules">Live Chat RPG Rules</NavLink>
                 <NavLink to="/magicspellrules">Magic & Spell Rules</NavLink>
                 <NavLink to="/raceschoolrules">Race & School Rules</NavLink>
-                <NavLink to="/datingrelationshiprules">Dating & Relationship Rules</NavLink>
+                <NavLink to="/datingrelationshiprules">
+                  Dating & Relationship Rules
+                </NavLink>
                 <NavLink to="/18forumrules">18+ Forum Rules</NavLink>
               </div>
             </div>

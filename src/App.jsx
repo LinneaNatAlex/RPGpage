@@ -59,61 +59,14 @@ function App() {
     requestPermission();
   }, []);
 
-  // Global mention detection - listens to chat messages even when chat is not open
+  // Global mention detection - TEMPORARILY DISABLED to fix quota issues
   useEffect(() => {
-    if (!user) return;
-
-    const messagesRef = collection(db, "messages");
-    const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
-
-    const unsub = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) return;
-
-      const latestMessage = snapshot.docs[0];
-      const messageData = latestMessage.data();
-
-      // Only check if this is a new message (not the same as last one)
-      if (latestMessage.id === lastMessageId) return;
-
-      // Only ping if this is a very recent message (within last 30 seconds)
-      const messageTime = messageData.timestamp?.seconds
-        ? new Date(messageData.timestamp.seconds * 1000)
-        : new Date(messageData.timestamp);
-      const now = new Date();
-      const timeDiff = (now - messageTime) / 1000; // seconds
-
-      if (timeDiff > 30) {
-        // This is an old message, just set the ID and don't ping
-        startTransition(() => {
-          setLastMessageId(latestMessage.id);
-        });
-        return;
-      }
-
-      startTransition(() => {
-        setLastMessageId(latestMessage.id);
-      });
-
-      // Check if user is mentioned
-      const myName = user.displayName?.toLowerCase();
-      if (
-        messageData.text &&
-        messageData.sender?.toLowerCase() !== myName &&
-        (messageData.text.toLowerCase().includes(`@${myName}`) ||
-          messageData.text.toLowerCase().includes("@all"))
-      ) {
-        // Debounce pings - only ping once every 2 seconds
-        const now = Date.now();
-        if (now - lastPingTime > 2000) {
-          startTransition(() => {
-            setLastPingTime(now);
-          });
-          playPing();
-        }
-      }
-    });
-
-    return () => unsub();
+    // DISABLED: This creates excessive Firebase reads
+    // if (!user) return;
+    // TODO: Implement with batch reads instead of realtime listeners
+    console.log(
+      "Global mention detection temporarily disabled to reduce Firebase quota usage"
+    );
   }, [user, lastMessageId, lastPingTime]);
 
   // Global private chat mention detection

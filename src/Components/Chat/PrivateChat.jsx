@@ -35,19 +35,27 @@ function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
             onClick={async (e) => {
               e.preventDefault();
               setOpen(false);
-              if (!window.confirm("Slett denne meldingen?")) return;
-              
+
               try {
                 const chatId = [currentUser.uid, selectedUser.uid]
                   .sort()
                   .join("_");
                 const { deleteDoc, doc } = await import("firebase/firestore");
-                
+
                 // Use the message ID directly for deletion
                 if (message.id) {
-                  const messageRef = doc(db, "privateMessages", chatId, "messages", message.id);
+                  const messageRef = doc(
+                    db,
+                    "privateMessages",
+                    chatId,
+                    "messages",
+                    message.id
+                  );
                   await deleteDoc(messageRef);
-                  console.log("Message deleted successfully from Firestore using ID:", message.id);
+                  console.log(
+                    "Message deleted successfully from Firestore using ID:",
+                    message.id
+                  );
                 } else {
                   console.error("Message ID not found, cannot delete");
                   alert("Kunne ikke slette meldingen - mangler ID.");
@@ -118,7 +126,7 @@ const PrivateChat = () => {
   }, [isCollapsed]);
   const [search, setSearch] = useState("");
   const [activeChats, setActiveChats] = useState([]); // [{user, messages: []}]
-  
+
   // Potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
   const [rainbowUntil, setRainbowUntil] = useState(null);
@@ -130,59 +138,128 @@ const PrivateChat = () => {
   const [mysteryUntil, setMysteryUntil] = useState(null);
   const [charmUntil, setCharmUntil] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
-  const [rainbowColor, setRainbowColor] = useState('#ff6b6b');
-  
+  const [rainbowColor, setRainbowColor] = useState("#ff6b6b");
+
   // Helper functions for potion effects
   const getRandomColor = () => {
-    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
+    const colors = [
+      "#ff6b6b",
+      "#4ecdc4",
+      "#45b7d1",
+      "#96ceb4",
+      "#feca57",
+      "#ff9ff3",
+      "#54a0ff",
+      "#5f27cd",
+    ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
   const translateText = (text) => {
     const translations = {
-      'hello': 'hola', 'hi': 'ciao', 'goodbye': 'adios', 'thanks': 'gracias',
-      'yes': 'si', 'no': 'nein', 'maybe': 'peut-être', 'love': 'amour',
-      'friend': 'ami', 'magic': 'magie', 'potion': 'poción', 'wizard': 'mago'
+      hello: "hola",
+      hi: "ciao",
+      goodbye: "adios",
+      thanks: "gracias",
+      yes: "si",
+      no: "nein",
+      maybe: "peut-être",
+      love: "amour",
+      friend: "ami",
+      magic: "magie",
+      potion: "poción",
+      wizard: "mago",
     };
-    return text.split(' ').map(word => {
-      const lower = word.toLowerCase().replace(/[^\w]/g, '');
-      return translations[lower] || word;
-    }).join(' ');
+    return text
+      .split(" ")
+      .map((word) => {
+        const lower = word.toLowerCase().replace(/[^\w]/g, "");
+        return translations[lower] || word;
+      })
+      .join(" ");
   };
 
-  // Load user's potion effects
+  // Load user's potion effects - fetch once instead of listening
   useEffect(() => {
     if (!auth.currentUser) return;
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    const unsub = onSnapshot(userRef, (userDoc) => {
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
-        setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
-        setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
-        setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
-        setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
-        setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
-        setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
-        setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
-        setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
-        setInLoveUntil(data.inLoveUntil && data.inLoveUntil > Date.now() ? data.inLoveUntil : null);
+    const fetchPotionEffects = async () => {
+      try {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setHairColorUntil(
+            data.hairColorUntil && data.hairColorUntil > Date.now()
+              ? data.hairColorUntil
+              : null
+          );
+          setRainbowUntil(
+            data.rainbowUntil && data.rainbowUntil > Date.now()
+              ? data.rainbowUntil
+              : null
+          );
+          setGlowUntil(
+            data.glowUntil && data.glowUntil > Date.now()
+              ? data.glowUntil
+              : null
+          );
+          setTranslationUntil(
+            data.translationUntil && data.translationUntil > Date.now()
+              ? data.translationUntil
+              : null
+          );
+          setEchoUntil(
+            data.echoUntil && data.echoUntil > Date.now()
+              ? data.echoUntil
+              : null
+          );
+          setWhisperUntil(
+            data.whisperUntil && data.whisperUntil > Date.now()
+              ? data.whisperUntil
+              : null
+          );
+          setShoutUntil(
+            data.shoutUntil && data.shoutUntil > Date.now()
+              ? data.shoutUntil
+              : null
+          );
+          setMysteryUntil(
+            data.mysteryUntil && data.mysteryUntil > Date.now()
+              ? data.mysteryUntil
+              : null
+          );
+          setCharmUntil(
+            data.charmUntil && data.charmUntil > Date.now()
+              ? data.charmUntil
+              : null
+          );
+          setInLoveUntil(
+            data.inLoveUntil && data.inLoveUntil > Date.now()
+              ? data.inLoveUntil
+              : null
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching potion effects:", error);
       }
-    });
-    return () => unsub();
+    };
+    fetchPotionEffects();
+    // Refresh every 5 minutes instead of real-time listening
+    const interval = setInterval(fetchPotionEffects, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // Rainbow Potion effect - change color every 10 seconds
   useEffect(() => {
     if (!rainbowUntil || rainbowUntil <= Date.now()) return;
-    
+
     const interval = setInterval(() => {
       setRainbowColor(getRandomColor());
     }, 10000); // Change every 10 seconds
-    
+
     return () => clearInterval(interval);
   }, [rainbowUntil]);
-  
+
   // Skjulte brukere (uid-array), lagres i localStorage
   const [hiddenChats, setHiddenChats] = useState(() => {
     try {
@@ -203,7 +280,6 @@ const PrivateChat = () => {
   const chatBoxRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
-  
 
   // Load active chats from Firestore on mount
   useEffect(() => {
@@ -225,51 +301,12 @@ const PrivateChat = () => {
     fetchChats();
   }, [currentUser, users]);
 
-  // Listen for messages for each active chat (for unread badges etc)
-  useEffect(() => {
-    if (!currentUser || !chatLoaded) return;
-    const unsubscribes = activeChats.map((chat, idx) => {
-      const chatId = [currentUser.uid, chat.user.uid].sort().join("_");
-      const q = query(
-        collection(db, "privateMessages", chatId, "messages"),
-        orderBy("timestamp")
-      );
-      let prevMessages = chat.messages || [];
-      let firstRun = true;
-      return onSnapshot(q, (snapshot) => {
-        const newMessages = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setActiveChats((prev) => {
-          const updated = [...prev];
-          updated[idx] = {
-            ...chat,
-            messages: newMessages,
-          };
-          return updated;
-        });
-        // Skip notifications on the initial snapshot to avoid login-time pings
-        if (firstRun) {
-          firstRun = false;
-          prevMessages = newMessages;
-          return;
-        }
-        if (newMessages.length > prevMessages.length) {
-          const latestMessage = newMessages[newMessages.length - 1];
-          // Note: Ping functionality moved to global App.jsx
-        }
-        prevMessages = newMessages;
-      });
-    });
-    return () => {
-      unsubscribes.forEach((unsub) => unsub());
-    };
-  }, [currentUser, chatLoaded, activeChats]);
+  // Optimized: Only listen for messages from the currently selected chat
+  // Remove the multiple listeners for all active chats to reduce Firebase quota usage
 
-  // Always listen for messages for the selected user
+  // Only listen for messages for the selected user when chat is open
   useEffect(() => {
-    if (!currentUser || !selectedUser) {
+    if (!currentUser || !selectedUser || isCollapsed) {
       setSelectedMessages([]);
       return;
     }
@@ -281,38 +318,41 @@ const PrivateChat = () => {
     return onSnapshot(q, (snapshot) => {
       const messages = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
-      console.log("Private chat messages updated:", messages.length, "messages", messages.map(m => ({ id: m.id, text: m.text })));
+      console.log(
+        "Private chat messages updated:",
+        messages.length,
+        "messages"
+      );
       setSelectedMessages(messages);
     });
-  }, [currentUser, selectedUser]);
-  
+  }, [currentUser, selectedUser, isCollapsed]);
+
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;
   if (loading) return <div>Loading...</div>;
-  
+
   // Find the current user's full data from users array
-  const currentUserData = users ? users.find(u => u.uid === currentUser.uid) : null;
+  const currentUserData = users
+    ? users.find((u) => u.uid === currentUser.uid)
+    : null;
 
   // Filter users for search (exclude self and allerede synlige aktive chats, men IKKE skjulte)
-  const filteredUsers = search && users
-    ? users.filter(
-        (u) =>
-          u.uid !== currentUser.uid &&
-          (u.displayName || u.name || u.uid)
-            .toLowerCase()
-            .includes(search.toLowerCase()) &&
-          // Ikke vis brukere som allerede er synlige i activeChats (men vis skjulte)
-          !activeChats.some(
-            (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid)
-          )
-      )
-    : [];
-
-
-
-
+  const filteredUsers =
+    search && users
+      ? users.filter(
+          (u) =>
+            u.uid !== currentUser.uid &&
+            (u.displayName || u.name || u.uid)
+              .toLowerCase()
+              .includes(search.toLowerCase()) &&
+            // Ikke vis brukere som allerede er synlige i activeChats (men vis skjulte)
+            !activeChats.some(
+              (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid)
+            )
+        )
+      : [];
 
   // Add new private chat
   const addChat = async (user) => {
@@ -345,9 +385,15 @@ const PrivateChat = () => {
       // Edit existing message
       const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
       const { updateDoc, doc } = await import("firebase/firestore");
-      
+
       if (editingMessage.id) {
-        const messageRef = doc(db, "privateMessages", chatId, "messages", editingMessage.id);
+        const messageRef = doc(
+          db,
+          "privateMessages",
+          chatId,
+          "messages",
+          editingMessage.id
+        );
         await updateDoc(messageRef, { text: message });
         console.log("Message edited successfully using ID:", editingMessage.id);
       } else {
@@ -394,7 +440,8 @@ const PrivateChat = () => {
         from: currentUser.uid,
         to: selectedUser.uid,
         timestamp: serverTimestamp(),
-        potionEffects: Object.keys(potionEffects).length > 0 ? potionEffects : null,
+        potionEffects:
+          Object.keys(potionEffects).length > 0 ? potionEffects : null,
       });
 
       // Add each other in userChats for both sender and receiver
@@ -608,14 +655,18 @@ const PrivateChat = () => {
                 marginBottom: "1rem",
               }}
             >
-              <h3 style={{
-                color: "#F5EFE0",
-                fontSize: "1.2rem",
-                fontWeight: 600,
-                margin: 0,
-                fontFamily: '"Cinzel", serif',
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-              }}>Private Chat</h3>
+              <h3
+                style={{
+                  color: "#F5EFE0",
+                  fontSize: "1.2rem",
+                  fontWeight: 600,
+                  margin: 0,
+                  fontFamily: '"Cinzel", serif',
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                }}
+              >
+                Private Chat
+              </h3>
             </div>
           )}
           <div style={{ padding: "0.5rem 1rem" }}>
@@ -837,28 +888,38 @@ const PrivateChat = () => {
                         <img
                           src={
                             m.from === currentUser?.uid
-                              ? currentUserData?.profileImageUrl || "/icons/avatar.svg"
-                              : selectedUser.profileImageUrl || "/icons/avatar.svg"
+                              ? currentUserData?.profileImageUrl ||
+                                "/icons/avatar.svg"
+                              : selectedUser.profileImageUrl ||
+                                "/icons/avatar.svg"
                           }
                           alt="Profile"
                           className={styles.privateMessageProfilePic}
                         />
                         <div className={styles.privateMessageContent}>
-                          <div 
+                          <div
                             className={styles.privateMessageSender}
                             style={{
-                              ...(m.potionEffects && m.potionEffects.glow ? {
-                                textShadow: '0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700',
-                                color: '#ffd700'
-                              } : {}),
-                              ...(m.potionEffects && m.potionEffects.charm ? {
-                                textShadow: '0 0 8px #ff69b4, 0 0 16px #ff1493, 0 0 24px #ff69b4',
-                                color: '#ff69b4'
-                              } : {})
+                              ...(m.potionEffects && m.potionEffects.glow
+                                ? {
+                                    textShadow:
+                                      "0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700",
+                                    color: "#ffd700",
+                                  }
+                                : {}),
+                              ...(m.potionEffects && m.potionEffects.charm
+                                ? {
+                                    textShadow:
+                                      "0 0 8px #ff69b4, 0 0 16px #ff1493, 0 0 24px #ff69b4",
+                                    color: "#ff69b4",
+                                  }
+                                : {}),
                             }}
                           >
                             {m.from === currentUser?.uid
-                              ? (m.potionEffects && m.potionEffects.mystery ? "???" : "You")
+                              ? m.potionEffects && m.potionEffects.mystery
+                                ? "???"
+                                : "You"
                               : selectedUser.displayName ||
                                 selectedUser.name ||
                                 selectedUser.uid}
@@ -891,14 +952,29 @@ const PrivateChat = () => {
                               style={{
                                 display: "block",
                                 wordBreak: "break-word",
-                                ...(m.potionEffects ? {
-                                  ...(m.potionEffects.hairColor ? { color: m.potionEffects.hairColor } : {}),
-                                  ...(m.potionEffects.rainbow ? { color: m.potionEffects.rainbowColor } : {}),
-                                  ...(m.potionEffects.shout ? { textTransform: 'uppercase', fontWeight: 'bold' } : {})
-                                } : {})
+                                ...(m.potionEffects
+                                  ? {
+                                      ...(m.potionEffects.hairColor
+                                        ? { color: m.potionEffects.hairColor }
+                                        : {}),
+                                      ...(m.potionEffects.rainbow
+                                        ? {
+                                            color: m.potionEffects.rainbowColor,
+                                          }
+                                        : {}),
+                                      ...(m.potionEffects.shout
+                                        ? {
+                                            textTransform: "uppercase",
+                                            fontWeight: "bold",
+                                          }
+                                        : {}),
+                                    }
+                                  : {}),
                               }}
                             >
-                              {m.potionEffects && m.potionEffects.translation ? translateText(m.text) : m.text}
+                              {m.potionEffects && m.potionEffects.translation
+                                ? translateText(m.text)
+                                : m.text}
                             </span>
                           </div>
                           <div className={styles.privateMessageTimestamp}>

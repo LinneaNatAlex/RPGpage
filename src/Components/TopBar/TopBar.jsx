@@ -13,14 +13,22 @@ import {
   addDoc,
   query,
   where,
+  getDocs,
 } from "firebase/firestore";
 import { useRef } from "react";
 import GiftModal from "./GiftModal";
 import BookViewer from "../BookViewer/BookViewer";
 import useUsers from "../../hooks/useUser";
 import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
+import { cacheHelpers } from "../../utils/firebaseCache";
 
 import styles from "./TopBar.module.css";
+
+// Helper function to update user doc and clear cache
+const updateUserDocWithCacheClear = async (userRef, updates, userId) => {
+  await updateDoc(userRef, updates);
+  cacheHelpers.clearUserCache(userId);
+};
 
 function HealthBar({ health = 100, maxHealth = 100 }) {
   const percent = Math.max(0, Math.min(100, (health / maxHealth) * 100));
@@ -61,7 +69,7 @@ const TopBar = () => {
   const [inLoveUntil, setInLoveUntil] = useState(null);
   const [inLoveCountdown, setInLoveCountdown] = useState(0);
   const [magicalCursorEnabled, setMagicalCursorEnabled] = useState(true);
-  
+
   // New potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
   const [rainbowUntil, setRainbowUntil] = useState(null);
@@ -91,21 +99,21 @@ const TopBar = () => {
 
   useEffect(() => {
     if (!user) return;
-    const userRef = doc(db, "users", user.uid);
-    const unsub = onSnapshot(userRef, async (userDoc) => {
+
+    // QUOTA OPTIMIZATION: Use caching + polling instead of real-time listener
+    const fetchUserData = async () => {
       try {
-        if (userDoc.exists()) {
-          const data = userDoc.data();
+        // Check cache first
+        const cachedData = cacheHelpers.getUserData(user.uid);
+        if (cachedData) {
+          const data = cachedData;
           setBalance(data.currency ?? 1000);
           setInventory(data.inventory ?? []);
           setHealth(data.health ?? 100);
           setPoints(data.points ?? 0);
           setRoles(data.roles ?? []);
           setProfileImageUrl(data.profileImageUrl || null);
-          // Sett lastHealthUpdate første gang hvis mangler
-          if (!data.lastHealthUpdate) {
-            await updateDoc(userRef, { lastHealthUpdate: Date.now() });
-          }
+
           // Love Potion effect
           if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
             setInLoveWith(data.inLoveWith || "Someone");
@@ -114,27 +122,144 @@ const TopBar = () => {
             setInLoveWith(null);
             setInLoveUntil(null);
           }
-          
+
           // New potion effects
-          setHairColorUntil(data.hairColorUntil && data.hairColorUntil > Date.now() ? data.hairColorUntil : null);
-          setRainbowUntil(data.rainbowUntil && data.rainbowUntil > Date.now() ? data.rainbowUntil : null);
-          setGlowUntil(data.glowUntil && data.glowUntil > Date.now() ? data.glowUntil : null);
-          setSparkleUntil(data.sparkleUntil && data.sparkleUntil > Date.now() ? data.sparkleUntil : null);
-          setTranslationUntil(data.translationUntil && data.translationUntil > Date.now() ? data.translationUntil : null);
-          setEchoUntil(data.echoUntil && data.echoUntil > Date.now() ? data.echoUntil : null);
-          setWhisperUntil(data.whisperUntil && data.whisperUntil > Date.now() ? data.whisperUntil : null);
-          setShoutUntil(data.shoutUntil && data.shoutUntil > Date.now() ? data.shoutUntil : null);
-          setDarkModeUntil(data.darkModeUntil && data.darkModeUntil > Date.now() ? data.darkModeUntil : null);
-          setRetroUntil(data.retroUntil && data.retroUntil > Date.now() ? data.retroUntil : null);
-          setMirrorUntil(data.mirrorUntil && data.mirrorUntil > Date.now() ? data.mirrorUntil : null);
-          setSpeedUntil(data.speedUntil && data.speedUntil > Date.now() ? data.speedUntil : null);
-          setSlowMotionUntil(data.slowMotionUntil && data.slowMotionUntil > Date.now() ? data.slowMotionUntil : null);
-          setLuckyUntil(data.luckyUntil && data.luckyUntil > Date.now() ? data.luckyUntil : null);
-          setWisdomUntil(data.wisdomUntil && data.wisdomUntil > Date.now() ? data.wisdomUntil : null);
-          setSurveillanceUntil(data.surveillanceUntil && data.surveillanceUntil > Date.now() ? data.surveillanceUntil : null);
-          setCharmUntil(data.charmUntil && data.charmUntil > Date.now() ? data.charmUntil : null);
-          setMysteryUntil(data.mysteryUntil && data.mysteryUntil > Date.now() ? data.mysteryUntil : null);
-          
+          setHairColorUntil(
+            data.hairColorUntil && data.hairColorUntil > Date.now()
+              ? data.hairColorUntil
+              : null
+          );
+          setRainbowUntil(
+            data.rainbowUntil && data.rainbowUntil > Date.now()
+              ? data.rainbowUntil
+              : null
+          );
+          return; // Use cached data
+        }
+
+        // Fetch from Firebase if no cache
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+
+          // Cache the data
+          cacheHelpers.setUserData(user.uid, data);
+
+          setBalance(data.currency ?? 1000);
+          setInventory(data.inventory ?? []);
+          setHealth(data.health ?? 100);
+          setPoints(data.points ?? 0);
+          setRoles(data.roles ?? []);
+          setProfileImageUrl(data.profileImageUrl || null);
+
+          // Sett lastHealthUpdate første gang hvis mangler
+          if (!data.lastHealthUpdate) {
+            await updateDoc(userRef, { lastHealthUpdate: Date.now() });
+          }
+
+          // Love Potion effect
+          if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
+            setInLoveWith(data.inLoveWith || "Someone");
+            setInLoveUntil(data.inLoveUntil);
+          } else {
+            setInLoveWith(null);
+            setInLoveUntil(null);
+          }
+
+          // New potion effects
+          setHairColorUntil(
+            data.hairColorUntil && data.hairColorUntil > Date.now()
+              ? data.hairColorUntil
+              : null
+          );
+          setRainbowUntil(
+            data.rainbowUntil && data.rainbowUntil > Date.now()
+              ? data.rainbowUntil
+              : null
+          );
+          setGlowUntil(
+            data.glowUntil && data.glowUntil > Date.now()
+              ? data.glowUntil
+              : null
+          );
+          setSparkleUntil(
+            data.sparkleUntil && data.sparkleUntil > Date.now()
+              ? data.sparkleUntil
+              : null
+          );
+          setTranslationUntil(
+            data.translationUntil && data.translationUntil > Date.now()
+              ? data.translationUntil
+              : null
+          );
+          setEchoUntil(
+            data.echoUntil && data.echoUntil > Date.now()
+              ? data.echoUntil
+              : null
+          );
+          setWhisperUntil(
+            data.whisperUntil && data.whisperUntil > Date.now()
+              ? data.whisperUntil
+              : null
+          );
+          setShoutUntil(
+            data.shoutUntil && data.shoutUntil > Date.now()
+              ? data.shoutUntil
+              : null
+          );
+          setDarkModeUntil(
+            data.darkModeUntil && data.darkModeUntil > Date.now()
+              ? data.darkModeUntil
+              : null
+          );
+          setRetroUntil(
+            data.retroUntil && data.retroUntil > Date.now()
+              ? data.retroUntil
+              : null
+          );
+          setMirrorUntil(
+            data.mirrorUntil && data.mirrorUntil > Date.now()
+              ? data.mirrorUntil
+              : null
+          );
+          setSpeedUntil(
+            data.speedUntil && data.speedUntil > Date.now()
+              ? data.speedUntil
+              : null
+          );
+          setSlowMotionUntil(
+            data.slowMotionUntil && data.slowMotionUntil > Date.now()
+              ? data.slowMotionUntil
+              : null
+          );
+          setLuckyUntil(
+            data.luckyUntil && data.luckyUntil > Date.now()
+              ? data.luckyUntil
+              : null
+          );
+          setWisdomUntil(
+            data.wisdomUntil && data.wisdomUntil > Date.now()
+              ? data.wisdomUntil
+              : null
+          );
+          setSurveillanceUntil(
+            data.surveillanceUntil && data.surveillanceUntil > Date.now()
+              ? data.surveillanceUntil
+              : null
+          );
+          setCharmUntil(
+            data.charmUntil && data.charmUntil > Date.now()
+              ? data.charmUntil
+              : null
+          );
+          setMysteryUntil(
+            data.mysteryUntil && data.mysteryUntil > Date.now()
+              ? data.mysteryUntil
+              : null
+          );
+
           // Infirmary state
           if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
             setInfirmary(true);
@@ -143,7 +268,7 @@ const TopBar = () => {
             setInfirmary(false);
             setInfirmaryEnd(null);
           }
-          
+
           // Detention state
           if (data.detentionUntil && Date.now() < data.detentionUntil) {
             setDetentionUntil(data.detentionUntil);
@@ -157,16 +282,17 @@ const TopBar = () => {
           }
         }
       } catch (error) {
-        console.error("Error in TopBar useEffect:", error);
-      }
-    });
-    return () => {
-      try {
-        unsub && unsub();
-      } catch (error) {
-        console.warn("Error unsubscribing from user data:", error);
+        console.error("Error fetching user data:", error);
       }
     };
+
+    // Fetch initially
+    fetchUserData();
+
+    // Poll every 60 seconds instead of real-time listening
+    const interval = setInterval(fetchUserData, 60000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   // Love Potion countdown
@@ -206,23 +332,23 @@ const TopBar = () => {
         const hpToLose = Math.floor(elapsed / msPerHp);
         if (hpToLose > 0) {
           let newHealth = health - hpToLose * healthPerDecay;
-        let update = { lastHealthUpdate: now };
-        if (newHealth <= 0) {
-          newHealth = 0;
-          update.health = 0;
-          // Set infirmaryEnd to 20 minutes from now
-          update.infirmaryEnd = Date.now() + 20 * 60 * 1000;
-        } else {
-          update.health = newHealth;
+          let update = { lastHealthUpdate: now };
+          if (newHealth <= 0) {
+            newHealth = 0;
+            update.health = 0;
+            // Set infirmaryEnd to 20 minutes from now
+            update.infirmaryEnd = Date.now() + 20 * 60 * 1000;
+          } else {
+            update.health = newHealth;
+          }
+          await updateDoc(userRef, update);
+        } else if (!data.lastHealthUpdate) {
+          // Sett første gang
+          await updateDoc(userRef, { lastHealthUpdate: now });
         }
-        await updateDoc(userRef, update);
-      } else if (!data.lastHealthUpdate) {
-        // Sett første gang
-        await updateDoc(userRef, { lastHealthUpdate: now });
+      } catch (error) {
+        console.error("Error in decayHealth:", error);
       }
-    } catch (error) {
-      console.error("Error in decayHealth:", error);
-    }
     }
 
     decayHealth();
@@ -236,7 +362,10 @@ const TopBar = () => {
     setCountdown(Math.max(0, Math.floor((infirmaryEnd - Date.now()) / 1000)));
     const timer = setInterval(() => {
       try {
-        const secs = Math.max(0, Math.floor((infirmaryEnd - Date.now()) / 1000));
+        const secs = Math.max(
+          0,
+          Math.floor((infirmaryEnd - Date.now()) / 1000)
+        );
         setCountdown(secs);
         if (secs <= 0) {
           // Ferdig, gjenopprett health
@@ -274,27 +403,46 @@ const TopBar = () => {
   }, [invisibleUntil]);
 
   // Hent notifications for innlogget bruker
+  // QUOTA OPTIMIZATION: Use caching + polling for notifications
   useEffect(() => {
     if (!user) return;
-    const q = query(
-      collection(db, "notifications"),
-      where("to", "==", user.uid),
-      where("read", "==", false)
-    );
-    const unsub = onSnapshot(q, (snap) => {
+
+    const fetchNotifications = async () => {
       try {
-        setNotifications(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        // Check cache first
+        const cachedNotifications = cacheHelpers.getNotifications(user.uid);
+        if (cachedNotifications) {
+          setNotifications(cachedNotifications);
+          return;
+        }
+
+        // Fetch from Firebase if no cache
+        const q = query(
+          collection(db, "notifications"),
+          where("to", "==", user.uid),
+          where("read", "==", false)
+        );
+        const snap = await getDocs(q);
+        const notifications = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Cache the notifications
+        cacheHelpers.setNotifications(user.uid, notifications);
+        setNotifications(notifications);
       } catch (error) {
-        console.error("Error in notifications useEffect:", error);
-      }
-    });
-    return () => {
-      try {
-        unsub();
-      } catch (error) {
-        console.warn("Error unsubscribing from notifications:", error);
+        console.error("Error fetching notifications:", error);
       }
     };
+
+    // Fetch initially
+    fetchNotifications();
+
+    // Poll every 30 seconds for notifications
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   return (
@@ -341,7 +489,7 @@ const TopBar = () => {
           `}</style>
         </div>
       )}
-      
+
       {/* Love Potion: falling hearts */}
       {inLoveUntil && inLoveUntil > Date.now() && (
         <div
@@ -382,16 +530,16 @@ const TopBar = () => {
           `}</style>
         </div>
       )}
-      
+
       <div
         className={styles.topBar}
         style={{
           ...(infirmary ? { opacity: 0.5, filter: "grayscale(1)" } : {}),
           ...(inLoveUntil && inLoveUntil > Date.now()
-            ? { 
+            ? {
                 backgroundColor: "#ff69b4",
                 color: "#ffffff",
-                boxShadow: "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset"
+                boxShadow: "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
               }
             : {}),
         }}
@@ -424,90 +572,111 @@ const TopBar = () => {
           `}</style>
         )}
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-            {(() => {
-              if (!user) return null;
-              const src = user.photoURL || profileImageUrl || "/icons/avatar.svg";
-              // Compute role-based class
-              let roleClass = styles.profilePic;
-              const lower = (roles || []).map((r) => String(r).toLowerCase());
-              if (lower.includes("headmaster"))
-                roleClass += ` ${styles.headmasterPic}`;
-              else if (lower.includes("teacher"))
-                roleClass += ` ${styles.teacherPic}`;
-              else if (lower.includes("shadowpatrol"))
-                roleClass += ` ${styles.shadowPatrolPic}`;
-              else if (lower.includes("admin"))
-                roleClass += ` ${styles.adminPic}`;
-              return (
-                <img
-                  src={src}
-                  alt="Profile"
-                  className={`${roleClass} ${sparkleUntil && sparkleUntil > Date.now() ? 'sparkle-effect' : ''}`}
-                  style={
-                    inLoveUntil && inLoveUntil > Date.now()
-                      ? {
-                          boxShadow:
-                            "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
-                          borderRadius: "50%",
-                        }
-                      : {}
-                  }
-                />
-              );
-            })()}
-            <HealthBar health={health} maxHealth={100} />
-          </div>
+          {(() => {
+            if (!user) return null;
+            const src = user.photoURL || profileImageUrl || "/icons/avatar.svg";
+            // Compute role-based class
+            let roleClass = styles.profilePic;
+            const lower = (roles || []).map((r) => String(r).toLowerCase());
+            if (lower.includes("headmaster"))
+              roleClass += ` ${styles.headmasterPic}`;
+            else if (lower.includes("teacher"))
+              roleClass += ` ${styles.teacherPic}`;
+            else if (lower.includes("shadowpatrol"))
+              roleClass += ` ${styles.shadowPatrolPic}`;
+            else if (lower.includes("admin"))
+              roleClass += ` ${styles.adminPic}`;
+            return (
+              <img
+                src={src}
+                alt="Profile"
+                className={`${roleClass} ${
+                  sparkleUntil && sparkleUntil > Date.now()
+                    ? "sparkle-effect"
+                    : ""
+                }`}
+                style={
+                  inLoveUntil && inLoveUntil > Date.now()
+                    ? {
+                        boxShadow:
+                          "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                        borderRadius: "50%",
+                      }
+                    : {}
+                }
+              />
+            );
+          })()}
+          <HealthBar health={health} maxHealth={100} />
+        </div>
         <div className={styles.currency}>
-            <img
-              src="/icons/gold-coin.svg"
-              alt="Nits"
-              className={styles.coinIcon}
-            />
-            {balance} Nits
-            <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
-              ◆ {points} points
+          <img
+            src="/icons/gold-coin.svg"
+            alt="Nits"
+            className={styles.coinIcon}
+          />
+          {balance} Nits
+          <span style={{ marginLeft: 16, color: "#4fc3f7", fontWeight: 700 }}>
+            ◆ {points} points
+          </span>
+          {invisibleUntil && (
+            <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
+              Invisible:{" "}
+              {String(Math.floor(invisibleCountdown / 60)).padStart(2, "0")}:
+              {String(invisibleCountdown % 60).padStart(2, "0")}
             </span>
-            {invisibleUntil && (
-              <span style={{ marginLeft: 16, color: "#00e6a8", fontWeight: 700 }}>
-                Invisible:{" "}
-                {String(Math.floor(invisibleCountdown / 60)).padStart(2, "0")}:
-                {String(invisibleCountdown % 60).padStart(2, "0")}
-              </span>
-            )}
-            {detentionUntil && (
-              <span style={{ marginLeft: 16, color: "#ff6b6b", fontWeight: 700 }}>
-                ⏰ Detention:{" "}
-                {String(Math.floor((detentionUntil - Date.now()) / (1000 * 60 * 60))).padStart(2, "0")}:
-                {String(Math.floor(((detentionUntil - Date.now()) % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0")}:
-                {String(Math.floor(((detentionUntil - Date.now()) % (1000 * 60)) / 1000)).padStart(2, "0")}
-              </span>
-            )}
-          </div>
+          )}
+          {detentionUntil && (
+            <span style={{ marginLeft: 16, color: "#ff6b6b", fontWeight: 700 }}>
+              ⏰ Detention:{" "}
+              {String(
+                Math.floor((detentionUntil - Date.now()) / (1000 * 60 * 60))
+              ).padStart(2, "0")}
+              :
+              {String(
+                Math.floor(
+                  ((detentionUntil - Date.now()) % (1000 * 60 * 60)) /
+                    (1000 * 60)
+                )
+              ).padStart(2, "0")}
+              :
+              {String(
+                Math.floor(((detentionUntil - Date.now()) % (1000 * 60)) / 1000)
+              ).padStart(2, "0")}
+            </span>
+          )}
+        </div>
         <button
-            className={`${styles.inventoryIconBtn} ${styles.hideOnMobile}`}
-            onClick={() => setShowInventory((v) => !v)}
-            title="Inventory"
-            disabled={infirmary}
-          >
-            <img
-              src="/icons/chest.svg"
-              alt="Inventory"
-              className={styles.chestIcon}
-            />
-          </button>
+          className={`${styles.inventoryIconBtn} ${styles.hideOnMobile}`}
+          onClick={() => setShowInventory((v) => !v)}
+          title="Inventory"
+          disabled={infirmary}
+        >
+          <img
+            src="/icons/chest.svg"
+            alt="Inventory"
+            className={styles.chestIcon}
+          />
+        </button>
         <button
-            className={styles.inventoryIconBtn}
-            onClick={handleMagicalCursorToggle}
-            title={magicalCursorEnabled ? "Disable Magical Cursor" : "Enable Magical Cursor"}
-            style={{
-              background: magicalCursorEnabled ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#E8DDD4',
-              color: magicalCursorEnabled ? '#2C2C2C' : '#7B6857',
-              fontSize: '18px',
-              fontWeight: 'bold'
-            }}
-          >
-            ✦
-          </button>
+          className={styles.inventoryIconBtn}
+          onClick={handleMagicalCursorToggle}
+          title={
+            magicalCursorEnabled
+              ? "Disable Magical Cursor"
+              : "Enable Magical Cursor"
+          }
+          style={{
+            background: magicalCursorEnabled
+              ? "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
+              : "#E8DDD4",
+            color: magicalCursorEnabled ? "#2C2C2C" : "#7B6857",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          ✦
+        </button>
         {/* Love Potion: in love text */}
         {inLoveUntil && inLoveUntil > Date.now() && inLoveWith && (
           <span
@@ -601,6 +770,9 @@ const TopBar = () => {
                                 inv.splice(invIdx, 1);
                               }
                               await updateDoc(userRef, { inventory: inv });
+
+                              // Clear cache after inventory update
+                              cacheHelpers.clearUserCache(user.uid);
                             }}
                           >
                             ✕
@@ -609,197 +781,247 @@ const TopBar = () => {
                             <button
                               className={styles.eatBtn}
                               onClick={async () => {
-                              if (!user) return;
-                              const userRef = doc(db, "users", user.uid);
-                              const userDoc = await getDoc(userRef);
-                              if (!userDoc.exists()) return;
-                              const data = userDoc.data();
-                              let inv = data.inventory || [];
-                              const invIdx = inv.findIndex(
-                                (i) => i.name === item.name
-                              );
-                              if (invIdx === -1) return;
-                              // Fjern én av denne matvaren
-                              inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
-                              if (inv[invIdx].qty <= 0) inv.splice(invIdx, 1);
-                              let update = {
-                                inventory: inv,
-                                lastHealthUpdate: Date.now(),
-                              };
-                              // Find original name if disguised
-                              const realName =
-                                item.originalName || item.realItem || item.name;
-                              
-                              // Debug log to help troubleshoot
-                              console.log('Consuming item:', {
-                                displayName: item.name,
-                                realName: realName,
-                                originalName: item.originalName,
-                                realItem: item.realItem,
-                                giftedBy: item.giftedBy
-                              });
-                              if (realName === "Death Draught") {
-                                update.health = 0;
-                                update.infirmaryEnd =
-                                  Date.now() + 20 * 60 * 1000;
-                              } else if (realName === "Healing Potion") {
-                                update.health = 100;
-                              } else if (realName === "Invisibility Draught") {
-                                update.invisibleUntil =
-                                  Date.now() + 5 * 60 * 1000;
-                              } else if (realName === "Love Potion") {
-                                // Love Potion effect: use giftedBy from inventory if available, otherwise fallback to notification
-                                let giver = item.giftedBy;
-                                console.log('Love Potion - giver from item:', giver);
-                                
-                                if (!giver) {
-                                  try {
-                                    // Search for notification with the disguised item name
-                                    const notifQuery = query(
-                                      collection(db, "notifications"),
-                                      where("to", "==", user.uid),
-                                      where("item", "==", item.name), // Use the disguised name
-                                      where("read", "==", false)
-                                    );
-                                    const notifSnap = await getDocs(notifQuery);
-                                    console.log('Found notifications:', notifSnap.docs.length);
-                                    
-                                    if (!notifSnap.empty) {
-                                      // Use the most recent notification
-                                      const notifDoc = notifSnap.docs
-                                        .map((d) => d)
-                                        .sort(
-                                          (a, b) =>
-                                            b.data().created - a.data().created
-                                        )[0];
-                                      const notif = notifDoc.data();
-                                      console.log('Using notification:', notif);
-                                      
-                                      if (notif && notif.from) {
-                                        giver = notif.from;
-                                        // Mark notification as read
-                                        await updateDoc(
-                                          doc(db, "notifications", notifDoc.id),
-                                          { read: true }
+                                if (!user) return;
+                                const userRef = doc(db, "users", user.uid);
+                                const userDoc = await getDoc(userRef);
+                                if (!userDoc.exists()) return;
+                                const data = userDoc.data();
+                                let inv = data.inventory || [];
+                                const invIdx = inv.findIndex(
+                                  (i) => i.name === item.name
+                                );
+                                if (invIdx === -1) return;
+                                // Fjern én av denne matvaren
+                                inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
+                                if (inv[invIdx].qty <= 0) inv.splice(invIdx, 1);
+                                let update = {
+                                  inventory: inv,
+                                  lastHealthUpdate: Date.now(),
+                                };
+                                // Find original name if disguised
+                                const realName =
+                                  item.originalName ||
+                                  item.realItem ||
+                                  item.name;
+
+                                // Debug log to help troubleshoot
+                                console.log("Consuming item:", {
+                                  displayName: item.name,
+                                  realName: realName,
+                                  originalName: item.originalName,
+                                  realItem: item.realItem,
+                                  giftedBy: item.giftedBy,
+                                });
+                                if (realName === "Death Draught") {
+                                  update.health = 0;
+                                  update.infirmaryEnd =
+                                    Date.now() + 20 * 60 * 1000;
+                                } else if (realName === "Healing Potion") {
+                                  update.health = 100;
+                                } else if (
+                                  realName === "Invisibility Draught"
+                                ) {
+                                  update.invisibleUntil =
+                                    Date.now() + 5 * 60 * 1000;
+                                } else if (realName === "Love Potion") {
+                                  // Love Potion effect: use giftedBy from inventory if available, otherwise fallback to notification
+                                  let giver = item.giftedBy;
+                                  console.log(
+                                    "Love Potion - giver from item:",
+                                    giver
+                                  );
+
+                                  if (!giver) {
+                                    try {
+                                      // Search for notification with the disguised item name
+                                      const notifQuery = query(
+                                        collection(db, "notifications"),
+                                        where("to", "==", user.uid),
+                                        where("item", "==", item.name), // Use the disguised name
+                                        where("read", "==", false)
+                                      );
+                                      const notifSnap = await getDocs(
+                                        notifQuery
+                                      );
+                                      console.log(
+                                        "Found notifications:",
+                                        notifSnap.docs.length
+                                      );
+
+                                      if (!notifSnap.empty) {
+                                        // Use the most recent notification
+                                        const notifDoc = notifSnap.docs
+                                          .map((d) => d)
+                                          .sort(
+                                            (a, b) =>
+                                              b.data().created -
+                                              a.data().created
+                                          )[0];
+                                        const notif = notifDoc.data();
+                                        console.log(
+                                          "Using notification:",
+                                          notif
                                         );
+
+                                        if (notif && notif.from) {
+                                          giver = notif.from;
+                                          // Mark notification as read
+                                          await updateDoc(
+                                            doc(
+                                              db,
+                                              "notifications",
+                                              notifDoc.id
+                                            ),
+                                            { read: true }
+                                          );
+                                        }
                                       }
+                                    } catch (e) {
+                                      console.error(
+                                        "Error finding notification:",
+                                        e
+                                      );
+                                      giver = "Unknown";
                                     }
-                                  } catch (e) {
-                                    console.error('Error finding notification:', e);
-                                    giver = "Unknown";
                                   }
-                                }
-                                if (!giver) giver = "Unknown";
-                                console.log('Final giver for Love Potion:', giver);
-                                
-                                update.inLoveUntil =
-                                  Date.now() + 60 * 60 * 1000; // 1 time
-                                update.inLoveWith = giver;
-                              } else if (realName === "Hair Color Potion") {
-                                update.hairColorUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Rainbow Potion") {
-                                update.rainbowUntil = Date.now() + 60 * 60 * 1000; // 1 hour
-                              } else if (realName === "Glow Potion") {
-                                update.glowUntil = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
-                              } else if (realName === "Sparkle Potion") {
-                                update.sparkleUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Translation Potion") {
-                                update.translationUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Echo Potion") {
-                                update.echoUntil = Date.now() + 60 * 60 * 1000; // 1 hour
-                              } else if (realName === "Whisper Potion") {
-                                update.whisperUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Shout Potion") {
-                                update.shoutUntil = Date.now() + 15 * 60 * 1000; // 15 minutes
-                              } else if (realName === "Dark Mode Potion") {
-                                update.darkModeUntil = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-                              } else if (realName === "Retro Potion") {
-                                update.retroUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Mirror Potion") {
-                                update.mirrorUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Speed Potion") {
-                                update.speedUntil = Date.now() + 15 * 60 * 1000; // 15 minutes
-                              } else if (realName === "Slow Motion Potion") {
-                                update.slowMotionUntil = Date.now() + 60 * 60 * 1000; // 1 hour
-                              } else if (realName === "Lucky Potion") {
-                                update.luckyUntil = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
-                              } else if (realName === "Wisdom Potion") {
-                                update.wisdomUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Surveillance Potion") {
-                                update.surveillanceUntil = Date.now() + 60 * 60 * 1000; // 1 hour
-                              } else if (realName === "Charm Potion") {
-                                update.charmUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else if (realName === "Mystery Potion") {
-                                update.mysteryUntil = Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                              } else {
-                                let newHealth =
-                                  (data.health || 100) + healAmount;
-                                if (newHealth > 100) newHealth = 100;
-                                update.health = newHealth;
-                              }
-                              await updateDoc(userRef, update);
-                            }}
-                          >
-                            {item.name === "Death Draught" ||
-                            item.name === "Invisibility Draught" ||
-                            item.name === "Love Potion" ||
-                            item.name === "Hair Color Potion" ||
-                            item.name === "Rainbow Potion" ||
-                            item.name === "Glow Potion" ||
-                            item.name === "Sparkle Potion" ||
-                            item.name === "Translation Potion" ||
-                            item.name === "Echo Potion" ||
-                            item.name === "Whisper Potion" ||
-                            item.name === "Shout Potion" ||
-                            item.name === "Dark Mode Potion" ||
-                            item.name === "Retro Potion" ||
-                            item.name === "Mirror Potion" ||
-                            item.name === "Speed Potion" ||
-                            item.name === "Slow Motion Potion" ||
-                            item.name === "Lucky Potion" ||
-                            item.name === "Wisdom Potion" ||
-                            item.name === "Surveillance Potion" ||
-                            item.name === "Charm Potion" ||
-                            item.name === "Mystery Potion"
-                              ? "Drink"
-                              : "Eat"}
-                          </button>
-                          )}
-                          {/* Read button for books - only show if book has proper content */}
-                          {(item.type === "book" && 
-                            item.pages && 
-                            Array.isArray(item.pages) && 
-                            item.pages.length > 0) && (
-                            <button
-                              title="Read this book"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log("Read button clicked for:", item);
-                                console.log("Book data:", item);
-                                
-                                // Only open BookViewer if book has proper content
-                                if (item.pages && Array.isArray(item.pages) && item.pages.length > 0) {
-                                  setBookViewer({ open: true, book: item });
+                                  if (!giver) giver = "Unknown";
+                                  console.log(
+                                    "Final giver for Love Potion:",
+                                    giver
+                                  );
+
+                                  update.inLoveUntil =
+                                    Date.now() + 60 * 60 * 1000; // 1 time
+                                  update.inLoveWith = giver;
+                                } else if (realName === "Hair Color Potion") {
+                                  update.hairColorUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Rainbow Potion") {
+                                  update.rainbowUntil =
+                                    Date.now() + 60 * 60 * 1000; // 1 hour
+                                } else if (realName === "Glow Potion") {
+                                  update.glowUntil =
+                                    Date.now() + 3 * 60 * 60 * 1000; // 3 hours
+                                } else if (realName === "Sparkle Potion") {
+                                  update.sparkleUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Translation Potion") {
+                                  update.translationUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Echo Potion") {
+                                  update.echoUntil =
+                                    Date.now() + 60 * 60 * 1000; // 1 hour
+                                } else if (realName === "Whisper Potion") {
+                                  update.whisperUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Shout Potion") {
+                                  update.shoutUntil =
+                                    Date.now() + 15 * 60 * 1000; // 15 minutes
+                                } else if (realName === "Dark Mode Potion") {
+                                  update.darkModeUntil =
+                                    Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+                                } else if (realName === "Retro Potion") {
+                                  update.retroUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Mirror Potion") {
+                                  update.mirrorUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Speed Potion") {
+                                  update.speedUntil =
+                                    Date.now() + 15 * 60 * 1000; // 15 minutes
+                                } else if (realName === "Slow Motion Potion") {
+                                  update.slowMotionUntil =
+                                    Date.now() + 60 * 60 * 1000; // 1 hour
+                                } else if (realName === "Lucky Potion") {
+                                  update.luckyUntil =
+                                    Date.now() + 3 * 60 * 60 * 1000; // 3 hours
+                                } else if (realName === "Wisdom Potion") {
+                                  update.wisdomUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Surveillance Potion") {
+                                  update.surveillanceUntil =
+                                    Date.now() + 60 * 60 * 1000; // 1 hour
+                                } else if (realName === "Charm Potion") {
+                                  update.charmUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
+                                } else if (realName === "Mystery Potion") {
+                                  update.mysteryUntil =
+                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
                                 } else {
-                                  alert("This book has no content to display.");
+                                  let newHealth =
+                                    (data.health || 100) + healAmount;
+                                  if (newHealth > 100) newHealth = 100;
+                                  update.health = newHealth;
                                 }
-                              }}
-                              style={{ 
-                                background: '#8B4513', 
-                                color: 'white', 
-                                border: '2px solid #D4C4A8',
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                marginLeft: '4px',
-                                zIndex: 1000,
-                                position: 'relative'
+                                await updateDoc(userRef, update);
                               }}
                             >
-                              📖 Read
+                              {item.name === "Death Draught" ||
+                              item.name === "Invisibility Draught" ||
+                              item.name === "Love Potion" ||
+                              item.name === "Hair Color Potion" ||
+                              item.name === "Rainbow Potion" ||
+                              item.name === "Glow Potion" ||
+                              item.name === "Sparkle Potion" ||
+                              item.name === "Translation Potion" ||
+                              item.name === "Echo Potion" ||
+                              item.name === "Whisper Potion" ||
+                              item.name === "Shout Potion" ||
+                              item.name === "Dark Mode Potion" ||
+                              item.name === "Retro Potion" ||
+                              item.name === "Mirror Potion" ||
+                              item.name === "Speed Potion" ||
+                              item.name === "Slow Motion Potion" ||
+                              item.name === "Lucky Potion" ||
+                              item.name === "Wisdom Potion" ||
+                              item.name === "Surveillance Potion" ||
+                              item.name === "Charm Potion" ||
+                              item.name === "Mystery Potion"
+                                ? "Drink"
+                                : "Eat"}
                             </button>
                           )}
+                          {/* Read button for books - only show if book has proper content */}
+                          {item.type === "book" &&
+                            item.pages &&
+                            Array.isArray(item.pages) &&
+                            item.pages.length > 0 && (
+                              <button
+                                title="Read this book"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  console.log("Read button clicked for:", item);
+                                  console.log("Book data:", item);
+
+                                  // Only open BookViewer if book has proper content
+                                  if (
+                                    item.pages &&
+                                    Array.isArray(item.pages) &&
+                                    item.pages.length > 0
+                                  ) {
+                                    setBookViewer({ open: true, book: item });
+                                  } else {
+                                    alert(
+                                      "This book has no content to display."
+                                    );
+                                  }
+                                }}
+                                style={{
+                                  background: "#8B4513",
+                                  color: "white",
+                                  border: "2px solid #D4C4A8",
+                                  padding: "4px 8px",
+                                  borderRadius: "4px",
+                                  cursor: "pointer",
+                                  marginLeft: "4px",
+                                  zIndex: 1000,
+                                  position: "relative",
+                                }}
+                              >
+                                📖 Read
+                              </button>
+                            )}
                         </div>
                       </li>
                     );
@@ -833,6 +1055,10 @@ const TopBar = () => {
             inv[idx].qty = (inv[idx].qty || 1) - 1;
             if (inv[idx].qty <= 0) inv.splice(idx, 1);
             await updateDoc(userRef, { inventory: inv });
+
+            // Clear cache after inventory update
+            cacheHelpers.clearUserCache(user.uid);
+
             // Add to recipient (bruk alltid uid)
             const toRef = doc(db, "users", toUser.uid);
             const toDoc = await getDoc(toRef);
@@ -940,7 +1166,7 @@ const TopBar = () => {
           </div>
         )}
       </div>
-      
+
       {/* Book Viewer Modal */}
       <BookViewer
         open={bookViewer.open}
