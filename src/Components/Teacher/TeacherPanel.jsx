@@ -4,6 +4,7 @@ import useBooks from "../../hooks/useBooks";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import BookEditor from "../BookEditor/BookEditor";
+import DeleteConfirmModal from "../DeleteConfirmModal/DeleteConfirmModal";
 
 export default function TeacherPanel() {
   const { users } = useUsers();
@@ -14,6 +15,8 @@ export default function TeacherPanel() {
   const [showBookEditor, setShowBookEditor] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [activeTab, setActiveTab] = useState("points");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState(null);
 
   async function handleGivePoints() {
     if (!selected) return;
@@ -37,15 +40,29 @@ export default function TeacherPanel() {
     setShowBookEditor(true);
   };
 
-  const handleDeleteBook = async (bookId) => {
-    if (window.confirm("Are you sure you want to delete this book?")) {
-      try {
-        await deleteBook(bookId);
-        setStatus("Book deleted successfully");
-      } catch (error) {
-        setStatus("Error deleting book");
-      }
+  const handleDeleteBook = (book) => {
+    setBookToDelete(book);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteBook = async () => {
+    if (!bookToDelete) return;
+
+    try {
+      await deleteBook(bookToDelete.id);
+      setStatus("Book deleted successfully");
+      setShowDeleteModal(false);
+      setBookToDelete(null);
+    } catch (error) {
+      setStatus("Error deleting book");
+      setShowDeleteModal(false);
+      setBookToDelete(null);
     }
+  };
+
+  const cancelDeleteBook = () => {
+    setShowDeleteModal(false);
+    setBookToDelete(null);
   };
 
   const handleBookSave = () => {
@@ -347,7 +364,7 @@ export default function TeacherPanel() {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDeleteBook(book.id)}
+                      onClick={() => handleDeleteBook(book)}
                       style={{
                         background:
                           "linear-gradient(135deg, #8B4513 0%, #A0522D 100%)",
@@ -496,6 +513,13 @@ export default function TeacherPanel() {
           </div>
         </div>
       )}
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onConfirm={confirmDeleteBook}
+        onCancel={cancelDeleteBook}
+        itemName={bookToDelete?.title || "this book"}
+      />
     </div>
   );
 }

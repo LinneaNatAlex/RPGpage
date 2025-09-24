@@ -4,10 +4,10 @@ import {
   doc,
   updateDoc,
   getDoc,
-  arrayUnion,
+  setDoc,
   arrayRemove,
-  onSnapshot,
   increment,
+  onSnapshot,
 } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import { classesList } from "../../data/classesList";
@@ -22,40 +22,15 @@ export default function Classrooms() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [attending, setAttending] = useState(null); // {classId, year}
-  const [attendance, setAttendance] = useState({}); // {classId: {year: [user,...]}}
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(""); // Add error state
   const userYear = getUserYear(user);
   const [lastAttended, setLastAttended] = useState({}); // {classId: timestamp}
 
-  // Listen for attendance changes in Firestore - OPTIMIZED
+  // Set loading to false immediately since we don't need attendance data
   useEffect(() => {
-    const unsubList = [];
-    // Only listen to classes that are actually being displayed/used
-    const visibleClasses = classesList.slice(0, 5); // Limit concurrent listeners
-
-    visibleClasses.forEach((cls) => {
-      const ref = doc(db, "classAttendance", `${cls.id}-year${userYear}`);
-      const unsub = onSnapshot(ref, (snap) => {
-        setAttendance((prev) => ({
-          ...prev,
-          [cls.id]: snap.exists() ? snap.data().students || [] : [],
-        }));
-      });
-      unsubList.push(unsub);
-    });
     setLoading(false);
-
-    // CRITICAL: Ensure cleanup
-    return () => {
-      unsubList.forEach((u) => {
-        try {
-          u();
-        } catch (error) {
-          console.warn("Error cleaning up listener:", error);
-        }
-      });
-    };
-  }, [userYear]);
+  }, []);
 
   // Track last attended per class (from user doc)
   useEffect(() => {
@@ -76,7 +51,8 @@ export default function Classrooms() {
     const cooldown = 60 * 60 * 1000; // 1 hour
     const last = lastAttended?.[cls.id] || 0;
     if (now - last < cooldown) {
-      alert("You can only attend this class once per hour.");
+      setErrorMessage("You can only attend this class once per hour.");
+      setTimeout(() => setErrorMessage(""), 5000);
       return;
     }
     const ref = doc(db, "classAttendance", `${cls.id}-year${userYear}`);
@@ -100,11 +76,21 @@ export default function Classrooms() {
       attendedAt: now,
       roles: roles,
     };
+    // Check if user is already in the list to prevent duplicates
+    const snap = await getDoc(ref);
+    let studentsArray = snap.exists() ? snap.data().students || [] : [];
+
+    // Remove any existing entries for this user (in case of old duplicates)
+    studentsArray = studentsArray.filter((s) => s.uid !== user.uid);
+
+    // Add the user with current timestamp
+    studentsArray.push(userInfo);
+
     await updateDoc(ref, {
-      students: arrayUnion(userInfo),
+      students: studentsArray,
     }).catch(async (e) => {
       // If doc doesn't exist, create it
-      await updateDoc(ref, { students: [userInfo] }).catch(() => {});
+      await setDoc(ref, { students: [userInfo] }, { merge: true });
     });
     // Gi poeng til bruker
     const userRef = doc(db, "users", user.uid);
@@ -192,8 +178,26 @@ export default function Classrooms() {
         Select a class to attend. You will only see students from your own year
         in each class session.
       </p>
+      {/* Error Message Display */}
+      {errorMessage && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #dc3545 0%, #c82333 100%)",
+            color: "#fff",
+            padding: "15px 25px",
+            borderRadius: "12px",
+            marginBottom: "25px",
+            textAlign: "center",
+            fontSize: "1.1rem",
+            fontWeight: "600",
+            boxShadow: "0 6px 20px rgba(220, 53, 69, 0.4)",
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+          }}
+        >
+          {errorMessage}
+        </div>
+      )}
       {classesList.map((cls) => {
-        const students = attendance[cls.id] || [];
         const isAttending = attending && attending.classId === cls.id;
         return (
           <div
@@ -304,71 +308,9 @@ export default function Classrooms() {
                   Attend (+{cls.points} points)
                 </button>
               )}
-              <span
-                style={{
-                  color: "#D4C4A8",
-                  fontSize: "1.1rem",
-                  fontWeight: 600,
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                }}
-              >
-                {students.length} attending
-              </span>
+{/* Attendance count removed - only show active users in class */}
             </div>
-            {students.length > 0 && (
-              <div
-                style={{
-                  background: "rgba(212, 196, 168, 0.1)",
-                  borderRadius: 12,
-                  padding: 16,
-                  marginTop: 16,
-                  border: "1px solid rgba(212, 196, 168, 0.3)",
-                }}
-              >
-                <b
-                  style={{
-                    color: "#D4C4A8",
-                    fontSize: "1.1rem",
-                    fontFamily: '"Cinzel", serif',
-                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                  }}
-                >
-                  Students in this session (Year {userYear}):
-                </b>
-                <ul
-                  style={{
-                    margin: "12px 0 0 0",
-                    paddingLeft: 20,
-                    listStyle: "none",
-                  }}
-                >
-                  {students.map((s) => (
-                    <li
-                      key={s.uid}
-                      style={{
-                        marginBottom: 8,
-                        padding: "8px 12px",
-                        background: "rgba(245, 239, 224, 0.1)",
-                        borderRadius: 8,
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                        color: "#F5EFE0",
-                        fontSize: "1rem",
-                      }}
-                    >
-                      {s.displayName}{" "}
-                      <span
-                        style={{
-                          color: "#D4C4A8",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        ({s.house})
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {/* Students list removed as requested - duplicates were showing */}
           </div>
         );
       })}
