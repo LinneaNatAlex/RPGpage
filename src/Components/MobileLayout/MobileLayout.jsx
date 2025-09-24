@@ -13,9 +13,6 @@ const Navbar = React.lazy(() => import("../../Navbar/Navbar"));
 const NewsFeed = React.lazy(() => import("../NewsFeed/NewsFeed"));
 const RPGCalendarSidebar = React.lazy(() => import("../RPGCalendarSidebar"));
 const RPGClock = React.lazy(() => import("../RPGClock/RPGClock"));
-const InventoryModal = React.lazy(() =>
-  import("../InventoryModal/InventoryModal")
-);
 const Shop = React.lazy(() => import("../Shop/Shop"));
 import "./MobileLayout.css";
 
@@ -29,7 +26,6 @@ const MobileLayout = ({ children }) => {
     setShowNewsFeed(false);
     setShowRPGCalendar(false);
     setShowOnlineUsers(false);
-    setShowInventory(false);
     setShowPageRules(false);
     setShowDashboard(false);
   };
@@ -51,7 +47,6 @@ const MobileLayout = ({ children }) => {
   const [showRPGCalendar, setShowRPGCalendar] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showForumList, setShowForumList] = useState(false);
-  const [showInventory, setShowInventory] = useState(false);
   const [showPageRules, setShowPageRules] = useState(false);
 
   // Check if device is mobile
@@ -727,32 +722,6 @@ const MobileLayout = ({ children }) => {
           </div>
         )}
 
-        {/* Inventory Overlay */}
-        {showInventory && (
-          <Suspense fallback={null}>
-            <div className="mobile-overlay">
-              <div className="mobile-overlay-header">
-                <h2>Inventory</h2>
-                <button
-                  className="mobile-overlay-close"
-                  onClick={() => {
-                    setShowInventory(false);
-                    navigate("/");
-                    setActiveTab("home");
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="mobile-overlay-content">
-                <InventoryModal
-                  open={true}
-                  onClose={() => setShowInventory(false)}
-                />
-              </div>
-            </div>
-          </Suspense>
-        )}
 
         {/* Chat overlay when chat tab is active */}
         {showChat && (
@@ -924,17 +893,10 @@ const MobileLayout = ({ children }) => {
 
             <button
               className={`mobile-dashboard-item ${
-                showInventory ? "active" : ""
+                location.pathname === "/inventory" ? "active" : ""
               }`}
               onClick={() => {
-                // Close all other overlays first
-                setShowChat(false);
-                setShowPrivateChat(false);
-                setShowForumList(false);
-                setShowNewsFeed(false);
-                setShowRPGCalendar(false);
-                setShowOnlineUsers(false);
-                setShowInventory(true);
+                navigate("/inventory");
                 setShowDashboard(false);
               }}
             >

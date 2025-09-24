@@ -281,14 +281,46 @@ const Shop = ({ open = true }) => {
 
       <ul className={styles.itemList}>
         {[...shopItems, ...firestoreItems, ...books]
+          .filter((item) => {
+            // Filtrer ut statiske produkter som er konvertert til Firestore
+            if (item.firestore) return true; // Firestore-produkter vises alltid
+            if (item.type === "book") return true; // Bøker vises alltid
+            
+            // For statiske produkter, sjekk om de er konvertert
+            const isConverted = firestoreItems.some(fsItem => 
+              fsItem.originalId === item.id || 
+              (fsItem.name === item.name && fsItem.category === item.category)
+            );
+            
+            return !isConverted; // Vis kun ikke-konverterte statiske produkter
+          })
           .filter((item) => item.category === activeCategory)
-          .map((item) => (
+          .map((item) => {
+            console.log('Shop item:', item.name, 'Image:', item.image, 'CoverImage:', item.coverImage, 'Firestore:', item.firestore);
+            return (
             <li
               key={item.id + (item.firestore ? "-fs" : "-static")}
               className={styles.item}
             >
               <div className={styles.itemInfo}>
-                <span className={styles.itemName}>{item.name}</span>
+                {/* Product Image */}
+                {(item.image || item.coverImage) && (
+                  <div className={styles.itemImageContainer}>
+                    <img
+                      src={item.image || item.coverImage}
+                      alt={item.name}
+                      className={styles.itemImage}
+                      onLoad={() => console.log('Image loaded for:', item.name, 'URL:', item.image || item.coverImage)}
+                      onError={() => console.log('Image failed to load for:', item.name, 'URL:', item.image || item.coverImage)}
+                      style={{
+                        border: '2px solid #7B6857',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                      }}
+                    />
+                  </div>
+                )}
+                <div className={styles.itemTextContent}>
+                  <span className={styles.itemName}>{item.name}</span>
                 {item.ingredients && Array.isArray(item.ingredients) && (
                   <span className={styles.ingredients}>
                     [Includes: {item.ingredients.join(", ")}]
@@ -307,6 +339,7 @@ const Shop = ({ open = true }) => {
                     <strong>HP:</strong> +{item.health}
                   </span>
                 )}
+                </div>
               </div>
               <div
                 style={{
@@ -370,7 +403,8 @@ const Shop = ({ open = true }) => {
                 )}
               </div>
             </li>
-          ))}
+          );
+        })}
       </ul>
     </div>
   );

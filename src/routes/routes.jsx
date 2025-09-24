@@ -63,6 +63,7 @@ const TeacherRouteGuard = ({ children }) => {
 import useUserRoles from "../hooks/useUserRoles";
 import HousePointsPage from "../Pages/HousePoints.jsx";
 import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
+import Inventory from "../Pages/Inventory/Inventory.jsx";
 
 const RouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
@@ -244,6 +245,14 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <ClassroomSession />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="inventory"
+        element={
+          <RouteGuard>
+            <Inventory />
           </RouteGuard>
         }
       />

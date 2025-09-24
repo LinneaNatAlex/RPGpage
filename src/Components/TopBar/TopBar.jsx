@@ -1,6 +1,7 @@
 // src/Components/TopBar/TopBar.jsx
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import {
@@ -17,7 +18,6 @@ import {
 } from "firebase/firestore";
 import { useRef } from "react";
 import GiftModal from "./GiftModal";
-import BookViewer from "../BookViewer/BookViewer";
 import useUsers from "../../hooks/useUser";
 import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
 import { cacheHelpers } from "../../utils/firebaseCache";
@@ -49,10 +49,10 @@ function HealthBar({ health = 100, maxHealth = 100 }) {
 
 const TopBar = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [inventory, setInventory] = useState([]);
   const [points, setPoints] = useState(0);
-  const [showInventory, setShowInventory] = useState(false);
   const [health, setHealth] = useState(100);
   const [roles, setRoles] = useState([]);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
@@ -63,7 +63,6 @@ const TopBar = () => {
   const [invisibleUntil, setInvisibleUntil] = useState(null);
   const [invisibleCountdown, setInvisibleCountdown] = useState(0);
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
-  const [bookViewer, setBookViewer] = useState({ open: false, book: null });
   const [notifications, setNotifications] = useState([]);
   const [inLoveWith, setInLoveWith] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
@@ -100,199 +99,162 @@ const TopBar = () => {
   useEffect(() => {
     if (!user) return;
 
-    // QUOTA OPTIMIZATION: Use caching + polling instead of real-time listener
-    const fetchUserData = async () => {
-      try {
-        // Check cache first
-        const cachedData = cacheHelpers.getUserData(user.uid);
-        if (cachedData) {
-          const data = cachedData;
-          setBalance(data.currency ?? 1000);
-          setInventory(data.inventory ?? []);
-          setHealth(data.health ?? 100);
-          setPoints(data.points ?? 0);
-          setRoles(data.roles ?? []);
-          setProfileImageUrl(data.profileImageUrl || null);
+    // Use real-time listener for immediate updates
+    const userRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(
+      userRef,
+      (userDoc) => {
+        try {
+          if (userDoc.exists()) {
+            const data = userDoc.data();
 
-          // Love Potion effect
-          if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
-            setInLoveWith(data.inLoveWith || "Someone");
-            setInLoveUntil(data.inLoveUntil);
-          } else {
-            setInLoveWith(null);
-            setInLoveUntil(null);
+            // Cache the data
+            cacheHelpers.setUserData(user.uid, data);
+
+            setBalance(data.currency ?? 1000);
+            setInventory(data.inventory ?? []);
+            setHealth(data.health ?? 100);
+            setPoints(data.points ?? 0);
+            setRoles(data.roles ?? []);
+            setProfileImageUrl(data.profileImageUrl || null);
+
+            // Sett lastHealthUpdate første gang hvis mangler
+            if (!data.lastHealthUpdate) {
+              updateDoc(userRef, { lastHealthUpdate: Date.now() });
+            }
+
+            // Love Potion effect
+            if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
+              setInLoveWith(data.inLoveWith || "Someone");
+              setInLoveUntil(data.inLoveUntil);
+            } else {
+              setInLoveWith(null);
+              setInLoveUntil(null);
+            }
+
+            // New potion effects
+            setHairColorUntil(
+              data.hairColorUntil && data.hairColorUntil > Date.now()
+                ? data.hairColorUntil
+                : null
+            );
+            setRainbowUntil(
+              data.rainbowUntil && data.rainbowUntil > Date.now()
+                ? data.rainbowUntil
+                : null
+            );
+            setGlowUntil(
+              data.glowUntil && data.glowUntil > Date.now()
+                ? data.glowUntil
+                : null
+            );
+            setSparkleUntil(
+              data.sparkleUntil && data.sparkleUntil > Date.now()
+                ? data.sparkleUntil
+                : null
+            );
+            setTranslationUntil(
+              data.translationUntil && data.translationUntil > Date.now()
+                ? data.translationUntil
+                : null
+            );
+            setEchoUntil(
+              data.echoUntil && data.echoUntil > Date.now()
+                ? data.echoUntil
+                : null
+            );
+            setWhisperUntil(
+              data.whisperUntil && data.whisperUntil > Date.now()
+                ? data.whisperUntil
+                : null
+            );
+            setShoutUntil(
+              data.shoutUntil && data.shoutUntil > Date.now()
+                ? data.shoutUntil
+                : null
+            );
+            setDarkModeUntil(
+              data.darkModeUntil && data.darkModeUntil > Date.now()
+                ? data.darkModeUntil
+                : null
+            );
+            setRetroUntil(
+              data.retroUntil && data.retroUntil > Date.now()
+                ? data.retroUntil
+                : null
+            );
+            setMirrorUntil(
+              data.mirrorUntil && data.mirrorUntil > Date.now()
+                ? data.mirrorUntil
+                : null
+            );
+            setSpeedUntil(
+              data.speedUntil && data.speedUntil > Date.now()
+                ? data.speedUntil
+                : null
+            );
+            setSlowMotionUntil(
+              data.slowMotionUntil && data.slowMotionUntil > Date.now()
+                ? data.slowMotionUntil
+                : null
+            );
+            setLuckyUntil(
+              data.luckyUntil && data.luckyUntil > Date.now()
+                ? data.luckyUntil
+                : null
+            );
+            setWisdomUntil(
+              data.wisdomUntil && data.wisdomUntil > Date.now()
+                ? data.wisdomUntil
+                : null
+            );
+            setSurveillanceUntil(
+              data.surveillanceUntil && data.surveillanceUntil > Date.now()
+                ? data.surveillanceUntil
+                : null
+            );
+            setCharmUntil(
+              data.charmUntil && data.charmUntil > Date.now()
+                ? data.charmUntil
+                : null
+            );
+            setMysteryUntil(
+              data.mysteryUntil && data.mysteryUntil > Date.now()
+                ? data.mysteryUntil
+                : null
+            );
+
+            // Infirmary state
+            if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
+              setInfirmary(true);
+              setInfirmaryEnd(data.infirmaryEnd);
+            } else {
+              setInfirmary(false);
+              setInfirmaryEnd(null);
+            }
+
+            // Detention state
+            if (data.detentionUntil && Date.now() < data.detentionUntil) {
+              setDetentionUntil(data.detentionUntil);
+            } else {
+              setDetentionUntil(null);
+            }
+            if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
+              setInvisibleUntil(data.invisibleUntil);
+            } else {
+              setInvisibleUntil(null);
+            }
           }
-
-          // New potion effects
-          setHairColorUntil(
-            data.hairColorUntil && data.hairColorUntil > Date.now()
-              ? data.hairColorUntil
-              : null
-          );
-          setRainbowUntil(
-            data.rainbowUntil && data.rainbowUntil > Date.now()
-              ? data.rainbowUntil
-              : null
-          );
-          return; // Use cached data
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-
-        // Fetch from Firebase if no cache
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-
-          // Cache the data
-          cacheHelpers.setUserData(user.uid, data);
-
-          setBalance(data.currency ?? 1000);
-          setInventory(data.inventory ?? []);
-          setHealth(data.health ?? 100);
-          setPoints(data.points ?? 0);
-          setRoles(data.roles ?? []);
-          setProfileImageUrl(data.profileImageUrl || null);
-
-          // Sett lastHealthUpdate første gang hvis mangler
-          if (!data.lastHealthUpdate) {
-            await updateDoc(userRef, { lastHealthUpdate: Date.now() });
-          }
-
-          // Love Potion effect
-          if (data.inLoveUntil && data.inLoveUntil > Date.now()) {
-            setInLoveWith(data.inLoveWith || "Someone");
-            setInLoveUntil(data.inLoveUntil);
-          } else {
-            setInLoveWith(null);
-            setInLoveUntil(null);
-          }
-
-          // New potion effects
-          setHairColorUntil(
-            data.hairColorUntil && data.hairColorUntil > Date.now()
-              ? data.hairColorUntil
-              : null
-          );
-          setRainbowUntil(
-            data.rainbowUntil && data.rainbowUntil > Date.now()
-              ? data.rainbowUntil
-              : null
-          );
-          setGlowUntil(
-            data.glowUntil && data.glowUntil > Date.now()
-              ? data.glowUntil
-              : null
-          );
-          setSparkleUntil(
-            data.sparkleUntil && data.sparkleUntil > Date.now()
-              ? data.sparkleUntil
-              : null
-          );
-          setTranslationUntil(
-            data.translationUntil && data.translationUntil > Date.now()
-              ? data.translationUntil
-              : null
-          );
-          setEchoUntil(
-            data.echoUntil && data.echoUntil > Date.now()
-              ? data.echoUntil
-              : null
-          );
-          setWhisperUntil(
-            data.whisperUntil && data.whisperUntil > Date.now()
-              ? data.whisperUntil
-              : null
-          );
-          setShoutUntil(
-            data.shoutUntil && data.shoutUntil > Date.now()
-              ? data.shoutUntil
-              : null
-          );
-          setDarkModeUntil(
-            data.darkModeUntil && data.darkModeUntil > Date.now()
-              ? data.darkModeUntil
-              : null
-          );
-          setRetroUntil(
-            data.retroUntil && data.retroUntil > Date.now()
-              ? data.retroUntil
-              : null
-          );
-          setMirrorUntil(
-            data.mirrorUntil && data.mirrorUntil > Date.now()
-              ? data.mirrorUntil
-              : null
-          );
-          setSpeedUntil(
-            data.speedUntil && data.speedUntil > Date.now()
-              ? data.speedUntil
-              : null
-          );
-          setSlowMotionUntil(
-            data.slowMotionUntil && data.slowMotionUntil > Date.now()
-              ? data.slowMotionUntil
-              : null
-          );
-          setLuckyUntil(
-            data.luckyUntil && data.luckyUntil > Date.now()
-              ? data.luckyUntil
-              : null
-          );
-          setWisdomUntil(
-            data.wisdomUntil && data.wisdomUntil > Date.now()
-              ? data.wisdomUntil
-              : null
-          );
-          setSurveillanceUntil(
-            data.surveillanceUntil && data.surveillanceUntil > Date.now()
-              ? data.surveillanceUntil
-              : null
-          );
-          setCharmUntil(
-            data.charmUntil && data.charmUntil > Date.now()
-              ? data.charmUntil
-              : null
-          );
-          setMysteryUntil(
-            data.mysteryUntil && data.mysteryUntil > Date.now()
-              ? data.mysteryUntil
-              : null
-          );
-
-          // Infirmary state
-          if (data.infirmaryEnd && Date.now() < data.infirmaryEnd) {
-            setInfirmary(true);
-            setInfirmaryEnd(data.infirmaryEnd);
-          } else {
-            setInfirmary(false);
-            setInfirmaryEnd(null);
-          }
-
-          // Detention state
-          if (data.detentionUntil && Date.now() < data.detentionUntil) {
-            setDetentionUntil(data.detentionUntil);
-          } else {
-            setDetentionUntil(null);
-          }
-          if (data.invisibleUntil && Date.now() < data.invisibleUntil) {
-            setInvisibleUntil(data.invisibleUntil);
-          } else {
-            setInvisibleUntil(null);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      },
+      (error) => {
+        console.error("Error listening to user data:", error);
       }
-    };
+    );
 
-    // Fetch initially
-    fetchUserData();
-
-    // Poll every 60 seconds instead of real-time listening
-    const interval = setInterval(fetchUserData, 60000);
-
-    return () => clearInterval(interval);
+    return () => unsubscribe();
   }, [user]);
 
   // Love Potion countdown
@@ -648,7 +610,7 @@ const TopBar = () => {
         </div>
         <button
           className={`${styles.inventoryIconBtn} ${styles.hideOnMobile}`}
-          onClick={() => setShowInventory((v) => !v)}
+          onClick={() => navigate("/inventory")}
           title="Inventory"
           disabled={infirmary}
         >
@@ -699,343 +661,6 @@ const TopBar = () => {
               </span>
             )}
           </span>
-        )}
-        {showInventory && !infirmary && (
-          <div
-            className={styles.inventoryPopup}
-            onClick={() => setShowInventory(false)}
-          >
-            <div
-              className={styles.inventoryPopupContent}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h4>Inventory</h4>
-              {inventory.length === 0 ? (
-                <span className={styles.empty}>Empty</span>
-              ) : (
-                <ul className={styles.itemList}>
-                  {inventory.map((item, idx) => {
-                    // Mat og potions kan spises/drikkes
-                    const isEdible =
-                      item.type === "food" || item.type === "potion";
-                    let healAmount = 0;
-                    const isDeathPotion = item.name === "Death Draught";
-                    if (item.name === "Chocolate Frog") healAmount = 15;
-                    if (item.name === "Healing Potion") healAmount = 1000; // Fills health to max
-                    // Firestore-mat: bruk health-feltet hvis satt
-                    if (
-                      item.type === "food" &&
-                      typeof item.health === "number"
-                    ) {
-                      healAmount = item.health;
-                    }
-                    return (
-                      <li key={idx} className={styles.itemRow}>
-                        <div className={styles.itemInfo}>
-                          <span className={styles.itemName}>{item.name}</span> x
-                          {item.qty || 1}
-                          {typeof item.health === "number" &&
-                            item.type === "food" && (
-                              <span style={{ color: "#6f6", marginLeft: 6 }}>
-                                (+{item.health} HP)
-                              </span>
-                            )}
-                        </div>
-                        <div className={styles.itemButtons}>
-                          {/* Gift button */}
-                          <button
-                            className={styles.giftBtn}
-                            title="Gift this item"
-                            onClick={() => setGiftModal({ open: true, item })}
-                          >
-                            ⚜
-                          </button>
-                          {/* Delete button */}
-                          <button
-                            className={styles.deleteBtn}
-                            title="Delete this item"
-                            onClick={async () => {
-                              if (!user) return;
-                              const userRef = doc(db, "users", user.uid);
-                              const userDoc = await getDoc(userRef);
-                              if (!userDoc.exists()) return;
-                              let inv = userDoc.data().inventory || [];
-                              const invIdx = inv.findIndex(
-                                (i) => i.name === item.name
-                              );
-                              if (invIdx === -1) return;
-                              // Only remove one item, not all
-                              inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
-                              if (inv[invIdx].qty <= 0) {
-                                inv.splice(invIdx, 1);
-                              }
-                              await updateDoc(userRef, { inventory: inv });
-
-                              // Clear cache after inventory update
-                              cacheHelpers.clearUserCache(user.uid);
-                            }}
-                          >
-                            ✕
-                          </button>
-                          {isEdible && !infirmary && (
-                            <button
-                              className={styles.eatBtn}
-                              onClick={async () => {
-                                if (!user) return;
-                                const userRef = doc(db, "users", user.uid);
-                                const userDoc = await getDoc(userRef);
-                                if (!userDoc.exists()) return;
-                                const data = userDoc.data();
-                                let inv = data.inventory || [];
-                                const invIdx = inv.findIndex(
-                                  (i) => i.name === item.name
-                                );
-                                if (invIdx === -1) return;
-                                // Fjern én av denne matvaren
-                                inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
-                                if (inv[invIdx].qty <= 0) inv.splice(invIdx, 1);
-                                let update = {
-                                  inventory: inv,
-                                  lastHealthUpdate: Date.now(),
-                                };
-                                // Find original name if disguised
-                                const realName =
-                                  item.originalName ||
-                                  item.realItem ||
-                                  item.name;
-
-                                // Debug log to help troubleshoot
-                                console.log("Consuming item:", {
-                                  displayName: item.name,
-                                  realName: realName,
-                                  originalName: item.originalName,
-                                  realItem: item.realItem,
-                                  giftedBy: item.giftedBy,
-                                });
-                                if (realName === "Death Draught") {
-                                  update.health = 0;
-                                  update.infirmaryEnd =
-                                    Date.now() + 20 * 60 * 1000;
-                                } else if (realName === "Healing Potion") {
-                                  update.health = 100;
-                                } else if (
-                                  realName === "Invisibility Draught"
-                                ) {
-                                  update.invisibleUntil =
-                                    Date.now() + 5 * 60 * 1000;
-                                } else if (realName === "Love Potion") {
-                                  // Love Potion effect: use giftedBy from inventory if available, otherwise fallback to notification
-                                  let giver = item.giftedBy;
-                                  console.log(
-                                    "Love Potion - giver from item:",
-                                    giver
-                                  );
-
-                                  if (!giver) {
-                                    try {
-                                      // Search for notification with the disguised item name
-                                      const notifQuery = query(
-                                        collection(db, "notifications"),
-                                        where("to", "==", user.uid),
-                                        where("item", "==", item.name), // Use the disguised name
-                                        where("read", "==", false)
-                                      );
-                                      const notifSnap = await getDocs(
-                                        notifQuery
-                                      );
-                                      console.log(
-                                        "Found notifications:",
-                                        notifSnap.docs.length
-                                      );
-
-                                      if (!notifSnap.empty) {
-                                        // Use the most recent notification
-                                        const notifDoc = notifSnap.docs
-                                          .map((d) => d)
-                                          .sort(
-                                            (a, b) =>
-                                              b.data().created -
-                                              a.data().created
-                                          )[0];
-                                        const notif = notifDoc.data();
-                                        console.log(
-                                          "Using notification:",
-                                          notif
-                                        );
-
-                                        if (notif && notif.from) {
-                                          giver = notif.from;
-                                          // Mark notification as read
-                                          await updateDoc(
-                                            doc(
-                                              db,
-                                              "notifications",
-                                              notifDoc.id
-                                            ),
-                                            { read: true }
-                                          );
-                                        }
-                                      }
-                                    } catch (e) {
-                                      console.error(
-                                        "Error finding notification:",
-                                        e
-                                      );
-                                      giver = "Unknown";
-                                    }
-                                  }
-                                  if (!giver) giver = "Unknown";
-                                  console.log(
-                                    "Final giver for Love Potion:",
-                                    giver
-                                  );
-
-                                  update.inLoveUntil =
-                                    Date.now() + 60 * 60 * 1000; // 1 time
-                                  update.inLoveWith = giver;
-                                } else if (realName === "Hair Color Potion") {
-                                  update.hairColorUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Rainbow Potion") {
-                                  update.rainbowUntil =
-                                    Date.now() + 60 * 60 * 1000; // 1 hour
-                                } else if (realName === "Glow Potion") {
-                                  update.glowUntil =
-                                    Date.now() + 3 * 60 * 60 * 1000; // 3 hours
-                                } else if (realName === "Sparkle Potion") {
-                                  update.sparkleUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Translation Potion") {
-                                  update.translationUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Echo Potion") {
-                                  update.echoUntil =
-                                    Date.now() + 60 * 60 * 1000; // 1 hour
-                                } else if (realName === "Whisper Potion") {
-                                  update.whisperUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Shout Potion") {
-                                  update.shoutUntil =
-                                    Date.now() + 15 * 60 * 1000; // 15 minutes
-                                } else if (realName === "Dark Mode Potion") {
-                                  update.darkModeUntil =
-                                    Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-                                } else if (realName === "Retro Potion") {
-                                  update.retroUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Mirror Potion") {
-                                  update.mirrorUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Speed Potion") {
-                                  update.speedUntil =
-                                    Date.now() + 15 * 60 * 1000; // 15 minutes
-                                } else if (realName === "Slow Motion Potion") {
-                                  update.slowMotionUntil =
-                                    Date.now() + 60 * 60 * 1000; // 1 hour
-                                } else if (realName === "Lucky Potion") {
-                                  update.luckyUntil =
-                                    Date.now() + 3 * 60 * 60 * 1000; // 3 hours
-                                } else if (realName === "Wisdom Potion") {
-                                  update.wisdomUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Surveillance Potion") {
-                                  update.surveillanceUntil =
-                                    Date.now() + 60 * 60 * 1000; // 1 hour
-                                } else if (realName === "Charm Potion") {
-                                  update.charmUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else if (realName === "Mystery Potion") {
-                                  update.mysteryUntil =
-                                    Date.now() + 2 * 60 * 60 * 1000; // 2 hours
-                                } else {
-                                  let newHealth =
-                                    (data.health || 100) + healAmount;
-                                  if (newHealth > 100) newHealth = 100;
-                                  update.health = newHealth;
-                                }
-                                await updateDoc(userRef, update);
-                              }}
-                            >
-                              {item.name === "Death Draught" ||
-                              item.name === "Invisibility Draught" ||
-                              item.name === "Love Potion" ||
-                              item.name === "Hair Color Potion" ||
-                              item.name === "Rainbow Potion" ||
-                              item.name === "Glow Potion" ||
-                              item.name === "Sparkle Potion" ||
-                              item.name === "Translation Potion" ||
-                              item.name === "Echo Potion" ||
-                              item.name === "Whisper Potion" ||
-                              item.name === "Shout Potion" ||
-                              item.name === "Dark Mode Potion" ||
-                              item.name === "Retro Potion" ||
-                              item.name === "Mirror Potion" ||
-                              item.name === "Speed Potion" ||
-                              item.name === "Slow Motion Potion" ||
-                              item.name === "Lucky Potion" ||
-                              item.name === "Wisdom Potion" ||
-                              item.name === "Surveillance Potion" ||
-                              item.name === "Charm Potion" ||
-                              item.name === "Mystery Potion"
-                                ? "Drink"
-                                : "Eat"}
-                            </button>
-                          )}
-                          {/* Read button for books - only show if book has proper content */}
-                          {item.type === "book" &&
-                            item.pages &&
-                            Array.isArray(item.pages) &&
-                            item.pages.length > 0 && (
-                              <button
-                                title="Read this book"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  console.log("Read button clicked for:", item);
-                                  console.log("Book data:", item);
-
-                                  // Only open BookViewer if book has proper content
-                                  if (
-                                    item.pages &&
-                                    Array.isArray(item.pages) &&
-                                    item.pages.length > 0
-                                  ) {
-                                    setBookViewer({ open: true, book: item });
-                                  } else {
-                                    alert(
-                                      "This book has no content to display."
-                                    );
-                                  }
-                                }}
-                                style={{
-                                  background: "#8B4513",
-                                  color: "white",
-                                  border: "2px solid #D4C4A8",
-                                  padding: "4px 8px",
-                                  borderRadius: "4px",
-                                  cursor: "pointer",
-                                  marginLeft: "4px",
-                                  zIndex: 1000,
-                                  position: "relative",
-                                }}
-                              >
-                                📖 Read
-                              </button>
-                            )}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              <button
-                className={styles.closeBtn}
-                onClick={() => setShowInventory(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
         )}
         <GiftModal
           open={giftModal.open}
@@ -1167,12 +792,6 @@ const TopBar = () => {
         )}
       </div>
 
-      {/* Book Viewer Modal */}
-      <BookViewer
-        open={bookViewer.open}
-        onClose={() => setBookViewer({ open: false, book: null })}
-        book={bookViewer.book}
-      />
     </>
   );
 };

@@ -74,6 +74,16 @@ const BookViewer = ({ open, book, onClose }) => {
         </div>
 
         <div className={styles.bookInfo}>
+          {/* Book Cover Image */}
+          {book.coverImage && (
+            <div className={styles.bookCoverContainer}>
+              <img
+                src={book.coverImage}
+                alt={`${book.title} cover`}
+                className={styles.bookCover}
+              />
+            </div>
+          )}
           <p>
             <strong>Author:</strong> {book.author}
           </p>

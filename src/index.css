@@ -70,7 +70,12 @@ body::-webkit-scrollbar-track,
 }
 
 .ql-editor p {
-  color: #2c2c2c !important;
+  color: #e19924 !important;
+}
+
+/* Override for BookEditor - use light text */
+.pageContent .ql-editor p {
+  color: #F5EFE0 !important;
 }
 
 .ql-editor strong {

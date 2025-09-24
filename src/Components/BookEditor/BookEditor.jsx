@@ -3,11 +3,13 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useAuth } from "../../context/authContext";
 import useBooks from "../../hooks/useBooks";
+import { useImageUpload } from "../../hooks/useImageUpload";
 import styles from "./BookEditor.module.css";
 
 const BookEditor = ({ book = null, onSave, onCancel }) => {
   const { user } = useAuth();
   const { addBook, updateBook } = useBooks();
+  const { uploadImage } = useImageUpload();
 
   const [title, setTitle] = useState(book?.title || "");
   const [description, setDescription] = useState(book?.description || "");
@@ -16,6 +18,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
     book?.pages || [{ content: "", pageNumber: 1, htmlMode: false }]
   );
   const [saving, setSaving] = useState(false);
+  const [coverImage, setCoverImage] = useState(book?.coverImage || "");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const addPage = () => {
     setPages([
@@ -42,6 +46,40 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
     setPages(newPages);
   };
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Bildet er for stort. Maksimal størrelse er 2MB.");
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Vennligst velg et gyldig bildeformat.");
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const imageUrl = await uploadImage(file);
+      if (imageUrl) {
+        setCoverImage(imageUrl);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Kunne ikke laste opp bilde. Prøv igjen.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removeImage = () => {
+    setCoverImage("");
+  };
+
   const handleSave = async () => {
     if (!title.trim()) {
       alert("Please enter a book title");
@@ -63,6 +101,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         author: user.displayName || user.email,
         authorId: user.uid,
         type: "book",
+        coverImage: coverImage,
       };
 
       console.log("Saving book data:", bookData);
@@ -118,6 +157,46 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
           className={styles.input}
           min="0"
         />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Book Cover Image:</label>
+        <div className={styles.imageUploadSection}>
+          {coverImage ? (
+            <div className={styles.imagePreview}>
+              <img
+                src={coverImage}
+                alt="Book cover preview"
+                className={styles.coverImage}
+              />
+              <button
+                type="button"
+                onClick={removeImage}
+                className={styles.removeImageBtn}
+              >
+                Remove Image
+              </button>
+            </div>
+          ) : (
+            <div className={styles.imageUploadArea}>
+              <label className={styles.uploadLabel}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={uploadingImage}
+                  style={{ display: "none" }}
+                />
+                <span className={styles.uploadButton}>
+                  {uploadingImage ? "Uploading..." : "Choose Cover Image"}
+                </span>
+              </label>
+              <p className={styles.uploadHint}>
+                Max size: 2MB. Recommended: 300x400px
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={styles.pagesSection}>
@@ -179,7 +258,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
                 >
                   <iframe
                     title={`Preview-${index}`}
-                    style={{ width: "100%", minHeight: 120, border: "none" }}
+                    style={{ width: "100%", minHeight: 120, border: "none", color: " #e19924" }}
                     sandbox="allow-scripts allow-same-origin"
                     srcDoc={page.content}
                   />

@@ -88,6 +88,98 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.imageUploadSection {
+  margin-top: 0.5rem;
+}
+
+.imagePreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.coverImage {
+  max-width: 200px;
+  max-height: 300px;
+  border-radius: 8px;
+  border: 2px solid #7B6857;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+}
+
+.removeImageBtn {
+  background: linear-gradient(135deg, #c44 0%, #d55 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.removeImageBtn:hover {
+  background: linear-gradient(135deg, #d55 0%, #e66 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.imageUploadArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  border: 2px dashed #7B6857;
+  border-radius: 8px;
+  background: rgba(245, 239, 224, 0.05);
+  transition: all 0.3s ease;
+}
+
+.imageUploadArea:hover {
+  border-color: #D4C4A8;
+  background: rgba(245, 239, 224, 0.1);
+}
+
+.uploadLabel {
+  cursor: pointer;
+}
+
+.uploadButton {
+  display: inline-block;
+  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  color: #F5EFE0;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 150px;
+}
+
+.uploadButton:hover {
+  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.uploadButton:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.uploadHint {
+  color: rgba(245, 239, 224, 0.7);
+  font-size: 0.9rem;
+  margin: 0;
+  text-align: center;
+}
+
 .pageEditor {
   background: rgba(245, 239, 224, 0.05);
   border: 1px solid rgba(123, 104, 87, 0.3);

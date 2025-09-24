@@ -14,11 +14,11 @@ import {
 } from "firebase/firestore";
 import { cacheHelpers } from "../../utils/firebaseCache";
 import useUsers from "../../hooks/useUser";
-import GiftModal from "../TopBar/GiftModal";
-import BookViewer from "../BookViewer/BookViewer";
-import styles from "./InventoryModal.module.css";
+import GiftModal from "../../Components/TopBar/GiftModal";
+import BookViewer from "../../Components/BookViewer/BookViewer";
+import styles from "./Inventory.module.css";
 
-const InventoryModal = ({ open, onClose }) => {
+const Inventory = () => {
   const { user } = useAuth();
   const { users } = useUsers();
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
@@ -53,14 +53,12 @@ const InventoryModal = ({ open, onClose }) => {
     return () => unsubscribe();
   }, [user]);
 
-  if (!open) return null;
-
-  console.log("InventoryModal opened, inventory:", inventory);
+  console.log("Inventory page loaded, inventory:", inventory);
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <h2>Inventory</h2>
+    <div className={styles.inventoryPage}>
+      <div className={styles.inventoryContainer}>
+        <h1 className={styles.inventoryTitle}>Inventory</h1>
         {Array.isArray(inventory) && inventory.length > 0 ? (
           <ul className={styles.inventoryList}>
             {inventory.map((item, idx) => {
@@ -99,8 +97,8 @@ const InventoryModal = ({ open, onClose }) => {
                           src={item.image || item.coverImage}
                           alt={item.name}
                           className={styles.itemImage}
-                          onLoad={() => console.log('InventoryModal image loaded for:', item.name)}
-                          onError={() => console.log('InventoryModal image failed to load for:', item.name)}
+                          onLoad={() => console.log('Inventory image loaded for:', item.name)}
+                          onError={() => console.log('Inventory image failed to load for:', item.name)}
                         />
                       </div>
                     )}
@@ -339,11 +337,13 @@ const InventoryModal = ({ open, onClose }) => {
             })}
           </ul>
         ) : (
-          <span className={styles.emptyText}>Empty</span>
+          <div className={styles.emptyInventory}>
+            <span className={styles.emptyText}>Your inventory is empty</span>
+            <p className={styles.emptySubtext}>
+              Visit the shop to purchase items or receive gifts from other players!
+            </p>
+          </div>
         )}
-        <button className={styles.closeBtn} onClick={onClose}>
-          Close
-        </button>
       </div>
 
       <GiftModal
@@ -457,4 +457,4 @@ const InventoryModal = ({ open, onClose }) => {
   );
 };
 
-export default InventoryModal;
+export default Inventory;
