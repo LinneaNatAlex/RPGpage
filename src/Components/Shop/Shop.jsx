@@ -201,7 +201,7 @@ const Shop = ({ open = true }) => {
 
       setBalance(newBalance);
       setSuccessMessage(
-        `✅ Successfully bought ${item.name} for ${item.price} Nits!`
+        `Successfully bought ${item.name} for ${item.price} Nits!`
       );
 
       // Clear success message after 5 seconds
@@ -264,7 +264,7 @@ const Shop = ({ open = true }) => {
             animation: "slideIn 0.3s ease-out",
           }}
         >
-          ✅ {successMessage}
+          {successMessage}
         </div>
       )}
 
