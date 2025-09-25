@@ -118,9 +118,35 @@ export const AuthProvider = ({ children }) => {
             userData = { ...currentUser, ...userDoc.data() };
             setUser(userData);
           } else {
-            // If user document doesn't exist and email is not verified,
-            // don't set the user (they need to complete verification first)
-            if (!currentUser.emailVerified) {
+            // If user document doesn't exist but email is verified,
+            // create a basic user document and set the user
+            if (currentUser.emailVerified) {
+              console.log("Creating missing user document for verified user");
+              try {
+                const basicUserData = {
+                  uid: currentUser.uid,
+                  displayName: currentUser.displayName || currentUser.email,
+                  email: currentUser.email,
+                  roles: ["user"],
+                  age: 11,
+                  race: "Witch", // Default race if missing
+                  class: "1st year",
+                  currency: 1000,
+                  inventory: [],
+                  createdAt: new Date(),
+                  lastLogin: new Date(),
+                  online: true,
+                };
+                
+                await setDoc(doc(db, "users", currentUser.uid), basicUserData);
+                setUser({ ...currentUser, ...basicUserData });
+              } catch (error) {
+                console.error("Failed to create user document:", error);
+                // Set user anyway with basic Firebase auth data
+                setUser(currentUser);
+              }
+            } else {
+              // Email not verified, don't set user
               setUser(null);
               setEmailVerified(false);
               setBlocked({
@@ -132,7 +158,6 @@ export const AuthProvider = ({ children }) => {
               setLoading(false);
               return;
             }
-            setUser(currentUser);
           }
 
           setEmailVerified(currentUser.emailVerified);

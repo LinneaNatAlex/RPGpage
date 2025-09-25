@@ -72,8 +72,8 @@ const SignIn = () => {
       // Wait a moment for auth state to update
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // navigate to the home page after successful sign-in
-      navigate("/");
+      // navigate to the main page after successful sign-in
+      navigate("/main-page");
     } catch (error) {
       console.error("Sign in error:", error);
 
