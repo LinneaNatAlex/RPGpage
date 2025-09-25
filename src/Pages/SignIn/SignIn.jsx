@@ -2,7 +2,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import styles from "./SignIn.module.css";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { auth } from "../../firebaseConfig";
+import { auth, db } from "../../firebaseConfig";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import Train from "../../assets/VideoBackgrounds/Train.mp4";
 import ErrorMessage from "../../Components/ErrorMessage/ErrorMessage";
 
@@ -69,8 +70,29 @@ const SignIn = () => {
         return;
       }
 
+      // Check if this is a newly registered user who needs Firestore document creation
+      const tempUserData = localStorage.getItem("tempUserData");
+      if (tempUserData && user.emailVerified) {
+        try {
+          const userData = JSON.parse(tempUserData);
+          // Create the user document in Firestore
+          await setDoc(doc(db, "users", user.uid), {
+            ...userData,
+            uid: user.uid,
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp(),
+            online: true,
+          });
+          localStorage.removeItem("tempUserData");
+          console.log("Created Firestore document for newly verified user");
+        } catch (firestoreError) {
+          console.error("Failed to create user document:", firestoreError);
+          // Continue anyway - authContext will handle missing document
+        }
+      }
+
       // Wait a moment for auth state to update
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // navigate to the main page after successful sign-in
       navigate("/");

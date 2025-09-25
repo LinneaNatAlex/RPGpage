@@ -17,8 +17,13 @@ const VerifyEmail = () => {
 
   // Get the current user from Firebase Auth
   useEffect(() => {
-    // Check if user is logged in
+    // If user is not logged in, check if they came from email verification
     if (!auth.currentUser) {
+      // Check if there's temp user data - if so, they need to sign in again
+      const tempUserData = localStorage.getItem("tempUserData");
+      if (tempUserData) {
+        setError("Please sign in again to complete your registration.");
+      }
       navigate("/sign-in");
       return;
     }
@@ -50,10 +55,8 @@ const VerifyEmail = () => {
             return;
           }
         }
-        // Wait a moment for auth state to fully update before navigating
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+        // Navigate to main page after successful registration
+        navigate("/");
       }
     };
 

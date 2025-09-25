@@ -262,9 +262,6 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Debug logging for user state
-  console.log("AuthProvider render - user:", user?.displayName || "null", "loading:", loading);
-
   return (
     <authContext.Provider value={{ user, loading, emailVerified }}>
       {/* TEMPORARILY DISABLED - ALL BLOCKING LOGIC 

@@ -12,8 +12,7 @@ const MainPage = () => {
   const { user } = useAuth();
   const displayName = user?.displayName || user?.email;
   
-  // Debug logging
-  console.log("MainPage render - user:", user?.displayName || "null", "has roles:", !!user?.roles);
+
   // --------------------------------RETURNING HEADER TEXT----------------------------
   // simple returning of HTML showing the introduction page
   // Tilbake til enkel desktop/mobil logikk uten modal eller floating button

@@ -143,7 +143,15 @@ const SignUp = () => {
         formData.password
       );
       const user = userCredential.user;
-      await sendEmailVerification(user);
+      
+      try {
+        await sendEmailVerification(user);
+        console.log("Email verification sent successfully");
+      } catch (emailError) {
+        console.error("Failed to send email verification:", emailError);
+        setError("Account created but failed to send verification email. Please try to resend from the verify email page.");
+      }
+      
       await updateProfile(user, {
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
       });
