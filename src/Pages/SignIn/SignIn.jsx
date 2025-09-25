@@ -73,7 +73,7 @@ const SignIn = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // navigate to the main page after successful sign-in
-      navigate("/main-page");
+      navigate("/");
     } catch (error) {
       console.error("Sign in error:", error);
 

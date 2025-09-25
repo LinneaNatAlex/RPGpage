@@ -50,8 +50,10 @@ const VerifyEmail = () => {
             return;
           }
         }
-        // Navigate to main app after successful registration
-        navigate("/main-page");
+        // Wait a moment for auth state to fully update before navigating
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       }
     };
 

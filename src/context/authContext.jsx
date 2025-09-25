@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }) => {
         "AuthProvider: Auth state changed, currentUser:",
         currentUser?.uid || "null"
       );
+      console.log("AuthProvider: Email verified:", currentUser?.emailVerified);
 
       // Set a timeout to prevent infinite loading
       const timeoutId = setTimeout(() => {
@@ -115,9 +116,12 @@ export const AuthProvider = ({ children }) => {
 
           let userData = currentUser;
           if (userDoc && userDoc.exists()) {
+            console.log("AuthProvider: Found user document:", userDoc.data());
             userData = { ...currentUser, ...userDoc.data() };
             setUser(userData);
+            console.log("AuthProvider: Set user with Firestore data:", userData.displayName);
           } else {
+            console.log("AuthProvider: No user document found, email verified:", currentUser?.emailVerified);
             // If user document doesn't exist but email is verified,
             // create a basic user document and set the user
             if (currentUser.emailVerified) {
@@ -257,6 +261,9 @@ export const AuthProvider = ({ children }) => {
 
     return () => unsubscribe();
   }, []);
+
+  // Debug logging for user state
+  console.log("AuthProvider render - user:", user?.displayName || "null", "loading:", loading);
 
   return (
     <authContext.Provider value={{ user, loading, emailVerified }}>
