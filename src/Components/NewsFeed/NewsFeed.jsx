@@ -163,12 +163,23 @@ const NewsFeed = () => {
                 <div className={styles.newsContent}>
                   <div className={styles.newsInfo}>
                     <h3>{item.title}</h3>
-                    <span className={nameClass}>{item.author}</span>:
+                    <div className={styles.authorDateInfo}>
+                      <span className={nameClass}>{item.author}</span>
+                      {item.createdAt && (
+                        <span className={styles.postDate}>
+                          • {new Date(item.createdAt.toDate()).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {item.content.startsWith("{{code}}") ? (
                     <div className={styles.codePostPreview}>
                       <p className={styles.codePostDescription}>
-                        Klikk for å se HTML/CSS innhold
+                        Click to view the latest news
                       </p>
                       <Button
                         onClick={() => {
@@ -177,7 +188,7 @@ const NewsFeed = () => {
                         }}
                         className={styles.viewCodeButton}
                       >
-                        Se innhold
+                        View Content
                       </Button>
                     </div>
                   ) : (

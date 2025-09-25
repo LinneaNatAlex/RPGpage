@@ -136,6 +136,19 @@ iframe {
 .newsInfo {
   padding: 1rem;
 }
+
+.authorDateInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.postDate {
+  color: #8b7a6b;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
 .textBlock {
   padding: 2rem;
 }
