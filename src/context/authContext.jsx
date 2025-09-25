@@ -66,8 +66,26 @@ export const AuthProvider = ({ children }) => {
     until: null,
   });
 
+  // Function to force refresh auth state
+  const refreshAuthState = async () => {
+    if (auth.currentUser) {
+      await auth.currentUser.reload();
+      // Trigger the auth state change manually
+      console.log("Manually triggering auth state refresh");
+    }
+  };
+
   useEffect(() => {
     console.log("AuthProvider: Setting up auth state listener");
+    
+    // Add focus listener to refresh auth when user returns to tab
+    const handleFocus = () => {
+      console.log("Window focused - checking auth state");
+      refreshAuthState();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log(
         "AuthProvider: Auth state changed, currentUser:",
@@ -259,11 +277,14 @@ export const AuthProvider = ({ children }) => {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   return (
-    <authContext.Provider value={{ user, loading, emailVerified }}>
+    <authContext.Provider value={{ user, loading, emailVerified, refreshAuthState }}>
       {/* TEMPORARILY DISABLED - ALL BLOCKING LOGIC 
       {blocked.blocked ? (
         blocked.bannedType ? (

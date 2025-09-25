@@ -4,6 +4,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebaseConfig";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { useAuth } from "../../context/authContext";
 import Train from "../../assets/VideoBackgrounds/Train.mp4";
 import ErrorMessage from "../../Components/ErrorMessage/ErrorMessage";
 
@@ -16,6 +17,7 @@ const SignIn = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const { refreshAuthState } = useAuth();
 
   // retrive form data
   const handleChange = (e) => {
@@ -91,8 +93,9 @@ const SignIn = () => {
         }
       }
 
-      // Wait a moment for auth state to update
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Force refresh auth state and wait for it to update
+      await refreshAuthState();
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // navigate to the main page after successful sign-in
       navigate("/");
