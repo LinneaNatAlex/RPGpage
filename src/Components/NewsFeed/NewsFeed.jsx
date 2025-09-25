@@ -163,31 +163,70 @@ const NewsFeed = () => {
                   </div>
                   {item.content.startsWith("{{code}}") ? (
                     <iframe
-                      srcDoc={`<body style='margin:0'>${item.content
-                        .replace("{{code}}", "")
-                        .replace("{{/code}}", "")}
+                      srcDoc={`<!DOCTYPE html>
+                      <html>
+                      <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>
+                          * { box-sizing: border-box; }
+                          body { 
+                            margin: 0; 
+                            padding: 0; 
+                            overflow-x: auto;
+                            overflow-y: auto;
+                            min-height: 100vh;
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        ${item.content.replace("{{code}}", "").replace("{{/code}}", "")}
                         <script>
                           function sendHeight() {
-                            window.parent.postMessage({type: 'setHeight', height: document.body.scrollHeight, index: ${idx}}, '*');
+                            const height = Math.max(
+                              document.body.scrollHeight,
+                              document.body.offsetHeight,
+                              document.documentElement.clientHeight,
+                              document.documentElement.scrollHeight,
+                              document.documentElement.offsetHeight
+                            );
+                            window.parent.postMessage({
+                              type: 'setHeight', 
+                              height: height + 20, 
+                              index: ${idx}
+                            }, '*');
                           }
+                          
+                          // Send height multiple times to ensure it works
+                          setTimeout(sendHeight, 100);
+                          setTimeout(sendHeight, 500);
+                          setTimeout(sendHeight, 1000);
                           window.onload = sendHeight;
                           window.addEventListener('resize', sendHeight);
-                          setTimeout(sendHeight, 100);
+                          
+                          // Watch for content changes
+                          const observer = new MutationObserver(sendHeight);
+                          observer.observe(document.body, { 
+                            childList: true, 
+                            subtree: true, 
+                            attributes: true 
+                          });
                         <\/script>
-                      </body>`}
-                      sandbox="allow-same-origin"
+                      </body>
+                      </html>`}
+                      sandbox="allow-same-origin allow-scripts"
                       title="code-preview"
                       frameBorder="0"
                       style={{
                         width: "100%",
-                        minHeight: "500px",
+                        minHeight: "200px",
                         maxHeight: "1200px",
-                        overflowY: "auto",
+                        border: "1px solid #ddd",
+                        borderRadius: "4px",
                         display: "block",
-                        padding: "5px",
                         height: iframeHeights[idx]
                           ? iframeHeights[idx] + "px"
-                          : "500px",
+                          : "600px",
                       }}
                     />
                   ) : (
