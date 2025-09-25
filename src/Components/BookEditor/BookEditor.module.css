@@ -1,21 +1,21 @@
 .bookEditor {
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
   padding: 2rem;
   border-radius: 12px;
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   max-width: 800px;
   margin: 0 auto;
 }
 
 .bookEditor h2 {
-  font-family: 'Cinzel', serif;
+  font-family: "Cinzel", serif;
   font-size: 1.8rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -27,29 +27,51 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #D4C4A8;
+  color: #d4c4a8;
 }
 
-.input, .textarea {
+.input,
+.textarea,
+.select {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   border-radius: 8px;
   background: rgba(245, 239, 224, 0.1);
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1rem;
   transition: all 0.3s ease;
 }
 
-.input:focus, .textarea:focus {
+.input:focus,
+.textarea:focus,
+.select:focus {
   outline: none;
-  border-color: #D4C4A8;
+  border-color: #d4c4a8;
   background: rgba(245, 239, 224, 0.2);
   box-shadow: 0 0 8px rgba(212, 196, 168, 0.3);
 }
 
-.input::placeholder, .textarea::placeholder {
+.input::placeholder,
+.textarea::placeholder {
   color: rgba(245, 239, 224, 0.6);
+}
+
+.select {
+  cursor: pointer;
+}
+
+.select option {
+  background: #5d4e37;
+  color: #f5efe0;
+  padding: 0.5rem;
+}
+
+.loading {
+  color: #d4c4a8;
+  font-style: italic;
+  padding: 0.75rem;
+  text-align: center;
 }
 
 .pagesSection {
@@ -66,14 +88,14 @@
 }
 
 .pagesHeader h3 {
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-size: 1.3rem;
   margin: 0;
 }
 
 .addPageBtn {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -83,7 +105,7 @@
 }
 
 .addPageBtn:hover {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -103,7 +125,7 @@
   max-width: 200px;
   max-height: 300px;
   border-radius: 8px;
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   object-fit: cover;
 }
@@ -131,14 +153,14 @@
   align-items: center;
   gap: 0.5rem;
   padding: 2rem;
-  border: 2px dashed #7B6857;
+  border: 2px dashed #7b6857;
   border-radius: 8px;
   background: rgba(245, 239, 224, 0.05);
   transition: all 0.3s ease;
 }
 
 .imageUploadArea:hover {
-  border-color: #D4C4A8;
+  border-color: #d4c4a8;
   background: rgba(245, 239, 224, 0.1);
 }
 
@@ -148,8 +170,8 @@
 
 .uploadButton {
   display: inline-block;
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -161,7 +183,7 @@
 }
 
 .uploadButton:hover {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
@@ -196,14 +218,14 @@
 }
 
 .pageHeader h4 {
-  color: #D4C4A8;
+  color: #d4c4a8;
   margin: 0;
   font-size: 1.1rem;
 }
 
 .removePageBtn {
-  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+  color: #f5efe0;
   border: none;
   padding: 0.3rem 0.8rem;
   border-radius: 4px;
@@ -213,7 +235,7 @@
 }
 
 .removePageBtn:hover {
-  background: linear-gradient(135deg, #A0522D 0%, #CD853F 100%);
+  background: linear-gradient(135deg, #a0522d 0%, #cd853f 100%);
   transform: translateY(-1px);
 }
 
@@ -221,10 +243,10 @@
   width: 100%;
   min-height: 200px;
   padding: 0.75rem;
-  border: 1px solid #7B6857;
+  border: 1px solid #7b6857;
   border-radius: 6px;
   background: rgba(245, 239, 224, 0.1);
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
@@ -233,7 +255,7 @@
 
 .pageContent:focus {
   outline: none;
-  border-color: #D4C4A8;
+  border-color: #d4c4a8;
   background: rgba(245, 239, 224, 0.15);
   box-shadow: 0 0 8px rgba(212, 196, 168, 0.2);
 }
@@ -248,8 +270,8 @@
 }
 
 .cancelBtn {
-  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+  color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -259,14 +281,14 @@
 }
 
 .cancelBtn:hover {
-  background: linear-gradient(135deg, #A0522D 0%, #CD853F 100%);
+  background: linear-gradient(135deg, #a0522d 0%, #cd853f 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .saveBtn {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -276,7 +298,7 @@
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -285,4 +307,65 @@
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+/* Audio Upload Styles */
+.audioUploadSection {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(245, 239, 224, 0.05);
+  border: 1px solid rgba(123, 104, 87, 0.3);
+  border-radius: 8px;
+}
+
+.audioUploadSection label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #d4c4a8;
+  font-size: 0.9rem;
+}
+
+.audioUploadArea {
+  text-align: center;
+  padding: 1rem;
+}
+
+.audioPreview {
+  padding: 1rem;
+  background: rgba(245, 239, 224, 0.1);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.audioPlayer {
+  flex: 1;
+  min-width: 200px;
+  background: transparent;
+  border-radius: 4px;
+}
+
+.audioPlayer::-webkit-media-controls-panel {
+  background-color: rgba(123, 104, 87, 0.8);
+}
+
+.removeAudioBtn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #f5efe0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.removeAudioBtn:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
 }

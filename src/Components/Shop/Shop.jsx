@@ -4,7 +4,6 @@ import {
   updateDoc,
   getDoc,
   collection,
-  onSnapshot,
   query,
   orderBy,
   deleteDoc,
@@ -88,24 +87,31 @@ const Shop = ({ open = true }) => {
   // Hent bøker fra Firestore KUN når Shop er synlig
   useEffect(() => {
     if (!open) return;
-    // QUOTA OPTIMIZATION: Limit books to reduce Firebase reads
-    const q = query(
-      collection(db, "books"),
-      orderBy("createdAt", "desc"),
-      limit(50) // Limit to 50 newest books
-    );
-    const unsub = onSnapshot(q, (snapshot) => {
-      const arr = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        firestore: true,
-        category: "Books",
-        name: doc.data().title,
-        type: "book",
-      }));
-      setBooks(arr);
-    });
-    return () => unsub();
+
+    const fetchBooks = async () => {
+      try {
+        // QUOTA OPTIMIZATION: Limit books to reduce Firebase reads
+        const q = query(
+          collection(db, "books"),
+          orderBy("createdAt", "desc"),
+          limit(50) // Limit to 50 newest books
+        );
+        const snapshot = await getDocs(q);
+        const arr = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          firestore: true,
+          category: "Books",
+          name: doc.data().title,
+          type: "book",
+        }));
+        setBooks(arr);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
+    };
+
+    fetchBooks();
   }, [open]);
 
   useEffect(() => {

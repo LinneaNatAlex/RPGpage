@@ -13,13 +13,23 @@ Dette dokumentet beskriver alle Firebase quota optimaliseringene som er implemen
 
 ### 2. **Real-time Listener Optimalisering**
 
-Konvertert fra `onSnapshot` til polling for:
+Konvertert fra `onSnapshot` til `getDocs` for komponenter som ikke trenger live updates:
+
+- **NewsFeed.jsx**: ✅ Konvertert til getDocs - oppdateres kun ved reload
+- **Forum.jsx**: ✅ Konvertert til getDocs - topics og posts oppdateres manuelt etter CRUD operasjoner
+- **Shop.jsx**: ✅ Konvertert til getDocs - books i shop oppdateres ved åpning
+- **useBooks.js**: ✅ Konvertert til getDocs - bøker oppdateres kun ved CRUD operasjoner
+
+Beholdt `onSnapshot` for komponenter som KREVER live updates:
+
+- **Chat komponenter**: Live chat må være real-time
+- **OnlineUsers**: Live bruker status må være real-time
+- **UserData**: Live brukerdata må være real-time
+
+Konvertert fra `onSnapshot` til polling for andre komponenter:
 
 - **InventoryModal**: Poll hver 30. sekund for inventory data
-- **Chat.jsx**: Poll hver 60. sekund for potion effects
 - **TopBar.jsx**: Poll hver 60. sekund for brukerdata og 30. sekund for notifikasjoner
-- **OnlineUsers**: Poll hver 30. sekund for online brukere
-- **Shop**: Poll hver 30. sekund for shop items
 
 ### 3. **Caching System** (`firebaseCache.js`)
 

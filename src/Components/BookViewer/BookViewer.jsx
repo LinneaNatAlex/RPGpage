@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./BookViewer.module.css";
 
 const BookViewer = ({ open, book, onClose }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.7);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const audioRef = useRef(null);
 
   // Handle escape key to close
   useEffect(() => {
@@ -14,6 +18,19 @@ const BookViewer = ({ open, book, onClose }) => {
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [onClose]);
+
+  // Handle audio setup when page changes
+  useEffect(() => {
+    const currentPageData = book?.pages?.[currentPage];
+    if (audioRef.current && currentPageData?.audioUrl) {
+      // Set up audio element
+      audioRef.current.volume = volume;
+      // Stop any playing audio when changing pages
+      setIsPlaying(false);
+    } else {
+      setIsPlaying(false);
+    }
+  }, [currentPage, book, volume]);
 
   // Don't render if not open
   if (!open) {
@@ -49,14 +66,56 @@ const BookViewer = ({ open, book, onClose }) => {
     );
   }
 
+  // Audio control functions
+  const playAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const pauseAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  };
+
+  const handleVolumeChange = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
+
+  // Image modal functions
+  const openImageModal = () => {
+    setShowImageModal(true);
+  };
+
+  const closeImageModal = () => {
+    setShowImageModal(false);
+  };
+
   const nextPage = () => {
     if (currentPage < book.pages.length - 1) {
+      stopAudio(); // Stop current audio when changing page
       setCurrentPage(currentPage + 1);
     }
   };
 
   const prevPage = () => {
     if (currentPage > 0) {
+      stopAudio(); // Stop current audio when changing page
       setCurrentPage(currentPage - 1);
     }
   };
@@ -81,6 +140,7 @@ const BookViewer = ({ open, book, onClose }) => {
                 src={book.coverImage}
                 alt={`${book.title} cover`}
                 className={styles.bookCover}
+                onClick={openImageModal}
               />
             </div>
           )}
@@ -106,6 +166,49 @@ const BookViewer = ({ open, book, onClose }) => {
               dangerouslySetInnerHTML={{ __html: currentPageData.content }}
             />
           </div>
+
+          {/* Audio Player for current page */}
+          {currentPageData.audioUrl && (
+            <div className={styles.audioPlayer}>
+              <audio
+                ref={audioRef}
+                src={currentPageData.audioUrl}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+              />
+
+              <div className={styles.audioControls}>
+                <button
+                  onClick={isPlaying ? pauseAudio : playAudio}
+                  className={styles.audioBtn}
+                >
+                  {isPlaying ? (
+                    <div className={styles.pauseIcon}></div>
+                  ) : (
+                    <div className={styles.playIcon}></div>
+                  )}
+                </button>
+
+                <button onClick={stopAudio} className={styles.audioBtn}>
+                  <div className={styles.stopIcon}></div>
+                </button>
+
+                <div className={styles.volumeControl}>
+                  <div className={styles.volumeIcon}></div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    className={styles.volumeSlider}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.pageNavigation}>
@@ -130,6 +233,21 @@ const BookViewer = ({ open, book, onClose }) => {
           </button>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {showImageModal && book.coverImage && (
+        <div className={styles.imageModal} onClick={closeImageModal}>
+          <img
+            src={book.coverImage}
+            alt={`${book.title} cover full size`}
+            className={styles.imageModalContent}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button className={styles.imageModalClose} onClick={closeImageModal}>
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 };

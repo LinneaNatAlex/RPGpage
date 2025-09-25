@@ -7,7 +7,7 @@ import {
   collection,
   query,
   orderBy,
-  onSnapshot,
+  getDocs,
   addDoc,
   serverTimestamp,
   limit,
@@ -61,35 +61,28 @@ const NewsFeed = () => {
   useEffect(() => {
     if (loading || loadingRoles || !user) return;
 
-    // QUOTA OPTIMIZATION: Add limit to reduce Firebase reads
-    const q = query(
-      collection(db, "news"),
-      orderBy("createdAt", "desc"),
-      limit(25) // Limit to 25 results to reduce quota usage, then filter to 10
-    );
-    let didCancel = false;
-    const unsubscribe = onSnapshot(
-      q,
-      (Snapshot) => {
-        if (didCancel) return;
-        const newData = Snapshot.docs
+    const fetchNews = async () => {
+      try {
+        // QUOTA OPTIMIZATION: Add limit to reduce Firebase reads
+        const q = query(
+          collection(db, "news"),
+          orderBy("createdAt", "desc"),
+          limit(25) // Limit to 25 results to reduce quota usage, then filter to 10
+        );
+
+        const snapshot = await getDocs(q);
+        const newData = snapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
           // Filter by type if not using Firestore 'where' above
           .filter((item) => item.type === "nyhet");
         setNewsList(newData.slice(0, 10));
-      },
-      (error) => {
-        if (!didCancel) {
-          setNewsList([]);
-          // Optionally, set an error state and display a message
-          console.error("Error loading news:", error);
-        }
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        setNewsList([]);
       }
-    );
-    return () => {
-      didCancel = true;
-      unsubscribe();
     };
+
+    fetchNews();
   }, [user, loading, loadingRoles]);
 
   // HANDLE POST SUBMIT is the function that handles the submission of the news post.

@@ -26,18 +26,21 @@ import {
   collection,
   query,
   orderBy,
-  onSnapshot,
+  getDocs,
   addDoc,
   updateDoc,
   deleteDoc,
   doc,
   serverTimestamp,
-  getDocs,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Forum.module.css";
 import Button from "../../Components/Button/Button";
-import { countWords, checkWordCountReward, updateUserWordCount } from "../../utils/wordCountReward";
+import {
+  countWords,
+  checkWordCountReward,
+  updateUserWordCount,
+} from "../../utils/wordCountReward";
 
 // Rich text editor (install react-quill if not present)
 import ReactQuill from "react-quill";
@@ -106,30 +109,42 @@ const Forum = () => {
 
   // Fetch forum posts for this room
   // Fetch topics for this forum room
-  useEffect(() => {
+  const fetchTopics = async () => {
     if (!forumRoom) return;
-    const q = query(
-      collection(db, `forums/${forumRoom}/topics`),
-      orderBy("createdAt", "desc")
-    );
-    const unsub = onSnapshot(q, (snap) => {
+    try {
+      const q = query(
+        collection(db, `forums/${forumRoom}/topics`),
+        orderBy("createdAt", "desc")
+      );
+      const snap = await getDocs(q);
       setTopics(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    });
-    return () => unsub();
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTopics();
   }, [forumRoom]);
 
   // Fetch posts for selected topic
-  useEffect(() => {
+  const fetchPosts = async () => {
     if (!forumRoom || !selectedTopic) return;
-    const q = query(
-      collection(db, `forums/${forumRoom}/topics/${selectedTopic}/posts`),
-      orderBy("createdAt", "asc")
-    );
-    const unsub = onSnapshot(q, (snap) => {
+    try {
+      const q = query(
+        collection(db, `forums/${forumRoom}/topics/${selectedTopic}/posts`),
+        orderBy("createdAt", "asc")
+      );
+      const snap = await getDocs(q);
       setPosts(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
       setPostPage(1); // Reset to first page when topic changes
-    });
-    return () => unsub();
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
   }, [forumRoom, selectedTopic]);
 
   // Post new thread
@@ -145,9 +160,9 @@ const Forum = () => {
   // Create new topic
   const handleCreateTopic = async () => {
     if (!newTopicTitle.trim() || isContentEmpty(newTopicContent)) return;
-    
+
     const wordCount = countWords(newTopicContent);
-    
+
     const topicRef = await addDoc(
       collection(db, `forums/${forumRoom}/topics`),
       {
@@ -166,21 +181,28 @@ const Forum = () => {
         uid: user.uid,
       }
     );
-    
+
     // Update user's total word count and check for nits reward
     const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
-    const reward = await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
-    
+    const reward = await checkWordCountReward(
+      user.uid,
+      newTotalWordCount,
+      newTotalWordCount - wordCount
+    );
+
     // Reward system still works, but no popup message
     // if (reward.awarded) {
     //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
     //   setTimeout(() => setNitsReward(null), 10000);
     // }
-    
+
     setNewTopicTitle("");
     setNewTopicContent("");
     setNewTopicWordCount(0);
     setSelectedTopic(topicRef.id);
+
+    // Refresh topics list
+    await fetchTopics();
   };
 
   // Delete entire topic (and all its posts)
@@ -198,6 +220,9 @@ const Forum = () => {
     // Delete the topic itself
     await deleteDoc(doc(db, `forums/${forumRoom}/topics`, selectedTopic));
     setSelectedTopic(null);
+
+    // Refresh topics list
+    await fetchTopics();
   };
   const [editingTopic, setEditingTopic] = useState(false);
   const [editTopicTitle, setEditTopicTitle] = useState("");
@@ -245,14 +270,18 @@ const Forum = () => {
       );
     }
     setEditingTopic(false);
+
+    // Refresh both topics and posts
+    await fetchTopics();
+    await fetchPosts();
   };
 
   // Post reply in topic
   const handleReply = async () => {
     if (!selectedTopic || isContentEmpty(replyContent)) return;
-    
+
     const wordCount = countWords(replyContent);
-    
+
     await addDoc(
       collection(db, `forums/${forumRoom}/topics/${selectedTopic}/posts`),
       {
@@ -262,19 +291,26 @@ const Forum = () => {
         uid: user.uid,
       }
     );
-    
+
     // Update user's total word count and check for nits reward
     const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
-    const reward = await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
-    
+    const reward = await checkWordCountReward(
+      user.uid,
+      newTotalWordCount,
+      newTotalWordCount - wordCount
+    );
+
     // Reward system still works, but no popup message
     // if (reward.awarded) {
     //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
     //   setTimeout(() => setNitsReward(null), 10000);
     // }
-    
+
     setReplyContent("");
     setReplyWordCount(0);
+
+    // Refresh posts list
+    await fetchPosts();
   };
 
   // Edit post (correct Firestore path)
@@ -288,6 +324,9 @@ const Forum = () => {
     );
     setEditingId(null);
     setEditContent("");
+
+    // Refresh posts list
+    await fetchPosts();
   };
 
   // Delete post (correct Firestore path)
@@ -296,6 +335,9 @@ const Forum = () => {
     await deleteDoc(
       doc(db, `forums/${forumRoom}/topics/${selectedTopic}/posts`, id)
     );
+
+    // Refresh posts list
+    await fetchPosts();
   };
 
   // Role color logic (reuse from chat/news)
@@ -348,7 +390,13 @@ const Forum = () => {
             >
               {`Words: ${newTopicWordCount} / 300`}
               {newTopicWordCount < 300 && " (minimum 300 words to post)"}
-              <div style={{ fontSize: "0.8rem", color: "#8B7A6B", marginTop: "4px" }}>
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#8B7A6B",
+                  marginTop: "4px",
+                }}
+              >
                 Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
             </div>
@@ -583,7 +631,13 @@ const Forum = () => {
             >
               {`Words: ${replyWordCount} / 300`}
               {replyWordCount < 300 && " (minimum 300 words to post)"}
-              <div style={{ fontSize: "0.8rem", color: "#8B7A6B", marginTop: "4px" }}>
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#8B7A6B",
+                  marginTop: "4px",
+                }}
+              >
                 Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
             </div>

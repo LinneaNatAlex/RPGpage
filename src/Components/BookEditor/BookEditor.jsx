@@ -1,30 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useAuth } from "../../context/authContext";
 import useBooks from "../../hooks/useBooks";
 import { useImageUpload } from "../../hooks/useImageUpload";
+import { useAudioUpload } from "../../hooks/useAudioUpload";
+import useAllUsers from "../../hooks/useAllUsers";
 import styles from "./BookEditor.module.css";
 
 const BookEditor = ({ book = null, onSave, onCancel }) => {
   const { user } = useAuth();
   const { addBook, updateBook } = useBooks();
   const { uploadImage } = useImageUpload();
+  const { uploadAudio } = useAudioUpload();
+  const { users, loading: usersLoading } = useAllUsers();
 
   const [title, setTitle] = useState(book?.title || "");
   const [description, setDescription] = useState(book?.description || "");
   const [price, setPrice] = useState(book?.price || 0);
+  const [selectedAuthor, setSelectedAuthor] = useState(
+    book?.authorId || user?.uid || ""
+  );
   const [pages, setPages] = useState(
-    book?.pages || [{ content: "", pageNumber: 1, htmlMode: false }]
+    book?.pages || [
+      { content: "", pageNumber: 1, htmlMode: false, audioUrl: "" },
+    ]
   );
   const [saving, setSaving] = useState(false);
   const [coverImage, setCoverImage] = useState(book?.coverImage || "");
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingAudio, setUploadingAudio] = useState({});
+
+  // Set default author when users load and no author is selected yet
+  useEffect(() => {
+    if (!selectedAuthor && users.length > 0 && user?.uid) {
+      setSelectedAuthor(user.uid);
+    }
+  }, [users, user, selectedAuthor]);
 
   const addPage = () => {
     setPages([
       ...pages,
-      { content: "", pageNumber: pages.length + 1, htmlMode: false },
+      {
+        content: "",
+        pageNumber: pages.length + 1,
+        htmlMode: false,
+        audioUrl: "",
+      },
     ]);
   };
 
@@ -80,6 +102,51 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
     setCoverImage("");
   };
 
+  const handleAudioChange = async (e, pageIndex) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validAudioTypes = [
+      "audio/mpeg",
+      "audio/wav",
+      "audio/ogg",
+      "audio/mp3",
+      "audio/m4a",
+    ];
+    if (!validAudioTypes.includes(file.type)) {
+      alert("Vennligst velg et gyldig lydformat (MP3, WAV, OGG, M4A).");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Lydfilen er for stor. Maksimal størrelse er 10MB.");
+      return;
+    }
+
+    setUploadingAudio((prev) => ({ ...prev, [pageIndex]: true }));
+    try {
+      const audioUrl = await uploadAudio(file);
+      if (audioUrl) {
+        const newPages = [...pages];
+        newPages[pageIndex].audioUrl = audioUrl;
+        setPages(newPages);
+      }
+    } catch (error) {
+      console.error("Error uploading audio:", error);
+      alert("Kunne ikke laste opp lydfil. Prøv igjen.");
+    } finally {
+      setUploadingAudio((prev) => ({ ...prev, [pageIndex]: false }));
+    }
+  };
+
+  const removeAudio = (pageIndex) => {
+    const newPages = [...pages];
+    newPages[pageIndex].audioUrl = "";
+    setPages(newPages);
+  };
+
   const handleSave = async () => {
     if (!title.trim()) {
       alert("Please enter a book title");
@@ -93,13 +160,19 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
     setSaving(true);
     try {
+      // Find the selected author
+      const selectedAuthorData =
+        users.find((u) => u.uid === selectedAuthor) ||
+        users.find((u) => u.uid === user.uid);
+
       const bookData = {
         title: title.trim(),
         description: description.trim(),
         price: parseInt(price) || 0,
         pages: pages.filter((page) => page.content.trim()),
-        author: user.displayName || user.email,
-        authorId: user.uid,
+        author:
+          selectedAuthorData?.displayName || user.displayName || user.email,
+        authorId: selectedAuthor || user.uid,
         type: "book",
         coverImage: coverImage,
       };
@@ -134,6 +207,27 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
           placeholder="Enter book title"
           className={styles.input}
         />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Author:</label>
+        {usersLoading ? (
+          <div className={styles.loading}>Loading users...</div>
+        ) : (
+          <select
+            value={selectedAuthor}
+            onChange={(e) => setSelectedAuthor(e.target.value)}
+            className={styles.select}
+          >
+            <option value="">Select an author</option>
+            {users.map((userOption) => (
+              <option key={userOption.uid} value={userOption.uid}>
+                {userOption.displayName}
+                {userOption.uid === user?.uid && " (You)"}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       <div className={styles.formGroup}>
@@ -231,6 +325,46 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
                 {page.htmlMode ? "WYSIWYG-modus" : "HTML/CSS-modus"}
               </button>
             </div>
+
+            {/* Audio Upload Section */}
+            <div className={styles.audioUploadSection}>
+              <label>Background Audio (Optional):</label>
+              {page.audioUrl ? (
+                <div className={styles.audioPreview}>
+                  <audio controls className={styles.audioPlayer}>
+                    <source src={page.audioUrl} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                  <button
+                    type="button"
+                    onClick={() => removeAudio(index)}
+                    className={styles.removeAudioBtn}
+                  >
+                    Remove Audio
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.audioUploadArea}>
+                  <label className={styles.uploadLabel}>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={(e) => handleAudioChange(e, index)}
+                      disabled={uploadingAudio[index]}
+                      style={{ display: "none" }}
+                    />
+                    <span className={styles.uploadButton}>
+                      {uploadingAudio[index]
+                        ? "Uploading..."
+                        : "Choose Audio File"}
+                    </span>
+                  </label>
+                  <p className={styles.uploadHint}>
+                    Max size: 10MB. Supported formats: MP3, WAV, OGG, M4A
+                  </p>
+                </div>
+              )}
+            </div>
             {page.htmlMode ? (
               <>
                 <textarea
@@ -258,7 +392,12 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
                 >
                   <iframe
                     title={`Preview-${index}`}
-                    style={{ width: "100%", minHeight: 120, border: "none", color: " #e19924" }}
+                    style={{
+                      width: "100%",
+                      minHeight: 120,
+                      border: "none",
+                      color: " #e19924",
+                    }}
                     sandbox="allow-scripts allow-same-origin"
                     srcDoc={page.content}
                   />

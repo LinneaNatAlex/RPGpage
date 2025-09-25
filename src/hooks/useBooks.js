@@ -11,7 +11,6 @@ import {
   serverTimestamp,
   query,
   orderBy,
-  onSnapshot,
 } from "firebase/firestore";
 
 const useBooks = () => {
@@ -21,7 +20,8 @@ const useBooks = () => {
   // Fetch all books from Firestore
   const fetchBooks = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "books"));
+      const q = query(collection(db, "books"), orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
       const booksData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -44,6 +44,10 @@ const useBooks = () => {
         updatedAt: serverTimestamp(),
       });
       console.log("Book added successfully with ID:", docRef.id);
+
+      // Refetch books to update the list
+      await fetchBooks();
+
       return docRef.id;
     } catch (error) {
       console.error("Error adding book: ", error);
@@ -60,6 +64,9 @@ const useBooks = () => {
         ...bookData,
         updatedAt: serverTimestamp(),
       });
+
+      // Refetch books to update the list
+      await fetchBooks();
     } catch (error) {
       console.error("Error updating book: ", error);
       throw error;
@@ -71,33 +78,18 @@ const useBooks = () => {
     try {
       const bookRef = doc(db, "books", bookId);
       await deleteDoc(bookRef);
+
+      // Refetch books to update the list
+      await fetchBooks();
     } catch (error) {
       console.error("Error deleting book: ", error);
       throw error;
     }
   };
 
-  // Listen to books in real-time
+  // Fetch books on component mount (no real-time listener to save snapshots)
   useEffect(() => {
-    const q = query(collection(db, "books"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const booksData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setBooks(booksData);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error in books snapshot listener:", error);
-        // Fallback to fetchBooks if real-time fails
-        fetchBooks();
-      }
-    );
-
-    return () => unsubscribe();
+    fetchBooks();
   }, []);
 
   return {

@@ -1,31 +1,29 @@
 .inventoryPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 50%, #7b6857 100%);
   padding: 2rem;
-  color: #fff;
+  color: #f5efe0;
 }
 
 .inventoryContainer {
   max-width: 1200px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   border-radius: 20px;
   padding: 2rem;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 3px solid #7b6857;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
 }
 
 .inventoryTitle {
+  font-family: "Cinzel", serif;
   font-size: 2.5rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
-  background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  color: #d4c4a8;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .inventoryList {
@@ -38,8 +36,8 @@
 }
 
 .inventoryItem {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(245, 239, 224, 0.1);
+  border: 2px solid #7b6857;
   border-radius: 15px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -49,21 +47,22 @@
 }
 
 .inventoryItem::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+  background: linear-gradient(90deg, #d4c4a8 0%, #8b7a6b 50%, #d4c4a8 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .inventoryItem:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-color: #8b7a6b;
+  background: rgba(245, 239, 224, 0.15);
 }
 
 .inventoryItem:hover::before {
@@ -84,7 +83,7 @@
   height: 80px;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(123, 104, 87, 0.5);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -105,7 +104,7 @@
 .itemName {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #fff;
+  color: #f5efe0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -131,67 +130,79 @@
 }
 
 .giftBtn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
+  border: 2px solid #7b6857;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .giftBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
+  border-color: #8b7a6b;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .deleteBtn {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+  color: #f5efe0;
+  border: 2px solid #7b3f1a;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .deleteBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+  background: linear-gradient(135deg, #a0522d 0%, #cd853f 100%);
+  border-color: #8b4513;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .eatBtn {
-  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
+  border: 2px solid #7b6857;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .eatBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
+  border-color: #8b7a6b;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .readBtn {
-  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-  color: white;
-  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.4);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
+  border: 2px solid #7b6857;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .readBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.6);
+  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
+  border-color: #8b7a6b;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .emptyInventory {
   text-align: center;
   padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(245, 239, 224, 0.05);
   border-radius: 15px;
-  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border: 2px dashed rgba(123, 104, 87, 0.5);
 }
 
 .emptyText {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #ccc;
+  color: #d4c4a8;
   display: block;
   margin-bottom: 1rem;
 }
 
 .emptySubtext {
-  color: #aaa;
+  color: #a89688;
   font-size: 1rem;
   line-height: 1.5;
   margin: 0;
@@ -216,29 +227,29 @@
   .inventoryPage {
     padding: 1rem;
   }
-  
+
   .inventoryContainer {
     padding: 1rem;
   }
-  
+
   .inventoryTitle {
     font-size: 2rem;
   }
-  
+
   .inventoryList {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .inventoryItem {
     padding: 1rem;
   }
-  
+
   .itemButtons {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .giftBtn,
   .deleteBtn,
   .eatBtn,
@@ -250,16 +261,28 @@
 
 /* Special item type styling */
 .inventoryItem[data-item-type="book"] {
-  border-color: rgba(139, 69, 19, 0.5);
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(160, 82, 45, 0.1));
+  border-color: rgba(123, 104, 87, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(93, 78, 55, 0.15),
+    rgba(107, 91, 71, 0.15)
+  );
 }
 
 .inventoryItem[data-item-type="potion"] {
-  border-color: rgba(78, 205, 196, 0.5);
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(68, 160, 141, 0.1));
+  border-color: rgba(139, 115, 85, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(123, 104, 87, 0.15),
+    rgba(139, 122, 107, 0.15)
+  );
 }
 
 .inventoryItem[data-item-type="food"] {
   border-color: rgba(255, 107, 107, 0.5);
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(238, 90, 36, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.1),
+    rgba(238, 90, 36, 0.1)
+  );
 }
