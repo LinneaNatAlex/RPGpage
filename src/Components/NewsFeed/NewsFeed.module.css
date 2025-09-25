@@ -1,6 +1,6 @@
 .posterName {
   font-weight: bold;
-  color: #7B6857;
+  color: #7b6857;
 }
 .headmasterName {
   color: #fff !important;
@@ -29,35 +29,36 @@
   justify-content: center;
   margin: 0;
   gap: 16px;
-  color: #2C2C2C;
-  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  color: #2c2c2c;
+  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
-  border: 2px solid #D4C4A8;
+  border: 2px solid #d4c4a8;
   padding: 2rem;
   position: relative;
   overflow: hidden;
 }
 
 .newsFeedWrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #7B6857 0%, #8B7A6B 50%, #7B6857 100%);
+  background: linear-gradient(90deg, #7b6857 0%, #8b7a6b 50%, #7b6857 100%);
 }
 
 .newsContainer {
   display: flex;
   flex-direction: column;
-  background: #F5EFE0;
+  background: #f5efe0;
   border-radius: 12px;
-  border: 2px solid #D4C4A8;
-  color: #2C2C2C;
+  border: 2px solid #d4c4a8;
+  color: #2c2c2c;
   padding: 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 3px rgba(255, 255, 255, 0.5);
   width: 100%;
   position: relative;
   z-index: 1;
@@ -66,7 +67,8 @@
 
 .newsContainer:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15),
+    inset 0 1px 3px rgba(255, 255, 255, 0.5);
 }
 /* -------------------ADMIN TEXT AREA------------------- */
 
@@ -86,9 +88,9 @@
   width: 100%;
   max-width: 600px;
   border-radius: var(--main-border-radius);
-  border: 2px solid #D4C4A8;
+  border: 2px solid #d4c4a8;
   padding: 12px;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   font-size: 14px;
   resize: vertical;
   box-sizing: border-box;
@@ -99,16 +101,16 @@
   width: 100%;
   max-width: 600px;
   padding: 12px;
-  border: 2px solid #D4C4A8;
+  border: 2px solid #d4c4a8;
   border-radius: var(--main-border-radius);
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   font-size: 14px;
   box-sizing: border-box;
-  background: #F5EFE0;
-  color: #2C2C2C;
+  background: #f5efe0;
+  color: #2c2c2c;
 }
 .title {
-  color: #7B6857;
+  color: #7b6857;
   font-size: 1.8rem;
   font-weight: 700;
   font-family: "Cinzel", serif;
@@ -139,20 +141,20 @@ iframe {
 }
 
 .newsContent {
-  background: #F5EFE0;
+  background: #f5efe0;
   border-radius: 12px;
-  border: 2px solid #D4C4A8;
-  color: #2C2C2C;
+  border: 2px solid #d4c4a8;
+  color: #2c2c2c;
   min-height: 200px;
   max-height: 900px;
   height: auto;
   overflow-y: auto;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   line-height: 1.6;
   scrollbar-width: thin;
-  scrollbar-color: #7B6857 #E8DDD4;
+  scrollbar-color: #7b6857 #e8ddd4;
 }
 
 .newsContent::-webkit-scrollbar {
@@ -160,17 +162,17 @@ iframe {
 }
 
 .newsContent::-webkit-scrollbar-track {
-  background: #E8DDD4;
+  background: #e8ddd4;
   border-radius: 4px;
 }
 
 .newsContent::-webkit-scrollbar-thumb {
-  background: #7B6857;
+  background: #7b6857;
   border-radius: 4px;
 }
 
 .newsContent::-webkit-scrollbar-thumb:hover {
-  background: #8B7A6B;
+  background: #8b7a6b;
 }
 
 .handlePostSubmit {
@@ -180,9 +182,9 @@ iframe {
   margin: 0;
   border-radius: var(--main-border-radius);
   background-color: var(--button-background);
-  border: 2px solid #D4C4A8;
-  color: #2C2C2C;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  border: 2px solid #d4c4a8;
+  color: #2c2c2c;
+  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -211,7 +213,7 @@ iframe {
 
 .posterName {
   font-size: 1.1rem;
-  color: #7B6857;
+  color: #7b6857;
   font-weight: 600;
   margin-bottom: 0.8rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -227,15 +229,101 @@ iframe {
     -webkit-overflow-scrolling: touch;
     max-height: 80vh;
   }
-  
+
   .newsContainer {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .newsContent {
     max-height: 60vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Code post preview styling */
+.codePostPreview {
+  background: linear-gradient(135deg, #f8f4f0 0%, #f0e8dc 100%);
+  border: 2px solid #d4c4a8;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.codePostDescription {
+  color: #7b6857;
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.viewCodeButton {
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.viewCodeButton:hover {
+  background: linear-gradient(135deg, #6a5a47 0%, #7a6a5b 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Popup overlay styling */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.closePopupButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 50%;
+  z-index: 10001;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closePopupButton:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.popupContent {
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  /* No background - let your content define its own styling */
+}
+
+/* Just prevent content from being too wide */
+.popupContent img {
+  max-width: 100%;
+  height: auto;
 }

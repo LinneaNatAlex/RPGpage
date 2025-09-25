@@ -19,6 +19,8 @@ import Button from "../Button/Button";
 const NewsFeed = () => {
   // All the state variables and hooks.
   const [iframeHeights, setIframeHeights] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Listen for messages from iframes to set their height
   useEffect(() => {
@@ -51,11 +53,13 @@ const NewsFeed = () => {
   const [newPost, setNewPost] = useState("");
   const [titles, setTitles] = useState("");
 
-  // This CHECKS if the user has the role of admin. If the user is admin then this gives the user the ability to post news, and delete posts.
+  // This CHECKS if the user has the role of admin, teacher, or archivist. These roles can post news and delete posts.
   const isAdminOrTeacher =
     !loadingRoles &&
     Array.isArray(userRoles) &&
-    (userRoles.includes("admin") || userRoles.includes("teacher"));
+    (userRoles.includes("admin") ||
+      userRoles.includes("teacher") ||
+      userRoles.includes("archivist"));
 
   // USEEFFECT gathering / fetching the news from the database, now filtered and limited
   useEffect(() => {
@@ -162,73 +166,20 @@ const NewsFeed = () => {
                     <span className={nameClass}>{item.author}</span>:
                   </div>
                   {item.content.startsWith("{{code}}") ? (
-                    <iframe
-                      srcDoc={`<!DOCTYPE html>
-                      <html>
-                      <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>
-                          * { box-sizing: border-box; }
-                          body { 
-                            margin: 0; 
-                            padding: 0; 
-                            overflow-x: auto;
-                            overflow-y: auto;
-                            min-height: 100vh;
-                          }
-                        </style>
-                      </head>
-                      <body>
-                        ${item.content.replace("{{code}}", "").replace("{{/code}}", "")}
-                        <script>
-                          function sendHeight() {
-                            const height = Math.max(
-                              document.body.scrollHeight,
-                              document.body.offsetHeight,
-                              document.documentElement.clientHeight,
-                              document.documentElement.scrollHeight,
-                              document.documentElement.offsetHeight
-                            );
-                            window.parent.postMessage({
-                              type: 'setHeight', 
-                              height: height + 20, 
-                              index: ${idx}
-                            }, '*');
-                          }
-                          
-                          // Send height multiple times to ensure it works
-                          setTimeout(sendHeight, 100);
-                          setTimeout(sendHeight, 500);
-                          setTimeout(sendHeight, 1000);
-                          window.onload = sendHeight;
-                          window.addEventListener('resize', sendHeight);
-                          
-                          // Watch for content changes
-                          const observer = new MutationObserver(sendHeight);
-                          observer.observe(document.body, { 
-                            childList: true, 
-                            subtree: true, 
-                            attributes: true 
-                          });
-                        <\/script>
-                      </body>
-                      </html>`}
-                      sandbox="allow-same-origin allow-scripts"
-                      title="code-preview"
-                      frameBorder="0"
-                      style={{
-                        width: "100%",
-                        minHeight: "200px",
-                        maxHeight: "1200px",
-                        border: "1px solid #ddd",
-                        borderRadius: "4px",
-                        display: "block",
-                        height: iframeHeights[idx]
-                          ? iframeHeights[idx] + "px"
-                          : "600px",
-                      }}
-                    />
+                    <div className={styles.codePostPreview}>
+                      <p className={styles.codePostDescription}>
+                        Klikk for å se HTML/CSS innhold
+                      </p>
+                      <Button
+                        onClick={() => {
+                          setSelectedPost(item);
+                          setModalOpen(true);
+                        }}
+                        className={styles.viewCodeButton}
+                      >
+                        Se innhold
+                      </Button>
+                    </div>
                   ) : (
                     <div className={styles.textBlock}>
                       <p>{item.content}</p>
@@ -251,6 +202,30 @@ const NewsFeed = () => {
           })}
         </>
       </div>
+
+      {/* Popup overlay for HTML/CSS content */}
+      {modalOpen && selectedPost && (
+        <div
+          className={styles.popupOverlay}
+          onClick={() => setModalOpen(false)}
+        >
+          <button
+            className={styles.closePopupButton}
+            onClick={() => setModalOpen(false)}
+          >
+            ×
+          </button>
+          <div
+            className={styles.popupContent}
+            onClick={(e) => e.stopPropagation()}
+            dangerouslySetInnerHTML={{
+              __html: selectedPost.content
+                .replace("{{code}}", "")
+                .replace("{{/code}}", ""),
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
