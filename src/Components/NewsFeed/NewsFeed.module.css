@@ -328,6 +328,129 @@ iframe {
   transform: scale(1.1);
 }
 
+.popupContainer {
+  display: flex;
+  width: 100%;
+  max-width: 1400px;
+  height: 90vh;
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.popupContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: transparent;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.popupContent::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.otherNewsSidebar {
+  width: 300px;
+  background: transparent;
+  border-left: 2px solid #d4c4a8;
+  padding: 20px;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.otherNewsSidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.otherNewsSidebar h3 {
+  color: #a0453d;
+  font-family: "Cinzel", serif;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  text-align: center;
+  border-bottom: 2px solid #d4c4a8;
+  padding-bottom: 10px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.otherNewsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.otherNewsItem {
+  background: transparent;
+  border: 1px solid rgba(212, 196, 168, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.otherNewsItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.otherNewsItem h4 {
+  font-size: 0.9rem;
+  color: #8b4a42;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+  font-weight: 600;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.otherNewsAuthor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.otherNewsDate {
+  color: #8b7a6b;
+  font-size: 0.75rem;
+}
+
+.noOtherNews {
+  color: #8b7a6b;
+  font-style: italic;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Mobile responsiveness for popup */
+@media (max-width: 768px) {
+  .popupContainer {
+    flex-direction: column;
+    height: 95vh;
+  }
+
+  .otherNewsSidebar {
+    width: 100%;
+    max-height: 200px;
+    border-left: none;
+    border-top: 2px solid #d4c4a8;
+  }
+
+  .otherNewsGrid {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .otherNewsItem {
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+}
+
 .popupContent {
   max-width: 90vw;
   max-height: 90vh;

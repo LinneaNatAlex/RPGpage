@@ -167,11 +167,15 @@ const NewsFeed = () => {
                       <span className={nameClass}>{item.author}</span>
                       {item.createdAt && (
                         <span className={styles.postDate}>
-                          • {new Date(item.createdAt.toDate()).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
+                          •{" "}
+                          {new Date(item.createdAt.toDate()).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
                         </span>
                       )}
                     </div>
@@ -227,14 +231,85 @@ const NewsFeed = () => {
             ×
           </button>
           <div
-            className={styles.popupContent}
+            className={styles.popupContainer}
             onClick={(e) => e.stopPropagation()}
-            dangerouslySetInnerHTML={{
-              __html: selectedPost.content
-                .replace("{{code}}", "")
-                .replace("{{/code}}", ""),
-            }}
-          />
+          >
+            <div
+              className={styles.popupContent}
+              dangerouslySetInnerHTML={{
+                __html: selectedPost.content
+                  .replace("{{code}}", "")
+                  .replace("{{/code}}", ""),
+              }}
+            />
+            <div className={styles.otherNewsSidebar}>
+              <h3>Other News</h3>
+              <div className={styles.otherNewsGrid}>
+                {newsList
+                  .filter(
+                    (post) =>
+                      post.id !== selectedPost.id &&
+                      post.content.startsWith("{{code}}")
+                  )
+                  .slice(0, 4)
+                  .map((post) => {
+                    const userObj = users.find(
+                      (u) =>
+                        u.displayName &&
+                        u.displayName.toLowerCase() ===
+                          post.author?.toLowerCase()
+                    );
+                    let nameClass = styles.posterName;
+                    if (
+                      userObj?.roles?.some(
+                        (r) => r.toLowerCase() === "headmaster"
+                      )
+                    )
+                      nameClass += ` ${styles.headmasterName}`;
+                    else if (
+                      userObj?.roles?.some((r) => r.toLowerCase() === "teacher")
+                    )
+                      nameClass += ` ${styles.teacherName}`;
+                    else if (
+                      userObj?.roles?.some(
+                        (r) => r.toLowerCase() === "archivist"
+                      )
+                    )
+                      nameClass += ` ${styles.archivistName}`;
+
+                    return (
+                      <div
+                        key={post.id}
+                        className={styles.otherNewsItem}
+                        onClick={() => setSelectedPost(post)}
+                      >
+                        <h4>{post.title}</h4>
+                        <div className={styles.otherNewsAuthor}>
+                          <span className={nameClass}>{post.author}</span>
+                          {post.createdAt && (
+                            <span className={styles.otherNewsDate}>
+                              {new Date(
+                                post.createdAt.toDate()
+                              ).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                {newsList.filter(
+                  (post) =>
+                    post.id !== selectedPost.id &&
+                    post.content.startsWith("{{code}}")
+                ).length === 0 && (
+                  <p className={styles.noOtherNews}>No other news available</p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
