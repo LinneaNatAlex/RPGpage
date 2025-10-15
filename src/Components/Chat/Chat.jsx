@@ -236,7 +236,9 @@ const Chat = () => {
         auth.currentUser?.displayName?.toLowerCase()
   );
   const canDelete = currentUserObj?.roles?.some((r) =>
-    ["admin", "teacher", "headmaster", "shadowpatrol"].includes(r.toLowerCase())
+    ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"].includes(
+      r.toLowerCase()
+    )
   );
 
   // Slett melding
@@ -468,6 +470,7 @@ const Chat = () => {
                   u.displayName &&
                   u.displayName.toLowerCase() === message.sender?.toLowerCase()
               );
+
               let roleClass = styles.messageSender;
               if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
                 roleClass += ` ${styles.headmasterSender}`;
@@ -481,6 +484,10 @@ const Chat = () => {
                 roleClass += ` ${styles.shadowPatrolSender}`;
               else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
                 roleClass += ` ${styles.adminSender}`;
+              else if (
+                userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
+              )
+                roleClass += ` ${styles.archivistSender}`;
               return (
                 <div key={message.id} className={styles.message}>
                   <span className={styles.senderNameWrapper}>
