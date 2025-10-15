@@ -17,6 +17,7 @@ import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import GiftModal from "../../Components/TopBar/GiftModal";
 import BookViewer from "../../Components/BookViewer/BookViewer";
+import DeleteConfirmModal from "../../Components/DeleteConfirmModal/DeleteConfirmModal";
 import styles from "./Inventory.module.css";
 
 const Inventory = () => {
@@ -25,6 +26,11 @@ const Inventory = () => {
   const { users } = useUsers();
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
   const [bookViewer, setBookViewer] = useState({ open: false, book: null });
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    item: null,
+    index: null,
+  });
   const [infirmary, setInfirmary] = useState(false);
   const [firestoreItems, setFirestoreItems] = useState([]);
 
@@ -54,6 +60,38 @@ const Inventory = () => {
   }, []);
 
   console.log("Inventory page loaded, inventory:", userData?.inventory || []);
+
+  // Delete item function
+  const handleDeleteItem = async () => {
+    if (!user || !deleteModal.item) return;
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) return;
+
+      let inv = userDoc.data().inventory || [];
+      const invIdx = inv.findIndex((i) => i.name === deleteModal.item.name);
+      if (invIdx === -1) return;
+
+      inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
+      if (inv[invIdx].qty <= 0) {
+        inv.splice(invIdx, 1);
+      }
+
+      await updateDoc(userRef, { inventory: inv });
+
+      // Clear cache after inventory update
+      cacheHelpers.clearUserCache(user.uid);
+
+      // Close modal
+      setDeleteModal({ open: false, item: null, index: null });
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      // Close modal even on error
+      setDeleteModal({ open: false, item: null, index: null });
+    }
+  };
 
   return (
     <div className={styles.inventoryPage}>
@@ -148,25 +186,13 @@ const Inventory = () => {
                     <button
                       className={styles.deleteBtn}
                       title="Delete this item"
-                      onClick={async () => {
-                        if (!user) return;
-                        const userRef = doc(db, "users", user.uid);
-                        const userDoc = await getDoc(userRef);
-                        if (!userDoc.exists()) return;
-                        let inv = userDoc.data().inventory || [];
-                        const invIdx = inv.findIndex(
-                          (i) => i.name === item.name
-                        );
-                        if (invIdx === -1) return;
-                        inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
-                        if (inv[invIdx].qty <= 0) {
-                          inv.splice(invIdx, 1);
-                        }
-                        await updateDoc(userRef, { inventory: inv });
-
-                        // Clear cache after inventory update
-                        cacheHelpers.clearUserCache(user.uid);
-                      }}
+                      onClick={() =>
+                        setDeleteModal({
+                          open: true,
+                          item: itemWithImage,
+                          index: idx,
+                        })
+                      }
                     >
                       ✕
                     </button>
@@ -465,6 +491,15 @@ const Inventory = () => {
           });
           setGiftModal({ open: false, item: null });
         }}
+      />
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteModal.open}
+        onConfirm={handleDeleteItem}
+        onCancel={() =>
+          setDeleteModal({ open: false, item: null, index: null })
+        }
+        itemName={deleteModal.item?.name}
       />
       {/* Book Viewer Modal */}
       {bookViewer.open && (

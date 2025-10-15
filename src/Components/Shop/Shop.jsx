@@ -22,23 +22,8 @@ import shopItems from "./itemsList";
 const categories = ["Books", "Potions", "Ingredients", "Equipment", "Food"];
 
 const Shop = ({ open = true }) => {
-  // Helper to pay author nits if teacher/archivist/admin
-  const payAuthorNits = async (book) => {
-    if (!book.authorId || !book.price) return;
-    const authorRef = doc(db, "users", book.authorId);
-    const authorDoc = await getDoc(authorRef);
-    if (!authorDoc.exists()) return;
-    const authorData = authorDoc.data();
-    const authorRoles = authorData.roles || [];
-    if (
-      authorRoles.includes("teacher") ||
-      authorRoles.includes("archivist") ||
-      authorRoles.includes("admin")
-    ) {
-      const currentNits = authorData.nits || 0;
-      await updateDoc(authorRef, { nits: currentNits + book.price });
-    }
-  };
+  // Note: Author payments removed since books now use display names only
+  // Books are now purely for RP purposes and don't affect user accounts
   const { user } = useAuth();
   // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
   const isAdmin =
@@ -142,10 +127,7 @@ const Shop = ({ open = true }) => {
     }
 
     try {
-      // If buying a book, pay author nits if teacher/archivist
-      if (item.type === "book") {
-        await payAuthorNits(item);
-      }
+      // Note: Books no longer pay authors since they use display names only
 
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userRef);

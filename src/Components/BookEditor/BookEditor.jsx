@@ -19,7 +19,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
   const [description, setDescription] = useState(book?.description || "");
   const [price, setPrice] = useState(book?.price || 0);
   const [selectedAuthor, setSelectedAuthor] = useState(
-    book?.authorId || user?.uid || ""
+    book?.author || user?.displayName || ""
   );
   const [pages, setPages] = useState(
     book?.pages || [
@@ -33,10 +33,10 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
   // Set default author when users load and no author is selected yet
   useEffect(() => {
-    if (!selectedAuthor && users.length > 0 && user?.uid) {
-      setSelectedAuthor(user.uid);
+    if (!selectedAuthor && user?.displayName) {
+      setSelectedAuthor(user.displayName);
     }
-  }, [users, user, selectedAuthor]);
+  }, [user, selectedAuthor]);
 
   const addPage = () => {
     setPages([
@@ -160,19 +160,13 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
     setSaving(true);
     try {
-      // Find the selected author
-      const selectedAuthorData =
-        users.find((u) => u.uid === selectedAuthor) ||
-        users.find((u) => u.uid === user.uid);
-
       const bookData = {
         title: title.trim(),
         description: description.trim(),
         price: parseInt(price) || 0,
         pages: pages.filter((page) => page.content.trim()),
-        author:
-          selectedAuthorData?.displayName || user.displayName || user.email,
-        authorId: selectedAuthor || user.uid,
+        author: selectedAuthor || user.displayName || user.email,
+        createdBy: user.uid, // Store who actually created the book for admin purposes
         type: "book",
         coverImage: coverImage,
       };
@@ -211,23 +205,24 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
       <div className={styles.formGroup}>
         <label>Author:</label>
-        {usersLoading ? (
-          <div className={styles.loading}>Loading users...</div>
-        ) : (
-          <select
-            value={selectedAuthor}
-            onChange={(e) => setSelectedAuthor(e.target.value)}
-            className={styles.select}
-          >
-            <option value="">Select an author</option>
-            {users.map((userOption) => (
-              <option key={userOption.uid} value={userOption.uid}>
-                {userOption.displayName}
-                {userOption.uid === user?.uid && " (You)"}
-              </option>
-            ))}
-          </select>
-        )}
+        <input
+          type="text"
+          value={selectedAuthor}
+          onChange={(e) => setSelectedAuthor(e.target.value)}
+          placeholder="Enter author name"
+          className={styles.input}
+          list="userSuggestions"
+        />
+        <datalist id="userSuggestions">
+          {users.map((userOption) => (
+            <option key={userOption.uid} value={userOption.displayName}>
+              {userOption.displayName}
+            </option>
+          ))}
+        </datalist>
+        <small className={styles.authorHint}>
+          You can enter any name - it doesn't have to be an existing user
+        </small>
       </div>
 
       <div className={styles.formGroup}>

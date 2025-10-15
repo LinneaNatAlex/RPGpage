@@ -245,7 +245,13 @@ const TopBar = () => {
         const userDoc = await getDoc(userRef);
         if (!userDoc.exists()) return;
         const data = userDoc.data();
-        // Fjern lockout på decayHealth, så vi alltid kan tvinge fainting og resette infirmaryEnd
+
+        // CRITICAL FIX: Don't decay health if user is in infirmary
+        if (data.infirmaryEnd && data.infirmaryEnd > Date.now()) {
+          // User is in infirmary, just update lastHealthUpdate to prevent catching up when they get out
+          await updateDoc(userRef, { lastHealthUpdate: Date.now() });
+          return;
+        }
 
         // Finn hvor lenge siden sist decay
         const now = Date.now();
@@ -294,7 +300,11 @@ const TopBar = () => {
           // Ferdig, gjenopprett health
           if (user) {
             const userRef = doc(db, "users", user.uid);
-            updateDoc(userRef, { health: 100, infirmaryEnd: null });
+            updateDoc(userRef, {
+              health: 100,
+              infirmaryEnd: null,
+              lastHealthUpdate: Date.now(), // Prevent immediate health decay after recovery
+            });
           }
           setInfirmary(false);
           setInfirmaryEnd(null);
@@ -497,10 +507,13 @@ const TopBar = () => {
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
           {(() => {
             if (!user) return null;
-            const src = user.photoURL || userData?.profileImageUrl || "/icons/avatar.svg";
+            const src =
+              user.photoURL || userData?.profileImageUrl || "/icons/avatar.svg";
             // Compute role-based class
             let roleClass = styles.profilePic;
-            const lower = (userData?.roles || []).map((r) => String(r).toLowerCase());
+            const lower = (userData?.roles || []).map((r) =>
+              String(r).toLowerCase()
+            );
             if (lower.includes("headmaster"))
               roleClass += ` ${styles.headmasterPic}`;
             else if (lower.includes("teacher"))
@@ -752,7 +765,6 @@ const TopBar = () => {
           </div>
         )}
       </div>
-
     </>
   );
 };
