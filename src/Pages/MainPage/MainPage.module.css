@@ -9,13 +9,17 @@
 .userStats {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: rgba(245, 239, 224, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 3rem;
+  margin: 2rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(245, 239, 224, 0.8) 0%, rgba(232, 221, 212, 0.6) 100%);
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .statItem {
@@ -23,21 +27,26 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  text-align: center;
+  min-width: 120px;
 }
 
 .statNumber {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #5D4E37;
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #7B6857;
   font-family: 'Cinzel', serif;
+  line-height: 1;
+  margin-bottom: 0.25rem;
 }
 
 .statLabel {
-  font-size: 0.9rem;
-  color: #8B7A6B;
+  font-size: 0.75rem;
+  color: #A0907D;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 500;
+  letter-spacing: 1.5px;
+  font-weight: 400;
+  white-space: nowrap;
 }
 
 /* Main content containers */
@@ -407,6 +416,27 @@
   .introductionHeader {
     padding: 1.2rem;
     margin-bottom: 1rem;
+  }
+
+  /* Mobile statistics */
+  .userStats {
+    gap: 2rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .statItem {
+    min-width: 80px;
+  }
+
+  .statNumber {
+    font-size: 2.5rem;
+  }
+
+  .statLabel {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
   }
   
   .introductionHeader h1 {

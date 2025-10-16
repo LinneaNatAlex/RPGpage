@@ -26,40 +26,9 @@ const UserList = ({ userQuery }) => {
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
     const isRecentlyActive = user.lastSeen && user.lastSeen > twoMinutesAgo;
 
-    // Function to format location text properly
-    const formatLocation = (location) => {
-      if (!location) return "Walking around school";
-
-      // Handle user profile visits - extract user ID from URL
-      if (location.includes('/user/')) {
-        const userId = location.split('/user/')[1];
-        // Find the user being visited
-        const visitedUser = users.find(u => u.uid === userId);
-        if (visitedUser) {
-          return `Visiting ${visitedUser.displayName}'s room`;
-        }
-        return `Visiting someone's room`;
-      }
-
-      // Handle other locations
-      const locationMap = {
-        '/': 'Main Hall',
-        '/forum': 'Forum',
-        '/shop': 'Shop',
-        '/inventory': 'Inventory',
-        '/profile': 'Own Room',
-        '/rpg': 'RPG Area',
-        '/house-points': 'House Points Hall',
-        '/classrooms': 'Classrooms',
-        '/teacher': 'Teacher Area'
-      };
-
-      return locationMap[location] || location.replace('/', '').replace('-', ' ') || "Walking around school";
-    };
-
     // If user has a current location and is recently active, show it
     if (user.currentLocation && isRecentlyActive) {
-      return formatLocation(user.currentLocation);
+      return user.currentLocation;
     }
 
     // If user has a current location but isn't super recently active, still show it if within 10 minutes
@@ -67,19 +36,16 @@ const UserList = ({ userQuery }) => {
     const isWithinRange = user.lastSeen && user.lastSeen > tenMinutesAgo;
 
     if (user.currentLocation && isWithinRange) {
-      return formatLocation(user.currentLocation) + " (recently)";
+      return user.currentLocation + " (recently)";
     }
 
-    // If user was seen but not recently, show as sleeping/taking a nap
+    // If user was seen but not recently, show as offline
     if (user.lastSeen && !isWithinRange) {
-      // Randomly choose between sleeping or taking a nap for variety
-      const sleepTexts = ["Sleeping", "Taking a nap", "Resting"];
-      const randomSleepText = sleepTexts[Math.floor(Math.random() * sleepTexts.length)];
-      return randomSleepText;
+      return "Left the school";
     }
 
-    // If no lastSeen data, show as sleeping
-    return "Sleeping";
+    // If no lastSeen data, show as offline
+    return "Left the school";
   };
 
   // Filter users by search query if provided and exclude current user

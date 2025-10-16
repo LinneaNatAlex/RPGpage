@@ -789,7 +789,7 @@ const UserProfile = () => {
             `}
             style={{
               width: "100%",
-              minHeight: "200px",
+              height: "1000vh",
               border: "none",
               borderRadius: "8px",
               background: "transparent",

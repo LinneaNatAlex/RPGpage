@@ -513,35 +513,3 @@ td {
   font-weight: 500;
   opacity: 0.7;
 }
-
-/* Specific styling for different location types */
-.locationCell span {
-  font-style: normal;
-}
-
-/* Sleeping/offline status */
-.locationCell span:has-text("Sleeping"),
-.locationCell span:has-text("Taking a nap"),
-.locationCell span:has-text("Resting") {
-  color: #8b7a6b !important;
-  opacity: 0.8 !important;
-  font-style: italic;
-}
-
-/* Visiting someone's room */
-.locationCell span:has-text("Visiting") {
-  color: #6b46c1 !important;
-  font-weight: 500;
-  font-style: normal;
-}
-
-/* Active locations */
-.locationCell span:has-text("Main Hall"),
-.locationCell span:has-text("Forum"),
-.locationCell span:has-text("Shop"),
-.locationCell span:has-text("RPG Area"),
-.locationCell span:has-text("Classrooms"),
-.locationCell span:has-text("Walking around school") {
-  color: #2e7d3e !important;
-  font-weight: 500;
-}
