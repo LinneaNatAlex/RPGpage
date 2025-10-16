@@ -105,11 +105,7 @@ export default function Classrooms() {
       });
     }
     setAttending({ classId: cls.id, year: userYear });
-    if (cls.id === "potions") {
-      navigate(`/ClassRooms/potions`);
-    } else {
-      navigate(`/classrooms/${cls.id}`);
-    }
+    navigate(`/classrooms/${cls.id}`);
   }
 
   // Leave class (remove user from attendance list)

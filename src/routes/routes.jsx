@@ -32,7 +32,6 @@ import VerifyEmail from "../Pages/VerifyEmail/VerifyEmail.jsx";
 import UserProfile from "../Pages/UserProfile/UserProfile.jsx";
 import UserMap from "../Pages/UserMap/UserMap.jsx";
 import ClassRooms from "../Pages/ClassRooms/ClassRooms.jsx";
-import Potions from "../Pages/ClassRooms/Potions/Potions.jsx";
 import Rpg from "../Pages/Rpg/Rpg.jsx";
 import GreatHall from "../Pages/Rpg/GreateHall/GreatHall.jsx";
 import Forum from "../Pages/Forum/Forum.jsx";
@@ -184,14 +183,6 @@ export const router = createBrowserRouter(
         }
       />
 
-      <Route
-        path="ClassRooms/potions"
-        element={
-          <RouteGuard>
-            <ClassroomSession />
-          </RouteGuard>
-        }
-      />
       <Route
         path="Profile"
         element={
