@@ -78,9 +78,9 @@ const TopBar = () => {
   const [mirrorUntil, setMirrorUntil] = useState(null);
   const [speedUntil, setSpeedUntil] = useState(null);
   const [slowMotionUntil, setSlowMotionUntil] = useState(null);
+  const [surveillanceUntil, setSurveillanceUntil] = useState(null);
   const [luckyUntil, setLuckyUntil] = useState(null);
   const [wisdomUntil, setWisdomUntil] = useState(null);
-  const [surveillanceUntil, setSurveillanceUntil] = useState(null);
   const [charmUntil, setCharmUntil] = useState(null);
   const [mysteryUntil, setMysteryUntil] = useState(null);
   const intervalRef = useRef();
@@ -161,6 +161,11 @@ const TopBar = () => {
         ? userData.slowMotionUntil
         : null
     );
+    setSurveillanceUntil(
+      userData.surveillanceUntil && userData.surveillanceUntil > Date.now()
+        ? userData.surveillanceUntil
+        : null
+    );
     setLuckyUntil(
       userData.luckyUntil && userData.luckyUntil > Date.now()
         ? userData.luckyUntil
@@ -169,11 +174,6 @@ const TopBar = () => {
     setWisdomUntil(
       userData.wisdomUntil && userData.wisdomUntil > Date.now()
         ? userData.wisdomUntil
-        : null
-    );
-    setSurveillanceUntil(
-      userData.surveillanceUntil && userData.surveillanceUntil > Date.now()
-        ? userData.surveillanceUntil
         : null
     );
     setCharmUntil(

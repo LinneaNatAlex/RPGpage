@@ -8,7 +8,7 @@ import { useAuth } from "../../context/authContext";
 
 const UserList = ({ userQuery }) => {
   const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook with REAL-TIME updates
-  const { user: authUser } = useAuth(); // Get current authenticated user with surveillance status
+  const { user: authUser } = useAuth();
 
   // Hent innlogget bruker
   const currentUser = auth.currentUser;
@@ -17,42 +17,49 @@ const UserList = ({ userQuery }) => {
   const hasSurveillanceActive =
     authUser?.surveillanceUntil && authUser.surveillanceUntil > Date.now();
 
-  // TEMPORARY: Force surveillance active for testing
-  const forceSurveillance = true;
-
-  // Debug surveillance status and users
-  console.log("UserList Debug:", {
-    hasAuthUser: !!authUser,
-    surveillanceUntil: authUser?.surveillanceUntil,
-    currentTime: Date.now(),
-    isActive: hasSurveillanceActive,
-    usersCount: users.length,
-    loading: loading,
-    firstUser: users[0]?.displayName,
-    firstUserLastSeen: users[0]?.lastSeen,
-    firstUserLocation: users[0]?.currentLocation,
-  });
 
   // Function to get user location based on their activity
   const getUserLocation = (user) => {
-    if (!hasSurveillanceActive && !forceSurveillance) return null;
+    if (!hasSurveillanceActive) return null;
 
     // Check if user was recently seen (last 2 minutes instead of 5)
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
     const isRecentlyActive = user.lastSeen && user.lastSeen > twoMinutesAgo;
 
-    // Debug logging
-    console.log(
-      `User ${user.firstName}: lastSeen=${
-        user.lastSeen
-      }, now=${Date.now()}, isRecent=${isRecentlyActive}, location=${
-        user.currentLocation
-      }`
-    );
+    // Function to format location text properly
+    const formatLocation = (location) => {
+      if (!location) return "Walking around school";
+
+      // Handle user profile visits - extract user ID from URL
+      if (location.includes('/user/')) {
+        const userId = location.split('/user/')[1];
+        // Find the user being visited
+        const visitedUser = users.find(u => u.uid === userId);
+        if (visitedUser) {
+          return `Visiting ${visitedUser.displayName}'s room`;
+        }
+        return `Visiting someone's room`;
+      }
+
+      // Handle other locations
+      const locationMap = {
+        '/': 'Main Hall',
+        '/forum': 'Forum',
+        '/shop': 'Shop',
+        '/inventory': 'Inventory',
+        '/profile': 'Own Room',
+        '/rpg': 'RPG Area',
+        '/house-points': 'House Points Hall',
+        '/classrooms': 'Classrooms',
+        '/teacher': 'Teacher Area'
+      };
+
+      return locationMap[location] || location.replace('/', '').replace('-', ' ') || "Walking around school";
+    };
 
     // If user has a current location and is recently active, show it
     if (user.currentLocation && isRecentlyActive) {
-      return user.currentLocation;
+      return formatLocation(user.currentLocation);
     }
 
     // If user has a current location but isn't super recently active, still show it if within 10 minutes
@@ -60,16 +67,19 @@ const UserList = ({ userQuery }) => {
     const isWithinRange = user.lastSeen && user.lastSeen > tenMinutesAgo;
 
     if (user.currentLocation && isWithinRange) {
-      return user.currentLocation + " (recently)";
+      return formatLocation(user.currentLocation) + " (recently)";
     }
 
-    // If user was seen but not recently, show as offline
+    // If user was seen but not recently, show as sleeping/taking a nap
     if (user.lastSeen && !isWithinRange) {
-      return "Left the school";
+      // Randomly choose between sleeping or taking a nap for variety
+      const sleepTexts = ["Sleeping", "Taking a nap", "Resting"];
+      const randomSleepText = sleepTexts[Math.floor(Math.random() * sleepTexts.length)];
+      return randomSleepText;
     }
 
-    // Default location when surveillance is active but no specific location
-    return "Walking around school";
+    // If no lastSeen data, show as sleeping
+    return "Sleeping";
   };
 
   // Filter users by search query if provided and exclude current user
@@ -187,7 +197,7 @@ const UserList = ({ userQuery }) => {
                 })()}
               </td>
               <td data-label="Location" className={styles.locationCell}>
-                {hasSurveillanceActive || forceSurveillance ? (
+                {hasSurveillanceActive ? (
                   <span
                     className={
                       getUserLocation(user)?.includes("Left the school")

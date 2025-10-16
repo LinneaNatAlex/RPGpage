@@ -103,7 +103,7 @@ const MainPage = () => {
           {user && <OnlineUsers />}
         </div>
         <div className={styles.newsFeedContainer}>{user && <NewsFeed />}</div>
-         {/* Right sidebar for RPG calendar, only show on desktop */}
+         {/* RPG calendar */}
          {user && (
            <div className={styles.rpgCalendarSidebarContainer}>
              <RPGCalendarSidebar />

@@ -24,6 +24,8 @@ import Chat from "./Components/Chat/Chat";
 import TopBar from "./Components/TopBar/TopBar";
 import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
+import "./utils/dailyPetDiscoveryScheduler"; // Daily pet discovery system
+import PetDiscoveryPopupOnly from "./Components/PetDiscovery/PetDiscoveryPopupOnly";
 import useLocationTracker from "./hooks/useLocationTracker";
 import "./App.mobile.css";
 
@@ -69,6 +71,7 @@ function App() {
   const [mirrorUntil, setMirrorUntil] = useState(null);
   const [speedUntil, setSpeedUntil] = useState(null);
   const [slowMotionUntil, setSlowMotionUntil] = useState(null);
+  const [surveillanceUntil, setSurveillanceUntil] = useState(null);
   const [sparkleUntil, setSparkleUntil] = useState(null);
   const [lastMessageId, setLastMessageId] = useState(null);
   const [lastPrivateMessageId, setLastPrivateMessageId] = useState(null);
@@ -138,6 +141,11 @@ function App() {
             setSlowMotionUntil(
               data.slowMotionUntil && data.slowMotionUntil > Date.now()
                 ? data.slowMotionUntil
+                : null
+            );
+            setSurveillanceUntil(
+              data.surveillanceUntil && data.surveillanceUntil > Date.now()
+                ? data.surveillanceUntil
                 : null
             );
             setSparkleUntil(
@@ -299,8 +307,21 @@ function App() {
           slowMotionUntil && slowMotionUntil > Date.now()
             ? `
           *, *::before, *::after {
-            animation-duration: 2s !important;
+            animation-duration: 90s !important;
             transition-duration: 1s !important;
+          }
+          /* Make banner animations extremely slow with slow motion potion */
+          .bannerWrapper, .bannerWrapper *, .bannerContent, .bannerContent *,
+          .marquee, .marquee *, .marquee span, .marquee span *,
+          .announcement, .announcement *, .news-banner, .news-banner *, 
+          .popup, .popup *, .notification, .notification *, 
+          .toast, .toast *, .banner, .banner * {
+            animation-duration: 60s !important;
+            transition-duration: 4s !important;
+          }
+          /* Specifically target the marquee animation */
+          .marquee span {
+            animation: marquee 60s linear infinite !important;
           }
         `
             : ""
@@ -350,6 +371,8 @@ function App() {
           {/* Main chat and PrivateChat only for logged-in users */}
           {user && <Chat />}
           {user && <PrivateChat />}
+          {/* Pet Discovery Popup Only for logged-in users */}
+          {user && <PetDiscoveryPopupOnly />}
         </div>
       </MobileLayout>
     </>

@@ -295,6 +295,7 @@ export default function RPGCalendarSidebar() {
         The highlighted day shows today. The numbers below each day show which
         RPG days are covered by that real day.
       </div>
+      
     </aside>
   );
 }

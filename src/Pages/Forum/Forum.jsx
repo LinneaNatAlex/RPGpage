@@ -465,20 +465,26 @@ const Forum = () => {
             >
               Back to topics
             </Button>
-            {(roles?.includes("teacher") || roles?.includes("admin")) && (
-              <>
-                <Button onClick={handleEditTopic} className={styles.editButton}>
-                  Edit Topic
-                </Button>
-                <Button
-                  onClick={handleDeleteTopic}
-                  className={styles.deleteButton}
-                  style={{ marginLeft: "0.5rem" }}
-                >
-                  Delete Topic
-                </Button>
-              </>
-            )}
+            {(() => {
+              const currentTopic = topics.find(t => t.id === selectedTopic);
+              const isTopicOwner = currentTopic && currentTopic.uid === user?.uid;
+              const isTeacherOrAdmin = roles?.includes("teacher") || roles?.includes("admin");
+              
+              return (isTeacherOrAdmin || isTopicOwner) && (
+                <>
+                  <Button onClick={handleEditTopic} className={styles.editButton}>
+                    Edit Topic
+                  </Button>
+                  <Button
+                    onClick={handleDeleteTopic}
+                    className={styles.deleteButton}
+                    style={{ marginLeft: "0.5rem" }}
+                  >
+                    Delete Topic
+                  </Button>
+                </>
+              );
+            })()}
           </div>
           {editingTopic && (
             <div

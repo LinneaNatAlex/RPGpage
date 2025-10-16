@@ -79,12 +79,14 @@ import { classesList } from "../../data/classesList";
 import useUserRoles from "../../hooks/useUserRoles";
 import onlineUserStyles from "../OnlineUsers/OnlineUsers.module.css";
 import useUsers from "../../hooks/useUser";
+import useUserData from "../../hooks/useUserData";
 
 export default function ClassroomSession() {
   const { users: allUsers = [] } = useUsers();
   const { classId } = useParams();
   const { user } = useAuth();
   const { roles: userRoles = [] } = useUserRoles();
+  const { wisdomUntil } = useUserData();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -130,7 +132,7 @@ export default function ClassroomSession() {
             setCustomClassInfo(data.classInfo);
           } else {
             setCustomClassInfo({
-              points: classInfo?.points || 10,
+              points: 2, // Base points for all classes
               requirements: "Class for all races and backgrounds",
               activities: "Roleplay, ask questions, or just hang out!",
             });
@@ -138,7 +140,7 @@ export default function ClassroomSession() {
         } else {
           setCustomDescription(classInfo?.description || "");
           setCustomClassInfo({
-            points: classInfo?.points || 10,
+            points: 2, // Base points for all classes
             requirements: "Class for all races and backgrounds",
             activities: "Roleplay, ask questions, or just hang out!",
           });
@@ -913,7 +915,7 @@ export default function ClassroomSession() {
               </label>
               <input
                 type="number"
-                value={customClassInfo.points}
+                value={wisdomUntil && wisdomUntil > Date.now() ? 6 : 2}
                 onChange={(e) =>
                   setCustomClassInfo({
                     ...customClassInfo,
@@ -1055,7 +1057,9 @@ export default function ClassroomSession() {
                 }}
               >
                 Points for attending:{" "}
-                <b style={{ color: "#D4C4A8" }}>{customClassInfo.points}</b>
+                <b style={{ color: "#D4C4A8" }}>
+                  {wisdomUntil && wisdomUntil > Date.now() ? "6 (Wisdom Potion active!)" : "2"}
+                </b>
               </li>
               <li
                 style={{
