@@ -7,10 +7,28 @@ import { useAuth } from "../../context/authContext";
 import RPGCalendarSidebar from "../../Components/RPGCalendarSidebar";
 import AnnouncementBanner from "../../Components/AnnouncementBanner/AnnouncementBanner";
 import AnnouncementAdmin from "../../Components/AnnouncementBanner/AnnouncementAdmin";
+import { subscribeToStats, getCurrentStats } from "../../utils/userStatsCache";
+import { useState, useEffect } from "react";
+
+console.log('MainPage: Importing userStatsCache...');
 
 const MainPage = () => {
   const { user } = useAuth();
   const displayName = user?.displayName || user?.email;
+  
+  const [stats, setStats] = useState(getCurrentStats());
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    console.log('MainPage: Setting up stats subscription...');
+    const unsubscribe = subscribeToStats((newStats) => {
+      console.log('MainPage: Received stats update:', newStats);
+      setStats(newStats);
+      setLoading(false);
+    });
+    
+    return unsubscribe;
+  }, []);
   
 
   // --------------------------------RETURNING HEADER TEXT----------------------------
@@ -57,6 +75,22 @@ const MainPage = () => {
                   Create an Account
                 </Link>
               </div>
+              
+              {/* User Statistics */}
+              <div className={styles.userStats}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{loading ? '...' : stats.onlineUsers}</span>
+                  <span className={styles.statLabel}>Online Now</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{loading ? '...' : stats.dailyActiveUsers}</span>
+                  <span className={styles.statLabel}>Active Today</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{loading ? '...' : stats.totalUsers}</span>
+                  <span className={styles.statLabel}>Total Students</span>
+                </div>
+              </div>
             </>
           )}
         </header>
@@ -93,6 +127,22 @@ const MainPage = () => {
                 <Link to="/sign-up" className={styles.ctaBtn}>
                   Create an Account
                 </Link>
+              </div>
+              
+              {/* User Statistics */}
+              <div className={styles.userStats}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{loading ? '...' : stats.onlineUsers}</span>
+                  <span className={styles.statLabel}>Online Now</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{loading ? '...' : stats.dailyActiveUsers}</span>
+                  <span className={styles.statLabel}>Active Today</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{loading ? '...' : stats.totalUsers}</span>
+                  <span className={styles.statLabel}>Total Students</span>
+                </div>
               </div>
             </>
           )}
