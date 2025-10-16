@@ -13,6 +13,11 @@ service cloud.firestore {
         "teacher" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles ||
         // Vanlig bruker kan oppdatere seg selv
         request.auth.uid == userId ||
+        // Location tracking: brukere kan oppdatere sin egen currentLocation og lastSeen
+        (
+          request.auth.uid == userId &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['currentLocation', 'lastSeen'])
+        ) ||
         (
           // Kun inventory kan endres av andre brukere (for gaver)
           request.resource.data.keys().hasAll(resource.data.keys()) &&
@@ -27,7 +32,7 @@ service cloud.firestore {
           request.auth.uid == userId &&
           request.resource.data.diff(resource.data).changedKeys().hasAny(['roles', 'vipExpiresAt', 'vipActivatedAt', 'vipTheme', 'vipSettings']) &&
           // Sikre at bare VIP-relaterte felter endres
-          request.resource.data.diff(resource.data).changedKeys().hasOnly(['roles', 'vipExpiresAt', 'vipActivatedAt', 'vipTheme', 'vipSettings', 'inventory', 'lastActive', 'currency', 'points', 'health']) &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['roles', 'vipExpiresAt', 'vipActivatedAt', 'vipTheme', 'vipSettings', 'inventory', 'lastActive', 'currency', 'points', 'health', 'currentLocation', 'lastSeen']) &&
           // Sikre at VIP rolle bare kan legges til eller fjernes, ikke andre roller
           (
             !request.resource.data.diff(resource.data).changedKeys().hasAny(['roles']) ||

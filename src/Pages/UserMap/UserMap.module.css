@@ -2,8 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
   border: none;
   padding: 2rem 0 1rem 0;
   width: 100%;
@@ -21,18 +21,24 @@
   .userSearchBar {
     padding: 1rem 0.5rem;
     margin: 0;
+    color: #ffd700 !important; /* Golden text on mobile */
   }
-  
+
   .userMapContainer {
     padding: 0.5rem;
     margin: 0;
     width: 100%;
     overflow-x: auto;
   }
-  
+
   /* Ensure content fits on mobile */
   .userMapContainer * {
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  /* Better text visibility on mobile */
+  .userSearchBar * {
+    color: #ffd700 !important;
   }
 }

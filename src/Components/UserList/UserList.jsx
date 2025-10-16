@@ -1,15 +1,77 @@
-// Imorting the function needed to fetch the users and the logic.
+// Importing the function needed to fetch the users and the logic.
 import { Link } from "react-router-dom";
 import styles from "./UserList.module.css";
 import useUsers from "../../hooks/useUser"; // Importing the custom hook to fetch users
 import { auth } from "../../firebaseConfig";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
+import { useAuth } from "../../context/authContext";
 
 const UserList = ({ userQuery }) => {
-  const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook
+  const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook with REAL-TIME updates
+  const { user: authUser } = useAuth(); // Get current authenticated user with surveillance status
 
   // Hent innlogget bruker
   const currentUser = auth.currentUser;
+
+  // Check if current user has surveillance potion active
+  const hasSurveillanceActive =
+    authUser?.surveillanceUntil && authUser.surveillanceUntil > Date.now();
+
+  // TEMPORARY: Force surveillance active for testing
+  const forceSurveillance = true;
+
+  // Debug surveillance status and users
+  console.log("UserList Debug:", {
+    hasAuthUser: !!authUser,
+    surveillanceUntil: authUser?.surveillanceUntil,
+    currentTime: Date.now(),
+    isActive: hasSurveillanceActive,
+    usersCount: users.length,
+    loading: loading,
+    firstUser: users[0]?.displayName,
+    firstUserLastSeen: users[0]?.lastSeen,
+    firstUserLocation: users[0]?.currentLocation,
+  });
+
+  // Function to get user location based on their activity
+  const getUserLocation = (user) => {
+    if (!hasSurveillanceActive && !forceSurveillance) return null;
+
+    // Check if user was recently seen (last 2 minutes instead of 5)
+    const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
+    const isRecentlyActive = user.lastSeen && user.lastSeen > twoMinutesAgo;
+
+    // Debug logging
+    console.log(
+      `User ${user.firstName}: lastSeen=${
+        user.lastSeen
+      }, now=${Date.now()}, isRecent=${isRecentlyActive}, location=${
+        user.currentLocation
+      }`
+    );
+
+    // If user has a current location and is recently active, show it
+    if (user.currentLocation && isRecentlyActive) {
+      return user.currentLocation;
+    }
+
+    // If user has a current location but isn't super recently active, still show it if within 10 minutes
+    const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
+    const isWithinRange = user.lastSeen && user.lastSeen > tenMinutesAgo;
+
+    if (user.currentLocation && isWithinRange) {
+      return user.currentLocation + " (recently)";
+    }
+
+    // If user was seen but not recently, show as offline
+    if (user.lastSeen && !isWithinRange) {
+      return "Left the school";
+    }
+
+    // Default location when surveillance is active but no specific location
+    return "Walking around school";
+  };
+
   // Filter users by search query if provided and exclude current user
   const filteredUsers = (
     userQuery
@@ -39,12 +101,50 @@ const UserList = ({ userQuery }) => {
     (a, b) => b[1] - a[1]
   );
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className={styles.userListWrapper}>
+        <div
+          style={{
+            textAlign: "center",
+            padding: "2rem",
+            color: "#7b6857",
+            fontSize: "1.2rem",
+          }}
+        >
+          Loading users... 🔄
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (!loading && users.length === 0) {
+    return (
+      <div className={styles.userListWrapper}>
+        <div
+          style={{
+            textAlign: "center",
+            padding: "2rem",
+            color: "#7b6857",
+            fontSize: "1.1rem",
+          }}
+        >
+          <p>No users found. 🤔</p>
+          <p>Check console for debugging info.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.userListWrapper}>
       <table className={styles.userListContainer}>
         <thead>
           <tr className={styles.tableHeader}>
             <th scope="col">Student/Teacher</th>
+            <th scope="col">Location</th>
             <th scope="col">Race</th>
             <th scope="col">Class</th>
             <th scope="col">Points</th>
@@ -85,6 +185,21 @@ const UserList = ({ userQuery }) => {
                     nameClass += ` ${styles.archivistName}`;
                   return <span className={nameClass}>{user.displayName}</span>;
                 })()}
+              </td>
+              <td data-label="Location" className={styles.locationCell}>
+                {hasSurveillanceActive || forceSurveillance ? (
+                  <span
+                    className={
+                      getUserLocation(user)?.includes("Left the school")
+                        ? styles.locationOffline
+                        : styles.locationActive
+                    }
+                  >
+                    {getUserLocation(user)}
+                  </span>
+                ) : (
+                  <span className={styles.locationHidden}>Hidden</span>
+                )}
               </td>
               <td data-label="Race">
                 {user.race && (

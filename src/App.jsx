@@ -24,10 +24,14 @@ import Chat from "./Components/Chat/Chat";
 import TopBar from "./Components/TopBar/TopBar";
 import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
+import useLocationTracker from "./hooks/useLocationTracker";
 import "./App.mobile.css";
 
 function App() {
   const { user, loading } = useAuth();
+
+  // Track user location for Surveillance Potion
+  useLocationTracker();
 
   console.log(
     "App.jsx: Rendering with user:",

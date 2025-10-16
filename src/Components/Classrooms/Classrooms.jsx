@@ -129,10 +129,10 @@ export default function Classrooms() {
     <div
       style={{
         maxWidth: 900,
-        margin: "2rem auto",
+        margin: window.innerWidth <= 768 ? "1rem auto" : "2rem auto",
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-        color: "#F5EFE0",
-        padding: 40,
+        color: window.innerWidth <= 768 ? "#FFD700" : "#F5EFE0", // Golden text on mobile
+        padding: window.innerWidth <= 768 ? 20 : 40,
         borderRadius: 20,
         boxShadow:
           "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -156,23 +156,26 @@ export default function Classrooms() {
       <h2
         style={{
           fontFamily: '"Cinzel", serif',
-          fontSize: "2.5rem",
+          fontSize: window.innerWidth <= 768 ? "2rem" : "2.5rem",
           fontWeight: 700,
           letterSpacing: "2px",
           textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
           marginBottom: "1rem",
           textAlign: "center",
+          color: window.innerWidth <= 768 ? "#FFD700" : "#F5EFE0", // Golden on mobile
         }}
       >
         Classrooms
       </h2>
       <p
         style={{
-          color: "#D4C4A8",
-          fontSize: "1.2rem",
+          color: window.innerWidth <= 768 ? "#FFE55C" : "#D4C4A8", // Brighter golden on mobile
+          fontSize: window.innerWidth <= 768 ? "1rem" : "1.2rem",
           textAlign: "center",
           fontStyle: "italic",
           marginBottom: "2rem",
+          textShadow:
+            window.innerWidth <= 768 ? "0 1px 2px rgba(0, 0, 0, 0.5)" : "none",
         }}
       >
         Select a class to attend. You will only see students from your own year
@@ -216,8 +219,8 @@ export default function Classrooms() {
               style={{
                 margin: "0 0 12px 0",
                 fontFamily: '"Cinzel", serif',
-                fontSize: "1.5rem",
-                color: "#F5EFE0",
+                fontSize: window.innerWidth <= 768 ? "1.3rem" : "1.5rem",
+                color: window.innerWidth <= 768 ? "#FFD700" : "#F5EFE0", // Golden on mobile
                 textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
               }}
             >
@@ -226,9 +229,13 @@ export default function Classrooms() {
             <p
               style={{
                 margin: "0 0 16px 0",
-                color: "#D4C4A8",
-                fontSize: "1.1rem",
+                color: window.innerWidth <= 768 ? "#FFE55C" : "#D4C4A8", // Brighter golden on mobile
+                fontSize: window.innerWidth <= 768 ? "1rem" : "1.1rem",
                 lineHeight: 1.5,
+                textShadow:
+                  window.innerWidth <= 768
+                    ? "0 1px 2px rgba(0, 0, 0, 0.5)"
+                    : "none",
               }}
             >
               {cls.description}

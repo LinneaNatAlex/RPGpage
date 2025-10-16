@@ -296,7 +296,7 @@ const UserProfile = () => {
           <div className={styles.charactinfo}>
             <h2
               style={{
-                color: "#FFFFFF",
+                color: "#FFD700",
                 fontSize: "2rem",
                 fontWeight: 700,
                 margin: "0 0 1.5rem 0",
@@ -310,7 +310,7 @@ const UserProfile = () => {
             </h2>
             <p
               style={{
-                color: "#FFFFFF",
+                color: "#FFE55C",
                 fontSize: "1.1rem",
                 margin: "0.5rem 0",
                 textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",

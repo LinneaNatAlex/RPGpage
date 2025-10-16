@@ -206,6 +206,7 @@
 }
 
 /* Forum action buttons styling */
+.backButton,
 .editButton,
 .deleteButton,
 .saveButton,
@@ -225,6 +226,17 @@
   font-family: '"Cinzel", serif';
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.backButton {
+  background: linear-gradient(135deg, #d4c4a8 0%, #b8a082 100%);
+  color: #2c1810;
+}
+.backButton:hover,
+.backButton:focus {
+  background: linear-gradient(135deg, #e8ddd4 0%, #d4c4a8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .editButton {
   background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
@@ -370,8 +382,8 @@
   }
 
   .postContent {
-    background: #f5efe0 !important;
-    color: #2c1810 !important;
+    background: #1a1a1a !important;
+    color: #fcfbfb !important;
     padding: 2rem !important;
     min-height: 200px;
     border-radius: 8px;
@@ -393,7 +405,7 @@
   }
 
   .postContent p {
-    color: #2c1810 !important;
+    color: #ffffff !important;
     margin-bottom: 1rem;
   }
 
@@ -412,6 +424,7 @@
   }
 
   /* Mobile button sizing */
+  .backButton,
   .editButton,
   .deleteButton,
   .saveButton,
@@ -427,5 +440,47 @@
     padding: 0.6rem 1.2rem !important;
     font-size: 0.9rem !important;
     margin-top: 1rem !important;
+  }
+
+  /* Mobile button styling to match .mobile-page-content button */
+  .backButton,
+  .newTopicButton,
+  .editButton,
+  .deleteButton,
+  .saveButton,
+  .cancelButton,
+  .postButton {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+  }
+
+  .backButton:hover,
+  .newTopicButton:hover,
+  .editButton:hover,
+  .deleteButton:hover,
+  .saveButton:hover,
+  .cancelButton:hover,
+  .postButton:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Special styling for delete button */
+  .deleteButton {
+    background: rgba(220, 38, 38, 0.3) !important;
+    border: 1px solid rgba(220, 38, 38, 0.5) !important;
+  }
+
+  .deleteButton:hover {
+    background: rgba(220, 38, 38, 0.4) !important;
   }
 }
