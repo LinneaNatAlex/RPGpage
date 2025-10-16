@@ -4,11 +4,20 @@
   flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(135deg, #1a0b08 0%, #2d1a15 50%, #1a0b08 100%);
-  color: #f5efe0;
+  color: #f5efe0 !important;
   font-family: "Arial", sans-serif;
   cursor: default !important;
   align-items: center;
   justify-content: flex-start;
+}
+
+/* Force dark mode for all mobile content */
+.mobile-app * {
+  color: #f5efe0 !important;
+}
+
+.mobile-app .mobile-page-content * {
+  color: #f5efe0 !important;
 }
 
 /* Mobile App - Light Mode (when logged out) */
@@ -1074,14 +1083,14 @@
   background: rgba(45, 26, 21, 0.9);
   backdrop-filter: blur(20px);
   border-radius: 16px;
-  padding: 20px;
-  margin: 10px auto;
+  padding: 15px;
+  margin: 5px auto;
   border: 1px solid rgba(93, 78, 55, 0.4);
   min-height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  max-width: calc(100vw - 20px);
-  width: calc(100vw - 20px);
+  max-width: calc(100vw - 10px);
+  width: calc(100vw - 10px);
   box-sizing: border-box;
   word-wrap: break-word;
   overflow-wrap: break-word;

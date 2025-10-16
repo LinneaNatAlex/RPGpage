@@ -37,6 +37,7 @@
 .userListContainer {
   border-collapse: collapse;
   width: 100%;
+  max-width: 100%;
   background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
   color: #2c2c2c;
   border-radius: 16px;
@@ -44,6 +45,7 @@
   border: 2px solid #d4c4a8;
   overflow: hidden;
   table-layout: fixed;
+  box-sizing: border-box;
 }
 
 /* Table column widths for better alignment */
@@ -120,20 +122,20 @@ td {
 /* Race Championship Styles */
 .raceChampionship {
   margin-top: 32px;
-  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   width: 100%;
   text-align: center;
 }
 
 .championshipTitle {
-  color: #7B6857;
+  color: #7b6857;
   font-size: 1.8rem;
   margin-bottom: 20px;
-  font-family: 'Cinzel', serif;
+  font-family: "Cinzel", serif;
   letter-spacing: 1px;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -159,23 +161,23 @@ td {
 }
 
 .leaderboardItem.first {
-  background: linear-gradient(135deg, #E8DDD4 0%, #D4C4A8 100%);
-  border: 2px solid #B5A48E;
+  background: linear-gradient(135deg, #e8ddd4 0%, #d4c4a8 100%);
+  border: 2px solid #b5a48e;
 }
 
 .leaderboardItem.second {
-  background: linear-gradient(135deg, #D4C4A8 0%, #C4B29B 100%);
-  border: 2px solid #A59488;
+  background: linear-gradient(135deg, #d4c4a8 0%, #c4b29b 100%);
+  border: 2px solid #a59488;
 }
 
 .leaderboardItem.third {
-  background: linear-gradient(135deg, #C4B29B 0%, #B5A48E 100%);
-  border: 2px solid #95847B;
+  background: linear-gradient(135deg, #c4b29b 0%, #b5a48e 100%);
+  border: 2px solid #95847b;
 }
 
 .leaderboardItem.other {
-  background: linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%);
-  border: 1px solid #7B6857;
+  background: linear-gradient(135deg, #f5efe0 0%, #e8ddd4 100%);
+  border: 1px solid #7b6857;
 }
 
 .raceInfo {
@@ -189,17 +191,17 @@ td {
 }
 
 .raceName {
-  font-family: 'Cinzel', serif;
+  font-family: "Cinzel", serif;
   letter-spacing: 0.5px;
   font-weight: 600;
   font-size: 1.1rem;
 }
 
 .points {
-  font-family: 'Cinzel', serif;
+  font-family: "Cinzel", serif;
   letter-spacing: 0.5px;
   font-weight: 600;
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 1.1rem;
 }
 
@@ -225,74 +227,94 @@ td {
 .leaderboardItem.other .points {
   font-weight: 500;
   font-size: 1rem;
-  color: #7B6857;
+  color: #7b6857;
 }
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .userListWrapper {
-    padding: 10px;
+    padding: 0;
+    margin: 0;
     height: auto;
     min-height: 100vh;
+    width: 100vw;
+    max-width: 100vw;
   }
 
   .userListContainer {
     width: 100%;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     overflow-x: auto;
     display: table;
     table-layout: fixed;
     border-collapse: collapse;
   }
 
-  /* Mobile column widths - EXACT same as desktop */
-  .userListContainer th:nth-child(1) {
-    width: 22%;
-  } /* Student/Teacher */
-  .userListContainer th:nth-child(2) {
-    width: 25%;
-  } /* Location */
-  .userListContainer th:nth-child(3) {
-    width: 13%;
-  } /* Race */
-  .userListContainer th:nth-child(4) {
-    width: 13%;
-  } /* Class */
-  .userListContainer th:nth-child(5) {
-    width: 12%;
-  } /* Points */
-  .userListContainer th:nth-child(6) {
+  /* Hide location column completely on mobile */
+  .userListContainer th:nth-child(2),
+  .userListContainer td:nth-child(2) {
+    display: none;
+  }
+
+  /* Mobile column widths - without location column */
+  .userListContainer th:nth-child(1),
+  .userListContainer td:nth-child(1) {
+    width: 35%;
+  } /* Student/Teacher - more space since no location */
+
+  .userListContainer th:nth-child(3),
+  .userListContainer td:nth-child(3) {
     width: 15%;
+  } /* Race */
+
+  .userListContainer th:nth-child(4),
+  .userListContainer td:nth-child(4) {
+    width: 15%;
+  } /* Class */
+
+  .userListContainer th:nth-child(5),
+  .userListContainer td:nth-child(5) {
+    width: 10%;
+  } /* Points */
+
+  .userListContainer th:nth-child(6),
+  .userListContainer td:nth-child(6) {
+    width: 25%;
   } /* Profile */
 
-  /* Apply same widths to td elements */
-  .userListContainer td:nth-child(1) {
-    width: 22%;
+  .userListContainer th {
+    padding: 4px 2px;
+    font-size: 0.6rem;
+    white-space: normal;
+    text-align: left;
   }
-  .userListContainer td:nth-child(2) {
-    width: 25%;
+
+  .userListContainer td {
+    padding: 4px 2px;
+    font-size: 0.6rem;
   }
-  .userListContainer td:nth-child(3) {
-    width: 13%;
-  }
-  .userListContainer td:nth-child(4) {
-    width: 13%;
-  }
+
+  /* Make points column even smaller */
+  .userListContainer th:nth-child(5),
   .userListContainer td:nth-child(5) {
-    width: 12%;
-  }
-  .userListContainer td:nth-child(6) {
-    width: 15%;
+    font-size: 0.4rem;
+    padding: 1px;
+    text-align: center;
   }
 
   .profileLink {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 2px 4px;
     background: #7b6857;
     color: white !important;
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    border-radius: 2px;
+    font-size: 0.4rem;
+    white-space: nowrap;
+    line-height: 0.8;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .profileLink:hover {
@@ -336,6 +358,94 @@ td {
   /* Mobile-specific text color improvements */
   .userName {
     color: #b8860b !important; /* Dark goldenrod for better visibility */
+  }
+
+  /* Ensure role colors work on mobile - override userName color */
+  .headmasterName {
+    color: #fff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .teacherName {
+    color: #ffd700 !important; /* Brighter gold for mobile */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .shadowPatrolName {
+    color: #1ecb8c !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .adminName {
+    color: #ff5e5e !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .archivistName {
+    color: #a084e8 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Race-based name colors for mobile - works in both light and dark mode */
+  .userName[style*="color: #1e3a8a"] {
+    color: #1e3a8a !important; /* Werewolf - Night blue */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .userName[style*="color: #dc2626"] {
+    color: #dc2626 !important; /* Vampire - Blood red */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .userName[style*="color: #166534"] {
+    color: #166534 !important; /* Wizard - Dark green */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .userName[style*="color: #06b6d4"] {
+    color: #06b6d4 !important; /* Elf - Turquoise */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .userName[style*="color: #7c3aed"] {
+    color: #7c3aed !important; /* Witch - Purple */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .userName[style*="color: #d97706"] {
+    color: #d97706 !important; /* Human - Gold */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Dark mode race colors - override for better visibility */
+  .mobile-app .userName[style*="color: #1e3a8a"] {
+    color: #60a5fa !important; /* Brighter blue for dark mode */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .mobile-app .userName[style*="color: #dc2626"] {
+    color: #f87171 !important; /* Brighter red for dark mode */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .mobile-app .userName[style*="color: #166534"] {
+    color: #4ade80 !important; /* Brighter green for dark mode */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .mobile-app .userName[style*="color: #06b6d4"] {
+    color: #22d3ee !important; /* Brighter turquoise for dark mode */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .mobile-app .userName[style*="color: #7c3aed"] {
+    color: #a78bfa !important; /* Brighter purple for dark mode */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .mobile-app .userName[style*="color: #d97706"] {
+    color: #fbbf24 !important; /* Brighter gold for dark mode */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
   }
 
   .userListContainer {

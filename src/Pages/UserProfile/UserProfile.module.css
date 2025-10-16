@@ -609,6 +609,43 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
+  /* Race-based name colors for mobile - brighter versions for dark backgrounds */
+  .charactinfo h2[style*="#1e3a8a"], /* Werewolf */
+  .charactinfo span[style*="#1e3a8a"] {
+    color: #60a5fa !important; /* Light blue for werewolf */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .charactinfo h2[style*="#dc2626"], /* Vampire */
+  .charactinfo span[style*="#dc2626"] {
+    color: #f87171 !important; /* Light red for vampire */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .charactinfo h2[style*="#166534"], /* Wizard */
+  .charactinfo span[style*="#166534"] {
+    color: #4ade80 !important; /* Light green for wizard */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .charactinfo h2[style*="#06b6d4"], /* Elf */
+  .charactinfo span[style*="#06b6d4"] {
+    color: #67e8f9 !important; /* Light cyan for elf */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .charactinfo h2[style*="#7c3aed"], /* Witch */
+  .charactinfo span[style*="#7c3aed"] {
+    color: #c084fc !important; /* Light purple for witch */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .charactinfo h2[style*="#d97706"], /* Human */
+  .charactinfo span[style*="#d97706"] {
+    color: #fbbf24 !important; /* Light gold for human */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  }
+
   .profileTextContainer {
     width: 100%;
     margin-top: 1rem;

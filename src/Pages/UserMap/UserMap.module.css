@@ -19,13 +19,14 @@
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .userSearchBar {
-    padding: 1rem 0.5rem;
+    padding: 1rem 5px;
     margin: 0;
     color: #ffd700 !important; /* Golden text on mobile */
+    width: 100%;
   }
 
   .userMapContainer {
-    padding: 0.5rem;
+    padding: 5px;
     margin: 0;
     width: 100%;
     overflow-x: auto;
