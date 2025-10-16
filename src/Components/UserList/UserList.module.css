@@ -117,6 +117,117 @@ td {
   vertical-align: middle;
 }
 
+/* Race Championship Styles */
+.raceChampionship {
+  margin-top: 32px;
+  background: linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 2px solid #7B6857;
+  width: 100%;
+  text-align: center;
+}
+
+.championshipTitle {
+  color: #7B6857;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard {
+  display: grid;
+  gap: 12px;
+}
+
+.leaderboardItem {
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.leaderboardItem:hover {
+  transform: translateY(-2px);
+}
+
+.leaderboardItem.first {
+  background: linear-gradient(135deg, #E8DDD4 0%, #D4C4A8 100%);
+  border: 2px solid #B5A48E;
+}
+
+.leaderboardItem.second {
+  background: linear-gradient(135deg, #D4C4A8 0%, #C4B29B 100%);
+  border: 2px solid #A59488;
+}
+
+.leaderboardItem.third {
+  background: linear-gradient(135deg, #C4B29B 0%, #B5A48E 100%);
+  border: 2px solid #95847B;
+}
+
+.leaderboardItem.other {
+  background: linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%);
+  border: 1px solid #7B6857;
+}
+
+.raceInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.medal {
+  font-size: 20px;
+}
+
+.raceName {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.points {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: #2C2C2C;
+  font-size: 1.1rem;
+}
+
+.leaderboardItem.first .raceName,
+.leaderboardItem.first .points {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.leaderboardItem.second .raceName,
+.leaderboardItem.second .points {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.leaderboardItem.third .raceName,
+.leaderboardItem.third .points {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.leaderboardItem.other .raceName,
+.leaderboardItem.other .points {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #7B6857;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .userListWrapper {
@@ -127,75 +238,51 @@ td {
 
   .userListContainer {
     width: 100%;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     overflow-x: auto;
-    display: block;
-    white-space: nowrap;
+    display: table;
+    table-layout: fixed;
+    border-collapse: collapse;
   }
 
-  .userListContainer thead,
-  .userListContainer tbody,
-  .userListContainer tr {
-    display: block;
-  }
+  /* Mobile column widths - EXACT same as desktop */
+  .userListContainer th:nth-child(1) {
+    width: 22%;
+  } /* Student/Teacher */
+  .userListContainer th:nth-child(2) {
+    width: 25%;
+  } /* Location */
+  .userListContainer th:nth-child(3) {
+    width: 13%;
+  } /* Race */
+  .userListContainer th:nth-child(4) {
+    width: 13%;
+  } /* Class */
+  .userListContainer th:nth-child(5) {
+    width: 12%;
+  } /* Points */
+  .userListContainer th:nth-child(6) {
+    width: 15%;
+  } /* Profile */
 
-  .userListContainer thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
+  /* Apply same widths to td elements */
+  .userListContainer td:nth-child(1) {
+    width: 22%;
   }
-
-  .userListContainer tr {
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  .userListContainer td:nth-child(2) {
+    width: 25%;
   }
-
-  .userListContainer td {
-    border: none;
-    position: relative;
-    padding: 8px 8px 8px 50%;
-    white-space: normal;
-    text-align: left;
-    display: block;
+  .userListContainer td:nth-child(3) {
+    width: 13%;
   }
-
-  .userListContainer td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: 6px;
-    width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
-    font-weight: bold;
-    color: #7b6857;
+  .userListContainer td:nth-child(4) {
+    width: 13%;
   }
-
-  .userListContainer td:first-child:before {
-    content: "Name:";
+  .userListContainer td:nth-child(5) {
+    width: 12%;
   }
-
-  .userListContainer td:nth-child(2):before {
-    content: "Location:";
-  }
-
-  .userListContainer td:nth-child(3):before {
-    content: "Race:";
-  }
-
-  .userListContainer td:nth-child(4):before {
-    content: "Class:";
-  }
-
-  .userListContainer td:nth-child(5):before {
-    content: "Points:";
-  }
-
-  .userListContainer td:nth-child(6):before {
-    content: "Profile:";
+  .userListContainer td:nth-child(6) {
+    width: 15%;
   }
 
   .profileLink {

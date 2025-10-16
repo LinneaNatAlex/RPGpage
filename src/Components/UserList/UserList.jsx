@@ -239,40 +239,10 @@ const UserList = ({ userQuery }) => {
           ))}
         </tbody>
       </table>
-      {/* Race points summary - Simplified Design */}
-      <div
-        className={styles.racePointsContainer}
-        style={{
-          marginTop: 32,
-          background: "linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%)",
-          borderRadius: 16,
-          padding: 24,
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
-          border: "2px solid #7B6857",
-          width: "100%",
-          textAlign: "center",
-        }}
-      >
-        <h3
-          style={{
-            color: "#7B6857",
-            fontSize: "1.8rem",
-            marginBottom: 20,
-            fontFamily: '"Cinzel", serif',
-            letterSpacing: 1,
-            fontWeight: 700,
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          Race Championship
-        </h3>
-
-        <div
-          style={{
-            display: "grid",
-            gap: 12,
-          }}
-        >
+      {/* Race Championship - Clean Design */}
+      <div className={styles.raceChampionship}>
+        <h3 className={styles.championshipTitle}>Race Championship</h3>
+        <div className={styles.leaderboard}>
           {sortedRacePoints.map(([race, points], i) => {
             const displayRace = [
               "Witch",
@@ -290,87 +260,22 @@ const UserList = ({ userQuery }) => {
             return (
               <div
                 key={race}
-                style={{
-                  background: isFirst
-                    ? "linear-gradient(135deg, #E8DDD4 0%, #D4C4A8 100%)"
-                    : isSecond
-                    ? "linear-gradient(135deg, #D4C4A8 0%, #C4B29B 100%)"
-                    : isThird
-                    ? "linear-gradient(135deg, #C4B29B 0%, #B5A48E 100%)"
-                    : "linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%)",
-                  borderRadius: 8,
-                  padding: "12px 16px",
-                  border: isFirst
-                    ? "2px solid #B5A48E"
-                    : isSecond
-                    ? "2px solid #A59488"
-                    : isThird
-                    ? "2px solid #95847B"
-                    : "1px solid #7B6857",
-                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
+                className={`${styles.leaderboardItem} ${
+                  isFirst ? styles.first : isSecond ? styles.second : isThird ? styles.third : styles.other
+                }`}
               >
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
-                >
-                  {isFirst && <span style={{ fontSize: "20px" }}>🥇</span>}
-                  {isSecond && <span style={{ fontSize: "18px" }}>🥈</span>}
-                  {isThird && <span style={{ fontSize: "18px" }}>🥉</span>}
-                  <span
-                    style={{
-                      fontWeight: isFirst
-                        ? 700
-                        : isSecond
-                        ? 600
-                        : isThird
-                        ? 600
-                        : 500,
-                      color: getRaceColor(race),
-                      fontSize: isFirst
-                        ? "1.2rem"
-                        : isSecond
-                        ? "1.1rem"
-                        : isThird
-                        ? "1.1rem"
-                        : "1rem",
-                      fontFamily: '"Cinzel", serif',
-                      letterSpacing: 0.5,
-                    }}
+                <div className={styles.raceInfo}>
+                  {isFirst && <span className={styles.medal}>🥇</span>}
+                  {isSecond && <span className={styles.medal}>🥈</span>}
+                  {isThird && <span className={styles.medal}>🥉</span>}
+                  <span 
+                    className={styles.raceName}
+                    style={{ color: getRaceColor(race) }}
                   >
                     {displayRace}
                   </span>
                 </div>
-                <span
-                  style={{
-                    fontWeight: isFirst
-                      ? 700
-                      : isSecond
-                      ? 600
-                      : isThird
-                      ? 600
-                      : 500,
-                    color: isFirst
-                      ? "#2C2C2C"
-                      : isSecond
-                      ? "#2C2C2C"
-                      : isThird
-                      ? "#2C2C2C"
-                      : "#7B6857",
-                    fontSize: isFirst
-                      ? "1.3rem"
-                      : isSecond
-                      ? "1.2rem"
-                      : isThird
-                      ? "1.1rem"
-                      : "1rem",
-                    fontFamily: '"Cinzel", serif',
-                  }}
-                >
-                  {points.toLocaleString()} pts
-                </span>
+                <span className={styles.points}>{points.toLocaleString()} PTS</span>
               </div>
             );
           })}
