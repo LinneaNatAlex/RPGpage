@@ -198,7 +198,7 @@
   --navbar-width: 100%;
   --navbar-mobile-text-size: 0.5rem;
   scrollbar-color: var(--primary-color) var(--secondary-color);
-  color: var(--text-color);
+  color:#cd853f;
   font-family: "Arial", sans-serif;
   box-sizing: border-box;
 }
