@@ -1,10 +1,25 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import staticShopItems from "../Shop/itemsList";
 
-const categories = ["Books", "Potions", "Ingredients", "Equipment", "Food"];
+const categories = [
+  "Books",
+  "Potions",
+  "Ingredients",
+  "Equipment",
+  "Food",
+  "Pets",
+  "Pet Items",
+];
 
 export default function ShopProductAdmin() {
   const { uploadImage } = useImageUpload();
@@ -16,28 +31,37 @@ export default function ShopProductAdmin() {
     effect: "",
     health: "",
     image: "",
+    petHpRestore: "",
+    bonusTime: "",
   });
   const [status, setStatus] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [existingProducts, setExistingProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState("All");
 
-  // Hent eksisterende produkter
+  // Fetch existing products
   const fetchProducts = async () => {
     try {
       console.log("Fetching products...");
       const querySnapshot = await getDocs(collection(db, "shopItems"));
-      const products = querySnapshot.docs.map(doc => ({
+      const products = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       console.log("Products loaded:", products);
       setExistingProducts(products);
     } catch (error) {
       console.error("Error fetching products:", error);
       console.error("Error details:", error.code, error.message);
-      setStatus("Feil ved henting av produkter: " + error.message + " (Kode: " + error.code + ")");
+      setStatus(
+        "Error fetching products: " +
+          error.message +
+          " (Code: " +
+          error.code +
+          ")"
+      );
     }
   };
 
@@ -56,13 +80,13 @@ export default function ShopProductAdmin() {
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      alert("Bildet er for stort. Maksimal størrelse er 2MB.");
+      alert("Image is too large. Maximum size is 2MB.");
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      alert("Vennligst velg et gyldig bildeformat.");
+      alert("Please select a valid image format.");
       return;
     }
 
@@ -74,7 +98,7 @@ export default function ShopProductAdmin() {
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Kunne ikke laste opp bilde. Prøv igjen.");
+      alert("Could not upload image. Please try again.");
     } finally {
       setUploadingImage(false);
     }
@@ -94,6 +118,8 @@ export default function ShopProductAdmin() {
       effect: product.effect || "",
       health: product.health || "",
       image: product.image || "",
+      petHpRestore: product.petHpRestore || "",
+      bonusTime: product.bonusTime || "",
     });
     setShowEditForm(true);
   };
@@ -109,79 +135,108 @@ export default function ShopProductAdmin() {
       effect: "",
       health: "",
       image: "",
+      petHpRestore: "",
+      bonusTime: "",
     });
   };
 
   const updateProduct = async (e) => {
     e.preventDefault();
     if (!editingProduct) return;
-    
+
     setStatus("");
     if (!form.name || !form.category || !form.price) {
-      setStatus("Navn, kategori og pris er påkrevd.");
+      setStatus("Name, category and price are required.");
       return;
     }
 
     try {
       console.log("Updating product with ID:", editingProduct.id);
       console.log("Editing product:", editingProduct);
-      
+
       const docData = {
         ...form,
         price: Number(form.price),
         updatedAt: Date.now(),
       };
+
+      // Set type based on category
+      if (form.category === "Food") {
+        docData.type = "food";
+      } else if (form.category === "Pet Items") {
+        docData.type = "petFood";
+      }
+
       if (form.health) {
         docData.health = Number(form.health);
       } else {
         delete docData.health;
       }
-      
+
+      // Pet Food specific fields
+      if (form.category === "Pet Items") {
+        if (form.petHpRestore) {
+          docData.petHpRestore = Number(form.petHpRestore);
+        } else {
+          delete docData.petHpRestore;
+        }
+        if (form.bonusTime) {
+          docData.bonusTime = Number(form.bonusTime);
+        } else {
+          delete docData.bonusTime;
+        }
+      } else {
+        // Remove pet fields if not pet items
+        delete docData.petHpRestore;
+        delete docData.bonusTime;
+      }
+
       console.log("Updating with data:", docData);
-      
+
       await updateDoc(doc(db, "shopItems", editingProduct.id), docData);
-      setStatus("Produkt oppdatert!");
-      
+      setStatus("Product updated!");
+
       // Refresh produkter fra Firestore
       await fetchProducts();
-      
+
       cancelEdit();
     } catch (err) {
-      console.error("Oppdatering feil:", err);
+      console.error("Update error:", err);
       console.error("Product ID:", editingProduct.id);
       console.error("Product data:", editingProduct);
-      setStatus("Feil ved oppdatering: " + err.message + " (Kode: " + err.code + ")");
+      setStatus("Error updating: " + err.message + " (Code: " + err.code + ")");
     }
   };
 
   const deleteProduct = async (productId) => {
-    if (!window.confirm("Er du sikker på at du vil slette dette produktet?")) {
+    if (!window.confirm("Are you sure you want to delete this product?")) {
       return;
     }
-    
+
     try {
       await deleteDoc(doc(db, "shopItems", productId));
-      setStatus("Produkt slettet!");
-      
+      setStatus("Product deleted!");
+
       // Refresh produkter fra Firestore
       await fetchProducts();
     } catch (err) {
-      setStatus("Feil ved sletting: " + err.message);
+      setStatus("Error deleting: " + err.message);
     }
   };
 
   const convertStaticToFirestore = async (staticProduct) => {
     // Sjekk om produktet allerede er konvertert
-    const alreadyConverted = existingProducts.find(p => 
-      p.originalId === staticProduct.id || 
-      (p.name === staticProduct.name && p.category === staticProduct.category)
+    const alreadyConverted = existingProducts.find(
+      (p) =>
+        p.originalId === staticProduct.id ||
+        (p.name === staticProduct.name && p.category === staticProduct.category)
     );
-    
+
     if (alreadyConverted) {
-      setStatus("Dette produktet er allerede konvertert til Firestore!");
+      setStatus("This product is already converted to Firestore!");
       return;
     }
-    
+
     try {
       const docData = {
         name: staticProduct.name,
@@ -190,51 +245,67 @@ export default function ShopProductAdmin() {
         description: staticProduct.description || "",
         effect: staticProduct.effect || "",
         health: staticProduct.health || "",
-        image: "", // Tomt bilde som kan fylles ut
+        image: staticProduct.image || "", // Use static image if available
         type: staticProduct.type || "food",
         createdAt: Date.now(),
         convertedFromStatic: true,
-        originalId: staticProduct.id
+        originalId: staticProduct.id,
       };
-      
+
+      // Add pet food specific fields if they exist
+      if (staticProduct.petHpRestore) {
+        docData.petHpRestore = staticProduct.petHpRestore;
+      }
+      if (staticProduct.bonusTime) {
+        docData.bonusTime = staticProduct.bonusTime;
+      }
+
       console.log("Converting static product:", staticProduct);
       console.log("Data to save:", docData);
-      
+
       const docRef = await addDoc(collection(db, "shopItems"), docData);
       console.log("Created document with ID:", docRef.id);
-      
-      setStatus("Statisk produkt konvertert til Firestore! Du kan nå redigere det.");
-      
+
+      setStatus("Static product converted to Firestore! You can now edit it.");
+
       // Refresh produkter fra Firestore
       await fetchProducts();
     } catch (err) {
-      console.error("Konvertering feil:", err);
-      setStatus("Feil ved konvertering: " + err.message + " (Kode: " + err.code + ")");
+      console.error("Conversion error:", err);
+      setStatus(
+        "Error converting: " + err.message + " (Code: " + err.code + ")"
+      );
     }
   };
 
   const convertAllStaticProducts = async () => {
-    if (!window.confirm(`Er du sikker på at du vil konvertere alle ${staticShopItems.length} statiske produkter til Firestore? Dette kan ta litt tid.`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to convert all ${staticShopItems.length} static products to Firestore? This may take some time.`
+      )
+    ) {
       return;
     }
-    
-    setStatus("Konverterer alle statiske produkter...");
+
+    setStatus("Converting all static products...");
     let converted = 0;
     let errors = 0;
-    
+
     for (const staticProduct of staticShopItems) {
       try {
         // Sjekk om allerede konvertert
-        const alreadyConverted = existingProducts.find(p => 
-          p.originalId === staticProduct.id || 
-          (p.name === staticProduct.name && p.category === staticProduct.category)
+        const alreadyConverted = existingProducts.find(
+          (p) =>
+            p.originalId === staticProduct.id ||
+            (p.name === staticProduct.name &&
+              p.category === staticProduct.category)
         );
-        
+
         if (alreadyConverted) {
           console.log(`Skipping already converted: ${staticProduct.name}`);
           continue;
         }
-        
+
         const docData = {
           name: staticProduct.name,
           category: staticProduct.category,
@@ -242,30 +313,41 @@ export default function ShopProductAdmin() {
           description: staticProduct.description || "",
           effect: staticProduct.effect || "",
           health: staticProduct.health || "",
-          image: "",
+          image: staticProduct.image || "",
           type: staticProduct.type || "food",
           createdAt: Date.now(),
           convertedFromStatic: true,
-          originalId: staticProduct.id
+          originalId: staticProduct.id,
         };
-        
+
+        // Add pet food specific fields if they exist
+        if (staticProduct.petHpRestore) {
+          docData.petHpRestore = staticProduct.petHpRestore;
+        }
+        if (staticProduct.bonusTime) {
+          docData.bonusTime = staticProduct.bonusTime;
+        }
+
         await addDoc(collection(db, "shopItems"), docData);
         converted++;
         console.log(`Converted: ${staticProduct.name}`);
-        
+
         // Oppdater status hver 10. konvertering
         if (converted % 10 === 0) {
-          setStatus(`Konvertert ${converted}/${staticShopItems.length} produkter...`);
+          setStatus(
+            `Converted ${converted}/${staticShopItems.length} products...`
+          );
         }
-        
       } catch (err) {
         console.error(`Error converting ${staticProduct.name}:`, err);
         errors++;
       }
     }
-    
-    setStatus(`Konvertering fullført! ${converted} produkter konvertert, ${errors} feil.`);
-    
+
+    setStatus(
+      `Conversion completed! ${converted} products converted, ${errors} errors.`
+    );
+
     // Refresh produkter fra Firestore
     await fetchProducts();
   };
@@ -274,17 +356,17 @@ export default function ShopProductAdmin() {
     e.preventDefault();
     setStatus("");
     if (!form.name || !form.category || !form.price) {
-      setStatus("Navn, kategori og pris er påkrevd.");
+      setStatus("Name, category and price are required.");
       return;
     }
-    
+
     if (editingProduct) {
       await updateProduct(e);
       return;
     }
-    
+
     try {
-      // Sett type automatisk hvis Food
+      // Sett type automatisk basert på category
       const docData = {
         ...form,
         price: Number(form.price),
@@ -292,18 +374,30 @@ export default function ShopProductAdmin() {
       };
       if (form.category === "Food") {
         docData.type = "food";
+      } else if (form.category === "Pet Items") {
+        docData.type = "petFood";
       }
       if (form.health) {
         docData.health = Number(form.health);
       } else {
         delete docData.health;
       }
+
+      // Pet Food specific fields
+      if (form.category === "Pet Items") {
+        if (form.petHpRestore) {
+          docData.petHpRestore = Number(form.petHpRestore);
+        }
+        if (form.bonusTime) {
+          docData.bonusTime = Number(form.bonusTime);
+        }
+      }
       const docRef = await addDoc(collection(db, "shopItems"), docData);
       setStatus("Product added!");
-      
+
       // Refresh produkter fra Firestore
       await fetchProducts();
-      
+
       setForm({
         name: "",
         category: "Food",
@@ -312,6 +406,8 @@ export default function ShopProductAdmin() {
         effect: "",
         health: "",
         image: "",
+        petHpRestore: "",
+        bonusTime: "",
       });
     } catch (err) {
       setStatus("Error: " + err.message);
@@ -321,17 +417,21 @@ export default function ShopProductAdmin() {
   return (
     <div
       style={{
-        background: "#23232b",
-        color: "#fff",
-        padding: 20,
-        borderRadius: 10,
-        marginTop: 24,
+        background: "#F5EFE0",
+        color: "#2C2C2C",
+        padding: "24px",
+        borderRadius: "12px",
+        marginTop: "32px",
+        marginBottom: "24px",
+        border: "2px solid #D4C4A8",
       }}
     >
-      <h3>{editingProduct ? "Edit product" : "Add new product to Shop"}</h3>
+      <h3 style={{ marginBottom: "20px", color: "#5D4E37" }}>
+        {editingProduct ? "Edit product" : "Add new product to Shop"}
+      </h3>
       <form
         onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: 10 }}
+        style={{ display: "flex", flexDirection: "column", gap: "16px" }}
       >
         <input
           name="name"
@@ -374,14 +474,50 @@ export default function ShopProductAdmin() {
           type="number"
           min="0"
         />
-        
+
+        {/* Pet Food specific fields */}
+        {form.category === "Pet Items" && (
+          <>
+            <input
+              name="petHpRestore"
+              value={form.petHpRestore}
+              onChange={handleChange}
+              placeholder="Pet HP Restore % (25, 50, 100)"
+              type="number"
+              min="0"
+              max="100"
+            />
+            <input
+              name="bonusTime"
+              value={form.bonusTime}
+              onChange={handleChange}
+              placeholder="Bonus feeding time in hours (valgfritt)"
+              type="number"
+              min="0"
+            />
+          </>
+        )}
+
         {/* Image Upload Section */}
         <div style={{ marginTop: "1rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+          <label
+            style={{
+              display: "block",
+              marginBottom: "0.5rem",
+              fontWeight: "bold",
+            }}
+          >
             Product Image:
           </label>
           {form.image ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
               <img
                 src={form.image}
                 alt="Product preview"
@@ -390,7 +526,7 @@ export default function ShopProductAdmin() {
                   maxHeight: "150px",
                   borderRadius: "8px",
                   border: "2px solid #7B6857",
-                  objectFit: "cover"
+                  objectFit: "cover",
                 }}
               />
               <button
@@ -402,14 +538,21 @@ export default function ShopProductAdmin() {
                   border: "none",
                   padding: "0.5rem 1rem",
                   borderRadius: "4px",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
                 Fjern bilde
               </button>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
               <label style={{ cursor: "pointer" }}>
                 <input
                   type="file"
@@ -421,243 +564,511 @@ export default function ShopProductAdmin() {
                 <span
                   style={{
                     display: "inline-block",
-                    background: uploadingImage ? "#666" : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    background: uploadingImage
+                      ? "#666"
+                      : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                     color: "white",
                     padding: "0.75rem 1.5rem",
                     borderRadius: "8px",
                     cursor: uploadingImage ? "not-allowed" : "pointer",
                     fontWeight: "600",
-                    transition: "all 0.3s ease"
+                    transition: "all 0.3s ease",
                   }}
                 >
-                  {uploadingImage ? "Laster opp..." : "Velg bilde"}
+                  {uploadingImage ? "Uploading..." : "Choose Image"}
                 </span>
               </label>
-              <p style={{ color: "#ccc", fontSize: "0.9rem", margin: "0" }}>
-                Maks størrelse: 2MB. Anbefalt: 300x300px
+              <p style={{ color: "#7B6857", fontSize: "0.9rem", margin: "0" }}>
+                Max size: 2MB. Recommended: 300x300px
               </p>
             </div>
           )}
         </div>
-        
+
         <div style={{ display: "flex", gap: "10px" }}>
-          <button type="submit">
-            {editingProduct ? "Oppdater produkt" : "Legg til produkt"}
+          <button
+            type="submit"
+            style={{
+              background: editingProduct
+                ? "linear-gradient(135deg, #8B7A6B 0%, #756357 100%)"
+                : "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+              color: "#FFFFFF",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              fontSize: "14px",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 6px rgba(123, 104, 87, 0.3)",
+              textTransform: "capitalize",
+              letterSpacing: "0.3px",
+              minWidth: "120px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-1px)";
+              e.target.style.boxShadow = "0 4px 12px rgba(123, 104, 87, 0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "0 2px 6px rgba(123, 104, 87, 0.3)";
+            }}
+          >
+            {editingProduct ? "Update Product" : "Add Product"}
           </button>
           {editingProduct && (
-            <button type="button" onClick={cancelEdit} style={{ background: "#666" }}>
-              Avbryt
+            <button
+              type="button"
+              onClick={cancelEdit}
+              style={{
+                background: "linear-gradient(135deg, #A0927E 0%, #8B7A6B 100%)",
+                color: "#FFFFFF",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 6px rgba(160, 146, 126, 0.3)",
+                textTransform: "capitalize",
+                letterSpacing: "0.3px",
+                minWidth: "90px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-1px)";
+                e.target.style.boxShadow =
+                  "0 4px 12px rgba(160, 146, 126, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 2px 6px rgba(160, 146, 126, 0.3)";
+              }}
+            >
+              Cancel
             </button>
           )}
         </div>
       </form>
-      {status && <div style={{ marginTop: 8 }}>{status}</div>}
-      
-      {/* Eksisterende produkter */}
-      <div style={{ marginTop: "2rem" }}>
-        <h4>Eksisterende produkter (Firestore: {existingProducts.length}, Statiske: {staticShopItems.filter(product => {
-          const isConverted = existingProducts.some(p => 
-            p.originalId === product.id || 
-            (p.name === product.name && p.category === product.category)
-          );
-          return !isConverted;
-        }).length} ikke-konverterte)</h4>
-        
-        {/* Firestore produkter (kan redigeres) */}
-        <h5 style={{ color: "#7B6857", marginTop: "1rem" }}>Firestore produkter (kan redigeres)</h5>
-        {existingProducts.length === 0 && (
-          <div style={{ color: "#ccc", fontStyle: "italic" }}>
-            Ingen Firestore produkter funnet.
+      {status && (
+        <div
+          style={{
+            marginTop: "16px",
+            padding: "12px",
+            background: "#E8DDD4",
+            borderRadius: "6px",
+            color: "#5D4E37",
+          }}
+        >
+          {status}
+        </div>
+      )}
+
+      {/* Existing products */}
+      <div
+        style={{
+          marginTop: "48px",
+          padding: "24px",
+          background: "#FEFEFE",
+          borderRadius: "12px",
+          border: "1px solid #E8DDD4",
+        }}
+      >
+        <h4
+          style={{
+            marginBottom: "24px",
+            color: "#5D4E37",
+            borderBottom: "2px solid #D4C4A8",
+            paddingBottom: "12px",
+          }}
+        >
+          Existing products (Firestore: {existingProducts.length}, Static:{" "}
+          {
+            staticShopItems.filter((product) => {
+              const isConverted = existingProducts.some(
+                (p) =>
+                  p.originalId === product.id ||
+                  (p.name === product.name && p.category === product.category)
+              );
+              return !isConverted;
+            }).length
+          }{" "}
+          not converted)
+        </h4>
+
+        {/* Category filter */}
+        <div
+          style={{
+            margin: "20px 0",
+            padding: "16px",
+            background: "#F9F6F1",
+            borderRadius: "8px",
+            border: "1px solid #E8DDD4",
+          }}
+        >
+          <label
+            style={{
+              display: "block",
+              marginBottom: "8px",
+              color: "#5D4E37",
+              fontWeight: "500",
+            }}
+          >
+            Filter by category:
+          </label>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: "6px",
+              border: "2px solid #D4C4A8",
+              background: "#FFFFFF",
+              color: "#2C2C2C",
+              fontSize: "14px",
+              width: "200px",
+            }}
+          >
+            <option value="All">All Categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Firestore products (editable) */}
+        <h5 style={{ color: "#7B6857", marginTop: "1rem" }}>
+          Firestore Products (Editable)
+        </h5>
+        {existingProducts.filter(
+          (product) =>
+            categoryFilter === "All" || product.category === categoryFilter
+        ).length === 0 && (
+          <div style={{ color: "#8B7A6B", fontStyle: "italic" }}>
+            No Firestore products found for this category.
           </div>
         )}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {existingProducts.map((product) => (
-            <div
-              key={product.id}
-              style={{
-                background: "#2a2a2a",
-                padding: "1rem",
-                borderRadius: "8px",
-                border: "1px solid #444",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                {product.image && (
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "8px",
-                      objectFit: "cover"
-                    }}
-                  />
-                )}
-                <div>
-                  <div style={{ fontWeight: "bold", color: "#fff" }}>{product.name}</div>
-                  <div style={{ color: "#ccc", fontSize: "0.9rem" }}>
-                    {product.category} - {product.price} Nits
-                  </div>
-                  {product.description && (
-                    <div style={{ color: "#aaa", fontSize: "0.8rem" }}>
-                      {product.description}
-                    </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            maxHeight: "400px",
+            overflowY: "auto",
+            padding: "0.5rem",
+            border: "1px solid #E8DDD4",
+            borderRadius: "8px",
+            background: "#FEFEFE",
+          }}
+        >
+          {existingProducts
+            .filter(
+              (product) =>
+                categoryFilter === "All" || product.category === categoryFilter
+            )
+            .map((product) => (
+              <div
+                key={product.id}
+                style={{
+                  background: "#FFFFFF",
+                  padding: "1rem",
+                  borderRadius: "8px",
+                  border: "1px solid #D4C4A8",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+                >
+                  {product.image && (
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "8px",
+                        objectFit: "cover",
+                      }}
+                    />
                   )}
+                  <div>
+                    <div style={{ fontWeight: "bold", color: "#2C2C2C" }}>
+                      {product.name}
+                    </div>
+                    <div style={{ color: "#7B6857", fontSize: "0.9rem" }}>
+                      {product.category} - {product.price} Nits
+                    </div>
+                    {product.description && (
+                      <div style={{ color: "#8B7A6B", fontSize: "0.8rem" }}>
+                        {product.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button
+                    onClick={() => {
+                      console.log("Edit button clicked for product:", product);
+                      startEdit(product);
+                    }}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
+                      color: "white",
+                      border: "none",
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      transition: "all 0.2s ease",
+                      boxShadow: "0 2px 8px rgba(76, 175, 80, 0.3)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.3px",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-1px)";
+                      e.target.style.boxShadow =
+                        "0 4px 12px rgba(76, 175, 80, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow =
+                        "0 2px 8px rgba(76, 175, 80, 0.3)";
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      console.log(
+                        "Delete button clicked for product:",
+                        product.id
+                      );
+                      deleteProduct(product.id);
+                    }}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                      color: "white",
+                      border: "none",
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      transition: "all 0.2s ease",
+                      boxShadow: "0 2px 8px rgba(244, 67, 54, 0.3)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.3px",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-1px)";
+                      e.target.style.boxShadow =
+                        "0 4px 12px rgba(244, 67, 54, 0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow =
+                        "0 2px 8px rgba(244, 67, 54, 0.3)";
+                    }}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <button
-                  onClick={() => {
-                    console.log("Edit button clicked for product:", product);
-                    startEdit(product);
-                  }}
-                  style={{
-                    background: "#7B6857",
-                    color: "white",
-                    border: "none",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Rediger
-                </button>
-                <button
-                  onClick={() => {
-                    console.log("Delete button clicked for product:", product.id);
-                    deleteProduct(product.id);
-                  }}
-                  style={{
-                    background: "#c44",
-                    color: "white",
-                    border: "none",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Slett
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
-        
-        {/* Statiske produkter (read-only) */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2rem" }}>
-          <h5 style={{ color: "#666", margin: 0 }}>Statiske produkter (read-only)</h5>
+
+        {/* Static products (read-only) */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "48px",
+            marginBottom: "20px",
+            paddingBottom: "12px",
+            borderBottom: "2px solid #D4C4A8",
+          }}
+        >
+          <h5 style={{ color: "#5D4E37", margin: 0, fontSize: "18px" }}>
+            Static products (read-only)
+          </h5>
           <button
             onClick={convertAllStaticProducts}
             style={{
-              background: "#4CAF50",
+              background: "linear-gradient(135deg, #8B7A6B 0%, #756357 100%)",
               color: "white",
               border: "none",
-              padding: "0.5rem 1rem",
-              borderRadius: "4px",
+              padding: "8px 16px",
+              borderRadius: "6px",
               cursor: "pointer",
-              fontSize: "0.9rem"
+              fontSize: "13px",
+              fontWeight: "500",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 6px rgba(123, 104, 87, 0.3)",
+              textTransform: "capitalize",
+              letterSpacing: "0.2px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-1px)";
+              e.target.style.boxShadow = "0 4px 12px rgba(123, 104, 87, 0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "0 2px 6px rgba(123, 104, 87, 0.3)";
             }}
           >
-            Konverter alle statiske produkter
+            Convert all static products
           </button>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            maxHeight: "400px",
+            overflowY: "auto",
+            padding: "0.5rem",
+            border: "1px solid #E8DDD4",
+            borderRadius: "8px",
+            background: "#FEFEFE",
+          }}
+        >
           {staticShopItems
-            .filter(product => {
-              // Filtrer ut produkter som allerede er konvertert
-              const isConverted = existingProducts.some(p => 
-                p.originalId === product.id || 
-                (p.name === product.name && p.category === product.category)
+            .filter((product) => {
+              // Filter out products that are already converted
+              const isConverted = existingProducts.some(
+                (p) =>
+                  p.originalId === product.id ||
+                  (p.name === product.name && p.category === product.category)
               );
               return !isConverted;
             })
-            .slice(0, 10)
+            .filter(
+              (product) =>
+                categoryFilter === "All" || product.category === categoryFilter
+            )
             .map((product) => (
-            <div
-              key={product.id}
-              style={{
-                background: "#1a1a1a",
-                padding: "1rem",
-                borderRadius: "8px",
-                border: "1px solid #333",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                opacity: 0.7
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                {product.image && (
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "8px",
-                      objectFit: "cover"
-                    }}
-                  />
-                )}
-                <div>
-                  <div style={{ fontWeight: "bold", color: "#ccc" }}>{product.name}</div>
-                  <div style={{ color: "#999", fontSize: "0.9rem" }}>
-                    {product.category} - {product.price} Nits
-                  </div>
-                  {product.description && (
-                    <div style={{ color: "#777", fontSize: "0.8rem" }}>
-                      {product.description}
-                    </div>
+              <div
+                key={product.id}
+                style={{
+                  background: "#F9F6F1",
+                  padding: "1rem",
+                  borderRadius: "8px",
+                  border: "1px solid #E8DDD4",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  opacity: 0.7,
+                }}
+              >
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+                >
+                  {product.image && (
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "8px",
+                        objectFit: "cover",
+                      }}
+                    />
                   )}
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                {existingProducts.find(p => 
-                  p.originalId === product.id || 
-                  (p.name === product.name && p.category === product.category)
-                ) ? (
-                  <div style={{ color: "#4CAF50", fontSize: "0.9rem", fontWeight: "bold" }}>
-                    ✓ Allerede konvertert
+                  <div>
+                    <div style={{ fontWeight: "bold", color: "#2C2C2C" }}>
+                      {product.name}
+                    </div>
+                    <div style={{ color: "#7B6857", fontSize: "0.9rem" }}>
+                      {product.category} - {product.price} Nits
+                    </div>
+                    {product.description && (
+                      <div style={{ color: "#8B7A6B", fontSize: "0.8rem" }}>
+                        {product.description}
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <button
-                    onClick={() => convertStaticToFirestore(product)}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "0.5rem",
+                    alignItems: "center",
+                  }}
+                >
+                  {existingProducts.find(
+                    (p) =>
+                      p.originalId === product.id ||
+                      (p.name === product.name &&
+                        p.category === product.category)
+                  ) ? (
+                    <div
+                      style={{
+                        color: "#4CAF50",
+                        fontSize: "0.9rem",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      ✓ Already converted
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => convertStaticToFirestore(product)}
+                      style={{
+                        background: "#7B6857",
+                        color: "white",
+                        border: "none",
+                        padding: "0.5rem 1rem",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      Konverter til Firestore
+                    </button>
+                  )}
+                  <div
                     style={{
-                      background: "#7B6857",
-                      color: "white",
-                      border: "none",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.9rem"
+                      color: "#666",
+                      fontSize: "0.9rem",
+                      fontStyle: "italic",
                     }}
                   >
-                    Konverter til Firestore
-                  </button>
-                )}
-                <div style={{ color: "#666", fontSize: "0.9rem", fontStyle: "italic" }}>
-                  Statisk
+                    Statisk
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
           {(() => {
-            const nonConvertedItems = staticShopItems.filter(product => {
-              const isConverted = existingProducts.some(p => 
-                p.originalId === product.id || 
-                (p.name === product.name && p.category === product.category)
+            const nonConvertedItems = staticShopItems.filter((product) => {
+              const isConverted = existingProducts.some(
+                (p) =>
+                  p.originalId === product.id ||
+                  (p.name === product.name && p.category === product.category)
               );
               return !isConverted;
             });
-            
+
             if (nonConvertedItems.length > 10) {
               return (
-                <div style={{ color: "#666", fontStyle: "italic", textAlign: "center" }}>
-                  ... og {nonConvertedItems.length - 10} flere ikke-konverterte statiske produkter
+                <div
+                  style={{
+                    color: "#666",
+                    fontStyle: "italic",
+                    textAlign: "center",
+                  }}
+                >
+                  ... and {nonConvertedItems.length - 10} more non-converted
+                  static products
                 </div>
               );
             }

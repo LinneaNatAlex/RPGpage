@@ -45,13 +45,15 @@ export default function AgeVerificationAdmin() {
       style={{
         maxWidth: 600,
         margin: "2rem auto",
-        background: "#23232b",
+        background: "#F5EFE0",
+        color: "#2C2C2C",
         padding: 24,
         borderRadius: 12,
+        border: "2px solid #D4C4A8",
       }}
     >
       <h2>18+ Forum Access – Admin</h2>
-      <p style={{ color: "#ffd86b", marginBottom: 24 }}>
+      <p style={{ color: "#7B6857", marginBottom: 24 }}>
         Approve or remove users for access to the 18+ forum. Only users who have
         been verified on Discord should be approved.
       </p>

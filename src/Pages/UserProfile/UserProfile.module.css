@@ -667,3 +667,78 @@
   margin-right: 32px;
   padding-right: 12px;
 }
+
+/* Pet Display Styles for UserProfile */
+.petDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid #7b6857;
+}
+
+.petImageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.petImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  border: 3px solid #ffe4b5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+}
+
+.petInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.petName {
+  color: #ffe4b5 !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+/* Pet HP Bar */
+.petHpContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.petHpBar {
+  width: 100px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #7b6857;
+}
+
+.petHpFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4444 0%, #ffaa44 50%, #44ff44 100%);
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.petHpText {
+  color: #ffe4b5;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}

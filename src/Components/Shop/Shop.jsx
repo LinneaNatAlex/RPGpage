@@ -19,7 +19,15 @@ import shopItems from "./itemsList";
 
 // itemsList.js varer + Firestore varer vises sammen
 
-const categories = ["Books", "Potions", "Ingredients", "Equipment", "Food"];
+const categories = [
+  "Books",
+  "Potions",
+  "Ingredients",
+  "Equipment",
+  "Food",
+  "Pets",
+  "Pet Items",
+];
 
 const Shop = ({ open = true }) => {
   // Note: Author payments removed since books now use display names only
@@ -154,6 +162,39 @@ const Shop = ({ open = true }) => {
             inventory.push({ name: ing, qty: 1, type: "ingredient" });
           }
         });
+      } else if (item.category === "Pets") {
+        // Special handling for pets - user can only have one pet at a time
+        const itemWithImage = addImageToItem(item);
+
+        // Check if user already has a pet
+        const existingPetIdx = inventory.findIndex(
+          (i) => i.category === "Pets"
+        );
+
+        if (existingPetIdx > -1) {
+          setErrorMessage(
+            `You already have a pet: ${inventory[existingPetIdx].name}. You can only have one pet at a time!`
+          );
+          setTimeout(() => setErrorMessage(""), 5000);
+          return;
+        }
+
+        // Add pet to inventory and set as current pet
+        const newPet = { ...itemWithImage, qty: 1 };
+        inventory.push(newPet);
+
+        // Set as current pet in user profile with lastFed timestamp
+        const petWithTimestamp = {
+          ...itemWithImage,
+          lastFed: new Date(), // Pet starts at full HP
+          customName: null, // Will be set later by user
+        };
+
+        await updateDoc(userRef, {
+          currency: newBalance,
+          inventory,
+          currentPet: petWithTimestamp,
+        });
       } else {
         // Finn eksisterende item i inventory basert på id eller navn
         const existingIdx = inventory.findIndex(
@@ -176,7 +217,10 @@ const Shop = ({ open = true }) => {
         }
       }
 
-      await updateDoc(userRef, { currency: newBalance, inventory });
+      // Update user document with new balance and inventory
+      const updateData = { currency: newBalance, inventory };
+
+      await updateDoc(userRef, updateData);
 
       // Clear cache after successful purchase to force UI update
       cacheHelpers.clearUserCache(user.uid);
@@ -387,7 +431,7 @@ const Shop = ({ open = true }) => {
                     {itemWithImage.price} Nits
                   </span>
                   <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
-                  {/* Slett-knapp for Firestore-varer, kun for admin/teacher */}
+                  {/* Delete button for Firestore items, admin/teacher only */}
                   {itemWithImage.firestore && isAdmin && (
                     <button
                       style={{
@@ -401,40 +445,39 @@ const Shop = ({ open = true }) => {
                       }}
                       onClick={async () => {
                         if (
-                          !window.confirm(
-                            `Slette produktet "${itemWithImage.name}"?`
+                          window.confirm(
+                            `Delete the product "${itemWithImage.name}"?`
                           )
-                        )
-                          return;
+                        ) {
+                          // Clear previous messages
+                          setSuccessMessage("");
+                          setErrorMessage("");
 
-                        // Clear previous messages
-                        setSuccessMessage("");
-                        setErrorMessage("");
+                          try {
+                            const collection =
+                              itemWithImage.type === "book"
+                                ? "books"
+                                : "shopItems";
 
-                        try {
-                          const collection =
-                            itemWithImage.type === "book"
-                              ? "books"
-                              : "shopItems";
+                            await deleteDoc(
+                              doc(db, collection, itemWithImage.id)
+                            );
 
-                          await deleteDoc(
-                            doc(db, collection, itemWithImage.id)
-                          );
-
-                          setSuccessMessage(
-                            `✅ Product "${itemWithImage.name}" deleted successfully!`
-                          );
-                          setTimeout(() => setSuccessMessage(""), 5000);
-                        } catch (error) {
-                          console.error("Error deleting product:", error);
-                          setErrorMessage(
-                            `Failed to delete product: ${error.message}`
-                          );
-                          setTimeout(() => setErrorMessage(""), 5000);
+                            setSuccessMessage(
+                              `✅ Product "${itemWithImage.name}" deleted successfully!`
+                            );
+                            setTimeout(() => setSuccessMessage(""), 5000);
+                          } catch (error) {
+                            console.error("Error deleting product:", error);
+                            setErrorMessage(
+                              `Failed to delete product: ${error.message}`
+                            );
+                            setTimeout(() => setErrorMessage(""), 5000);
+                          }
                         }
                       }}
                     >
-                      Slett
+                      Delete
                     </button>
                   )}
                 </div>

@@ -450,7 +450,8 @@ const shopItems = [
     price: 1200,
     type: "potion",
     category: "Potions",
-    description: "Gives extra points for all actions for 2 hours. Very expensive!",
+    description:
+      "Gives extra points for all actions for 2 hours. Very expensive!",
     effect: "Extra points for all actions for 2 hours.",
   },
   // SURVEILLANCE POTION
@@ -460,7 +461,8 @@ const shopItems = [
     price: 1000,
     type: "potion",
     category: "Potions",
-    description: "See what all users are doing and where they are on the website for 1 hour.",
+    description:
+      "See what all users are doing and where they are on the website for 1 hour.",
     effect: "See all user activities for 1 hour.",
   },
   // SOCIAL EFFECT POTIONS
@@ -470,7 +472,8 @@ const shopItems = [
     price: 750,
     type: "potion",
     category: "Potions",
-    description: "Other users see you as more attractive with special icons for 2 hours.",
+    description:
+      "Other users see you as more attractive with special icons for 2 hours.",
     effect: "Attractive appearance for 2 hours.",
   },
   {
@@ -481,6 +484,54 @@ const shopItems = [
     category: "Potions",
     description: "Your name appears as '???' to other users for 2 hours.",
     effect: "Mysterious name for 2 hours.",
+  },
+
+  // PET FOOD ITEMS
+  {
+    id: 701,
+    name: "Premium Pet Food",
+    price: 50,
+    type: "petFood",
+    category: "Pet Items",
+    description: "High-quality pet food that restores 100% HP to your pet.",
+    effect: "Restores pet HP to 100%",
+    image: "/icons/pet-food-premium.svg",
+    petHpRestore: 100,
+  },
+  {
+    id: 702,
+    name: "Basic Pet Food",
+    price: 25,
+    type: "petFood",
+    category: "Pet Items",
+    description: "Basic pet food that restores 50% HP to your pet.",
+    effect: "Restores 50% pet HP",
+    image: "/icons/pet-food-basic.svg",
+    petHpRestore: 50,
+  },
+  {
+    id: 703,
+    name: "Pet Treats",
+    price: 15,
+    type: "petFood",
+    category: "Pet Items",
+    description: "Delicious treats that restore 25% HP to your pet.",
+    effect: "Restores 25% pet HP",
+    image: "/icons/pet-treats.svg",
+    petHpRestore: 25,
+  },
+  {
+    id: 704,
+    name: "Magic Pet Elixir",
+    price: 100,
+    type: "petFood",
+    category: "Pet Items",
+    description:
+      "Magical elixir that fully restores pet HP and extends feeding time.",
+    effect: "Restores 100% HP + bonus time",
+    image: "/icons/pet-elixir.svg",
+    petHpRestore: 100,
+    bonusTime: 12, // 12 hours extra before next feeding needed
   },
 ];
 

@@ -118,6 +118,8 @@
 .giftBtn,
 .deleteBtn,
 .eatBtn,
+.feedPetBtn,
+.setPetBtn,
 .readBtn {
   padding: 0.5rem 1rem;
   border: none;
@@ -168,6 +170,41 @@
   transform: translateY(-2px);
   background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
   border-color: #8b7a6b;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.feedPetBtn {
+  background: linear-gradient(135deg, #4a7c59 0%, #5f8a6b 100%);
+  color: #f5efe0;
+  border: 2px solid #3d5f47;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.feedPetBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #5f8a6b 0%, #7a9e7c 100%);
+  border-color: #4a7c59;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.feedPetBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #666 0%, #888 100%);
+  border-color: #555;
+}
+
+.setPetBtn {
+  background: linear-gradient(135deg, #8b4a9c 0%, #a663b8 100%);
+  color: #f5efe0;
+  border: 2px solid #7a3e8c;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.setPetBtn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #a663b8 0%, #c77dd1 100%);
+  border-color: #8b4a9c;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -253,6 +290,8 @@
   .giftBtn,
   .deleteBtn,
   .eatBtn,
+  .feedPetBtn,
+  .setPetBtn,
   .readBtn {
     width: 100%;
     margin-bottom: 0.5rem;

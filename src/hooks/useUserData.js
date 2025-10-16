@@ -37,7 +37,8 @@ const useUserData = () => {
     infirmaryEnd: null,
     detentionUntil: null,
     invisibleUntil: null,
-    lastHealthUpdate: null
+    lastHealthUpdate: null,
+    currentPet: null,
   });
   const [loading, setLoading] = useState(true);
 
@@ -73,7 +74,8 @@ const useUserData = () => {
         infirmaryEnd: null,
         detentionUntil: null,
         invisibleUntil: null,
-        lastHealthUpdate: null
+        lastHealthUpdate: null,
+        currentPet: null,
       });
       setLoading(false);
       return;
@@ -121,7 +123,8 @@ const useUserData = () => {
               infirmaryEnd: data.infirmaryEnd || null,
               detentionUntil: data.detentionUntil || null,
               invisibleUntil: data.invisibleUntil || null,
-              lastHealthUpdate: data.lastHealthUpdate || null
+              lastHealthUpdate: data.lastHealthUpdate || null,
+              currentPet: data.currentPet || null,
             });
           }
         } catch (error) {

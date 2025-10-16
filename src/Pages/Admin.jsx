@@ -6,8 +6,8 @@ export default function Admin() {
   const { user } = useAuth();
   const { roles = [] } = useUserRoles();
   // Debug: show roles for troubleshooting
-  if (!user) return <div>Du må være logget inn for å se denne siden.</div>;
+  if (!user) return <div>You must be logged in to view this page.</div>;
   if (!roles.includes("admin"))
-    return <div>Du har ikke tilgang til denne siden.</div>;
+    return <div>You do not have access to this page.</div>;
   return <AdminPanel />;
 }

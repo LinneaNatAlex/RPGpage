@@ -16,6 +16,7 @@ import styles from "./UserProfile.module.css";
 import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
+import { addImageToItem } from "../../utils/itemImages";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import { Suspense } from "react";
 
@@ -36,6 +37,26 @@ const UserProfile = () => {
   );
   // For å hindre dobbel feiring
   const [ageChecked, setAgeChecked] = useState(false);
+
+  // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
+  const calculatePetHP = (pet) => {
+    if (!pet || !pet.lastFed) {
+      // If no lastFed timestamp, assume pet was just acquired at full HP
+      return 100;
+    }
+
+    const now = new Date().getTime();
+    const lastFed = pet.lastFed.toMillis ? pet.lastFed.toMillis() : pet.lastFed;
+    const timeSinceFed = now - lastFed;
+    const maxStarvationTime = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+
+    // Pet loses HP gradually over 3 days (72 hours)
+    const hpPercentage = Math.max(
+      0,
+      100 - (timeSinceFed / maxStarvationTime) * 100
+    );
+    return Math.round(hpPercentage);
+  };
 
   //  ----------------------------------useEffect----------------------------------
   useEffect(() => {
@@ -684,6 +705,60 @@ const UserProfile = () => {
               </strong>{" "}
               {userData.roles?.join(", ")}
             </p>
+
+            {/* Pet Display for other users */}
+            {userData.currentPet && (
+              <p
+                style={{
+                  color: "#FFFFFF",
+                  fontSize: "1.1rem",
+                  margin: "0.5rem 0",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                }}
+              >
+                <strong
+                  style={{
+                    color: "#FFE4B5",
+                    fontWeight: 700,
+                    marginRight: "0.5rem",
+                  }}
+                >
+                  Pet:
+                </strong>
+                <div className={styles.petDisplay}>
+                  <div className={styles.petImageContainer}>
+                    <img
+                      src={addImageToItem(userData.currentPet).image}
+                      alt={
+                        userData.currentPet.customName ||
+                        userData.currentPet.name
+                      }
+                      className={styles.petImage}
+                    />
+                    <div className={styles.petInfo}>
+                      <span className={styles.petName}>
+                        {userData.currentPet.customName ||
+                          userData.currentPet.name}
+                      </span>
+                      {/* Pet HP Bar */}
+                      <div className={styles.petHpContainer}>
+                        <div className={styles.petHpBar}>
+                          <div
+                            className={styles.petHpFill}
+                            style={{
+                              width: `${calculatePetHP(userData.currentPet)}%`,
+                            }}
+                          ></div>
+                        </div>
+                        <span className={styles.petHpText}>
+                          {Math.round(calculatePetHP(userData.currentPet))}% HP
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </p>
+            )}
           </div>
         </div>
       </div>

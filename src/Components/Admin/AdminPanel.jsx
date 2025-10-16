@@ -23,6 +23,18 @@ export default function AdminPanel() {
   const [amount, setAmount] = useState(0);
   const [status, setStatus] = useState("");
 
+  // Force light theme to match the beige page theme
+  const isDarkMode = false; // Always use light theme for admin panel
+
+  // Light theme colors to match the beige page design
+  const theme = {
+    background: "#F5EFE0", // Light beige background
+    text: "#2C2C2C", // Dark text for readability
+    secondaryText: "#7B6857", // Brown secondary text
+    border: "#D4C4A8", // Light brown borders
+    accent: "#ffd86b", // Gold accent color
+  };
+
   // Suspension/ban/IP-ban state
   const [suspendHours, setSuspendHours] = useState(0);
   const [suspendMinutes, setSuspendMinutes] = useState(0);
@@ -119,31 +131,49 @@ export default function AdminPanel() {
   // Detention functions
   async function handleDetentionUser() {
     if (!selected) return;
-    if (!roles.includes("admin") && !roles.includes("teacher") && !roles.includes("shadowpatrol") && !roles.includes("headmaster")) {
-      setDetentionStatus("Only admin, teacher, shadow patrol, or headmaster can assign detention.");
+    if (
+      !roles.includes("admin") &&
+      !roles.includes("teacher") &&
+      !roles.includes("shadowpatrol") &&
+      !roles.includes("headmaster")
+    ) {
+      setDetentionStatus(
+        "Only admin, teacher, shadow patrol, or headmaster can assign detention."
+      );
       return;
     }
     setDetentionStatus("Working...");
     const ref = doc(db, "users", selected.uid);
-    const detentionUntil = Date.now() + (60 * 60 * 1000); // 1 hour from now
-    await updateDoc(ref, { 
+    const detentionUntil = Date.now() + 60 * 60 * 1000; // 1 hour from now
+    await updateDoc(ref, {
       detentionUntil: detentionUntil,
-      detentionReason: "Curfew violation or rule breaking"
+      detentionReason: "Curfew violation or rule breaking",
     });
-    setDetentionStatus(`User sent to detention until ${new Date(detentionUntil).toLocaleString()}`);
+    setDetentionStatus(
+      `User sent to detention until ${new Date(
+        detentionUntil
+      ).toLocaleString()}`
+    );
   }
 
   async function handleClearDetention() {
     if (!selected) return;
-    if (!roles.includes("admin") && !roles.includes("teacher") && !roles.includes("shadowpatrol") && !roles.includes("headmaster")) {
-      setDetentionStatus("Only admin, teacher, shadow patrol, or headmaster can clear detention.");
+    if (
+      !roles.includes("admin") &&
+      !roles.includes("teacher") &&
+      !roles.includes("shadowpatrol") &&
+      !roles.includes("headmaster")
+    ) {
+      setDetentionStatus(
+        "Only admin, teacher, shadow patrol, or headmaster can clear detention."
+      );
       return;
     }
     setDetentionStatus("Working...");
     const ref = doc(db, "users", selected.uid);
-    await updateDoc(ref, { 
+    await updateDoc(ref, {
       detentionUntil: null,
-      detentionReason: null
+      detentionReason: null,
     });
     setDetentionStatus("Detention cleared.");
   }
@@ -207,12 +237,16 @@ export default function AdminPanel() {
       style={{
         maxWidth: 800,
         margin: "2rem auto",
-        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-        color: "#F5EFE0",
+        background: isDarkMode
+          ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)"
+          : "linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%)",
+        color: theme.text,
         padding: 40,
         borderRadius: 20,
-        boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-        border: "3px solid #7B6857",
+        boxShadow: isDarkMode
+          ? "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)"
+          : "0 12px 48px rgba(139, 69, 19, 0.15), 0 4px 16px rgba(139, 69, 19, 0.1)",
+        border: `3px solid ${theme.border}`,
         position: "relative",
         overflow: "hidden",
       }}
@@ -224,20 +258,27 @@ export default function AdminPanel() {
           left: 0,
           right: 0,
           height: "4px",
-          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
+          background:
+            "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
           borderRadius: "20px 20px 0 0",
         }}
       />
-      <h2 style={{
-        fontFamily: '"Cinzel", serif',
-        fontSize: "2.2rem",
-        fontWeight: 700,
-        letterSpacing: "1.5px",
-        textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-        marginBottom: "2rem",
-        textAlign: "center"
-      }}>Admin Panel</h2>
-      {(roles.includes("admin") || roles.includes("teacher")) && <ShopProductAdmin />}
+      <h2
+        style={{
+          fontFamily: '"Cinzel", serif',
+          fontSize: "2.2rem",
+          fontWeight: 700,
+          letterSpacing: "1.5px",
+          textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+          marginBottom: "2rem",
+          textAlign: "center",
+        }}
+      >
+        Admin Panel
+      </h2>
+      {(roles.includes("admin") || roles.includes("teacher")) && (
+        <ShopProductAdmin />
+      )}
       <button
         onClick={() => setShowBanned((v) => !v)}
         style={{
@@ -250,19 +291,22 @@ export default function AdminPanel() {
           fontSize: "1rem",
           cursor: "pointer",
           transition: "all 0.3s ease",
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+          boxShadow:
+            "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
           textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
           fontFamily: '"Cinzel", serif',
           letterSpacing: "0.5px",
-          marginBottom: 20
+          marginBottom: 20,
         }}
         onMouseEnter={(e) => {
           e.target.style.transform = "translateY(-2px)";
-          e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+          e.target.style.boxShadow =
+            "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
         }}
         onMouseLeave={(e) => {
           e.target.style.transform = "translateY(0)";
-          e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+          e.target.style.boxShadow =
+            "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
         }}
       >
         {showBanned ? "Hide banned users/IPs" : "Show banned users/IPs"}
@@ -275,17 +319,24 @@ export default function AdminPanel() {
             borderRadius: 16,
             marginBottom: 24,
             border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+            boxShadow:
+              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
           }}
         >
-          <h3 style={{
-            color: "#D4C4A8",
-            fontSize: "1.3rem",
-            fontFamily: '"Cinzel", serif',
-            fontWeight: 600,
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-            marginBottom: 16
-          }}>Banned users & IPs</h3>
+          <h3
+            style={{
+              color: theme.secondaryText,
+              fontSize: "1.3rem",
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 600,
+              textShadow: isDarkMode
+                ? "0 1px 2px rgba(0, 0, 0, 0.3)"
+                : "0 1px 2px rgba(255, 255, 255, 0.3)",
+              marginBottom: 16,
+            }}
+          >
+            Banned users & IPs
+          </h3>
           <ul style={{ maxHeight: 100, overflowY: "auto" }}>
             {bannedUsers.length === 0 && <li>No banned users/IPs.</li>}
             {bannedUsers.map((u) => (
@@ -320,7 +371,7 @@ export default function AdminPanel() {
         </div>
       )}
       <input
-        placeholder="Search user..."
+        placeholder="Search by name or email..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={{
@@ -328,89 +379,161 @@ export default function AdminPanel() {
           marginBottom: 16,
           padding: "12px 16px",
           borderRadius: 12,
-          border: "2px solid #D4C4A8",
-          background: "#F5EFE0",
-          color: "#2C2C2C",
+          border: `2px solid ${theme.border}`,
+          background: theme.background,
+          color: theme.text,
           fontSize: "1rem",
           fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
           outline: "none",
-          transition: "all 0.3s ease"
+          transition: "all 0.3s ease",
         }}
         onFocus={(e) => {
-          e.target.style.borderColor = "#7B6857";
-          e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+          e.target.style.borderColor = theme.secondaryText;
+          e.target.style.boxShadow = `0 0 16px ${
+            isDarkMode ? "rgba(123, 104, 87, 0.4)" : "rgba(212, 196, 168, 0.4)"
+          }`;
         }}
         onBlur={(e) => {
-          e.target.style.borderColor = "#D4C4A8";
+          e.target.style.borderColor = theme.border;
           e.target.style.boxShadow = "none";
         }}
       />
-      <ul style={{ 
-        maxHeight: 150, 
-        overflowY: "auto", 
-        marginBottom: 16,
-        background: "rgba(245, 239, 224, 0.1)",
-        borderRadius: 12,
-        padding: 12,
-        border: "2px solid rgba(255, 255, 255, 0.2)",
-        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
-      }}>
-        {filtered.map((u) => (
+      {/* User count info */}
+      <div
+        style={{
+          marginBottom: "8px",
+          fontSize: "14px",
+          color: theme.secondaryText,
+          fontStyle: "italic",
+        }}
+      >
+        Showing {Math.min(filtered.length, 5)} of {filtered.length} users
+        {filtered.length > 5 && " (scroll to see more)"}
+      </div>
+
+      <ul
+        style={{
+          maxHeight: "200px", // Space for about 5 items
+          overflowY: "auto",
+          marginBottom: 16,
+          background: theme.background,
+          borderRadius: 12,
+          padding: 12,
+          border: `2px solid ${theme.border}`,
+          boxShadow: "0 4px 16px rgba(123, 104, 87, 0.15)",
+        }}
+      >
+        {filtered.slice(0, 20).map(
+          (
+            u // Show max 20 in DOM but limit visible to ~5 with scroll
+          ) => (
+            <li
+              key={u.uid}
+              style={{
+                cursor: "pointer",
+                background:
+                  selected?.uid === u.uid
+                    ? isDarkMode
+                      ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)"
+                      : "linear-gradient(135deg, #D4C4A8 0%, #C4B49A 100%)"
+                    : isDarkMode
+                    ? "rgba(245, 239, 224, 0.1)"
+                    : "rgba(123, 104, 87, 0.1)",
+                color: theme.text,
+                padding: "12px 16px",
+                borderRadius: 8,
+                marginBottom: 8,
+                border:
+                  selected?.uid === u.uid
+                    ? `2px solid ${
+                        isDarkMode
+                          ? "rgba(255, 255, 255, 0.3)"
+                          : "rgba(123, 104, 87, 0.3)"
+                      }`
+                    : `1px solid ${
+                        isDarkMode
+                          ? "rgba(255, 255, 255, 0.1)"
+                          : "rgba(123, 104, 87, 0.1)"
+                      }`,
+                transition: "all 0.3s ease",
+                fontWeight: selected?.uid === u.uid ? 600 : 400,
+                boxShadow:
+                  selected?.uid === u.uid
+                    ? isDarkMode
+                      ? "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
+                      : "0 4px 16px rgba(123, 104, 87, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.8)"
+                    : "none",
+              }}
+              onClick={() => {
+                setSelected(u);
+                setPointsUser(u.displayName || u.email || "");
+              }}
+              onMouseEnter={(e) => {
+                if (selected?.uid !== u.uid) {
+                  e.target.style.background = "rgba(245, 239, 224, 0.2)";
+                  e.target.style.transform = "translateY(-1px)";
+                  e.target.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.2)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selected?.uid !== u.uid) {
+                  e.target.style.background = "rgba(245, 239, 224, 0.1)";
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "none";
+                }
+              }}
+            >
+              {u.displayName || u.email || u.uid} ({u.currency ?? 0} nits)
+            </li>
+          )
+        )}
+        {filtered.length === 0 && (
           <li
-            key={u.uid}
             style={{
-              cursor: "pointer",
-              background: selected?.uid === u.uid ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)" : "rgba(245, 239, 224, 0.1)",
-              color: selected?.uid === u.uid ? "#F5EFE0" : "#F5EFE0",
-              padding: "12px 16px",
-              borderRadius: 8,
-              marginBottom: 8,
-              border: selected?.uid === u.uid ? "2px solid rgba(255, 255, 255, 0.3)" : "1px solid rgba(255, 255, 255, 0.1)",
-              transition: "all 0.3s ease",
-              fontWeight: selected?.uid === u.uid ? 600 : 400,
-              boxShadow: selected?.uid === u.uid ? "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)" : "none"
-            }}
-            onClick={() => {
-              setSelected(u);
-              setPointsUser(u.displayName || u.email || "");
-            }}
-            onMouseEnter={(e) => {
-              if (selected?.uid !== u.uid) {
-                e.target.style.background = "rgba(245, 239, 224, 0.2)";
-                e.target.style.transform = "translateY(-1px)";
-                e.target.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.2)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (selected?.uid !== u.uid) {
-                e.target.style.background = "rgba(245, 239, 224, 0.1)";
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "none";
-              }
+              color: theme.secondaryText,
+              fontStyle: "italic",
+              textAlign: "center",
+              padding: "20px",
             }}
           >
-            {u.displayName || u.email || u.uid} ({u.currency ?? 0} nits)
+            No users found matching "{search}"
           </li>
-        ))}
+        )}
       </ul>
       {selected && roles.includes("admin") && (
-        <div style={{ 
-          marginBottom: 24,
-          background: "rgba(245, 239, 224, 0.1)",
-          padding: 20,
-          borderRadius: 16,
-          border: "2px solid rgba(255, 255, 255, 0.2)",
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
-        }}>
-          <h3 style={{
-            color: "#D4C4A8",
-            fontSize: "1.3rem",
-            fontFamily: '"Cinzel", serif',
-            fontWeight: 600,
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-            marginBottom: 16
-          }}>Currency Management</h3>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <div
+          style={{
+            marginBottom: 24,
+            background: "rgba(245, 239, 224, 0.1)",
+            padding: 20,
+            borderRadius: 16,
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow:
+              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <h3
+            style={{
+              color: theme.secondaryText,
+              fontSize: "1.3rem",
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 600,
+              textShadow: isDarkMode
+                ? "0 1px 2px rgba(0, 0, 0, 0.3)"
+                : "0 1px 2px rgba(255, 255, 255, 0.3)",
+              marginBottom: 16,
+            }}
+          >
+            Currency Management
+          </h3>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginBottom: 16,
+            }}
+          >
             <input
               type="number"
               value={amount}
@@ -419,20 +542,24 @@ export default function AdminPanel() {
                 width: 100,
                 padding: "8px 12px",
                 borderRadius: 8,
-                border: "2px solid #D4C4A8",
-                background: "#F5EFE0",
-                color: "#2C2C2C",
+                border: `2px solid ${theme.border}`,
+                background: theme.background,
+                color: theme.text,
                 fontSize: "1rem",
                 fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
                 outline: "none",
-                transition: "all 0.3s ease"
+                transition: "all 0.3s ease",
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = "#7B6857";
-                e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+                e.target.style.borderColor = theme.secondaryText;
+                e.target.style.boxShadow = `0 0 16px ${
+                  isDarkMode
+                    ? "rgba(123, 104, 87, 0.4)"
+                    : "rgba(212, 196, 168, 0.4)"
+                }`;
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = "#D4C4A8";
+                e.target.style.borderColor = theme.border;
                 e.target.style.boxShadow = "none";
               }}
             />
@@ -448,23 +575,26 @@ export default function AdminPanel() {
                 fontSize: "0.9rem",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
-                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                 textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                 fontFamily: '"Cinzel", serif',
-                letterSpacing: "0.5px"
+                letterSpacing: "0.5px",
               }}
               onMouseEnter={(e) => {
                 e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
               }}
               onMouseLeave={(e) => {
                 e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
               }}
             >
               + Nits
             </button>
-            <button 
+            <button
               onClick={() => handleNitsChange(-amount)}
               style={{
                 background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
@@ -476,18 +606,21 @@ export default function AdminPanel() {
                 fontSize: "0.9rem",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
-                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                 textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                 fontFamily: '"Cinzel", serif',
-                letterSpacing: "0.5px"
+                letterSpacing: "0.5px",
               }}
               onMouseEnter={(e) => {
                 e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
               }}
               onMouseLeave={(e) => {
                 e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
               }}
             >
               - Nits
@@ -529,10 +662,11 @@ export default function AdminPanel() {
               }}
             />
             <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-              <button 
+              <button
                 onClick={handleSuspendUser}
                 style={{
-                  background: "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
+                  background:
+                    "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
                   color: "#F5EFE0",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: 12,
@@ -541,18 +675,21 @@ export default function AdminPanel() {
                   fontSize: "0.9rem",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
-                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  boxShadow:
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                   textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   fontFamily: '"Cinzel", serif',
-                  letterSpacing: "0.5px"
+                  letterSpacing: "0.5px",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                  e.target.style.boxShadow =
+                    "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow =
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                 }}
               >
                 Set suspension
@@ -565,7 +702,8 @@ export default function AdminPanel() {
                   handleSuspendUser();
                 }}
                 style={{
-                  background: "linear-gradient(135deg, #D4C4A8 0%, #B8A082 100%)",
+                  background:
+                    "linear-gradient(135deg, #D4C4A8 0%, #B8A082 100%)",
                   color: "#2C2C2C",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: 12,
@@ -574,18 +712,21 @@ export default function AdminPanel() {
                   fontSize: "0.9rem",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
-                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  boxShadow:
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                   textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   fontFamily: '"Cinzel", serif',
-                  letterSpacing: "0.5px"
+                  letterSpacing: "0.5px",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                  e.target.style.boxShadow =
+                    "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow =
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                 }}
               >
                 Clear suspension
@@ -595,7 +736,8 @@ export default function AdminPanel() {
               <button
                 onClick={handleBanUser}
                 style={{
-                  background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                  background:
+                    "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                   color: "#F5EFE0",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: 12,
@@ -604,18 +746,21 @@ export default function AdminPanel() {
                   fontSize: "0.9rem",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
-                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  boxShadow:
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                   textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   fontFamily: '"Cinzel", serif',
-                  letterSpacing: "0.5px"
+                  letterSpacing: "0.5px",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                  e.target.style.boxShadow =
+                    "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow =
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                 }}
               >
                 Ban user
@@ -623,7 +768,8 @@ export default function AdminPanel() {
               <button
                 onClick={handleUnbanUser}
                 style={{
-                  background: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
+                  background:
+                    "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
                   color: "#F5EFE0",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: 12,
@@ -632,18 +778,21 @@ export default function AdminPanel() {
                   fontSize: "0.9rem",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
-                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                  boxShadow:
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                   textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   fontFamily: '"Cinzel", serif',
-                  letterSpacing: "0.5px"
+                  letterSpacing: "0.5px",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                  e.target.style.boxShadow =
+                    "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow =
+                    "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                 }}
               >
                 Unban user
@@ -667,15 +816,22 @@ export default function AdminPanel() {
             {selected.bannedIp && (
               <div style={{ color: "#ffd86b" }}>User's IP is banned</div>
             )}
-            
+
             {/* Detention Controls */}
-            <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.2)" }}>
+            <div
+              style={{
+                marginTop: 20,
+                paddingTop: 20,
+                borderTop: "1px solid rgba(255,255,255,0.2)",
+              }}
+            >
               <h4>Detention Controls</h4>
               <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-                <button 
+                <button
                   onClick={handleDetentionUser}
                   style={{
-                    background: "linear-gradient(135deg, #ff5722 0%, #d84315 100%)",
+                    background:
+                      "linear-gradient(135deg, #ff5722 0%, #d84315 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                     borderRadius: 12,
@@ -684,18 +840,21 @@ export default function AdminPanel() {
                     fontSize: "0.9rem",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    boxShadow:
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                     textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     fontFamily: '"Cinzel", serif',
-                    letterSpacing: "0.5px"
+                    letterSpacing: "0.5px",
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                    e.target.style.boxShadow =
+                      "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                    e.target.style.boxShadow =
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                   }}
                 >
                   Send to Detention
@@ -703,7 +862,8 @@ export default function AdminPanel() {
                 <button
                   onClick={handleClearDetention}
                   style={{
-                    background: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
+                    background:
+                      "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                     borderRadius: 12,
@@ -712,30 +872,38 @@ export default function AdminPanel() {
                     fontSize: "0.9rem",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    boxShadow:
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                     textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                     fontFamily: '"Cinzel", serif',
-                    letterSpacing: "0.5px"
+                    letterSpacing: "0.5px",
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "translateY(-2px)";
-                    e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                    e.target.style.boxShadow =
+                      "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = "translateY(0)";
-                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                    e.target.style.boxShadow =
+                      "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                   }}
                 >
                   Clear Detention
                 </button>
               </div>
-              {detentionStatus && <div style={{ color: "#ffd86b", marginTop: 8 }}>{detentionStatus}</div>}
-              {selected.detentionUntil && selected.detentionUntil > Date.now() && (
+              {detentionStatus && (
                 <div style={{ color: "#ffd86b", marginTop: 8 }}>
-                  In detention until:{" "}
-                  {new Date(selected.detentionUntil).toLocaleString()}
+                  {detentionStatus}
                 </div>
               )}
+              {selected.detentionUntil &&
+                selected.detentionUntil > Date.now() && (
+                  <div style={{ color: "#ffd86b", marginTop: 8 }}>
+                    In detention until:{" "}
+                    {new Date(selected.detentionUntil).toLocaleString()}
+                  </div>
+                )}
             </div>
           </div>
         </div>
@@ -744,22 +912,29 @@ export default function AdminPanel() {
 
       {/* Points management section */}
       {(roles.includes("admin") || roles.includes("teacher")) && (
-        <div style={{ 
-          marginTop: 24,
-          background: "rgba(245, 239, 224, 0.1)",
-          padding: 20,
-          borderRadius: 16,
-          border: "2px solid rgba(255, 255, 255, 0.2)",
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
-        }}>
-          <h3 style={{
-            color: "#D4C4A8",
-            fontSize: "1.3rem",
-            fontFamily: '"Cinzel", serif',
-            fontWeight: 600,
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-            marginBottom: 16
-          }}>Add / subtract points</h3>
+        <div
+          style={{
+            marginTop: 24,
+            background: "rgba(245, 239, 224, 0.1)",
+            padding: 20,
+            borderRadius: 16,
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow:
+              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <h3
+            style={{
+              color: "#D4C4A8",
+              fontSize: "1.3rem",
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 600,
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              marginBottom: 16,
+            }}
+          >
+            Add / subtract points
+          </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <input
               type="text"
@@ -776,7 +951,7 @@ export default function AdminPanel() {
                 fontSize: "1rem",
                 fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
                 outline: "none",
-                transition: "all 0.3s ease"
+                transition: "all 0.3s ease",
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = "#7B6857";
@@ -802,7 +977,7 @@ export default function AdminPanel() {
                 fontSize: "1rem",
                 fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
                 outline: "none",
-                transition: "all 0.3s ease"
+                transition: "all 0.3s ease",
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = "#7B6857";
@@ -813,7 +988,7 @@ export default function AdminPanel() {
                 e.target.style.boxShadow = "none";
               }}
             />
-            <button 
+            <button
               onClick={handlePointsUpdate}
               style={{
                 background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
@@ -825,33 +1000,36 @@ export default function AdminPanel() {
                 fontSize: "1rem",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
-                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                 textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                 fontFamily: '"Cinzel", serif',
-                letterSpacing: "0.5px"
+                letterSpacing: "0.5px",
               }}
               onMouseEnter={(e) => {
                 e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
               }}
               onMouseLeave={(e) => {
                 e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
               }}
             >
               Update points
             </button>
             {pointsMessage && (
               <div
-                style={{ 
-                  color: "#ffd86b", 
+                style={{
+                  color: "#ffd86b",
                   marginTop: 8,
                   padding: "8px 12px",
                   background: "rgba(255, 216, 107, 0.1)",
                   borderRadius: 8,
                   border: "1px solid rgba(255, 216, 107, 0.3)",
                   fontSize: "0.9rem",
-                  fontWeight: 500
+                  fontWeight: 500,
                 }}
               >
                 {pointsMessage}

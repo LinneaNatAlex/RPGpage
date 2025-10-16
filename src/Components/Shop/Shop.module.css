@@ -159,18 +159,22 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .tab:hover {
-  background: rgba(245, 239, 224, 0.2);
+  background: rgba(245, 239, 224, 0.25);
   color: #f5efe0;
-  transform: translateY(-2px);
+  transform: translateY(-1px) scale(1.02);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: rgba(212, 196, 168, 0.4);
 }
 .activeTab {
   background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
   color: #f5efe0;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+  border: 3px solid #d4c4a8;
+  box-shadow: 0 6px 20px rgba(123, 104, 87, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  font-weight: 700;
+  z-index: 2;
+  position: relative;
 }
 .ingredients {
   font-size: 0.95rem;
@@ -189,7 +193,7 @@
   max-width: 120px;
   max-height: 120px;
   border-radius: 8px;
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   object-fit: cover;
   transition: transform 0.3s ease;

@@ -12,6 +12,7 @@ import { isBirthdayToday } from "../../utils/rpgCalendar";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
+import { addImageToItem } from "../../utils/itemImages";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -23,6 +24,56 @@ const Profile = () => {
   const [birthdayDay, setBirthdayDay] = useState(1);
   const [birthdaySaved, setBirthdaySaved] = useState(false);
   const [editingBirthday, setEditingBirthday] = useState(false);
+
+  // Pet states
+  const [editingPetName, setEditingPetName] = useState(false);
+  const [newPetName, setNewPetName] = useState("");
+
+  // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
+  const calculatePetHP = (pet) => {
+    if (!pet || !pet.lastFed) {
+      // If no lastFed timestamp, assume pet was just acquired at full HP
+      return 100;
+    }
+
+    const now = new Date().getTime();
+    const lastFed = pet.lastFed.toMillis ? pet.lastFed.toMillis() : pet.lastFed;
+    const timeSinceFed = now - lastFed;
+    const maxStarvationTime = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+
+    // Pet loses HP gradually over 3 days (72 hours)
+    const hpPercentage = Math.max(
+      0,
+      100 - (timeSinceFed / maxStarvationTime) * 100
+    );
+    return Math.round(hpPercentage);
+  };
+
+  // Update pet name
+  const updatePetName = async (customName) => {
+    if (!user || !userData.currentPet) return;
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const updatedPet = {
+        ...userData.currentPet,
+        customName: customName,
+      };
+
+      await updateDoc(userRef, { currentPet: updatedPet });
+
+      // Update local state
+      setUserData((prev) => ({
+        ...prev,
+        currentPet: updatedPet,
+      }));
+
+      setEditingPetName(false);
+      setNewPetName("");
+    } catch (error) {
+      console.error("Error updating pet name:", error);
+    }
+  };
 
   // This uses the auth context to get the current user! teck loding state!
 
@@ -451,6 +502,99 @@ const Profile = () => {
                   </p>{" "}
                   {userData.roles?.join(", ")}
                 </div>
+
+                {/* Pet Display */}
+                {userData.currentPet && (
+                  <div className={styles.caracterDetails}>
+                    <p>
+                      <strong>Pet:</strong>
+                    </p>
+                    <div className={styles.petDisplay}>
+                      <div className={styles.petImageContainer}>
+                        <img
+                          src={addImageToItem(userData.currentPet).image}
+                          alt={
+                            userData.currentPet.customName ||
+                            userData.currentPet.name
+                          }
+                          className={styles.petImage}
+                        />
+                        <div className={styles.petInfo}>
+                          <span className={styles.petName}>
+                            {userData.currentPet.customName ||
+                              userData.currentPet.name}
+                          </span>
+                          {/* Pet HP Bar */}
+                          <div className={styles.petHpContainer}>
+                            <div className={styles.petHpBar}>
+                              <div
+                                className={styles.petHpFill}
+                                style={{
+                                  width: `${calculatePetHP(
+                                    userData.currentPet
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span className={styles.petHpText}>
+                              {Math.round(calculatePetHP(userData.currentPet))}%
+                              HP
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Pet Name Editor */}
+                      <div className={styles.petNameEditor}>
+                        {!editingPetName ? (
+                          <button
+                            onClick={() => {
+                              setEditingPetName(true);
+                              setNewPetName(
+                                userData.currentPet.customName ||
+                                  userData.currentPet.name ||
+                                  ""
+                              );
+                            }}
+                            className={styles.editPetNameBtn}
+                          >
+                            {userData.currentPet.customName
+                              ? "Rename Pet"
+                              : "Give Pet Name"}
+                          </button>
+                        ) : (
+                          <div className={styles.petNameInputContainer}>
+                            <input
+                              type="text"
+                              value={newPetName}
+                              onChange={(e) => setNewPetName(e.target.value)}
+                              placeholder="Enter pet name..."
+                              className={styles.petNameInput}
+                              maxLength="20"
+                            />
+                            <div className={styles.petNameButtons}>
+                              <button
+                                onClick={() => updatePetName(newPetName)}
+                                className={styles.savePetNameBtn}
+                                disabled={!newPetName.trim()}
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditingPetName(false);
+                                  setNewPetName("");
+                                }}
+                                className={styles.cancelPetNameBtn}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
