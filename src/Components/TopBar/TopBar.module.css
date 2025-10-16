@@ -184,27 +184,14 @@
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  scrollbar-width: thin;
-  scrollbar-color: #7B6857 #E8DDD4;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 .itemList::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-.itemList::-webkit-scrollbar-track {
-  background: #E8DDD4;
-  border-radius: 4px;
-}
-
-.itemList::-webkit-scrollbar-thumb {
-  background: #7B6857;
-  border-radius: 4px;
-}
-
-.itemList::-webkit-scrollbar-thumb:hover {
-  background: #8B7A6B;
-}
 
 .itemRow {
   display: flex;
@@ -429,6 +416,12 @@
   overflow-y: auto;
   margin: 0 0 1rem 0;
   padding: 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.giftUserList::-webkit-scrollbar {
+  display: none;
 }
 .giftUserList li {
   padding: 0.4em 0.7em;

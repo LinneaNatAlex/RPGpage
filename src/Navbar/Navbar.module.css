@@ -79,28 +79,16 @@
   /* Scroll functionality for long lists */
   max-height: 280px; /* Approximately 5 items */
   overflow-y: auto;
-  /* Custom scrollbar styling */
-  scrollbar-width: thin;
-  scrollbar-color: #d4c4a8 #5d4e37;
 }
 
-/* Webkit scrollbar styling */
+/* Hide scrollbar but allow scrolling */
 .dropdownContent::-webkit-scrollbar {
-  width: 6px;
+  display: none;
 }
 
-.dropdownContent::-webkit-scrollbar-track {
-  background: #5d4e37;
-  border-radius: 3px;
-}
-
-.dropdownContent::-webkit-scrollbar-thumb {
-  background: #d4c4a8;
-  border-radius: 3px;
-}
-
-.dropdownContent::-webkit-scrollbar-thumb:hover {
-  background: #f5efe0;
+.dropdownContent {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 .dropdownContent a {

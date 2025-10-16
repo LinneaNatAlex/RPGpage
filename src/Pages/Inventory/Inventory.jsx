@@ -33,6 +33,8 @@ const Inventory = () => {
   });
   const [infirmary, setInfirmary] = useState(false);
   const [firestoreItems, setFirestoreItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // 3x3 grid
 
   // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
   const calculatePetHP = (pet) => {
@@ -143,13 +145,20 @@ const Inventory = () => {
     }
   };
 
+  // Pagination logic
+  const inventory = userData?.inventory || [];
+  const totalPages = Math.ceil(inventory.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = inventory.slice(startIndex, endIndex);
+
   return (
     <div className={styles.inventoryPage}>
       <div className={styles.inventoryContainer}>
         <h1 className={styles.inventoryTitle}>Inventory</h1>
-        {Array.isArray(userData?.inventory) && userData.inventory.length > 0 ? (
+        {Array.isArray(inventory) && inventory.length > 0 ? (
           <ul className={styles.inventoryList}>
-            {userData.inventory.map((item, idx) => {
+            {currentItems.map((item, idx) => {
               // Add image to item if it doesn't have one
               const itemWithImage = addImageToItem(item, firestoreItems);
 
@@ -612,6 +621,34 @@ const Inventory = () => {
               Visit the shop to purchase items or receive gifts from other
               players!
             </p>
+          </div>
+        )}
+        
+        {/* Pagination Controls */}
+        {Array.isArray(inventory) && inventory.length > 0 && totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className={styles.paginationButton}
+            >
+              ← Previous
+            </button>
+            
+            <div className={styles.pageInfo}>
+              Page {currentPage} of {totalPages}
+              <span className={styles.itemCount}>
+                ({inventory.length} items total)
+              </span>
+            </div>
+            
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className={styles.paginationButton}
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>

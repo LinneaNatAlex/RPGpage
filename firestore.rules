@@ -5,8 +5,9 @@ service cloud.firestore {
     // USERS - hver bruker får tilgang til sitt eget dokument,
     // men alle kan oppdatere inventory-feltet til andre brukere (for gaver)
     // VIP system kan oppdatere VIP-relaterte felter
+    // Alle kan lese brukerdata for statistikk (ikke-innloggede brukere)
     match /users/{userId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow update: if request.auth != null && (
         // Admin eller teacher kan oppdatere alle brukere
         "admin" in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles ||

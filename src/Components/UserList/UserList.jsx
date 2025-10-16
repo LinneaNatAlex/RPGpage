@@ -1,5 +1,6 @@
 // Importing the function needed to fetch the users and the logic.
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import styles from "./UserList.module.css";
 import useUsers from "../../hooks/useUser"; // Importing the custom hook to fetch users
 import { auth } from "../../firebaseConfig";
@@ -9,6 +10,8 @@ import { useAuth } from "../../context/authContext";
 const UserList = ({ userQuery }) => {
   const { users, loading } = useUsers(); //fetching the users from the costum useUsers hook with REAL-TIME updates
   const { user: authUser } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   // Hent innlogget bruker
   const currentUser = auth.currentUser;
@@ -72,6 +75,13 @@ const UserList = ({ userQuery }) => {
   const sortedUsers = [...filteredUsers].sort(
     (a, b) => (b.points || 0) - (a.points || 0)
   );
+  
+  // Pagination logic
+  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const endIndex = startIndex + usersPerPage;
+  const currentUsers = sortedUsers.slice(startIndex, endIndex);
+  
   // Sort races by total points descending
   const sortedRacePoints = Object.entries(racePoints).sort(
     (a, b) => b[1] - a[1]
@@ -128,7 +138,7 @@ const UserList = ({ userQuery }) => {
           </tr>
         </thead>
         <tbody>
-          {sortedUsers.map((user, idx) => (
+          {currentUsers.map((user, idx) => (
             <tr
               key={user.uid}
               style={
@@ -215,6 +225,35 @@ const UserList = ({ userQuery }) => {
           ))}
         </tbody>
       </table>
+      
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className={styles.paginationButton}
+          >
+            ← Previous
+          </button>
+          
+          <div className={styles.pageInfo}>
+            Page {currentPage} of {totalPages}
+            <span className={styles.userCount}>
+              ({sortedUsers.length} users total)
+            </span>
+          </div>
+          
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className={styles.paginationButton}
+          >
+            Next →
+          </button>
+        </div>
+      )}
+      
       {/* Race Championship - Clean Design */}
       <div className={styles.raceChampionship}>
         <h3 className={styles.championshipTitle}>Race Championship</h3>

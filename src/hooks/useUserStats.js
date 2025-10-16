@@ -19,13 +19,23 @@ const useUserStats = () => {
       
       console.log('UserStats: Fetched users:', users.length);
       
-      // Calculate online users (last seen within 5 minutes)
+      // Calculate online users (last active within 5 minutes)
       const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-      const onlineUsers = users.filter(u => u.lastSeen && u.lastSeen > fiveMinutesAgo).length;
+      const onlineUsers = users.filter(u => {
+        if (!u.lastActive) return false;
+        // Handle different timestamp formats
+        const lastActiveTime = u.lastActive.toMillis ? u.lastActive.toMillis() : u.lastActive;
+        return lastActiveTime > fiveMinutesAgo;
+      }).length;
       
-      // Calculate daily active users (last seen within 24 hours)
+      // Calculate daily active users (last active within 24 hours)
       const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
-      const dailyActiveUsers = users.filter(u => u.lastSeen && u.lastSeen > twentyFourHoursAgo).length;
+      const dailyActiveUsers = users.filter(u => {
+        if (!u.lastActive) return false;
+        // Handle different timestamp formats
+        const lastActiveTime = u.lastActive.toMillis ? u.lastActive.toMillis() : u.lastActive;
+        return lastActiveTime > twentyFourHoursAgo;
+      }).length;
       
       // Total registered users
       const totalUsers = users.length;

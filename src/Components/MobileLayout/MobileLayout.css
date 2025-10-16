@@ -648,8 +648,19 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
   max-height: 100vh;
   max-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+}
+
+/* Hide scrollbars in mobile layout */
+.mobile-dashboard::-webkit-scrollbar,
+.mobile-messages::-webkit-scrollbar,
+.mobile-user-list::-webkit-scrollbar,
+.mobile-rules-list::-webkit-scrollbar,
+.mobile-announcements::-webkit-scrollbar {
+  display: none;
 }
 
 .mobile-dashboard-header {
@@ -891,6 +902,8 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   max-height: 400px; /* Fixed height to show ~5 items at once */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 /* Mobile Rules List */
@@ -902,6 +915,8 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   max-height: 400px; /* Fixed height to show ~5 items at once */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 .mobile-rules-category h3 {
