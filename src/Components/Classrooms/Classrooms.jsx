@@ -48,13 +48,12 @@ export default function Classrooms() {
   async function handleAttend(cls) {
     if (!user) return;
     const now = Date.now();
-    const cooldown = 60 * 60 * 1000; // 1 hour
+    const oneDay = 24 * 60 * 60 * 1000; // 24 hours
     const last = lastAttended?.[cls.id] || 0;
-    if (now - last < cooldown) {
-      setErrorMessage("You can only attend this class once per hour.");
-      setTimeout(() => setErrorMessage(""), 5000);
-      return;
-    }
+    const hasAttendedToday = (now - last) < oneDay;
+    
+    // Check if user can get points (only once per day)
+    let canGetPoints = !hasAttendedToday;
     const ref = doc(db, "classAttendance", `${cls.id}-year${userYear}`);
     // Try to get roles from user object (if present)
     // Fetch latest roles from Firestore
@@ -92,12 +91,19 @@ export default function Classrooms() {
       // If doc doesn't exist, create it
       await setDoc(ref, { students: [userInfo] }, { merge: true });
     });
-    // Gi poeng til bruker
+    // Gi poeng til bruker (kun hvis de ikke har fått poeng i dag)
     const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, {
-      points: increment(cls.points),
-      [`lastAttendedClass.${cls.id}`]: now,
-    });
+    if (canGetPoints) {
+      await updateDoc(userRef, {
+        points: increment(cls.points),
+        [`lastAttendedClass.${cls.id}`]: now,
+      });
+    } else {
+      // Update timestamp but don't give points
+      await updateDoc(userRef, {
+        [`lastAttendedClass.${cls.id}`]: now,
+      });
+    }
     setAttending({ classId: cls.id, year: userYear });
     if (cls.id === "potions") {
       navigate(`/ClassRooms/potions`);
@@ -202,6 +208,12 @@ export default function Classrooms() {
       )}
       {classesList.map((cls) => {
         const isAttending = attending && attending.classId === cls.id;
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const last = lastAttended?.[cls.id] || 0;
+        const hasAttendedToday = (now - last) < oneDay;
+        const canGetPoints = !hasAttendedToday;
+        
         return (
           <div
             key={cls.id}
@@ -312,7 +324,7 @@ export default function Classrooms() {
                       "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
                   }}
                 >
-                  Attend (+{cls.points} points)
+                  {canGetPoints ? `Attend (+${cls.points} points)` : "Attend (No points - already attended today)"}
                 </button>
               )}
               {/* Attendance count removed - only show active users in class */}
