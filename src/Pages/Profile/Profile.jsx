@@ -618,6 +618,14 @@ const Profile = () => {
                           line-height: 1.6;
                           background: transparent;
                         }
+                        /* Hide scrollbars but allow scrolling */
+                        ::-webkit-scrollbar {
+                          display: none;
+                        }
+                        html {
+                          scrollbar-width: none;
+                          -ms-overflow-style: none;
+                        }
                       </style>
                     </head>
                     <body>
@@ -631,6 +639,8 @@ const Profile = () => {
                     border: "none",
                     borderRadius: "8px",
                     background: "transparent",
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
                   }}
                   title="Profile Text"
                 />

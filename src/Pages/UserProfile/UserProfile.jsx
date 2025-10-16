@@ -771,16 +771,24 @@ const UserProfile = () => {
               <!DOCTYPE html>
               <html>
               <head>
-                <style>
-                  body { 
-                    margin: 0; 
-                    padding: 1rem; 
-                    font-family: "Cinzel", serif;
-                    color: #cd853f; /* Strong golden brown for unformatted text */
-                    line-height: 1.6;
-                    background: transparent;
-                  }
-                </style>
+              <style>
+                body { 
+                  margin: 0; 
+                  padding: 1rem; 
+                  font-family: "Cinzel", serif;
+                  color: #cd853f; /* Strong golden brown for unformatted text */
+                  line-height: 1.6;
+                  background: transparent;
+                }
+                /* Hide scrollbars but allow scrolling */
+                ::-webkit-scrollbar {
+                  display: none;
+                }
+                html {
+                  scrollbar-width: none;
+                  -ms-overflow-style: none;
+                }
+              </style>
               </head>
               <body>
                 ${userData.profileText}
@@ -793,6 +801,8 @@ const UserProfile = () => {
               border: "none",
               borderRadius: "8px",
               background: "transparent",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
             }}
             title="Profile Text"
           />
