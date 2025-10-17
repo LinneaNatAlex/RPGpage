@@ -15,19 +15,23 @@ export const playPing = () => {
   if (now - lastPingTime > 1000) {
     // Minimum 1 second between pings
     const soundUrls = [
-      "https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa1c7b.mp3", // Magical notification
       "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg", // Gentle notification
-      "https://actions.google.com/sounds/v1/notification/notification_simple.ogg" // Simple notification
+      "https://actions.google.com/sounds/v1/notification/notification_simple.ogg", // Simple notification
+      "https://actions.google.com/sounds/v1/alarms/beep_short.ogg" // Fallback beep
     ];
     
-    lastPingAudio = new window.Audio(soundUrls[0]);
-    lastPingAudio.volume = 0.5; // Moderate volume
-    lastPingAudio.play().catch(() => {
-      // Fallback to alternative sound if first fails
-      lastPingAudio = new window.Audio(soundUrls[1]);
-      lastPingAudio.volume = 0.5;
-      lastPingAudio.play().catch(() => {});
-    });
+    const tryPlaySound = (urlIndex = 0) => {
+      if (urlIndex >= soundUrls.length) return;
+      
+      lastPingAudio = new window.Audio(soundUrls[urlIndex]);
+      lastPingAudio.volume = 0.6;
+      lastPingAudio.play().catch((error) => {
+        console.log(`Sound ${urlIndex} failed:`, error);
+        tryPlaySound(urlIndex + 1);
+      });
+    };
+    
+    tryPlaySound();
     lastPingTime = now;
   }
 
@@ -51,4 +55,10 @@ export const requestNotificationPermission = async () => {
     return permission === "granted";
   }
   return Notification.permission === "granted";
+};
+
+// Test function to check if ping sound works
+export const testPing = () => {
+  console.log("Testing ping sound...");
+  playPing();
 };
