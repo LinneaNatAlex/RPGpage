@@ -644,7 +644,7 @@ const Chat = () => {
                     :{" "}
                     <span dangerouslySetInnerHTML={{
                       __html: getDisplayText(message.text, message)
-                        ?.replace(/@([^\s]+)/g, '<span class="' + styles.mentionHighlight + '">@$1</span>')
+                        ?.replace(/@([^\s@]+(?:\s+[^\s@]+)*)/g, '<span class="' + styles.mentionHighlight + '">@$1</span>')
                         ?.replace(/@all/gi, '<span class="' + styles.mentionAll + '">@all</span>')
                     }} />
                   </span>

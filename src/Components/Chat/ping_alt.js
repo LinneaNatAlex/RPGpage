@@ -13,7 +13,7 @@ export const playPing = () => {
 
   // Play sound with debouncing
   if (now - lastPingTime > 1000) {
-    // Minimum 1 second between pings - RPG style sounds
+    // Minimum 1 second between pings - Bell-like sounds
     const soundUrls = [
       "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg", // Gentle bell-like sound
       "https://actions.google.com/sounds/v1/notification/notification_simple.ogg", // Simple bell sound
