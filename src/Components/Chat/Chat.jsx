@@ -5,6 +5,7 @@ import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { db, auth } from "../../firebaseConfig";
+import { getRaceColor } from "../../utils/raceColors";
 import styles from "./Chat.module.css";
 import {
   addDoc,
@@ -472,6 +473,7 @@ const Chat = () => {
               );
 
               let roleClass = styles.messageSender;
+              let nameColor = null;
               if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
                 roleClass += ` ${styles.headmasterSender}`;
               else if (
@@ -488,6 +490,10 @@ const Chat = () => {
                 userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
               )
                 roleClass += ` ${styles.archivistSender}`;
+              else {
+                // Use race color for students without roles
+                nameColor = getRaceColor(userObj?.race);
+              }
               return (
                 <div key={message.id} className={styles.message}>
                   <span className={styles.senderNameWrapper}>

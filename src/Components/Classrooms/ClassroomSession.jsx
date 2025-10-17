@@ -360,15 +360,14 @@ export default function ClassroomSession() {
     setMessage("");
   }
 
-  // Delete message (only for teachers/admins or sender)
+  // Delete message (only for teachers/admins)
   async function handleDeleteMessage(idx) {
     const ref = doc(db, "classChats", `${classId}-year${userYear}`);
     const msgToDelete = messages[idx];
-    // Only allow if user is admin/teacher or sender
+    // Only allow if user is admin/teacher
     const canDelete =
       userRoles.includes("admin") ||
-      userRoles.includes("teacher") ||
-      msgToDelete.uid === user.uid;
+      userRoles.includes("teacher");
     if (!canDelete) return;
     const newMessages = messages.filter((_, i) => i !== idx);
     await updateDoc(ref, { messages: newMessages });
@@ -687,8 +686,7 @@ export default function ClassroomSession() {
           {messages.map((m, i) => {
             const canDelete =
               userRoles.includes("admin") ||
-              userRoles.includes("teacher") ||
-              m.uid === user?.uid;
+              userRoles.includes("teacher");
             return (
               <div
                 key={i}

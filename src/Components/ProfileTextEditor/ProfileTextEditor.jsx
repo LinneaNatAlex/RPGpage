@@ -217,7 +217,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
               `}
               style={{
                 width: "100%",
-                height: "1100px",
+                minHeight: "200px",
                 border: "none",
                 borderRadius: "8px",
                 background: "transparent",
