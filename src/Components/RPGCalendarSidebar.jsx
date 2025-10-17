@@ -275,8 +275,8 @@ export default function RPGCalendarSidebar() {
         })}
       </div>
       <div style={{ fontSize: 10, color: "#B8A082", marginBottom: 8 }}>
-        {weekDates[0].toLocaleDateString()} -{" "}
-        {weekDates[6].toLocaleDateString()}
+        {weekDates[0].toLocaleDateString("no-NO")} -{" "}
+        {weekDates[6].toLocaleDateString("no-NO")}
       </div>
       <div
         style={{
