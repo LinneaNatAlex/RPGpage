@@ -49,7 +49,7 @@
   width: 100%;
 }
 .messageSender {
-  color: #7B6857;
+  color: #f5efe0;
   font-weight: bold;
   font-size: 0.95rem;
 }
@@ -198,7 +198,7 @@
   --navbar-width: 100%;
   --navbar-mobile-text-size: 0.5rem;
   scrollbar-color: var(--primary-color) var(--secondary-color);
-  color:#cd853f;
+  color: var(--text-color);
   font-family: "Arial", sans-serif;
   box-sizing: border-box;
 }

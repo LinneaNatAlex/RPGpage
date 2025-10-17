@@ -466,11 +466,9 @@ const Forum = () => {
               Back to topics
             </Button>
             {(() => {
-              const currentTopic = topics.find(t => t.id === selectedTopic);
-              const isTopicOwner = currentTopic && currentTopic.uid === user?.uid;
               const isTeacherOrAdmin = roles?.includes("teacher") || roles?.includes("admin");
               
-              return (isTeacherOrAdmin || isTopicOwner) && (
+              return isTeacherOrAdmin && (
                 <>
                   <Button onClick={handleEditTopic} className={styles.editButton}>
                     Edit Topic
