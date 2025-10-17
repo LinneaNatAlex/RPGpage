@@ -50,7 +50,6 @@ const Shop = ({ open = true }) => {
   const [books, setBooks] = useState([]);
   
   // Get brewed potions for unlock system
-  const brewedPotions = userData?.brewedPotions || [];
 
   // Hent varer fra Firestore KUN når Shop er synlig - OPTIMIZED
   useEffect(() => {
@@ -342,9 +341,6 @@ const Shop = ({ open = true }) => {
           .map((item) => {
             const itemWithImage = addImageToItem(item);
             
-            // Check if potion is locked (not brewed yet)
-            const isPotion = itemWithImage.type === 'potion';
-            const isLocked = isPotion && !brewedPotions.includes(itemWithImage.name);
             
             console.log(
               "Shop item:",
@@ -354,9 +350,7 @@ const Shop = ({ open = true }) => {
               "CoverImage:",
               itemWithImage.coverImage,
               "Firestore:",
-              itemWithImage.firestore,
-              "Is Locked:",
-              isLocked
+              itemWithImage.firestore
             );
             return (
               <li
@@ -365,29 +359,7 @@ const Shop = ({ open = true }) => {
                   (itemWithImage.firestore ? "-fs" : "-static")
                 }
                 className={styles.item}
-                style={{
-                  opacity: isLocked ? 0.6 : 1,
-                  filter: isLocked ? 'grayscale(50%)' : 'none',
-                  position: 'relative'
-                }}
               >
-                {/* Lock overlay for locked potions */}
-                {isLocked && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    background: 'rgba(0, 0, 0, 0.8)',
-                    color: '#FFD700',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold',
-                    zIndex: 10
-                  }}>
-                    🔒 LOCKED
-                  </div>
-                )}
                 
                 <div className={styles.itemInfo}>
                   {/* Product Image */}
@@ -440,21 +412,6 @@ const Shop = ({ open = true }) => {
                         <strong>Effect:</strong> {itemWithImage.effect}
                       </span>
                     )}
-                    {isLocked && (
-                      <span style={{
-                        color: '#FFD700',
-                        fontSize: '0.9rem',
-                        fontWeight: 'bold',
-                        display: 'block',
-                        marginTop: '8px',
-                        padding: '4px 8px',
-                        background: 'rgba(255, 215, 0, 0.1)',
-                        borderRadius: '4px',
-                        border: '1px solid #FFD700'
-                      }}>
-                        🔒 You must brew this potion in Potions class first!
-                      </span>
-                    )}
                     {typeof itemWithImage.health === "number" &&
                       itemWithImage.health > 0 && (
                         <span className={styles.itemEffect}>
@@ -480,21 +437,7 @@ const Shop = ({ open = true }) => {
                   >
                     {itemWithImage.price} Nits
                   </span>
-                  {isLocked ? (
-                    <button 
-                      disabled
-                      style={{
-                        background: '#666',
-                        color: '#999',
-                        cursor: 'not-allowed',
-                        opacity: 0.6
-                      }}
-                    >
-                      🔒 Brew First
-                    </button>
-                  ) : (
-                    <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
-                  )}
+                  <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
                   {/* Delete button for Firestore items, admin/teacher only */}
                   {itemWithImage.firestore && isAdmin && (
                     <button
