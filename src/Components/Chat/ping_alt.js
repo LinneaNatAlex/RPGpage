@@ -3,6 +3,7 @@ let lastPingAudio = null;
 let lastPingTime = 0;
 
 export const playPing = () => {
+  console.log("playPing called!");
   const now = Date.now();
 
   // Prevent overlapping audio - stop previous audio if still playing
@@ -13,6 +14,7 @@ export const playPing = () => {
 
   // Play sound with debouncing
   if (now - lastPingTime > 1000) {
+    console.log("Playing ping sound...");
     // Minimum 1 second between pings - Bell-like sounds
     const soundUrls = [
       "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg", // Gentle bell-like sound
@@ -23,6 +25,7 @@ export const playPing = () => {
     const tryPlaySound = (urlIndex = 0) => {
       if (urlIndex >= soundUrls.length) return;
       
+      console.log(`Trying sound ${urlIndex}: ${soundUrls[urlIndex]}`);
       lastPingAudio = new window.Audio(soundUrls[urlIndex]);
       lastPingAudio.volume = 0.6;
       lastPingAudio.play().catch((error) => {
@@ -33,6 +36,8 @@ export const playPing = () => {
     
     tryPlaySound();
     lastPingTime = now;
+  } else {
+    console.log("Ping debounced, too soon");
   }
 
   // Show browser notification if permission granted and tab is not focused
