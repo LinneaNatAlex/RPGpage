@@ -36,9 +36,25 @@ export class PetDiscoverySystem {
     );
   }
 
+  // Get items with reduced potion probability
+  getAvailableItemsWithReducedPotions() {
+    const allItems = this.getAvailableItems();
+    
+    // Reduce potion probability by filtering out most potions
+    return allItems.filter(item => {
+      // Keep only basic potions, filter out most effect potions
+      if (item.type === 'potion') {
+        // Only allow basic potions (healing, mana, etc.) - filter out effect potions
+        const basicPotions = ['Healing Potion', 'Mana Potion', 'Stamina Potion'];
+        return basicPotions.includes(item.name);
+      }
+      return true; // Keep all non-potion items
+    });
+  }
+
   // Select a random item based on rarity
   selectRandomItem() {
-    const availableItems = this.getAvailableItems();
+    const availableItems = this.getAvailableItemsWithReducedPotions();
     const weightedItems = [];
 
     availableItems.forEach(item => {

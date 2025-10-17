@@ -18,6 +18,7 @@ import { useAuth } from "../../context/authContext";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
+import PetInteraction from "../../Components/PetInteraction/PetInteraction";
 import { Suspense } from "react";
 
 // state variables and hooks to manage user profile data
@@ -758,6 +759,23 @@ const UserProfile = () => {
                   </div>
                 </div>
               </p>
+            )}
+
+            {/* Pet Interaction Component */}
+            {userData.currentPet && (
+              <PetInteraction 
+                userData={userData} 
+                onMoodUpdate={(newMood) => {
+                  // Update local state if needed
+                  setUserData(prev => ({
+                    ...prev,
+                    currentPet: {
+                      ...prev.currentPet,
+                      mood: newMood
+                    }
+                  }));
+                }}
+              />
             )}
           </div>
         </div>

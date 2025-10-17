@@ -13,6 +13,7 @@ import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
+import PetInteraction from "../../Components/PetInteraction/PetInteraction";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -593,6 +594,20 @@ const Profile = () => {
                         )}
                       </div>
                     </div>
+                    
+                    {/* Pet Interaction Component */}
+                    <PetInteraction 
+                      userData={userData} 
+                      onMoodUpdate={(newMood) => {
+                        setUserData(prev => ({
+                          ...prev,
+                          currentPet: {
+                            ...prev.currentPet,
+                            mood: newMood
+                          }
+                        }));
+                      }}
+                    />
                   </div>
                 )}
               </div>
