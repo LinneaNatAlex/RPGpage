@@ -254,7 +254,10 @@ const Chat = () => {
   // Scroll til bunn etter sending
   useEffect(() => {
     if (!isCollapsed && chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      }, 100);
     }
   }, [messages, isCollapsed]);
 
@@ -394,7 +397,7 @@ const Chat = () => {
         right: window.innerWidth <= 768 ? "auto" : 0,
         width: window.innerWidth <= 768 ? "100%" : 350,
         zIndex: window.innerWidth <= 768 ? 1 : 10005,
-        
+     
       }}
     >
       {window.innerWidth > 768 && (
