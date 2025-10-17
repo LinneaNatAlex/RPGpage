@@ -13,11 +13,11 @@ export const playPing = () => {
 
   // Play sound with debouncing
   if (now - lastPingTime > 1000) {
-    // Minimum 1 second between pings
+    // Minimum 1 second between pings - RPG style sounds
     const soundUrls = [
-      "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg", // Gentle notification
-      "https://actions.google.com/sounds/v1/notification/notification_simple.ogg", // Simple notification
-      "https://actions.google.com/sounds/v1/alarms/beep_short.ogg" // Fallback beep
+      "https://actions.google.com/sounds/v1/cartoon/magic_wand_spell.ogg", // Magic wand sound
+      "https://actions.google.com/sounds/v1/cartoon/siren_whistle.ogg", // Magical whistle
+      "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg" // Fallback
     ];
     
     const tryPlaySound = (urlIndex = 0) => {
