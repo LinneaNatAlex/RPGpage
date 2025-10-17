@@ -424,18 +424,18 @@ const UserProfile = () => {
                 <span style={{ color: "#ffe084", fontWeight: 600 }}>
                   {
                     [
-                      "Januar",
-                      "Februar",
-                      "Mars",
+                      "January",
+                      "February",
+                      "March",
                       "April",
-                      "Mai",
-                      "Juni",
-                      "Juli",
+                      "May",
+                      "June",
+                      "July",
                       "August",
                       "September",
-                      "Oktober",
+                      "October",
                       "November",
-                      "Desember",
+                      "December",
                     ][userData.birthdayMonth - 1]
                   }
                   , Day {userData.birthdayDay}

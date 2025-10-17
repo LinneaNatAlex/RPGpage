@@ -169,7 +169,7 @@ const NewsFeed = () => {
                         <span className={styles.postDate}>
                           •{" "}
                           {new Date(item.createdAt.toDate()).toLocaleDateString(
-                            "no-NO",
+                            "en-US",
                             {
                               year: "numeric",
                               month: "short",
@@ -290,7 +290,7 @@ const NewsFeed = () => {
                             <span className={styles.otherNewsDate}>
                               {new Date(
                                 post.createdAt.toDate()
-                              ).toLocaleDateString("no-NO", {
+                              ).toLocaleDateString("en-US", {
                                 month: "short",
                                 day: "numeric",
                               })}

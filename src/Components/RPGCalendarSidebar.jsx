@@ -83,20 +83,20 @@ export default function RPGCalendarSidebar() {
     return dayNames[dayOfWeek];
   };
 
-  // Månedsnavn på norsk/engelsk
+  // Month names in English
   const monthNames = [
-    "Januar",
-    "Februar",
-    "Mars",
+    "January",
+    "February",
+    "March",
     "April",
-    "Mai",
-    "Juni",
-    "Juli",
+    "May",
+    "June",
+    "July",
     "August",
     "September",
-    "Oktober",
+    "October",
     "November",
-    "Desember",
+    "December",
   ];
 
   // Bruk fellesmodul for RPG-kalender
@@ -275,8 +275,8 @@ export default function RPGCalendarSidebar() {
         })}
       </div>
       <div style={{ fontSize: 10, color: "#B8A082", marginBottom: 8 }}>
-        {weekDates[0].toLocaleDateString("no-NO")} -{" "}
-        {weekDates[6].toLocaleDateString("no-NO")}
+        {weekDates[0].toLocaleDateString("en-US")} -{" "}
+        {weekDates[6].toLocaleDateString("en-US")}
       </div>
       <div
         style={{
