@@ -405,18 +405,23 @@ const Chat = () => {
 
   // Tastaturnavigering for dropdown
   const handleMentionKeyDown = (e) => {
-    if (!showMentions || mentionableUsers.length === 0) return;
-    if (e.key === "ArrowDown") {
-      setMentionActiveIdx((idx) => (idx + 1) % mentionableUsers.length);
-      e.preventDefault();
-    } else if (e.key === "ArrowUp") {
-      setMentionActiveIdx(
-        (idx) => (idx - 1 + mentionableUsers.length) % mentionableUsers.length
-      );
-      e.preventDefault();
+    if (showMentions && mentionableUsers.length > 0) {
+      if (e.key === "ArrowDown") {
+        setMentionActiveIdx((idx) => (idx + 1) % mentionableUsers.length);
+        e.preventDefault();
+      } else if (e.key === "ArrowUp") {
+        setMentionActiveIdx(
+          (idx) => (idx - 1 + mentionableUsers.length) % mentionableUsers.length
+        );
+        e.preventDefault();
+      } else if (e.key === "Enter") {
+        handleSelectMention(mentionableUsers[mentionActiveIdx].displayName);
+        e.preventDefault();
+      }
     } else if (e.key === "Enter") {
-      handleSelectMention(mentionableUsers[mentionActiveIdx].displayName);
+      // Send message when Enter is pressed and no mention dropdown is open
       e.preventDefault();
+      sendtMessage(e);
     }
   };
 
