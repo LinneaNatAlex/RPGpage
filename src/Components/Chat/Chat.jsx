@@ -263,6 +263,20 @@ const Chat = () => {
 
   // Note: Ping logic is now handled globally in App.jsx
 
+  // ----------------------FORMATTING FUNCTION-----------------------
+  const formatMessage = (text) => {
+    // Handle /i for italic - matches /i followed by text until end or another command
+    let formattedText = text.replace(/\/i\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g, '<em>$1</em>');
+    
+    // Handle /b for bold
+    formattedText = formattedText.replace(/\/b\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g, '<strong>$1</strong>');
+    
+    // Handle /u for underline
+    formattedText = formattedText.replace(/\/u\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g, '<u>$1</u>');
+    
+    return formattedText;
+  };
+
   // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {
     e.preventDefault();
@@ -277,7 +291,7 @@ const Chat = () => {
     }
 
     try {
-      const messageText = newMess;
+      const messageText = formatMessage(newMess);
 
       // Prepare potion effects for this message
       const potionEffects = {};
@@ -606,28 +620,11 @@ const Chat = () => {
                     style={getMessageStyle(message)}
                   >
                     :{" "}
-                    {getDisplayText(message.text, message)
-                      ?.split(/(\s+)/)
-                      .map((part, i) => {
-                        if (
-                          part.toLowerCase() ===
-                          `@${auth.currentUser?.displayName?.toLowerCase()}`
-                        ) {
-                          return (
-                            <span key={i} className={styles.mentionHighlight}>
-                              {part}
-                            </span>
-                          );
-                        }
-                        if (part.toLowerCase() === "@all") {
-                          return (
-                            <span key={i} className={styles.mentionAll}>
-                              {part}
-                            </span>
-                          );
-                        }
-                        return part;
-                      })}
+                    <span dangerouslySetInnerHTML={{
+                      __html: getDisplayText(message.text, message)
+                        ?.replace(/@(\w+)/g, '<span class="' + styles.mentionHighlight + '">@$1</span>')
+                        ?.replace(/@all/gi, '<span class="' + styles.mentionAll + '">@all</span>')
+                    }} />
                   </span>
                 </div>
               );
