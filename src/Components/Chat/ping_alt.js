@@ -14,11 +14,20 @@ export const playPing = () => {
   // Play sound with debouncing
   if (now - lastPingTime > 1000) {
     // Minimum 1 second between pings
-    lastPingAudio = new window.Audio(
-      "https://actions.google.com/sounds/v1/alarms/beep_short.ogg" // Google public beep
-    );
-    lastPingAudio.volume = 0.7; // Reduced volume to be less jarring
-    lastPingAudio.play().catch(() => {});
+    const soundUrls = [
+      "https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa1c7b.mp3", // Magical notification
+      "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg", // Gentle notification
+      "https://actions.google.com/sounds/v1/notification/notification_simple.ogg" // Simple notification
+    ];
+    
+    lastPingAudio = new window.Audio(soundUrls[0]);
+    lastPingAudio.volume = 0.5; // Moderate volume
+    lastPingAudio.play().catch(() => {
+      // Fallback to alternative sound if first fails
+      lastPingAudio = new window.Audio(soundUrls[1]);
+      lastPingAudio.volume = 0.5;
+      lastPingAudio.play().catch(() => {});
+    });
     lastPingTime = now;
   }
 
