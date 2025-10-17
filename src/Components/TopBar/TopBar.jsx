@@ -598,12 +598,37 @@ const TopBar = () => {
           onClick={() => navigate("/inventory")}
           title="Inventory"
           disabled={infirmary}
+          style={{ position: 'relative' }}
         >
           <img
             src="/icons/chest.svg"
             alt="Inventory"
             className={styles.chestIcon}
           />
+          {notifications.length > 0 && (
+            <span 
+              style={{
+                position: 'absolute',
+                top: '-5px',
+                right: '-5px',
+                background: '#ff5e5e',
+                color: 'white',
+                borderRadius: '50%',
+                width: '20px',
+                height: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                border: '2px solid #fff',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                zIndex: 10
+              }}
+            >
+              !
+            </span>
+          )}
         </button>
         <button
           className={styles.inventoryIconBtn}
