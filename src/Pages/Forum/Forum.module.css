@@ -316,7 +316,7 @@
     padding: 15px;
     border-radius: 12px;
     max-width: calc(100vw - 20px);
-    width: calc(100% - 20px);
+    width: 100%;
     box-sizing: border-box;
   }
 

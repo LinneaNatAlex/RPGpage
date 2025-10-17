@@ -497,7 +497,7 @@ const PrivateChat = () => {
         right: window.innerWidth <= 768 ? "auto" : 370,
         width: window.innerWidth <= 768 ? "100%" : 350,
         zIndex: window.innerWidth <= 768 ? 1 : 10005,
-        boxShadow: window.innerWidth <= 768 ? "none" : "0 0 12px #0008",
+        
       }}
     >
       {window.innerWidth > 768 && (
