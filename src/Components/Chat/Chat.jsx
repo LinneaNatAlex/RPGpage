@@ -438,7 +438,7 @@ const Chat = () => {
             borderTopLeftRadius: window.innerWidth <= 768 ? 12 : 0,
             borderTopRightRadius: window.innerWidth <= 768 ? 12 : 0,
             borderTop: window.innerWidth <= 768 ? "1px solid #7B6857" : "none",
-            height: "47pc",
+            height: "41.5pc",
             minHeight: 200,
           }}
         >
