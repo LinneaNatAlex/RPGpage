@@ -85,15 +85,29 @@ function App() {
     requestPermission();
   }, []);
 
-  // Global mention detection - TEMPORARILY DISABLED to fix quota issues
+  // Global mention detection - Listen for new messages
   useEffect(() => {
-    // DISABLED: This creates excessive Firebase reads
-    // if (!user) return;
-    // TODO: Implement with batch reads instead of realtime listeners
-    console.log(
-      "Global mention detection temporarily disabled to reduce Firebase quota usage"
-    );
-  }, [user, lastMessageId, lastPingTime]);
+    if (!user) return;
+    
+    const messagesRef = collection(db, "messages");
+    const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const latestMessage = snapshot.docs[0].data();
+        const messageText = latestMessage.text || "";
+        const userName = user.displayName || "";
+        
+        // Check if user is mentioned in the latest message
+        if (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
+            messageText.toLowerCase().includes("@all")) {
+          playPing();
+        }
+      }
+    });
+    
+    return () => unsubscribe();
+  }, [user]);
 
   // Global private chat mention detection - TEMPORARILY DISABLED to prevent quota issues
   useEffect(() => {
