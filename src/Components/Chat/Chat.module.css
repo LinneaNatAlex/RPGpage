@@ -225,7 +225,7 @@
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 25vh;
+  height: 15vh;
   border: none;
   border-radius: 12px;
   background: #d5c2b2;
