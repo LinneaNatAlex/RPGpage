@@ -18,7 +18,7 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-// Note: Ping functionality moved to global App.jsx
+import { playPing } from "./ping_alt";
 
 const Chat = () => {
   const { messages } = useChatMessages();
@@ -260,6 +260,23 @@ const Chat = () => {
       }, 100);
     }
   }, [messages, isCollapsed]);
+
+  // Ping notification for mentions
+  useEffect(() => {
+    if (!auth.currentUser || messages.length === 0) return;
+    
+    const latestMessage = messages[messages.length - 1];
+    const messageText = latestMessage.text || "";
+    const userName = auth.currentUser.displayName || "";
+    const messageSender = latestMessage.sender || "";
+    
+    // Only ping if user is mentioned and it's not their own message
+    if (messageSender !== userName && 
+        (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
+         messageText.toLowerCase().includes("@all"))) {
+      playPing();
+    }
+  }, [messages]);
 
   // Note: Ping logic is now handled globally in App.jsx
 

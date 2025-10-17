@@ -85,29 +85,29 @@ function App() {
     requestPermission();
   }, []);
 
-  // Global mention detection - Listen for new messages
-  useEffect(() => {
-    if (!user) return;
-    
-    const messagesRef = collection(db, "messages");
-    const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const latestMessage = snapshot.docs[0].data();
-        const messageText = latestMessage.text || "";
-        const userName = user.displayName || "";
-        
-        // Check if user is mentioned in the latest message
-        if (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
-            messageText.toLowerCase().includes("@all")) {
-          playPing();
-        }
-      }
-    });
-    
-    return () => unsubscribe();
-  }, [user]);
+  // Global mention detection - Moved to Chat component for better real-time detection
+  // useEffect(() => {
+  //   if (!user) return;
+  //   
+  //   const messagesRef = collection(db, "messages");
+  //   const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
+  //   
+  //   const unsubscribe = onSnapshot(q, (snapshot) => {
+  //     if (!snapshot.empty) {
+  //       const latestMessage = snapshot.docs[0].data();
+  //       const messageText = latestMessage.text || "";
+  //       const userName = user.displayName || "";
+  //       
+  //       // Check if user is mentioned in the latest message
+  //       if (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
+  //           messageText.toLowerCase().includes("@all")) {
+  //         playPing();
+  //       }
+  //     }
+  //   });
+  //   
+  //   return () => unsubscribe();
+  // }, [user]);
 
   // Global private chat mention detection - TEMPORARILY DISABLED to prevent quota issues
   useEffect(() => {
