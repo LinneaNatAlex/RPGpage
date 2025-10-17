@@ -16,6 +16,7 @@ import { cacheHelpers } from "../../utils/firebaseCache";
 import { addImageToItem } from "../../utils/itemImages";
 import styles from "./Shop.module.css";
 import shopItems from "./itemsList";
+import useUserData from "../../hooks/useUserData";
 
 // itemsList.js varer + Firestore varer vises sammen
 
@@ -33,6 +34,7 @@ const Shop = ({ open = true }) => {
   // Note: Author payments removed since books now use display names only
   // Books are now purely for RP purposes and don't affect user accounts
   const { user } = useAuth();
+  const { userData } = useUserData();
   // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
   const isAdmin =
     user &&
@@ -46,6 +48,9 @@ const Shop = ({ open = true }) => {
   const [activeCategory, setActiveCategory] = useState("Books");
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [books, setBooks] = useState([]);
+  
+  // Get brewed potions for unlock system
+  const brewedPotions = userData?.brewedPotions || [];
 
   // Hent varer fra Firestore KUN når Shop er synlig - OPTIMIZED
   useEffect(() => {
@@ -336,6 +341,11 @@ const Shop = ({ open = true }) => {
           .filter((item) => item.category === activeCategory)
           .map((item) => {
             const itemWithImage = addImageToItem(item);
+            
+            // Check if potion is locked (not brewed yet)
+            const isPotion = itemWithImage.type === 'potion';
+            const isLocked = isPotion && !brewedPotions.includes(itemWithImage.name);
+            
             console.log(
               "Shop item:",
               itemWithImage.name,
@@ -344,7 +354,9 @@ const Shop = ({ open = true }) => {
               "CoverImage:",
               itemWithImage.coverImage,
               "Firestore:",
-              itemWithImage.firestore
+              itemWithImage.firestore,
+              "Is Locked:",
+              isLocked
             );
             return (
               <li
@@ -353,7 +365,30 @@ const Shop = ({ open = true }) => {
                   (itemWithImage.firestore ? "-fs" : "-static")
                 }
                 className={styles.item}
+                style={{
+                  opacity: isLocked ? 0.6 : 1,
+                  filter: isLocked ? 'grayscale(50%)' : 'none',
+                  position: 'relative'
+                }}
               >
+                {/* Lock overlay for locked potions */}
+                {isLocked && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    color: '#FFD700',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
+                    zIndex: 10
+                  }}>
+                    🔒 LOCKED
+                  </div>
+                )}
+                
                 <div className={styles.itemInfo}>
                   {/* Product Image */}
                   {(itemWithImage.image || itemWithImage.coverImage) && (
@@ -405,6 +440,21 @@ const Shop = ({ open = true }) => {
                         <strong>Effect:</strong> {itemWithImage.effect}
                       </span>
                     )}
+                    {isLocked && (
+                      <span style={{
+                        color: '#FFD700',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold',
+                        display: 'block',
+                        marginTop: '8px',
+                        padding: '4px 8px',
+                        background: 'rgba(255, 215, 0, 0.1)',
+                        borderRadius: '4px',
+                        border: '1px solid #FFD700'
+                      }}>
+                        🔒 You must brew this potion in Potions class first!
+                      </span>
+                    )}
                     {typeof itemWithImage.health === "number" &&
                       itemWithImage.health > 0 && (
                         <span className={styles.itemEffect}>
@@ -430,7 +480,21 @@ const Shop = ({ open = true }) => {
                   >
                     {itemWithImage.price} Nits
                   </span>
-                  <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
+                  {isLocked ? (
+                    <button 
+                      disabled
+                      style={{
+                        background: '#666',
+                        color: '#999',
+                        cursor: 'not-allowed',
+                        opacity: 0.6
+                      }}
+                    >
+                      🔒 Brew First
+                    </button>
+                  ) : (
+                    <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
+                  )}
                   {/* Delete button for Firestore items, admin/teacher only */}
                   {itemWithImage.firestore && isAdmin && (
                     <button

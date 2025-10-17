@@ -90,39 +90,68 @@ const useUserData = () => {
             // Cache the data
             cacheHelpers.setUserData(user.uid, data);
 
+            // Check if infirmaryEnd has expired and handle recovery
+            let processedData = { ...data };
+            const now = Date.now();
+            
+            // If infirmaryEnd exists but has expired, recover the user
+            if (data.infirmaryEnd && data.infirmaryEnd <= now) {
+              console.log('Infirmary period expired, recovering user to 100% HP');
+              processedData = {
+                ...data,
+                health: 100,
+                infirmaryEnd: null,
+                lastHealthUpdate: now
+              };
+              
+              // Update Firebase with recovered state
+              import('../firebaseConfig').then(({ db }) => {
+                import('firebase/firestore').then(({ doc, updateDoc }) => {
+                  const userRef = doc(db, "users", user.uid);
+                  updateDoc(userRef, {
+                    health: 100,
+                    infirmaryEnd: null,
+                    lastHealthUpdate: now
+                  }).catch(error => {
+                    console.error('Error updating user recovery:', error);
+                  });
+                });
+              });
+            }
+
             // Update all user data at once
             setUserData({
-              currency: data.currency ?? 1000,
-              inventory: data.inventory ?? [],
-              health: data.health ?? 100,
-              points: data.points ?? 0,
-              roles: data.roles ?? [],
-              profileImageUrl: data.profileImageUrl || null,
-              inLoveUntil: data.inLoveUntil || null,
-              inLoveWith: data.inLoveWith || null,
-              hairColorUntil: data.hairColorUntil || null,
-              rainbowUntil: data.rainbowUntil || null,
-              glowUntil: data.glowUntil || null,
-              sparkleUntil: data.sparkleUntil || null,
-              translationUntil: data.translationUntil || null,
-              echoUntil: data.echoUntil || null,
-              whisperUntil: data.whisperUntil || null,
-              shoutUntil: data.shoutUntil || null,
-              darkModeUntil: data.darkModeUntil || null,
-              retroUntil: data.retroUntil || null,
-              mirrorUntil: data.mirrorUntil || null,
-              speedUntil: data.speedUntil || null,
-              slowMotionUntil: data.slowMotionUntil || null,
-              surveillanceUntil: data.surveillanceUntil || null,
-              luckyUntil: data.luckyUntil || null,
-              wisdomUntil: data.wisdomUntil || null,
-              charmUntil: data.charmUntil || null,
-              mysteryUntil: data.mysteryUntil || null,
-              infirmaryEnd: data.infirmaryEnd || null,
-              detentionUntil: data.detentionUntil || null,
-              invisibleUntil: data.invisibleUntil || null,
-              lastHealthUpdate: data.lastHealthUpdate || null,
-              currentPet: data.currentPet || null,
+              currency: processedData.currency ?? 1000,
+              inventory: processedData.inventory ?? [],
+              health: processedData.health ?? 100,
+              points: processedData.points ?? 0,
+              roles: processedData.roles ?? [],
+              profileImageUrl: processedData.profileImageUrl || null,
+              inLoveUntil: processedData.inLoveUntil || null,
+              inLoveWith: processedData.inLoveWith || null,
+              hairColorUntil: processedData.hairColorUntil || null,
+              rainbowUntil: processedData.rainbowUntil || null,
+              glowUntil: processedData.glowUntil || null,
+              sparkleUntil: processedData.sparkleUntil || null,
+              translationUntil: processedData.translationUntil || null,
+              echoUntil: processedData.echoUntil || null,
+              whisperUntil: processedData.whisperUntil || null,
+              shoutUntil: processedData.shoutUntil || null,
+              darkModeUntil: processedData.darkModeUntil || null,
+              retroUntil: processedData.retroUntil || null,
+              mirrorUntil: processedData.mirrorUntil || null,
+              speedUntil: processedData.speedUntil || null,
+              slowMotionUntil: processedData.slowMotionUntil || null,
+              surveillanceUntil: processedData.surveillanceUntil || null,
+              luckyUntil: processedData.luckyUntil || null,
+              wisdomUntil: processedData.wisdomUntil || null,
+              charmUntil: processedData.charmUntil || null,
+              mysteryUntil: processedData.mysteryUntil || null,
+              infirmaryEnd: processedData.infirmaryEnd || null,
+              detentionUntil: processedData.detentionUntil || null,
+              invisibleUntil: processedData.invisibleUntil || null,
+              lastHealthUpdate: processedData.lastHealthUpdate || null,
+              currentPet: processedData.currentPet || null,
             });
           }
         } catch (error) {

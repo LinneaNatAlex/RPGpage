@@ -196,8 +196,8 @@ const TopBar = () => {
       setInLoveUntil(null);
     }
 
-    // Infirmary state
-    if (userData.infirmaryEnd && Date.now() < userData.infirmaryEnd) {
+    // Infirmary state - check if infirmaryEnd exists and hasn't expired
+    if (userData.infirmaryEnd && userData.infirmaryEnd > Date.now()) {
       setInfirmary(true);
       setInfirmaryEnd(userData.infirmaryEnd);
     } else {
@@ -250,6 +250,17 @@ const TopBar = () => {
         if (data.infirmaryEnd && data.infirmaryEnd > Date.now()) {
           // User is in infirmary, just update lastHealthUpdate to prevent catching up when they get out
           await updateDoc(userRef, { lastHealthUpdate: Date.now() });
+          return;
+        }
+        
+        // If infirmaryEnd has expired, recover the user
+        if (data.infirmaryEnd && data.infirmaryEnd <= Date.now()) {
+          console.log('Infirmary period expired during health decay, recovering user');
+          await updateDoc(userRef, {
+            health: 100,
+            infirmaryEnd: null,
+            lastHealthUpdate: Date.now()
+          });
           return;
         }
 
