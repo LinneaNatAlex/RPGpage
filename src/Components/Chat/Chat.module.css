@@ -251,6 +251,75 @@
 .chatMessages::-webkit-scrollbar {
   display: none;
 }
+
+/* Mention dropdown styling */
+.mentionDropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: #5d4e37;
+  border: 1px solid #7b6857;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-bottom: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+}
+
+.mentionDropdownItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #f5efe0;
+  border-bottom: 1px solid #7b6857;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mentionDropdownItem:last-child {
+  border-bottom: none;
+}
+
+.mentionDropdownItem:hover,
+.mentionDropdownItemActive {
+  background: #7b6857;
+  color: #f5efe0;
+}
+
+.mentionDropdownItem .username {
+  font-weight: bold;
+  color: #b8860b;
+  font-size: 14px;
+}
+
+.mentionDropdownItem .fullname {
+  font-size: 12px;
+  color: #d4c4a8;
+  opacity: 0.8;
+}
+
+/* Mention highlighting in messages */
+.mentionHighlight {
+  background: #7b6857;
+  color: #f5efe0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.mentionAll {
+  background: #ff5e5e;
+  color: #f5efe0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: bold;
+}
 .messageSender {
   font-weight: bold;
   color: #b8860b;

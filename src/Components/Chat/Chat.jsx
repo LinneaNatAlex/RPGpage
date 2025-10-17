@@ -664,7 +664,10 @@ const Chat = () => {
                         }
                         onMouseDown={() => handleSelectMention(u.displayName)}
                       >
-                        @{u.displayName}
+                        <div className={styles.username}>@{u.displayName}</div>
+                        {u.fullName && (
+                          <div className={styles.fullname}>{u.fullName}</div>
+                        )}
                       </li>
                     ))}
                   </ul>
