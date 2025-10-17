@@ -9,6 +9,7 @@ import { db } from "../firebaseConfig"; // Import the Firestore database object
 import ErrorMessage from "../Components/ErrorMessage/ErrorMessage"; // Import your error message component
 import { useAuth } from "../context/authContext";
 import useUserRoles from "../hooks/useUserRoles"; // Import the custom hook for user roles
+import useTopicCounts from "../hooks/useTopicCounts";
 // --------------------------------------STATE VARIABLES--------------------------------------
 // navbar-komponet that shows the difference in navigation based on if user is loged in or not.
 const Navbar = () => {
@@ -19,6 +20,7 @@ const Navbar = () => {
   const [error, setError] = useState(null);
   const { user } = useAuth(); // <-- Endret her
   const { roles } = useUserRoles(); // <-- Get user roles using the custom hook
+  const { topicCounts, loading: topicCountsLoading } = useTopicCounts();
 
   // ----------------------------------useEFFECT--------------------------
   // fetching information about 'if the user is logged in'
@@ -82,20 +84,54 @@ const Navbar = () => {
               </span>
               <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
                 <NavLink to="/Rpg/GreatHall">Starshade Hall</NavLink>
-                <NavLink to="/forum/commonroom">Commonroom</NavLink>
-                <NavLink to="/forum/ritualroom">Ritual Room</NavLink>
-                <NavLink to="/forum/moongarden">Moon Garden</NavLink>
-                <NavLink to="/forum/bloodbank">Blood Bank</NavLink>
-                <NavLink to="/forum/nightlibrary">Night Library</NavLink>
-                <NavLink to="/forum/gymnasium">The Gymnasium</NavLink>
-                <NavLink to="/forum/infirmary">The Infirmary</NavLink>
-                <NavLink to="/forum/greenhouse">The Greenhouse</NavLink>
-                <NavLink to="/forum/artstudio">The Art Studio</NavLink>
-                <NavLink to="/forum/kitchen">Kitchen</NavLink>
-                <NavLink to="/forum/detentionclassroom">
-                  Detention Classroom
+                <NavLink to="/forum/commonroom">
+                  <span>Commonroom</span>
+                  <span>({topicCounts.commonroom || 0})</span>
                 </NavLink>
-                <NavLink to="/forum/16plus">18+ Forum</NavLink>
+                <NavLink to="/forum/ritualroom">
+                  <span>Ritual Room</span>
+                  <span>({topicCounts.ritualroom || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/moongarden">
+                  <span>Moon Garden</span>
+                  <span>({topicCounts.moongarden || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/bloodbank">
+                  <span>Blood Bank</span>
+                  <span>({topicCounts.bloodbank || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/nightlibrary">
+                  <span>Night Library</span>
+                  <span>({topicCounts.nightlibrary || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/gymnasium">
+                  <span>The Gymnasium</span>
+                  <span>({topicCounts.gymnasium || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/infirmary">
+                  <span>The Infirmary</span>
+                  <span>({topicCounts.infirmary || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/greenhouse">
+                  <span>The Greenhouse</span>
+                  <span>({topicCounts.greenhouse || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/artstudio">
+                  <span>The Art Studio</span>
+                  <span>({topicCounts.artstudio || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/kitchen">
+                  <span>Kitchen</span>
+                  <span>({topicCounts.kitchen || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/detentionclassroom">
+                  <span>Detention Classroom</span>
+                  <span>({topicCounts.detentionclassroom || 0})</span>
+                </NavLink>
+                <NavLink to="/forum/16plus">
+                  <span>18+ Forum</span>
+                  <span>({topicCounts['16plus'] || 0})</span>
+                </NavLink>
                 <NavLink to="/werewolf">Werewolf</NavLink>
               </div>
             </div>

@@ -64,7 +64,7 @@
   display: none;
   position: absolute;
   background-color: #7b6857;
-  min-width: 180px;
+  min-width: 250px;
   flex-direction: column;
   padding: 0.5rem 0;
   z-index: 10000;
@@ -92,7 +92,9 @@
 }
 
 .dropdownContent a {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0.6rem 1.5rem;
   color: #f5efe0;
   text-align: left;
@@ -178,7 +180,7 @@
   }
 
   .dropdownContent {
-    min-width: 160px;
+    min-width: 220px;
     max-height: 250px; /* Slightly smaller on tablet */
   }
 
@@ -212,7 +214,7 @@
   }
 
   .dropdownContent {
-    min-width: 140px;
+    min-width: 200px;
     max-height: 220px; /* Even smaller on mobile */
   }
 
