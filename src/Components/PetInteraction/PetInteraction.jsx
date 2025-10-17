@@ -21,14 +21,6 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
     }
   }, [userData]);
 
-  const getMoodEmoji = (mood) => {
-    if (mood >= 80) return '😍';
-    if (mood >= 60) return '😊';
-    if (mood >= 40) return '😐';
-    if (mood >= 20) return '😕';
-    return '😢';
-  };
-
   const getMoodText = (mood) => {
     if (mood >= 80) return 'Very Happy';
     if (mood >= 60) return 'Happy';
@@ -62,7 +54,7 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
       const now = serverTimestamp();
 
       // Update pet mood in user's document
-      const userRef = doc(db, 'users', userData.uid);
+      const userRef = doc(db, 'users', userData.uid || user.uid);
       await updateDoc(userRef, {
         'currentPet.mood': newMood,
         'currentPet.lastInteraction': now,
@@ -99,6 +91,7 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
 
     } catch (error) {
       console.error('Error updating pet mood:', error);
+      alert('Error updating pet mood: ' + error.message);
       setIsInteracting(false);
       setShowAnimation(false);
     }
@@ -112,9 +105,7 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
     handleInteraction('play', 10);
   };
 
-  const handleFeed = () => {
-    handleInteraction('feed', 8);
-  };
+  // Removed feed functionality as requested
 
   if (!userData?.currentPet) {
     return (
@@ -130,7 +121,6 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
       <div className={styles.petInfo}>
         <h3>{userData.currentPet.name}</h3>
         <div className={styles.moodDisplay}>
-          <span className={styles.moodEmoji}>{getMoodEmoji(petMood)}</span>
           <span className={styles.moodText}>{getMoodText(petMood)}</span>
           <span className={styles.moodValue}>({petMood}/100)</span>
         </div>
@@ -143,7 +133,7 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
           disabled={isInteracting || !canInteract()}
           title="Pet the animal (+5 mood)"
         >
-          🥰 Pet
+          Pet
         </button>
         
         <button
@@ -152,16 +142,7 @@ const PetInteraction = ({ userData, onMoodUpdate }) => {
           disabled={isInteracting || !canInteract()}
           title="Play with the animal (+10 mood)"
         >
-          🎾 Play
-        </button>
-        
-        <button
-          className={`${styles.interactionBtn} ${styles.feedBtn}`}
-          onClick={handleFeed}
-          disabled={isInteracting || !canInteract()}
-          title="Feed the animal (+8 mood)"
-        >
-          🍖 Feed
+          Play
         </button>
       </div>
 

@@ -50,22 +50,26 @@
 }
 
 .interactionBtn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: bold;
+  padding: 8px 16px;
+  border: 1px solid #5d4e37;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: normal;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 4px;
-  min-width: 60px;
+  justify-content: center;
+  min-width: 80px;
+  background: #f5efe0;
+  color: #5d4e37;
 }
 
 .interactionBtn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  background: #5d4e37;
+  color: #f5efe0;
+  transform: none;
+  box-shadow: none;
 }
 
 .interactionBtn:disabled {
@@ -74,32 +78,7 @@
   transform: none;
 }
 
-.petBtn {
-  background: linear-gradient(135deg, #ff6b9d, #ff8fab);
-  color: white;
-}
-
-.petBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff5a8a, #ff7a9a);
-}
-
-.playBtn {
-  background: linear-gradient(135deg, #4ecdc4, #44a08d);
-  color: white;
-}
-
-.playBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #3db8b0, #3a8b7a);
-}
-
-.feedBtn {
-  background: linear-gradient(135deg, #f093fb, #f5576c);
-  color: white;
-}
-
-.feedBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ee82f0, #f3455a);
-}
+/* Removed gradient styles - using consistent button styling */
 
 .cooldownText {
   text-align: center;
