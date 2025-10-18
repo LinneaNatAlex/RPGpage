@@ -2014,7 +2014,7 @@
 .mobile-forum-selection-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   padding: 12px 16px;
   background: rgba(93, 78, 55, 0.1);
   border: 1px solid #5d4e37;
@@ -2022,9 +2022,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: "Cinzel", serif;
-  color: #5d4e37;
+  color: #2c1810;
   font-size: 0.9rem;
-  text-align: left;
+  text-align: center;
   width: 100%;
 }
 
@@ -2032,11 +2032,6 @@
   background: #5d4e37;
   color: #f5efe0;
   transform: translateY(-1px);
-}
-
-.mobile-forum-selection-icon {
-  font-size: 1.2rem;
-  flex-shrink: 0;
 }
 
 .mobile-forum-selection-label {

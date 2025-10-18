@@ -385,7 +385,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🏠</span>
                 <span className="mobile-forum-selection-label">Commonroom</span>
               </button>
               
@@ -396,7 +395,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🔮</span>
                 <span className="mobile-forum-selection-label">Ritual Room</span>
               </button>
               
@@ -407,7 +405,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🌙</span>
                 <span className="mobile-forum-selection-label">Moon Garden</span>
               </button>
               
@@ -418,7 +415,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🩸</span>
                 <span className="mobile-forum-selection-label">Blood Bank</span>
               </button>
               
@@ -429,7 +425,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">📚</span>
                 <span className="mobile-forum-selection-label">Night Library</span>
               </button>
               
@@ -440,7 +435,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">💪</span>
                 <span className="mobile-forum-selection-label">The Gymnasium</span>
               </button>
               
@@ -451,7 +445,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🏥</span>
                 <span className="mobile-forum-selection-label">Infirmary</span>
               </button>
               
@@ -462,7 +455,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🌱</span>
                 <span className="mobile-forum-selection-label">The Greenhouse</span>
               </button>
               
@@ -473,7 +465,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🎨</span>
                 <span className="mobile-forum-selection-label">The Art Studio</span>
               </button>
               
@@ -484,7 +475,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🍳</span>
                 <span className="mobile-forum-selection-label">Kitchen</span>
               </button>
               
@@ -495,7 +485,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">⛓️</span>
                 <span className="mobile-forum-selection-label">Detention Classroom</span>
               </button>
               
@@ -506,7 +495,6 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-icon">🔞</span>
                 <span className="mobile-forum-selection-label">18+ Forum</span>
               </button>
             </div>
