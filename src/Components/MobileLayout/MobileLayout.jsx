@@ -194,16 +194,18 @@ const MobileLayout = ({ children }) => {
         )}
       </main>
 
-      {/* Mobile Dashboard Button - Always visible on mobile */}
-      <div className="mobile-dashboard-button">
-        <button
-          className="mobile-dashboard-btn"
-          onClick={() => setShowDashboard(true)}
-        >
-          <span className="mobile-dashboard-icon">☰</span>
-          <span className="mobile-dashboard-label">Menu</span>
-        </button>
-      </div>
+      {/* Mobile Dashboard Button - Hide when chat is open */}
+      {!showChat && (
+        <div className="mobile-dashboard-button">
+          <button
+            className="mobile-dashboard-btn"
+            onClick={() => setShowDashboard(true)}
+          >
+            <span className="mobile-dashboard-icon">☰</span>
+            <span className="mobile-dashboard-label">Menu</span>
+          </button>
+        </div>
+      )}
 
       {/* Mobile Floating Chat Button - Always visible */}
       {user && (
@@ -366,8 +368,14 @@ const MobileLayout = ({ children }) => {
 
       {/* Forum Selection Modal */}
       {showForumSelection && (
-        <div className="mobile-forum-selection-overlay">
-          <div className="mobile-forum-selection-content">
+        <div 
+          className="mobile-forum-selection-overlay"
+          onClick={() => setShowForumSelection(false)}
+        >
+          <div 
+            className="mobile-forum-selection-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mobile-forum-selection-header">
               <h2>Choose Forum</h2>
               <button
