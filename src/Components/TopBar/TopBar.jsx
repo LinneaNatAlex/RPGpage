@@ -14,6 +14,9 @@ import {
   query,
   where,
   getDocs,
+  onSnapshot,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { useRef } from "react";
 import GiftModal from "./GiftModal";
@@ -63,6 +66,105 @@ const TopBar = () => {
   const [inLoveUntil, setInLoveUntil] = useState(null);
   const [inLoveCountdown, setInLoveCountdown] = useState(0);
   const [magicalCursorEnabled, setMagicalCursorEnabled] = useState(true);
+  const [showFollowedTopics, setShowFollowedTopics] = useState(false);
+  const [followedTopics, setFollowedTopics] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const topicsPerPage = 10;
+
+  // Fetch user's followed topics
+  const fetchFollowedTopics = async () => {
+    if (!user) return;
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const topics = userData.followedTopics || [];
+        console.log("TopBar - Fetched followed topics:", topics);
+        setFollowedTopics(topics);
+      }
+    } catch (error) {
+      console.error("Error fetching followed topics:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFollowedTopics();
+  }, [user]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(followedTopics.length / topicsPerPage);
+  const startIndex = (currentPage - 1) * topicsPerPage;
+  const endIndex = startIndex + topicsPerPage;
+  const currentTopics = followedTopics.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Listen for changes in followed topics
+  useEffect(() => {
+    if (!user) return;
+
+    const userRef = doc(db, 'users', user.uid);
+    const unsubscribe = onSnapshot(userRef, (doc) => {
+      if (doc.exists()) {
+        const userData = doc.data();
+        setFollowedTopics(userData.followedTopics || []);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Listen for new posts in followed topics
+  useEffect(() => {
+    if (!user || followedTopics.length === 0) return;
+
+    const unsubscribeFunctions = [];
+
+    followedTopics.forEach(topic => {
+      // Listen to posts in this topic
+      const postsRef = collection(db, `forums/${topic.forum.toLowerCase().replace(' ', '')}/topics/${topic.id}/posts`);
+      const q = query(postsRef, orderBy('createdAt', 'desc'), limit(1));
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            const post = change.doc.data();
+            // Check if this is a new post (not the first one)
+            if (post.createdAt && post.createdAt.toDate) {
+              const postTime = post.createdAt.toDate();
+              const now = new Date();
+              const timeDiff = now - postTime;
+              
+              // Only notify if post is very recent (within last 30 seconds)
+              if (timeDiff < 30000 && post.uid !== user.uid) {
+                // Create notification
+                addDoc(collection(db, 'notifications'), {
+                  userId: user.uid,
+                  type: 'topic_reply',
+                  topicId: topic.id,
+                  topicTitle: topic.title,
+                  forum: topic.forum,
+                  author: post.author,
+                  content: post.content,
+                  createdAt: serverTimestamp(),
+                  read: false
+                });
+              }
+            }
+          }
+        });
+      });
+
+      unsubscribeFunctions.push(unsubscribe);
+    });
+
+    return () => {
+      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+    };
+  }, [user, followedTopics]);
 
   // New potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
@@ -649,6 +751,22 @@ const TopBar = () => {
         >
           ✦
         </button>
+        <button
+          className={styles.inventoryIconBtn}
+          onClick={() => {
+            setShowFollowedTopics(!showFollowedTopics);
+            setCurrentPage(1); // Reset to first page when opening
+          }}
+          title="Followed Topics"
+          style={{
+            background: "#E8DDD4",
+            color: "#7B6857",
+            fontSize: "18px",
+            fontWeight: "bold",
+          }}
+        >
+          ※
+        </button>
         {/* Love Potion: in love text */}
         {inLoveUntil && inLoveUntil > Date.now() && inLoveWith && (
           <span
@@ -796,8 +914,97 @@ const TopBar = () => {
               setNotifications([]);
             }}
           >
-            ! You received a gift from {notifications[0].from}:{" "}
-            {notifications[0].item}
+            ! {notifications[0].type === 'topic_reply' 
+              ? `New reply in "${notifications[0].topicTitle}" by ${notifications[0].author}`
+              : `You received a gift from ${notifications[0].from}: ${notifications[0].item}`
+            }
+          </div>
+        )}
+        
+        {/* Followed Topics Modal */}
+        {showFollowedTopics && (
+          <div className={styles.followedTopicsModal}>
+            <div className={styles.followedTopicsContent}>
+              <div className={styles.followedTopicsHeader}>
+                <h3>Followed Topics</h3>
+                <button 
+                  className={styles.closeButton}
+                  onClick={() => setShowFollowedTopics(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className={styles.followedTopicsList}>
+                {followedTopics.length === 0 ? (
+                  <p>No topics followed yet</p>
+                ) : (
+                  currentTopics.map((topic) => (
+                    <div key={topic.id} className={styles.followedTopicItem}>
+                      <div 
+                        className={styles.topicClickableArea}
+                        onClick={() => {
+                          // Navigate directly to the specific topic
+                          const forumPath = topic.forum.toLowerCase().replace(/\s+/g, '');
+                          navigate(`/forum/${forumPath}?topic=${topic.id}`);
+                          setShowFollowedTopics(false);
+                        }}
+                      >
+                        <span className={styles.topicTitle}>{topic.title}</span>
+                        <span className={styles.topicForum}>{topic.forum}</span>
+                      </div>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Remove from followed topics
+                          const updatedTopics = followedTopics.filter(t => t.id !== topic.id);
+                          setFollowedTopics(updatedTopics);
+                          // Update database
+                          updateDoc(doc(db, 'users', user.uid), {
+                            followedTopics: updatedTopics
+                          });
+                        }}
+                        style={{
+                          background: '#ff6b6b',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              {/* Pagination Controls */}
+              {followedTopics.length > topicsPerPage && (
+                <div className={styles.paginationControls}>
+                  <button
+                    className={styles.paginationBtn}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    ← Previous
+                  </button>
+                  
+                  <span className={styles.pageInfo}>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  
+                  <button
+                    className={styles.paginationBtn}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

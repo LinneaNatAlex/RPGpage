@@ -55,6 +55,12 @@ service cloud.firestore {
               )
             )
           )
+        ) ||
+        // Pet interactions: alle kan interagere med andres kjæledyr
+        (
+          request.auth != null &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['currentPet']) &&
+          request.resource.data.currentPet.diff(resource.data.currentPet).changedKeys().hasOnly(['mood', 'lastInteraction', 'lastInteractionBy', 'lastInteractionType'])
         )
       );
       allow create, delete: if request.auth != null && request.auth.uid == userId;

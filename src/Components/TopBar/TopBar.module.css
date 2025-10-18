@@ -531,3 +531,148 @@
     display: none !important;
   }
 }
+
+/* Followed Topics Modal */
+.followedTopicsModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.followedTopicsContent {
+  background: #f5efe0;
+  border: 2px solid #5d4e37;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.followedTopicsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #5d4e37;
+  padding-bottom: 10px;
+}
+
+.followedTopicsHeader h3 {
+  color: #5d4e37;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #5d4e37;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  color: #8b7a6b;
+}
+
+.followedTopicsList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.followedTopicItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(93, 78, 55, 0.1);
+  border-radius: 6px;
+  border: 1px solid #5d4e37;
+}
+
+.topicClickableArea {
+  flex: 1;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topicClickableArea:hover {
+  background: rgba(93, 78, 55, 0.2);
+}
+
+.topicTitle {
+  color: #5d4e37;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.topicForum {
+  color: #8b7a6b;
+  font-size: 0.8rem;
+  background: #5d4e37;
+  color: #f5efe0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  align-self: flex-start;
+}
+
+/* Pagination Controls */
+.paginationControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid #5d4e37;
+}
+
+.paginationBtn {
+  background: #5d4e37;
+  color: #f5efe0;
+  border: 1px solid #5d4e37;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: #8b7a6b;
+  border-color: #8b7a6b;
+}
+
+.paginationBtn:disabled {
+  background: #d4c4a8;
+  color: #8b7a6b;
+  border-color: #d4c4a8;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  color: #5d4e37;
+  font-weight: bold;
+  font-size: 0.9rem;
+}

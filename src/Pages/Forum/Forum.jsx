@@ -27,6 +27,7 @@ import {
   query,
   orderBy,
   getDocs,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -86,6 +87,7 @@ const Forum = () => {
   const [replyWordCount, setReplyWordCount] = useState(0);
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
+  const [followedTopics, setFollowedTopics] = useState([]);
   const navigate = useNavigate();
 
   // Hent forumId fra URL
@@ -126,6 +128,79 @@ const Forum = () => {
   useEffect(() => {
     fetchTopics();
   }, [forumRoom]);
+
+  // Handle URL parameter to open specific topic
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const topicId = urlParams.get('topic');
+    if (topicId) {
+      setSelectedTopic(topicId);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // Fetch user's followed topics
+  const fetchFollowedTopics = async () => {
+    if (!user) return;
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const topics = userData.followedTopics || [];
+        console.log("Fetched followed topics:", topics);
+        setFollowedTopics(topics);
+      }
+    } catch (error) {
+      console.error("Error fetching followed topics:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFollowedTopics();
+  }, [user]);
+
+  // Follow/Unfollow topic
+  const handleFollowTopic = async (topicId, topicTitle) => {
+    if (!user) return;
+    
+    try {
+      console.log("Follow topic clicked:", topicId, topicTitle);
+      const userRef = doc(db, 'users', user.uid);
+      const isFollowing = followedTopics.some(t => t.id === topicId);
+      
+      let updatedFollowedTopics;
+      if (isFollowing) {
+        // Unfollow
+        updatedFollowedTopics = followedTopics.filter(t => t.id !== topicId);
+        console.log("Unfollowing topic");
+      } else {
+        // Follow
+        updatedFollowedTopics = [...followedTopics, {
+          id: topicId,
+          title: topicTitle,
+          forum: forumTitle,
+          followedAt: new Date().toISOString()
+        }];
+        console.log("Following topic");
+      }
+      
+      // Update database first
+      await updateDoc(userRef, {
+        followedTopics: updatedFollowedTopics
+      });
+      
+      // Then update state
+      setFollowedTopics(updatedFollowedTopics);
+      
+      console.log("Updated followed topics:", updatedFollowedTopics);
+      
+    } catch (error) {
+      console.error("Error updating followed topics:", error);
+      alert("Error updating followed topics: " + error.message);
+    }
+  };
 
   // Fetch posts for selected topic
   const fetchPosts = async () => {
@@ -195,6 +270,17 @@ const Forum = () => {
     //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
     //   setTimeout(() => setNitsReward(null), 10000);
     // }
+
+    // Automatically follow the topic you just created
+    try {
+      const isAlreadyFollowing = followedTopics.some(t => t.id === topicRef.id);
+      if (!isAlreadyFollowing) {
+        await handleFollowTopic(topicRef.id, newTopicTitle);
+        console.log("Auto-followed new topic:", topicRef.id);
+      }
+    } catch (error) {
+      console.error("Error auto-following topic:", error);
+    }
 
     setNewTopicTitle("");
     setNewTopicContent("");
@@ -305,6 +391,20 @@ const Forum = () => {
     //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
     //   setTimeout(() => setNitsReward(null), 10000);
     // }
+
+    // Automatically follow the topic you just replied to
+    try {
+      const currentTopic = topics.find(t => t.id === selectedTopic);
+      if (currentTopic) {
+        const isAlreadyFollowing = followedTopics.some(t => t.id === selectedTopic);
+        if (!isAlreadyFollowing) {
+          await handleFollowTopic(selectedTopic, currentTopic.title);
+          console.log("Auto-followed topic after reply:", selectedTopic);
+        }
+      }
+    } catch (error) {
+      console.error("Error auto-following topic after reply:", error);
+    }
 
     setReplyContent("");
     setReplyWordCount(0);
@@ -427,20 +527,37 @@ const Forum = () => {
                     minute: "2-digit",
                   });
               }
+              const isFollowing = followedTopics.some(t => t.id === topic.id);
+              
               return (
                 <div key={topic.id} className={styles.topicBox}>
+                  <div className={styles.topicContent}>
+                    <button
+                      className={styles.topicLinkButton}
+                      onClick={() => setSelectedTopic(topic.id)}
+                      type="button"
+                    >
+                      <span className={styles.topicTitle}>{topic.title}</span>
+                      <span className={styles.topicAuthor}>
+                        by {topic.author}
+                      </span>
+                      {createdAtStr && (
+                        <span className={styles.topicTime}>{createdAtStr}</span>
+                      )}
+                    </button>
+                  </div>
                   <button
-                    className={styles.topicLinkButton}
-                    onClick={() => setSelectedTopic(topic.id)}
+                    className={styles.followButton}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Star button clicked for topic:", topic.id);
+                      handleFollowTopic(topic.id, topic.title);
+                    }}
+                    title={isFollowing ? "Unfollow topic" : "Follow topic"}
                     type="button"
                   >
-                    <span className={styles.topicTitle}>{topic.title}</span>
-                    <span className={styles.topicAuthor}>
-                      by {topic.author}
-                    </span>
-                    {createdAtStr && (
-                      <span className={styles.topicTime}>{createdAtStr}</span>
-                    )}
+                    {isFollowing ? "★" : "☆"}
                   </button>
                 </div>
               );

@@ -10,6 +10,7 @@ import {
   getDocs,
   updateDoc,
   doc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
@@ -18,7 +19,6 @@ import { useAuth } from "../../context/authContext";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
-import PetInteraction from "../../Components/PetInteraction/PetInteraction";
 import { Suspense } from "react";
 
 // state variables and hooks to manage user profile data
@@ -27,6 +27,11 @@ const UserProfile = () => {
   const { uid } = useParams();
   const [userData, setUserData] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [showPetInteraction, setShowPetInteraction] = useState(false);
+  const [petMood, setPetMood] = useState(50);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [lastInteraction, setLastInteraction] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
   // Birthday state
   const [editingBirthday, setEditingBirthday] = useState(false);
   const [birthdayMonth, setBirthdayMonth] = useState(
@@ -88,6 +93,70 @@ const UserProfile = () => {
     };
     if (uid) fetchUserData();
   }, [uid]);
+
+  // Check if pet can interact (cooldown check)
+  const canInteract = () => {
+    if (!lastInteraction) return true;
+    const now = new Date();
+    const lastTime = lastInteraction.toDate ? lastInteraction.toDate() : new Date(lastInteraction);
+    const timeDiff = now - lastTime;
+    return timeDiff > 5 * 60 * 1000; // 5 minutes cooldown
+  };
+
+  // Update countdown timer every second
+  useEffect(() => {
+    const updateCountdown = () => {
+      if (lastInteraction) {
+        const now = new Date();
+        const lastTime = lastInteraction.toDate ? lastInteraction.toDate() : new Date(lastInteraction);
+        const timeDiff = now - lastTime;
+        const cooldownTime = 5 * 60 * 1000; // 5 minutes
+        const remaining = Math.max(0, cooldownTime - timeDiff);
+        setTimeLeft(Math.ceil(remaining / 1000));
+      }
+    };
+
+    updateCountdown(); // Initial update
+    const interval = setInterval(updateCountdown, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, [lastInteraction]);
+
+  // Pet interaction function
+  const handlePetInteraction = async (type, moodChange) => {
+    if (!user || !userData?.currentPet || isInteracting || !canInteract()) return;
+
+    setIsInteracting(true);
+
+    try {
+      const newMood = Math.max(0, Math.min(100, petMood + moodChange));
+      const now = serverTimestamp();
+
+      // Update pet mood in user's document
+      const userRef = doc(db, 'users', userData.uid);
+      await updateDoc(userRef, {
+        'currentPet.mood': newMood,
+        'currentPet.lastInteraction': now,
+        'currentPet.lastInteractionBy': user.uid,
+        'currentPet.lastInteractionType': type
+      });
+
+      setPetMood(newMood);
+      setLastInteraction(now);
+      console.log(`${type} interaction successful! New mood: ${newMood}`);
+
+      // Close modal after interaction
+      setTimeout(() => {
+        setShowPetInteraction(false);
+        setIsInteracting(false);
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error updating pet mood:', error);
+      alert('Error updating pet mood: ' + error.message);
+      setIsInteracting(false);
+    }
+  };
 
   // --- Automatisk aldersøkning på RPG-bursdag med fellesmodul ---
   useEffect(() => {
@@ -751,9 +820,20 @@ const UserProfile = () => {
                             }}
                           ></div>
                         </div>
-                        <span className={styles.petHpText}>
-                          {Math.round(calculatePetHP(userData.currentPet))}% HP
-                        </span>
+                        <div className={styles.petHpTextContainer}>
+                          <span className={styles.petHpText}>
+                            {Math.round(calculatePetHP(userData.currentPet))}% HP
+                          </span>
+                          <button
+                            className={styles.petPawButton}
+                            onClick={() => {
+                              setShowPetInteraction(true);
+                            }}
+                            title="Interact with pet"
+                          >
+                            🐾
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -761,22 +841,6 @@ const UserProfile = () => {
               </p>
             )}
 
-            {/* Pet Interaction Component */}
-            {userData.currentPet && (
-              <PetInteraction 
-                userData={userData} 
-                onMoodUpdate={(newMood) => {
-                  // Update local state if needed
-                  setUserData(prev => ({
-                    ...prev,
-                    currentPet: {
-                      ...prev.currentPet,
-                      mood: newMood
-                    }
-                  }));
-                }}
-              />
-            )}
           </div>
         </div>
       </div>
@@ -828,6 +892,52 @@ const UserProfile = () => {
       ) : (
         // IF USER HAS NO BIO
         <div>No profile bio available</div>
+      )}
+      
+      {/* Pet Interaction Modal */}
+      {showPetInteraction && (
+        <div className={styles.petInteractionModal}>
+          <div className={styles.petInteractionModalContent}>
+            <div className={styles.petInteractionHeader}>
+              <h3>Pet Interaction</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowPetInteraction(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.petInteractionButtons}>
+              <button
+                className={styles.petInteractionBtn}
+                onClick={() => handlePetInteraction('pet', 5)}
+                disabled={isInteracting || !canInteract()}
+                title="Pet the animal (+5 mood)"
+              >
+                {isInteracting ? 'Petting...' : 'Pet'}
+              </button>
+              <button
+                className={styles.petInteractionBtn}
+                onClick={() => handlePetInteraction('play', 10)}
+                disabled={isInteracting || !canInteract()}
+                title="Play with the animal (+10 mood)"
+              >
+                {isInteracting ? 'Playing...' : 'Play'}
+              </button>
+            </div>
+            
+            {!canInteract() && lastInteraction && timeLeft > 0 && (
+              <div className={styles.cooldownText}>
+                Cooldown: {timeLeft}s
+              </div>
+            )}
+            
+            <div className={styles.petMoodDisplay}>
+              <span className={styles.moodLabel}>Pet Mood:</span>
+              <span className={styles.moodValue}>{petMood}/100</span>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
