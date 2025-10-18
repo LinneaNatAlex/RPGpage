@@ -2022,7 +2022,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: "Cinzel", serif;
-  color: #2c1810;
+  color: #2c1810 !important;
   font-size: 0.9rem;
   text-align: center;
   width: 100%;
