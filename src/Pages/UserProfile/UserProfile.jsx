@@ -30,8 +30,10 @@ const UserProfile = () => {
   const [showPetInteraction, setShowPetInteraction] = useState(false);
   const [petMood, setPetMood] = useState(50);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [lastInteraction, setLastInteraction] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [lastPet, setLastPet] = useState(null);
+  const [lastPlay, setLastPlay] = useState(null);
+  const [petTimeLeft, setPetTimeLeft] = useState(0);
+  const [playTimeLeft, setPlayTimeLeft] = useState(0);
   // Birthday state
   const [editingBirthday, setEditingBirthday] = useState(false);
   const [birthdayMonth, setBirthdayMonth] = useState(
@@ -94,37 +96,61 @@ const UserProfile = () => {
     if (uid) fetchUserData();
   }, [uid]);
 
-  // Check if pet can interact (cooldown check)
-  const canInteract = () => {
-    if (!lastInteraction) return true;
+  // Check if pet can be petted (cooldown check)
+  const canPet = () => {
+    if (!lastPet) return true;
     const now = new Date();
-    const lastTime = lastInteraction.toDate ? lastInteraction.toDate() : new Date(lastInteraction);
+    const lastTime = lastPet.toDate ? lastPet.toDate() : new Date(lastPet);
     const timeDiff = now - lastTime;
-    return timeDiff > 5 * 60 * 1000; // 5 minutes cooldown
+    return timeDiff > 3 * 60 * 1000; // 3 minutes cooldown for petting
   };
 
-  // Update countdown timer every second
+  // Check if pet can be played with (cooldown check)
+  const canPlay = () => {
+    if (!lastPlay) return true;
+    const now = new Date();
+    const lastTime = lastPlay.toDate ? lastPlay.toDate() : new Date(lastPlay);
+    const timeDiff = now - lastTime;
+    return timeDiff > 5 * 60 * 1000; // 5 minutes cooldown for playing
+  };
+
+  // Update countdown timers every second
   useEffect(() => {
-    const updateCountdown = () => {
-      if (lastInteraction) {
-        const now = new Date();
-        const lastTime = lastInteraction.toDate ? lastInteraction.toDate() : new Date(lastInteraction);
+    const updateCountdowns = () => {
+      const now = new Date();
+      
+      // Pet cooldown
+      if (lastPet) {
+        const lastTime = lastPet.toDate ? lastPet.toDate() : new Date(lastPet);
+        const timeDiff = now - lastTime;
+        const cooldownTime = 3 * 60 * 1000; // 3 minutes
+        const remaining = Math.max(0, cooldownTime - timeDiff);
+        setPetTimeLeft(Math.ceil(remaining / 1000));
+      }
+      
+      // Play cooldown
+      if (lastPlay) {
+        const lastTime = lastPlay.toDate ? lastPlay.toDate() : new Date(lastPlay);
         const timeDiff = now - lastTime;
         const cooldownTime = 5 * 60 * 1000; // 5 minutes
         const remaining = Math.max(0, cooldownTime - timeDiff);
-        setTimeLeft(Math.ceil(remaining / 1000));
+        setPlayTimeLeft(Math.ceil(remaining / 1000));
       }
     };
 
-    updateCountdown(); // Initial update
-    const interval = setInterval(updateCountdown, 1000); // Update every second
+    updateCountdowns(); // Initial update
+    const interval = setInterval(updateCountdowns, 1000); // Update every second
 
     return () => clearInterval(interval);
-  }, [lastInteraction]);
+  }, [lastPet, lastPlay]);
 
   // Pet interaction function
   const handlePetInteraction = async (type, moodChange) => {
-    if (!user || !userData?.currentPet || isInteracting || !canInteract()) return;
+    if (!user || !userData?.currentPet || isInteracting) return;
+    
+    // Check specific cooldown based on type
+    if (type === 'pet' && !canPet()) return;
+    if (type === 'play' && !canPlay()) return;
 
     setIsInteracting(true);
 
@@ -136,13 +162,17 @@ const UserProfile = () => {
       const userRef = doc(db, 'users', userData.uid);
       await updateDoc(userRef, {
         'currentPet.mood': newMood,
-        'currentPet.lastInteraction': now,
+        [`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`]: now,
         'currentPet.lastInteractionBy': user.uid,
         'currentPet.lastInteractionType': type
       });
 
       setPetMood(newMood);
-      setLastInteraction(now);
+      if (type === 'pet') {
+        setLastPet(now);
+      } else if (type === 'play') {
+        setLastPlay(now);
+      }
       console.log(`${type} interaction successful! New mood: ${newMood}`);
 
       // Close modal after interaction
@@ -911,7 +941,7 @@ const UserProfile = () => {
               <button
                 className={styles.petInteractionBtn}
                 onClick={() => handlePetInteraction('pet', 5)}
-                disabled={isInteracting || !canInteract()}
+                disabled={isInteracting || !canPet()}
                 title="Pet the animal (+5 mood)"
               >
                 {isInteracting ? 'Petting...' : 'Pet'}
@@ -919,16 +949,22 @@ const UserProfile = () => {
               <button
                 className={styles.petInteractionBtn}
                 onClick={() => handlePetInteraction('play', 10)}
-                disabled={isInteracting || !canInteract()}
+                disabled={isInteracting || !canPlay()}
                 title="Play with the animal (+10 mood)"
               >
                 {isInteracting ? 'Playing...' : 'Play'}
               </button>
             </div>
             
-            {!canInteract() && lastInteraction && timeLeft > 0 && (
+            {!canPet() && lastPet && petTimeLeft > 0 && (
               <div className={styles.cooldownText}>
-                Cooldown: {timeLeft}s
+                Pet cooldown: {petTimeLeft}s
+              </div>
+            )}
+            
+            {!canPlay() && lastPlay && playTimeLeft > 0 && (
+              <div className={styles.cooldownText}>
+                Play cooldown: {playTimeLeft}s
               </div>
             )}
             

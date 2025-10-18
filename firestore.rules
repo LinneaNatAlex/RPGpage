@@ -60,7 +60,7 @@ service cloud.firestore {
         (
           request.auth != null &&
           request.resource.data.diff(resource.data).changedKeys().hasOnly(['currentPet']) &&
-          request.resource.data.currentPet.diff(resource.data.currentPet).changedKeys().hasOnly(['mood', 'lastInteraction', 'lastInteractionBy', 'lastInteractionType'])
+          request.resource.data.currentPet.diff(resource.data.currentPet).changedKeys().hasOnly(['mood', 'lastPet', 'lastPlay', 'lastInteractionBy', 'lastInteractionType'])
         )
       );
       allow create, delete: if request.auth != null && request.auth.uid == userId;

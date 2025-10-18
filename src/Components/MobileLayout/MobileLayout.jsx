@@ -33,6 +33,7 @@ const MobileLayout = ({ children }) => {
   const [showChat, setShowChat] = useState(false);
   const [showPrivateChat, setShowPrivateChat] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showForumSelection, setShowForumSelection] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -74,7 +75,8 @@ const MobileLayout = ({ children }) => {
         navigate("/");
         break;
       case "forum":
-        navigate("/forum/commonroom"); // Navigate to actual forum instead of modal
+        // Show forum selection modal instead of navigating directly
+        setShowForumSelection(true);
         break;
       case "classes":
         navigate("/ClassRooms");
@@ -358,6 +360,156 @@ const MobileLayout = ({ children }) => {
               <span className="mobile-dashboard-item-icon">🚪</span>
               <span className="mobile-dashboard-item-label">Log Out</span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Forum Selection Modal */}
+      {showForumSelection && (
+        <div className="mobile-forum-selection-overlay">
+          <div className="mobile-forum-selection-content">
+            <div className="mobile-forum-selection-header">
+              <h2>Choose Forum</h2>
+              <button
+                className="mobile-forum-selection-close"
+                onClick={() => setShowForumSelection(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="mobile-forum-selection-list">
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/commonroom");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🏠</span>
+                <span className="mobile-forum-selection-label">Commonroom</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/ritualroom");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🔮</span>
+                <span className="mobile-forum-selection-label">Ritual Room</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/moongarden");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🌙</span>
+                <span className="mobile-forum-selection-label">Moon Garden</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/bloodbank");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🩸</span>
+                <span className="mobile-forum-selection-label">Blood Bank</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/nightlibrary");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">📚</span>
+                <span className="mobile-forum-selection-label">Night Library</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/gymnasium");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">💪</span>
+                <span className="mobile-forum-selection-label">The Gymnasium</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/infirmary");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🏥</span>
+                <span className="mobile-forum-selection-label">Infirmary</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/greenhouse");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🌱</span>
+                <span className="mobile-forum-selection-label">The Greenhouse</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/artstudio");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🎨</span>
+                <span className="mobile-forum-selection-label">The Art Studio</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/kitchen");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🍳</span>
+                <span className="mobile-forum-selection-label">Kitchen</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/detentionclassroom");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">⛓️</span>
+                <span className="mobile-forum-selection-label">Detention Classroom</span>
+              </button>
+              
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
+                  navigate("/forum/16plus");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-icon">🔞</span>
+                <span className="mobile-forum-selection-label">18+ Forum</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
