@@ -14,12 +14,10 @@
 }
 
 /* Force dark mode for all mobile content */
-.mobile-app * {
-  color: #d49904 !important;
-}
+
 
 .mobile-app .mobile-page-content * {
-  color: #f5efe0 !important;
+  color: #ca9610 !important;
 }
 
 /* Mobile App - Light Mode (when logged out) */

@@ -179,7 +179,8 @@
 /* Mobile Responsive Adjustments */
 @media (max-width: 480px) {
   .mobile-chat-container {
-   
+    height: 47pc;
+    max-height: 47pc;
   }
   
   .mobile-chat-header {
