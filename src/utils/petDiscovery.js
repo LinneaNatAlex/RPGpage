@@ -52,9 +52,23 @@ export class PetDiscoverySystem {
     });
   }
 
+  // Get items with extremely reduced potion probability (1 in 1000)
+  getAvailableItemsWithMinimalPotions() {
+    const allItems = this.getAvailableItems();
+    
+    // Drastically reduce potion probability - only 1 in 1000 chance
+    return allItems.filter(item => {
+      if (item.type === 'potion') {
+        // Only 1 in 1000 chance for any potion
+        return Math.random() < 0.001;
+      }
+      return true; // Keep all non-potion items
+    });
+  }
+
   // Select a random item based on rarity
   selectRandomItem() {
-    const availableItems = this.getAvailableItemsWithReducedPotions();
+    const availableItems = this.getAvailableItemsWithMinimalPotions();
     const weightedItems = [];
 
     availableItems.forEach(item => {
