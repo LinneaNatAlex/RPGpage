@@ -752,7 +752,18 @@ const PotionCrafting = ({ userYear = 1 }) => {
       // Add to crafted potions set
       setCraftedPotions(prev => new Set([...prev, recipe.result.name]));
       
-      await updateDoc(userRef, { inventory });
+      // Update crafted potions array in Firestore
+      const currentCraftedPotions = data.craftedPotions || [];
+      const updatedCraftedPotions = [...new Set([...currentCraftedPotions, recipe.result.name])];
+      
+      await updateDoc(userRef, { 
+        inventory,
+        craftedPotions: updatedCraftedPotions
+      });
+      
+      // Clear cache to refresh Shop component
+      const { cacheHelpers } = await import('../../utils/firebaseCache');
+      cacheHelpers.clearUserCache(user.uid);
       
       setCraftingResult(recipe.result.name);
       await loadUserData(); // Reload data
