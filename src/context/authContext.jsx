@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }) => {
     if (auth.currentUser) {
       await auth.currentUser.reload();
       // Trigger the auth state change manually
-      console.log("Manually triggering auth state refresh");
     }
   };
 
@@ -99,7 +98,6 @@ export const AuthProvider = ({ children }) => {
 
       try {
         if (currentUser) {
-          console.log("AuthProvider: Processing authenticated user");
           // Get user data from Firestore with retry logic
           let userDoc;
           let retries = 2; // Reduce retries to prevent long loading times
@@ -132,16 +130,12 @@ export const AuthProvider = ({ children }) => {
 
           let userData = currentUser;
           if (userDoc && userDoc.exists()) {
-            console.log("AuthProvider: Found user document:", userDoc.data());
             userData = { ...currentUser, ...userDoc.data() };
             setUser(userData);
-            console.log("AuthProvider: Set user with Firestore data:", userData.displayName);
           } else {
-            console.log("AuthProvider: No user document found, email verified:", currentUser?.emailVerified);
             // If user document doesn't exist but email is verified,
             // create a basic user document and set the user
             if (currentUser.emailVerified) {
-              console.log("Creating missing user document for verified user");
               try {
                 const basicUserData = {
                   uid: currentUser.uid,
@@ -254,7 +248,6 @@ export const AuthProvider = ({ children }) => {
           };
           window.addEventListener("beforeunload", handleUnload);
         } else {
-          console.log("AuthProvider: No authenticated user, setting null");
           setUser(null);
           setEmailVerified(false);
           setBlocked({
@@ -270,7 +263,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       } finally {
         clearTimeout(timeoutId); // Clear timeout when auth process completes
-        console.log("AuthProvider: Setting loading to false");
         setLoading(false);
       }
     });

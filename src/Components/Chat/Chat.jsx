@@ -270,13 +270,11 @@ const Chat = () => {
     const userName = auth.currentUser.displayName || "";
     const messageSender = latestMessage.sender || "";
     
-    console.log("Ping check:", { messageText, userName, messageSender });
     
     // Only ping if user is mentioned and it's not their own message
     if (messageSender !== userName && 
         (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
          messageText.toLowerCase().includes("@all"))) {
-      console.log("Playing ping!");
       playPing();
     }
   }, [messages]);

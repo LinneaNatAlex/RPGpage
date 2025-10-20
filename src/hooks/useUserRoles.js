@@ -18,7 +18,6 @@ const useUserRoles = () => {
       }
 
       if (!user) {
-        console.log("No user found, setting empty roles");
         setRoles([]);
         setRolesLoading(false);
         return;
@@ -32,9 +31,7 @@ const useUserRoles = () => {
           const data = userDoc.data();
           const userRoles = data?.roles || [];
           setRoles(userRoles);
-          console.log("User roles fetched:", userRoles);
         } else {
-          console.log("User document doesn't exist, setting empty roles");
           setRoles([]);
         }
       } catch (error) {

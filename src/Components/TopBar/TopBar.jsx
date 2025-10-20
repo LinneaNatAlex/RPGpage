@@ -80,7 +80,6 @@ const TopBar = () => {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         const topics = userData.followedTopics || [];
-        console.log("TopBar - Fetched followed topics:", topics);
         setFollowedTopics(topics);
       }
     } catch (error) {
@@ -357,7 +356,6 @@ const TopBar = () => {
         
         // If infirmaryEnd has expired, recover the user
         if (data.infirmaryEnd && data.infirmaryEnd <= Date.now()) {
-          console.log('Infirmary period expired during health decay, recovering user');
           await updateDoc(userRef, {
             health: 100,
             infirmaryEnd: null,

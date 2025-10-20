@@ -62,7 +62,6 @@ const triggerUserDiscovery = async (user) => {
         lastDiscoveryDate: new Date().toDateString()
       });
       
-      console.log(`✅ Discovery triggered for ${user.uid}: ${discovery.item.name}`);
       return true;
     }
     
@@ -92,14 +91,11 @@ const getUsersWithActivePets = async () => {
 
 // Main scheduler function
 const runDailyDiscoveryScheduler = async () => {
-  console.log('🐾 Running daily pet discovery scheduler...');
   
   try {
     const users = await getUsersWithActivePets();
-    console.log(`Found ${users.length} users with active pets`);
     
     if (users.length === 0) {
-      console.log('🐾 No users with pets found');
       return;
     }
     
@@ -110,7 +106,6 @@ const runDailyDiscoveryScheduler = async () => {
     }
     
     const successCount = results.filter(r => r.success).length;
-    console.log(`🐾 Daily discoveries: ${successCount}/${users.length} successful`);
     
     return results;
   } catch (error) {
@@ -121,7 +116,6 @@ const runDailyDiscoveryScheduler = async () => {
 
 // Schedule discoveries throughout the day
 const scheduleDailyDiscoveries = () => {
-  console.log('🐾 Starting daily pet discovery scheduler...');
   
   // Run immediately
   runDailyDiscoveryScheduler();
@@ -130,7 +124,6 @@ const scheduleDailyDiscoveries = () => {
   // This gives users multiple chances to get their 3 discoveries
   setInterval(runDailyDiscoveryScheduler, 2 * 60 * 60 * 1000); // 2 hours
   
-  console.log('🐾 Daily discovery scheduler started - running every 2 hours');
 };
 
 // Start the scheduler when module loads

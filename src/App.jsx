@@ -35,12 +35,6 @@ function App() {
   // Track user location for Surveillance Potion
   useLocationTracker();
 
-  console.log(
-    "App.jsx: Rendering with user:",
-    user?.uid || "null",
-    "loading:",
-    loading
-  );
 
   // Safe theme CSS with error handling - TEMPORARILY DISABLED
   let vipThemeCSS = "";
@@ -113,9 +107,6 @@ function App() {
   useEffect(() => {
     // DISABLED: This creates excessive Firebase reads and can cause permission errors
     // if (!user) return;
-    console.log(
-      "Private chat mention detection temporarily disabled to reduce Firebase quota usage"
-    );
 
     // TODO: Implement more efficient private chat notifications
     // Consider using Firebase Cloud Messaging instead of realtime listeners
