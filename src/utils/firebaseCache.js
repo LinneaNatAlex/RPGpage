@@ -35,11 +35,9 @@ class FirebaseCache {
     const cached = this.cache.get(key);
 
     if (this.isCacheValid(cached, type)) {
-      console.log(`✅ Cache HIT for ${key}`);
       return cached.data;
     }
 
-    console.log(`❌ Cache MISS for ${key}`);
     return null;
   }
 
@@ -50,20 +48,17 @@ class FirebaseCache {
       data,
       timestamp: Date.now(),
     });
-    console.log(`💾 Cached data for ${key}`);
   }
 
   // Clear cache for specific type
   clear(type, userId = null, extra = null) {
     const key = this.getCacheKey(type, userId, extra);
     this.cache.delete(key);
-    console.log(`🗑️ Cleared cache for ${key}`);
   }
 
   // Clear all cache
   clearAll() {
     this.cache.clear();
-    console.log("🗑️ Cleared all cache");
   }
 
   // Get cache statistics
