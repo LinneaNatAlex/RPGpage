@@ -638,6 +638,9 @@ const POTION_RECIPES_BY_YEAR = {
 const PotionCrafting = ({ userYear = 1 }) => {
   // Handle graduate status - graduates have access to all recipes
   const effectiveYear = userYear === 'graduate' ? 7 : parseInt(userYear) || 1;
+  
+  // Debug logging
+  console.log('PotionCrafting - userYear:', userYear, 'effectiveYear:', effectiveYear);
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
@@ -819,8 +822,10 @@ const PotionCrafting = ({ userYear = 1 }) => {
           const allRecipes = [];
           for (let year = 1; year <= effectiveYear; year++) {
             const yearRecipes = Object.entries(POTION_RECIPES_BY_YEAR[year] || {});
+            console.log(`Year ${year} recipes:`, yearRecipes.length);
             allRecipes.push(...yearRecipes.map(([name, recipe]) => ({ name, recipe, year })));
           }
+          console.log('Total recipes for effectiveYear', effectiveYear, ':', allRecipes.length);
           
           const totalPages = Math.ceil(allRecipes.length / recipesPerPage);
           const startIndex = (currentPage - 1) * recipesPerPage;
