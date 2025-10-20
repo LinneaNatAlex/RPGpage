@@ -781,7 +781,7 @@ const ClassroomSession = () => {
       </div>
 
       {/* Potion Crafting Section - Only show in Potions class */}
-      {classId === "potions" && user && <PotionCrafting />}
+      {classId === "potions" && user && <PotionCrafting userYear={userYear} />}
       {/* Leave class button removed as requested */}
       {/* Teachers/Admins in this session */}
       {/* All users in this session */}
