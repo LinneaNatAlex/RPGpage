@@ -116,6 +116,10 @@ const ClassroomSession = () => {
   // For teachers/admins/archivists: allow year selection
   const isTeacher =
     roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist");
+  
+  // Debug logging
+  console.log("ClassroomSession - roles:", roles);
+  console.log("ClassroomSession - isTeacher:", isTeacher);
   const [selectedYear, setSelectedYear] = useState(user?.year || 1);
   const userYear = isTeacher ? selectedYear : user?.year || 1;
   
