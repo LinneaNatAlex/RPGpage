@@ -30,7 +30,7 @@ export const getItemImage = (item, firestoreItems = []) => {
   }
 
   // Default fallback icon
-  return "/icons/chest.svg";
+  return "/icons/magic-school.svg";
 };
 
 // Add image property to items that don't have one

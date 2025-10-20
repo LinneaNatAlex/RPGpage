@@ -187,7 +187,7 @@ const Inventory = () => {
                         src={
                           itemWithImage.image ||
                           itemWithImage.coverImage ||
-                          "./icons/chest.svg"
+                          "./icons/magic-school.svg"
                         }
                         alt={itemWithImage.name}
                         className={styles.itemImage}
@@ -335,7 +335,7 @@ const Inventory = () => {
                               // Create simple pet object
                               const petData = {
                                 name: item.name,
-                                image: item.image || "/icons/chest.svg",
+                                image: item.image || "/icons/magic-school.svg",
                                 lastFed: Date.now(), // Use timestamp instead of Date object
                                 customName: null,
                               };

@@ -701,7 +701,7 @@ const TopBar = () => {
           style={{ position: 'relative' }}
         >
           <img
-            src="/icons/chest.svg"
+            src="/icons/magic-school.svg"
             alt="Inventory"
             className={styles.chestIcon}
           />

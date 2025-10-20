@@ -35,10 +35,10 @@ const PetDiscoveryNotification = ({
         <div className={styles.itemInfo}>
           <div className={styles.itemImage}>
             <img 
-              src={item.image || '/icons/chest.svg'} 
+              src={item.image || '/icons/magic-school.svg'} 
               alt={item.name}
               onError={(e) => {
-                e.target.src = '/icons/chest.svg';
+                e.target.src = '/icons/magic-school.svg';
               }}
             />
           </div>
