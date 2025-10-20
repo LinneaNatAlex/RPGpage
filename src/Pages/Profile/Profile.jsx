@@ -159,7 +159,6 @@ const Profile = () => {
       } else if (type === 'play') {
         setLastPlay(now);
       }
-      console.log(`${type} interaction successful! New mood: ${newMood}`);
 
       // Close modal after interaction
       setTimeout(() => {
@@ -190,7 +189,6 @@ const Profile = () => {
           if (data.birthdayDay) setBirthdayDay(data.birthdayDay);
           if (data.birthdayMonth && data.birthdayDay) setBirthdaySaved(true);
         } else {
-          console.log("No such document!");
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -815,7 +813,6 @@ const Profile = () => {
                           const userDoc = await getDoc(userDocRef);
                           if (userDoc.exists()) {
                             const data = userDoc.data();
-                            console.log("Updated user data:", data);
                             startTransition(() => {
                               setUserData(data);
                             });

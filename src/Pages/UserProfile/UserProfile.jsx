@@ -80,7 +80,6 @@ const UserProfile = () => {
           startTransition(() => {
             setUserData(data);
           });
-          console.log("Fetched user:", data);
         } else {
           startTransition(() => {
             setNotFound(true);
@@ -173,7 +172,6 @@ const UserProfile = () => {
       } else if (type === 'play') {
         setLastPlay(now);
       }
-      console.log(`${type} interaction successful! New mood: ${newMood}`);
 
       // Close modal after interaction
       setTimeout(() => {
