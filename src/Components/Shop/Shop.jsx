@@ -216,7 +216,6 @@ const Shop = ({ open = true }) => {
           // Legg til ALLE felter fra item (også type, health, osv.)
           const itemWithImage = addImageToItem(item);
           const newItem = { ...itemWithImage, qty: 1 };
-          console.log("Adding item to inventory:", newItem);
           inventory.push(newItem);
         }
       }
@@ -342,16 +341,6 @@ const Shop = ({ open = true }) => {
             const itemWithImage = addImageToItem(item);
             
             
-            console.log(
-              "Shop item:",
-              itemWithImage.name,
-              "Image:",
-              itemWithImage.image,
-              "CoverImage:",
-              itemWithImage.coverImage,
-              "Firestore:",
-              itemWithImage.firestore
-            );
             return (
               <li
                 key={
@@ -377,14 +366,7 @@ const Shop = ({ open = true }) => {
                             itemWithImage.image || itemWithImage.coverImage
                           )
                         }
-                        onError={() =>
-                          console.log(
-                            "Image failed to load for:",
-                            itemWithImage.name,
-                            "URL:",
-                            itemWithImage.image || itemWithImage.coverImage
-                          )
-                        }
+                        onError={() => {}}
                         style={{
                           border: "2px solid #7B6857",
                           boxShadow: "0 2px 8px rgba(0,0,0,0.3)",

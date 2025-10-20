@@ -187,5 +187,16 @@ service cloud.firestore {
     match /ageVerificationRequests/{docId} {
       allow read, write: if request.auth != null;
     }
+
+    // NOTIFICATIONS - brukere kan lese sine egne notifikasjoner
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && resource.data.to == request.auth.uid;
+      allow write: if request.auth != null && (
+        // Brukere kan lage notifikasjoner til seg selv
+        resource.data.to == request.auth.uid ||
+        // Admin og teacher kan lage notifikasjoner til alle
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]))
+      );
+    }
   }
 }

@@ -36,7 +36,6 @@ export const getItemImage = (item, firestoreItems = []) => {
 // Add image property to items that don't have one
 export const addImageToItem = (item, firestoreItems = []) => {
   const image = getItemImage(item, firestoreItems);
-  console.log(`Adding image to item "${item.name}": ${image}`);
   return {
     ...item,
     image: image,
