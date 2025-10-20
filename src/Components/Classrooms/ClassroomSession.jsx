@@ -119,8 +119,8 @@ const ClassroomSession = () => {
   // For teachers/admins: allow year selection
   const isTeacher =
     roles.includes("teacher") || roles.includes("admin");
-  const [selectedYear, setSelectedYear] = useState(user?.year || 1);
-  const userYear = isTeacher ? selectedYear : user?.year || 1;
+  const [selectedYear, setSelectedYear] = useState(parseInt(user?.year) || 1);
+  const userYear = isTeacher ? selectedYear : parseInt(user?.year) || 1;
   
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
@@ -334,13 +334,13 @@ const ClassroomSession = () => {
   // Check if user is eligible for graduate exam (7th year, passed all 7 subjects)
   const isEligibleForGraduateExam = () => {
     if (userYear !== 7) return false;
-    if (!userData?.takenQuizzes) return false;
+    if (!takenQuizzes || takenQuizzes.length === 0) return false;
     
     const rpgCalendar = getRPGCalendar();
     const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
     
     // Count passed subjects (grade E and above) for current month
-    const passedSubjects = userData.takenQuizzes.filter(quiz => 
+    const passedSubjects = takenQuizzes.filter(quiz => 
       quiz.month === currentMonth && 
       quiz.gradeLevel === 7 && 
       quiz.grade && 
