@@ -184,7 +184,7 @@ const Navbar = () => {
               {/* Removed Alchemy & Potions from dropdown */}
             </div>
             {roles.includes("admin") && <NavLink to="/admin">Admin</NavLink>}{" "}
-            {(roles.includes("teacher") || roles.includes("admin")) && (
+            {(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist")) && (
               <NavLink to="/teacher">TeacherPanel</NavLink>
             )}{" "}
             {/* Shows the Admin link only for admin, TeacherPanel for teacher/admin */}
