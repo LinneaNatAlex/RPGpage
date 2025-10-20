@@ -521,3 +521,185 @@
     background: rgba(220, 38, 38, 0.4) !important;
   }
 }
+
+/* Topic Actions Container */
+.topicActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+/* Follower Count Button */
+.followerCountButton {
+  background: rgba(93, 78, 55, 0.1);
+  border: 1px solid #5d4e37;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #5d4e37;
+  padding: 4px 8px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+  z-index: 100;
+  position: relative;
+  pointer-events: auto;
+  user-select: none;
+  font-weight: 500;
+}
+
+.followerCountButton:hover {
+  background: rgba(93, 78, 55, 0.2);
+  color: #5d4e37;
+  transform: scale(1.05);
+}
+
+/* Followers Modal */
+.followersModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.followersModalContent {
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 3px solid #7b6857;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.followersModalContent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.followersModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.followersModalHeader h3 {
+  color: #f5efe0;
+  font-family: '"Cinzel", serif';
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.closeButton {
+  background: rgba(245, 239, 224, 0.1);
+  border: 1px solid #5d4e37;
+  color: #5d4e37;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.closeButton:hover {
+  background: rgba(245, 239, 224, 0.2);
+  transform: scale(1.1);
+}
+
+.followersList {
+  padding: 20px 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.followerItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.followerItem:last-child {
+  border-bottom: none;
+}
+
+.followerAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #7b6857;
+  flex-shrink: 0;
+}
+
+.followerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.followerRoles {
+  font-size: 0.85rem;
+  color: #d4c4a8;
+  font-style: italic;
+}
+
+/* Mobile responsive for followers modal */
+@media (max-width: 768px) {
+  .followersModalContent {
+    margin: 10px;
+    max-width: calc(100vw - 20px);
+  }
+  
+  .followersModalHeader {
+    padding: 15px 20px;
+  }
+  
+  .followersModalHeader h3 {
+    font-size: 1.1rem;
+  }
+  
+  .followersList {
+    padding: 15px 20px;
+  }
+  
+  .followerItem {
+    padding: 10px 0;
+  }
+  
+  .followerAvatar {
+    width: 35px;
+    height: 35px;
+  }
+}

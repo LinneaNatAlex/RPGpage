@@ -33,6 +33,7 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
+  where,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Forum.module.css";
@@ -88,6 +89,9 @@ const Forum = () => {
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [followedTopics, setFollowedTopics] = useState([]);
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [selectedTopicFollowers, setSelectedTopicFollowers] = useState([]);
+  const [followerCounts, setFollowerCounts] = useState({});
   const navigate = useNavigate();
 
   // Hent forumId fra URL
@@ -129,6 +133,13 @@ const Forum = () => {
     fetchTopics();
   }, [forumRoom]);
 
+  // Fetch follower counts when topics change
+  useEffect(() => {
+    if (topics.length > 0) {
+      fetchFollowerCounts();
+    }
+  }, [topics]);
+
   // Handle URL parameter to open specific topic
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -161,38 +172,110 @@ const Forum = () => {
     fetchFollowedTopics();
   }, [user]);
 
+  // Fetch follower counts for all topics
+  const fetchFollowerCounts = async () => {
+    if (!topics.length) return;
+    
+    try {
+      const counts = {};
+      const usersRef = collection(db, 'users');
+      const allUsersSnapshot = await getDocs(usersRef);
+      
+      for (const topic of topics) {
+        let followerCount = 0;
+        
+        allUsersSnapshot.forEach(doc => {
+          const userData = doc.data();
+          const userFollowedTopics = userData.followedTopics || [];
+          const isFollowing = userFollowedTopics.some(t => t.id === topic.id);
+          if (isFollowing) {
+            followerCount++;
+          }
+        });
+        
+        counts[topic.id] = followerCount;
+      }
+      
+      setFollowerCounts(counts);
+      console.log("Follower counts updated:", counts);
+    } catch (error) {
+      console.error("Error fetching follower counts:", error);
+    }
+  };
+
+  // Fetch followers for a specific topic
+  const fetchTopicFollowers = async (topicId) => {
+    try {
+      console.log(`Fetching followers for topic: ${topicId}`);
+      const usersRef = collection(db, 'users');
+      const allUsersSnapshot = await getDocs(usersRef);
+      const followers = [];
+      
+      allUsersSnapshot.forEach(doc => {
+        const userData = doc.data();
+        const userFollowedTopics = userData.followedTopics || [];
+        const isFollowing = userFollowedTopics.some(t => t.id === topicId);
+        
+        if (isFollowing) {
+          followers.push({
+            id: doc.id,
+            displayName: userData.displayName,
+            photoURL: userData.photoURL || userData.profileImageUrl,
+            roles: userData.roles || []
+          });
+          console.log(`Found follower: ${userData.displayName}`);
+        }
+      });
+      
+      console.log(`Total followers found: ${followers.length}`);
+      setSelectedTopicFollowers(followers);
+      setShowFollowersModal(true);
+    } catch (error) {
+      console.error("Error fetching topic followers:", error);
+    }
+  };
+
   // Follow/Unfollow topic
   const handleFollowTopic = async (topicId, topicTitle) => {
     if (!user) return;
     
     try {
       console.log("Follow topic clicked:", topicId, topicTitle);
+      console.log("Current followedTopics:", followedTopics);
       const userRef = doc(db, 'users', user.uid);
       const isFollowing = followedTopics.some(t => t.id === topicId);
+      console.log("Is currently following:", isFollowing);
       
       let updatedFollowedTopics;
       if (isFollowing) {
         // Unfollow
         updatedFollowedTopics = followedTopics.filter(t => t.id !== topicId);
-        console.log("Unfollowing topic");
+        console.log("Unfollowing topic, new list:", updatedFollowedTopics);
       } else {
         // Follow
-        updatedFollowedTopics = [...followedTopics, {
+        const newTopic = {
           id: topicId,
           title: topicTitle,
           forum: forumTitle,
           followedAt: new Date().toISOString()
-        }];
-        console.log("Following topic");
+        };
+        updatedFollowedTopics = [...followedTopics, newTopic];
+        console.log("Following topic, new list:", updatedFollowedTopics);
       }
       
       // Update database first
+      console.log("Updating database with:", updatedFollowedTopics);
       await updateDoc(userRef, {
         followedTopics: updatedFollowedTopics
       });
       
       // Then update state
       setFollowedTopics(updatedFollowedTopics);
+      
+      // Refresh follower counts after following/unfollowing
+      setTimeout(() => {
+        fetchFollowerCounts();
+      }, 1000);
       
       console.log("Updated followed topics:", updatedFollowedTopics);
       
@@ -546,19 +629,39 @@ const Forum = () => {
                       )}
                     </button>
                   </div>
-                  <button
-                    className={styles.followButton}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log("Star button clicked for topic:", topic.id);
-                      handleFollowTopic(topic.id, topic.title);
-                    }}
-                    title={isFollowing ? "Unfollow topic" : "Follow topic"}
-                    type="button"
-                  >
-                    {isFollowing ? "★" : "☆"}
-                  </button>
+                  <div className={styles.topicActions}>
+                    <button
+                      className={styles.followButton}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("Star button clicked for topic:", topic.id);
+                        handleFollowTopic(topic.id, topic.title);
+                      }}
+                      title={isFollowing ? "Unfollow topic" : "Follow topic"}
+                      type="button"
+                    >
+                      {isFollowing ? "★" : "☆"}
+                    </button>
+                    {followerCounts[topic.id] > 0 && (
+                      <button
+                        className={styles.followerCountButton}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          fetchTopicFollowers(topic.id);
+                        }}
+                        title="View followers"
+                        type="button"
+                      >
+                        {followerCounts[topic.id]} 👥
+                      </button>
+                    )}
+                    {/* Debug: Show follower count even if 0 */}
+                    <span style={{ fontSize: '0.8rem', color: '#d4c4a8', marginLeft: '8px' }}>
+                      ({followerCounts[topic.id] || 0})
+                    </span>
+                  </div>
                 </div>
               );
             })}
@@ -769,6 +872,50 @@ const Forum = () => {
             >
               Reply
             </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Followers Modal */}
+      {showFollowersModal && (
+        <div className={styles.followersModalOverlay} onClick={() => setShowFollowersModal(false)}>
+          <div className={styles.followersModalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.followersModalHeader}>
+              <h3>Topic Followers ({selectedTopicFollowers.length})</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowFollowersModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.followersList}>
+              {selectedTopicFollowers.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '20px', color: '#d4c4a8' }}>
+                  No followers found for this topic.
+                </div>
+              ) : (
+                selectedTopicFollowers.map((follower) => (
+                  <div key={follower.id} className={styles.followerItem}>
+                    <img 
+                      src={follower.photoURL || "/icons/avatar.svg"} 
+                      alt={follower.displayName}
+                      className={styles.followerAvatar}
+                    />
+                    <div className={styles.followerInfo}>
+                      <span className={getNameClass(follower.displayName)}>
+                        {follower.displayName}
+                      </span>
+                      {follower.roles && follower.roles.length > 0 && (
+                        <span className={styles.followerRoles}>
+                          {follower.roles.join(", ")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}
