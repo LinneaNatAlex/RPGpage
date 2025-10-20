@@ -44,13 +44,11 @@ export default function ShopProductAdmin() {
   // Fetch existing products
   const fetchProducts = async () => {
     try {
-      console.log("Fetching products...");
       const querySnapshot = await getDocs(collection(db, "shopItems"));
       const products = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("Products loaded:", products);
       setExistingProducts(products);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -151,8 +149,6 @@ export default function ShopProductAdmin() {
     }
 
     try {
-      console.log("Updating product with ID:", editingProduct.id);
-      console.log("Editing product:", editingProduct);
 
       const docData = {
         ...form,
@@ -191,7 +187,6 @@ export default function ShopProductAdmin() {
         delete docData.bonusTime;
       }
 
-      console.log("Updating with data:", docData);
 
       await updateDoc(doc(db, "shopItems", editingProduct.id), docData);
       setStatus("Product updated!");
@@ -260,11 +255,8 @@ export default function ShopProductAdmin() {
         docData.bonusTime = staticProduct.bonusTime;
       }
 
-      console.log("Converting static product:", staticProduct);
-      console.log("Data to save:", docData);
 
       const docRef = await addDoc(collection(db, "shopItems"), docData);
-      console.log("Created document with ID:", docRef.id);
 
       setStatus("Static product converted to Firestore! You can now edit it.");
 
@@ -302,7 +294,6 @@ export default function ShopProductAdmin() {
         );
 
         if (alreadyConverted) {
-          console.log(`Skipping already converted: ${staticProduct.name}`);
           continue;
         }
 
@@ -330,7 +321,6 @@ export default function ShopProductAdmin() {
 
         await addDoc(collection(db, "shopItems"), docData);
         converted++;
-        console.log(`Converted: ${staticProduct.name}`);
 
         // Oppdater status hver 10. konvertering
         if (converted % 10 === 0) {
@@ -813,7 +803,6 @@ export default function ShopProductAdmin() {
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button
                     onClick={() => {
-                      console.log("Edit button clicked for product:", product);
                       startEdit(product);
                     }}
                     style={{
@@ -846,10 +835,6 @@ export default function ShopProductAdmin() {
                   </button>
                   <button
                     onClick={() => {
-                      console.log(
-                        "Delete button clicked for product:",
-                        product.id
-                      );
                       deleteProduct(product.id);
                     }}
                     style={{
