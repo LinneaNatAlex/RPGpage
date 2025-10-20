@@ -26,7 +26,6 @@ const useUsers = () => {
       return;
     }
 
-    console.log("Setting up real-time user listener...");
 
     // Set up real-time listener for users collection
     const usersRef = collection(db, "users");
@@ -36,10 +35,6 @@ const useUsers = () => {
     const unsubscribe = onSnapshot(
       usersQuery,
       (snapshot) => {
-        console.log(
-          "Real-time user update received, users count:",
-          snapshot.size
-        );
 
         const updatedUsers = [];
         snapshot.forEach((doc) => {
@@ -68,19 +63,16 @@ const useUsers = () => {
         // Sort by points in JavaScript instead of Firestore
         updatedUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
 
-        console.log("Processed users:", updatedUsers.length);
         setUsers(updatedUsers);
         setLoading(false);
       },
       (error) => {
         console.error("Real-time users listener error:", error);
-        console.log("Falling back to manual fetch...");
 
         // Fallback to manual fetch if real-time fails
         import("../firebaseConfig").then(({ getUserTerms }) => {
           getUserTerms()
             .then((fallbackUsers) => {
-              console.log("Fallback users loaded:", fallbackUsers.length);
               setUsers(fallbackUsers);
               setLoading(false);
             })
@@ -95,7 +87,6 @@ const useUsers = () => {
 
     // Cleanup listener on unmount
     return () => {
-      console.log("Cleaning up real-time user listener");
       unsubscribe();
     };
   }, [user, authLoading]);

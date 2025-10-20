@@ -76,22 +76,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("AuthProvider: Setting up auth state listener");
     
     // Add focus listener to refresh auth when user returns to tab
     const handleFocus = () => {
-      console.log("Window focused - checking auth state");
       refreshAuthState();
     };
     
     window.addEventListener('focus', handleFocus);
     
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      console.log(
-        "AuthProvider: Auth state changed, currentUser:",
-        currentUser?.uid || "null"
-      );
-      console.log("AuthProvider: Email verified:", currentUser?.emailVerified);
 
       // Set a timeout to prevent infinite loading
       const timeoutId = setTimeout(() => {

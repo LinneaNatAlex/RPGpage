@@ -10,7 +10,6 @@ import AnnouncementAdmin from "../../Components/AnnouncementBanner/AnnouncementA
 import { subscribeToStats, getCurrentStats, refreshStats } from "../../utils/userStatsCache";
 import { useState, useEffect } from "react";
 
-console.log('MainPage: Importing userStatsCache...');
 
 const MainPage = () => {
   const { user } = useAuth();
@@ -19,21 +18,14 @@ const MainPage = () => {
   const [stats, setStats] = useState(getCurrentStats());
   const [loading, setLoading] = useState(true);
   
-  console.log('MainPage: Initial stats from getCurrentStats():', getCurrentStats());
   
   // Test function to force stats update
   const testStatsUpdate = () => {
-    console.log('MainPage: Testing stats update...');
-    console.log('MainPage: Current stats:', stats);
-    console.log('MainPage: getCurrentStats():', getCurrentStats());
     refreshStats();
   };
   
   useEffect(() => {
-    console.log('MainPage: Setting up stats subscription...');
     const unsubscribe = subscribeToStats((newStats) => {
-      console.log('MainPage: Received stats update:', newStats);
-      console.log('MainPage: Current stats state:', stats);
       setStats(newStats);
       setLoading(false);
     });
