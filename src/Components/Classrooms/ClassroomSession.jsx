@@ -1,6 +1,9 @@
 import { useState } from "react";
 import PotionList from "../PotionList/PotionList";
 import PotionCrafting from "./PotionCrafting";
+import QuizCreation from "./QuizCreation";
+import QuizTaking from "./QuizTaking";
+import QuizEditing from "./QuizEditing";
 // Potions data (move to a shared file if needed)
 const potions = [
   {
@@ -102,6 +105,12 @@ export default function ClassroomSession() {
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showQuizCreation, setShowQuizCreation] = useState(false);
+  const [showQuizTaking, setShowQuizTaking] = useState(false);
+  const [showQuizEditing, setShowQuizEditing] = useState(false);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [availableQuizzes, setAvailableQuizzes] = useState([]);
+  const [takenQuizzes, setTakenQuizzes] = useState([]);
   const chatRef = useRef(null);
 
   // For teachers/admins: allow year selection
@@ -109,6 +118,10 @@ export default function ClassroomSession() {
     userRoles.includes("teacher") || userRoles.includes("admin");
   const [selectedYear, setSelectedYear] = useState(user?.year || 1);
   const userYear = isTeacher ? selectedYear : user?.year || 1;
+  
+  // Debug logging
+  console.log("User roles:", userRoles);
+  console.log("Is teacher:", isTeacher);
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
     (u) => u.online && (u.year === userYear || u.year === Number(userYear))
@@ -137,6 +150,32 @@ export default function ClassroomSession() {
               activities: "Roleplay, ask questions, or just hang out!",
             });
           }
+          // Load available quizzes
+          if (data.quizzes) {
+            console.log("Loading quizzes from class data:", data.quizzes);
+            // Load full quiz data from quizzes collection
+            const fullQuizzes = [];
+            for (const quizInfo of data.quizzes) {
+              try {
+                const quizRef = doc(db, "quizzes", quizInfo.quizId);
+                const quizSnap = await getDoc(quizRef);
+                if (quizSnap.exists()) {
+                  const quizData = quizSnap.data();
+                  fullQuizzes.push({
+                    ...quizInfo,
+                    ...quizData
+                  });
+                }
+              } catch (error) {
+                console.error("Error loading quiz:", quizInfo.quizId, error);
+              }
+            }
+            console.log("Full quizzes loaded:", fullQuizzes);
+            setAvailableQuizzes(fullQuizzes);
+          } else {
+            console.log("No quizzes found in class data");
+            setAvailableQuizzes([]);
+          }
         } else {
           setCustomDescription(classInfo?.description || "");
           setCustomClassInfo({
@@ -159,6 +198,25 @@ export default function ClassroomSession() {
       loadClassData();
     }
   }, [classId, classInfo]);
+
+  // Load taken quizzes for user
+  useEffect(() => {
+    const loadTakenQuizzes = async () => {
+      if (!user) return;
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          setTakenQuizzes(userData.takenQuizzes || []);
+        }
+      } catch (error) {
+        console.error("Error loading taken quizzes:", error);
+      }
+    };
+
+    loadTakenQuizzes();
+  }, [user]);
 
   // Save custom class description
   const saveClassDescription = async () => {
@@ -262,6 +320,108 @@ export default function ClassroomSession() {
       } else {
         setErrorMessage(`Failed to save class info: ${error.message}`);
       }
+    }
+  };
+
+  // Quiz functions
+  const hasTakenQuizForGrade = (gradeLevel) => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    return takenQuizzes.some(quiz => 
+      quiz.gradeLevel === gradeLevel && 
+      quiz.month === currentMonth &&
+      quiz.classId === classId
+    );
+  };
+
+  const handleQuizCreationComplete = async () => {
+    setShowQuizCreation(false);
+    // Reload class data to get updated quizzes
+    try {
+      console.log("Reloading class data after quiz creation...");
+      const ref = doc(db, "classDescriptions", classId);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        console.log("Loaded class data:", data);
+        if (data.quizzes) {
+          // Load full quiz data from quizzes collection
+          const fullQuizzes = [];
+          for (const quizInfo of data.quizzes) {
+            try {
+              const quizRef = doc(db, "quizzes", quizInfo.quizId);
+              const quizSnap = await getDoc(quizRef);
+              if (quizSnap.exists()) {
+                const quizData = quizSnap.data();
+                fullQuizzes.push({
+                  ...quizInfo,
+                  ...quizData
+                });
+              }
+            } catch (error) {
+              console.error("Error loading quiz:", quizInfo.quizId, error);
+            }
+          }
+          console.log("Full quizzes loaded:", fullQuizzes);
+          setAvailableQuizzes(fullQuizzes);
+        }
+      }
+    } catch (error) {
+      console.error("Error reloading class data:", error);
+    }
+  };
+
+  const handleStartQuiz = (quiz) => {
+    console.log("Starting quiz:", quiz);
+    console.log("Quiz ID:", quiz.quizId);
+    setSelectedQuiz(quiz);
+    setShowQuizTaking(true);
+  };
+
+  const handleQuizComplete = () => {
+    setShowQuizTaking(false);
+    setSelectedQuiz(null);
+  };
+
+  const handleEditQuiz = (quiz) => {
+    setSelectedQuiz(quiz);
+    setShowQuizEditing(true);
+  };
+
+  const handleQuizEditingComplete = async () => {
+    setShowQuizEditing(false);
+    setSelectedQuiz(null);
+    // Reload class data to get updated quizzes
+    try {
+      console.log("Reloading class data after quiz editing...");
+      const ref = doc(db, "classDescriptions", classId);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        console.log("Loaded class data:", data);
+        if (data.quizzes) {
+          // Load full quiz data from quizzes collection
+          const fullQuizzes = [];
+          for (const quizInfo of data.quizzes) {
+            try {
+              const quizRef = doc(db, "quizzes", quizInfo.quizId);
+              const quizSnap = await getDoc(quizRef);
+              if (quizSnap.exists()) {
+                const quizData = quizSnap.data();
+                fullQuizzes.push({
+                  ...quizInfo,
+                  ...quizData
+                });
+              }
+            } catch (error) {
+              console.error("Error loading quiz:", quizInfo.quizId, error);
+            }
+          }
+          console.log("Full quizzes loaded:", fullQuizzes);
+          setAvailableQuizzes(fullQuizzes);
+        }
+      }
+    } catch (error) {
+      console.error("Error reloading class data:", error);
     }
   };
 
@@ -1117,6 +1277,259 @@ export default function ClassroomSession() {
               </div>
             )}
           </div>
+        )}
+
+        {/* Quiz Section */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <h3
+              style={{
+                color: "#D4C4A8",
+                fontSize: "1.5rem",
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                margin: 0,
+              }}
+            >
+              Exams & Quizzes
+            </h3>
+            {isTeacher && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Create Quiz button clicked");
+                  setShowQuizCreation(true);
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
+                  color: "#fff",
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: "8px",
+                  padding: "8px 16px",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  transition: "all 0.3s ease",
+                  fontFamily: '"Cinzel", serif',
+                  letterSpacing: "0.5px",
+                  zIndex: 10,
+                  position: "relative",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "none";
+                }}
+              >
+                Create Quiz
+              </button>
+            )}
+          </div>
+
+          {availableQuizzes.length === 0 ? (
+            <div
+              style={{
+                color: "#D4C4A8",
+                fontSize: "1.1rem",
+                textAlign: "center",
+                fontStyle: "italic",
+                padding: "20px",
+                background: "rgba(245, 239, 224, 0.1)",
+                borderRadius: "12px",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+              }}
+            >
+              {isTeacher ? "No quizzes available. Create one to get started!" : "No quizzes available for this class."}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {console.log("Available quizzes:", availableQuizzes)}
+              {console.log("User year:", userYear)}
+              {console.log("Filtered quizzes:", availableQuizzes.filter(quiz => quiz.gradeLevel === userYear))}
+              {availableQuizzes
+                .filter(quiz => quiz.gradeLevel === userYear)
+                .map((quiz, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: "rgba(245, 239, 224, 0.1)",
+                      borderRadius: "12px",
+                      padding: "16px 20px",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <h4
+                        style={{
+                          color: "#F5EFE0",
+                          fontSize: "1.2rem",
+                          fontFamily: '"Cinzel", serif',
+                          fontWeight: 600,
+                          margin: "0 0 8px 0",
+                          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                        }}
+                      >
+                        {quiz.title}
+                      </h4>
+                      <p
+                        style={{
+                          color: "#D4C4A8",
+                          fontSize: "0.9rem",
+                          margin: "0 0 4px 0",
+                        }}
+                      >
+                        Grade {quiz.gradeLevel} • Created: {new Date(quiz.createdAt).toLocaleDateString()}
+                      </p>
+                      <p
+                        style={{
+                          color: "#D4C4A8",
+                          fontSize: "0.85rem",
+                          margin: 0,
+                          fontStyle: "italic",
+                        }}
+                      >
+                        Pass with E grade or better (5+ correct answers) to advance
+                      </p>
+                      {hasTakenQuizForGrade(quiz.gradeLevel) && (
+                        <div
+                          style={{
+                            background: "rgba(76, 175, 80, 0.2)",
+                            border: "1px solid #4caf50",
+                            borderRadius: "6px",
+                            padding: "8px 12px",
+                            marginTop: "8px",
+                            color: "#4caf50",
+                            fontSize: "0.9rem",
+                            fontWeight: "600",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          ✓ You have taken the exam for this year's class
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                      <button
+                        onClick={() => handleStartQuiz(quiz)}
+                        style={{
+                          background: "linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%)",
+                          color: "#F5EFE0",
+                          border: "2px solid rgba(255, 255, 255, 0.2)",
+                          borderRadius: "8px",
+                          padding: "10px 20px",
+                          fontSize: "1rem",
+                          cursor: "pointer",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease",
+                          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+                          fontFamily: '"Cinzel", serif',
+                          letterSpacing: "0.5px",
+                          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = "translateY(-2px)";
+                          e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+                        }}
+                      >
+                        Take Exam
+                      </button>
+                      {isTeacher && (
+                        <button
+                          onClick={() => handleEditQuiz(quiz)}
+                          style={{
+                            background: "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
+                            color: "#fff",
+                            border: "2px solid rgba(255, 255, 255, 0.2)",
+                            borderRadius: "8px",
+                            padding: "10px 16px",
+                            fontSize: "0.9rem",
+                            cursor: "pointer",
+                            fontWeight: "600",
+                            transition: "all 0.3s ease",
+                            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+                            fontFamily: '"Cinzel", serif',
+                            letterSpacing: "0.5px",
+                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = "translateY(-2px)";
+                            e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = "translateY(0)";
+                            e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+                          }}
+                        >
+                          Edit Quiz
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              
+              {availableQuizzes.filter(quiz => quiz.gradeLevel === userYear).length === 0 && availableQuizzes.length > 0 && (
+                <div
+                  style={{
+                    color: "#D4C4A8",
+                    fontSize: "1.1rem",
+                    textAlign: "center",
+                    fontStyle: "italic",
+                    padding: "20px",
+                    background: "rgba(245, 239, 224, 0.1)",
+                    borderRadius: "12px",
+                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                  }}
+                >
+                  No quizzes available for Grade {userYear}. Check other grade levels or ask your teacher to create one.
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Quiz Creation Modal */}
+        {showQuizCreation && (
+          <QuizCreation
+            classId={classId}
+            onClose={() => setShowQuizCreation(false)}
+            onComplete={handleQuizCreationComplete}
+          />
+        )}
+
+        {/* Quiz Taking Modal */}
+        {showQuizTaking && selectedQuiz && (
+          <QuizTaking
+            quizId={selectedQuiz.quizId}
+            classId={classId}
+            gradeLevel={selectedQuiz.gradeLevel}
+            onClose={() => setShowQuizTaking(false)}
+            onComplete={handleQuizComplete}
+          />
+        )}
+
+        {/* Quiz Editing Modal */}
+        {showQuizEditing && selectedQuiz && (
+          <QuizEditing
+            classId={classId}
+            quiz={selectedQuiz}
+            onClose={() => setShowQuizEditing(false)}
+            onComplete={handleQuizEditingComplete}
+          />
         )}
       </div>
     </div>

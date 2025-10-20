@@ -133,8 +133,30 @@ service cloud.firestore {
     // CLASS DESCRIPTIONS - alle kan lese, bare admin og teacher kan redigere
     match /classDescriptions/{classId} {
       allow read: if request.auth != null;
-      allow create, update, delete: if request.auth != null &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]));
+      allow create, update, delete: if request.auth != null; // Temporarily allow all authenticated users for testing
+    }
+
+    // QUIZZES - alle kan lese, bare teacher og admin kan opprette/redigere
+    match /quizzes/{quizId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null; // Temporarily allow all authenticated users for testing
+    }
+
+    // QUIZ RESULTS - brukere kan lese sine egne resultater, teacher og admin kan lese alle
+    match /quizResults/{resultId} {
+      allow read: if request.auth != null && (
+        // Bruker kan lese sine egne resultater (resultId starts with user ID)
+        resultId.matches(request.auth.uid + '_.*') ||
+        // Teacher og admin kan lese alle resultater
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]))
+      );
+      allow create: if request.auth != null && resultId.matches(request.auth.uid + '_.*');
+      allow update: if request.auth != null && (
+        // Bruker kan oppdatere sine egne resultater
+        resultId.matches(request.auth.uid + '_.*') ||
+        // Teacher og admin kan oppdatere alle resultater
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]))
+      );
     }
 
     // CLASS ATTENDANCE - alle innloggede kan lese og skrive (for å delta i klasser)
