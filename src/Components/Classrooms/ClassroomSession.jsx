@@ -3,8 +3,13 @@ import { db } from "../../firebaseConfig";
 import { doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, addDoc, query, where, getDocs, orderBy, limit } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
-import { getUserYear } from "../../utils/wordCountReward";
+// getUserYear function will be defined locally
 import { getRPGCalendar } from "../../utils/rpgCalendar";
+
+// Helper: get year from user object (default 1)
+function getUserYear(user) {
+  return user?.year || 1;
+}
 import PotionList from "../PotionList/PotionList";
 import PotionCrafting from "./PotionCrafting";
 import QuizCreation from "./QuizCreation";
@@ -78,7 +83,6 @@ import { classesList } from "../../data/classesList";
 import onlineUserStyles from "../OnlineUsers/OnlineUsers.module.css";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
-import styles from "./ClassroomSession.module.css";
 
 const ClassroomSession = () => {
   const { user } = useAuth();
@@ -111,12 +115,12 @@ const ClassroomSession = () => {
 
   // For teachers/admins: allow year selection
   const isTeacher =
-    userRoles.includes("teacher") || userRoles.includes("admin");
+    roles.includes("teacher") || roles.includes("admin");
   const [selectedYear, setSelectedYear] = useState(user?.year || 1);
   const userYear = isTeacher ? selectedYear : user?.year || 1;
   
   // Debug logging
-  console.log("User roles:", userRoles);
+  console.log("User roles:", roles);
   console.log("Is teacher:", isTeacher);
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
@@ -228,13 +232,13 @@ const ClassroomSession = () => {
 
       // Check if user has permission
       const hasPermission =
-        userRoles.includes("teacher") ||
-        userRoles.includes("admin") ||
-        userRoles.includes("headmaster");
+        roles.includes("teacher") ||
+        roles.includes("admin") ||
+        roles.includes("headmaster");
 
       if (!hasPermission) {
         setErrorMessage(
-          `You don't have permission to edit class description. Your roles: ${userRoles.join(
+          `You don't have permission to edit class description. Your roles: ${roles.join(
             ", "
           )}`
         );
@@ -254,7 +258,7 @@ const ClassroomSession = () => {
 
       if (error.code === "permission-denied") {
         setErrorMessage(
-          `Permission denied: Make sure you have teacher/admin role and Firebase rules are updated. Your roles: ${userRoles.join(
+          `Permission denied: Make sure you have teacher/admin role and Firebase rules are updated. Your roles: ${roles.join(
             ", "
           )}`
         );
@@ -280,13 +284,13 @@ const ClassroomSession = () => {
 
       // Check if user has permission - more lenient check
       const hasPermission =
-        userRoles.includes("teacher") ||
-        userRoles.includes("admin") ||
-        userRoles.includes("headmaster");
+        roles.includes("teacher") ||
+        roles.includes("admin") ||
+        roles.includes("headmaster");
 
       if (!hasPermission) {
         setErrorMessage(
-          `You don't have permission to edit class info. Your roles: ${userRoles.join(
+          `You don't have permission to edit class info. Your roles: ${roles.join(
             ", "
           )}`
         );
@@ -307,7 +311,7 @@ const ClassroomSession = () => {
       // Check for specific Firebase errors
       if (error.code === "permission-denied") {
         setErrorMessage(
-          `Permission denied: Make sure you have teacher/admin role and Firebase rules are updated. Your roles: ${userRoles.join(
+          `Permission denied: Make sure you have teacher/admin role and Firebase rules are updated. Your roles: ${roles.join(
             ", "
           )}`
         );
@@ -439,7 +443,7 @@ const ClassroomSession = () => {
               house: user.house || user.race || "?",
               year: userYear,
               attendedAt: Date.now(),
-              roles: Array.isArray(userRoles) ? userRoles : [],
+              roles: Array.isArray(roles) ? roles : [],
             },
           ];
         }
@@ -448,7 +452,7 @@ const ClassroomSession = () => {
     });
     setLoading(false);
     return () => unsub();
-  }, [classId, userYear, user, userRoles]);
+  }, [classId, userYear, user, roles]);
 
   // For teachers/admins: ensure they are in the students list for selected year
   // Always ensure the current user is in the students list for this class/year
@@ -458,7 +462,7 @@ const ClassroomSession = () => {
     const addSelf = async () => {
       const snap = await getDoc(ref);
       let studentsArr = snap.exists() ? snap.data().students || [] : [];
-      const roles = Array.isArray(userRoles) ? userRoles : [];
+      const roles = Array.isArray(roles) ? roles : [];
       const userInfo = {
         uid: user.uid,
         displayName: user.displayName || user.email || "Unknown",
@@ -481,7 +485,7 @@ const ClassroomSession = () => {
       }
     };
     addSelf();
-  }, [user, classId, userYear, userRoles]);
+  }, [user, classId, userYear, roles]);
 
   // Listen for chat messages
   useEffect(() => {
@@ -504,7 +508,7 @@ const ClassroomSession = () => {
     const newMsg = {
       uid: user.uid,
       displayName: user.displayName || user.email || "Unknown",
-      roles: userRoles,
+      roles: roles,
       text: message,
       sentAt: Date.now(),
     };
@@ -523,8 +527,8 @@ const ClassroomSession = () => {
     const msgToDelete = messages[idx];
     // Only allow if user is admin/teacher
     const canDelete =
-      userRoles.includes("admin") ||
-      userRoles.includes("teacher");
+      roles.includes("admin") ||
+      roles.includes("teacher");
     if (!canDelete) return;
     const newMessages = messages.filter((_, i) => i !== idx);
     await updateDoc(ref, { messages: newMessages });
@@ -842,8 +846,8 @@ const ClassroomSession = () => {
           )}
           {messages.map((m, i) => {
             const canDelete =
-              userRoles.includes("admin") ||
-              userRoles.includes("teacher");
+              roles.includes("admin") ||
+              roles.includes("teacher");
             return (
               <div
                 key={i}
@@ -1532,3 +1536,5 @@ const ClassroomSession = () => {
     </div>
   );
 }
+
+export default ClassroomSession;
