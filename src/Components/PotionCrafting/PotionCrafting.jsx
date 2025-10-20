@@ -644,6 +644,7 @@ const PotionCrafting = ({ userYear = 1 }) => {
   const [craftingResult, setCraftingResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [craftedPotions, setCraftedPotions] = useState(new Set());
+  const [openRecipes, setOpenRecipes] = useState(new Set());
 
   useEffect(() => {
     if (user) {
@@ -694,6 +695,18 @@ const PotionCrafting = ({ userYear = 1 }) => {
     return recipe.ingredients.every(ingredient => {
       const userAmount = userIngredients[ingredient.name] || 0;
       return userAmount >= ingredient.amount;
+    });
+  };
+
+  const toggleRecipe = (recipeName) => {
+    setOpenRecipes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(recipeName)) {
+        newSet.delete(recipeName);
+      } else {
+        newSet.add(recipeName);
+      }
+      return newSet;
     });
   };
 
@@ -786,32 +799,45 @@ const PotionCrafting = ({ userYear = 1 }) => {
       
       <div className={styles.recipes}>
         <h4>Available Recipes for Year {userYear}:</h4>
-        {Object.entries(POTION_RECIPES_BY_YEAR[userYear] || {}).map(([name, recipe]) => (
-          <div key={name} className={styles.recipe}>
-            <h5>{name}</h5>
-            <div className={styles.recipeIngredients}>
-              <p>Required ingredients:</p>
-              <ul>
-                {recipe.ingredients.map((ingredient, index) => {
-                  const userAmount = userIngredients[ingredient.name] || 0;
-                  const hasEnough = userAmount >= ingredient.amount;
-                  return (
-                    <li key={index} className={hasEnough ? styles.available : styles.missing}>
-                      {ingredient.name}: {userAmount}/{ingredient.amount}
-                    </li>
-                  );
-                })}
-              </ul>
+        {Object.entries(POTION_RECIPES_BY_YEAR[userYear] || {}).map(([name, recipe]) => {
+          const isOpen = openRecipes.has(name);
+          return (
+            <div key={name} className={styles.recipe}>
+              <div 
+                className={styles.recipeHeader}
+                onClick={() => toggleRecipe(name)}
+              >
+                <h5>{name}</h5>
+                <span className={`${styles.dropdownArrow} ${isOpen ? styles.open : ''}`}>
+                  ▼
+                </span>
+              </div>
+              <div className={`${styles.recipeContent} ${isOpen ? styles.open : ''}`}>
+                <div className={styles.recipeIngredients}>
+                  <p>Required ingredients:</p>
+                  <ul>
+                    {recipe.ingredients.map((ingredient, index) => {
+                      const userAmount = userIngredients[ingredient.name] || 0;
+                      const hasEnough = userAmount >= ingredient.amount;
+                      return (
+                        <li key={index} className={hasEnough ? styles.available : styles.missing}>
+                          {ingredient.name}: {userAmount}/{ingredient.amount}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+                <button
+                  className={`${styles.craftButton} ${canCraftPotion(recipe) ? styles.canCraft : styles.cannotCraft}`}
+                  onClick={() => craftPotion(recipe)}
+                  disabled={!canCraftPotion(recipe)}
+                >
+                  {canCraftPotion(recipe) ? 'Craft Potion' : 'Missing Ingredients'}
+                </button>
+              </div>
             </div>
-            <button
-              className={`${styles.craftButton} ${canCraftPotion(recipe) ? styles.canCraft : styles.cannotCraft}`}
-              onClick={() => craftPotion(recipe)}
-              disabled={!canCraftPotion(recipe)}
-            >
-              {canCraftPotion(recipe) ? 'Craft Potion' : 'Missing Ingredients'}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
