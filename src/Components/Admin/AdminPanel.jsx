@@ -276,7 +276,7 @@ export default function AdminPanel() {
       >
         Admin Panel
       </h2>
-      {(roles.includes("admin") || roles.includes("teacher")) && (
+      {(roles.includes("admin") || roles.includes("teacher") || roles.includes("archivist")) && (
         <ShopProductAdmin />
       )}
       <button
@@ -911,7 +911,7 @@ export default function AdminPanel() {
       {status && <div style={{ color: "#ff0", marginTop: 8 }}>{status}</div>}
 
       {/* Points management section */}
-      {(roles.includes("admin") || roles.includes("teacher")) && (
+      {(roles.includes("admin") || roles.includes("teacher") || roles.includes("archivist")) && (
         <div
           style={{
             marginTop: 24,

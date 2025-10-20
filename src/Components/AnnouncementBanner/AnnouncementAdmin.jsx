@@ -7,7 +7,7 @@ export default function AnnouncementAdmin({ user }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
 
-  if (!user?.roles?.includes("admin") && !user?.roles?.includes("teacher"))
+  if (!user?.roles?.includes("admin") && !user?.roles?.includes("teacher") && !user?.roles?.includes("archivist"))
     return null;
 
   const handleAdd = async (e) => {

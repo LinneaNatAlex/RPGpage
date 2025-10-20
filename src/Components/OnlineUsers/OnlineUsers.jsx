@@ -44,9 +44,9 @@ const OnlineUsers = () => {
     };
   }, [user]);
 
-  // Sjekk om innlogget bruker har admin, teacher, shadowpatrol eller headmaster rolle
+  // Sjekk om innlogget bruker har admin, teacher, shadowpatrol, archivist eller headmaster rolle
   const isPrivileged = user?.roles?.some((r) =>
-    ["admin", "teacher", "shadowpatrol", "headmaster"].includes(r.toLowerCase())
+    ["admin", "teacher", "shadowpatrol", "headmaster", "archivist"].includes(r.toLowerCase())
   );
 
   const handleTimeoutClick = (targetUser) => {

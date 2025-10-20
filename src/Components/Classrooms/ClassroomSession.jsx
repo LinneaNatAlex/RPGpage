@@ -113,9 +113,9 @@ const ClassroomSession = () => {
   const [takenQuizzes, setTakenQuizzes] = useState([]);
   const chatRef = useRef(null);
 
-  // For teachers/admins: allow year selection
+  // For teachers/admins/archivists: allow year selection
   const isTeacher =
-    roles.includes("teacher") || roles.includes("admin");
+    roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist");
   const [selectedYear, setSelectedYear] = useState(user?.year || 1);
   const userYear = isTeacher ? selectedYear : user?.year || 1;
   
@@ -228,6 +228,7 @@ const ClassroomSession = () => {
       const hasPermission =
         roles.includes("teacher") ||
         roles.includes("admin") ||
+        roles.includes("archivist") ||
         roles.includes("headmaster");
 
       if (!hasPermission) {
@@ -280,6 +281,7 @@ const ClassroomSession = () => {
       const hasPermission =
         roles.includes("teacher") ||
         roles.includes("admin") ||
+        roles.includes("archivist") ||
         roles.includes("headmaster");
 
       if (!hasPermission) {
@@ -511,10 +513,11 @@ const ClassroomSession = () => {
   async function handleDeleteMessage(idx) {
     const ref = doc(db, "classChats", `${classId}-year${userYear}`);
     const msgToDelete = messages[idx];
-    // Only allow if user is admin/teacher
+    // Only allow if user is admin/teacher/archivist
     const canDelete =
       roles.includes("admin") ||
-      roles.includes("teacher");
+      roles.includes("teacher") ||
+      roles.includes("archivist");
     if (!canDelete) return;
     const newMessages = messages.filter((_, i) => i !== idx);
     await updateDoc(ref, { messages: newMessages });
@@ -830,7 +833,8 @@ const ClassroomSession = () => {
           {messages.map((m, i) => {
             const canDelete =
               roles.includes("admin") ||
-              roles.includes("teacher");
+              roles.includes("teacher") ||
+              roles.includes("archivist");
             return (
               <div
                 key={i}

@@ -52,7 +52,7 @@ const LiveRP = () => {
         const data = snap.docs[0].data();
         setIsPrivilegedUser(
           data.roles &&
-            (data.roles.includes("admin") || data.roles.includes("teacher"))
+            (data.roles.includes("admin") || data.roles.includes("teacher") || data.roles.includes("archivist"))
         );
       } else {
         setIsPrivilegedUser(false);
