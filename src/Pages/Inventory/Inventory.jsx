@@ -96,7 +96,6 @@ const Inventory = () => {
     fetchFirestoreItems();
   }, []);
 
-  console.log("Inventory page loaded, inventory:", userData?.inventory || []);
 
   // Delete item function
   const handleDeleteItem = async () => {
@@ -126,9 +125,6 @@ const Inventory = () => {
       // If deleting the current pet, also remove currentPet
       if (isCurrentPet && inv[invIdx]?.qty <= 0) {
         updateData.currentPet = null;
-        console.log(
-          "Removing current pet because it was deleted from inventory"
-        );
       }
 
       await updateDoc(userRef, updateData);
@@ -162,21 +158,6 @@ const Inventory = () => {
               // Add image to item if it doesn't have one
               const itemWithImage = addImageToItem(item, firestoreItems);
 
-              // Debug: Log ALL items to see what's in inventory
-              console.log("Original item:", item);
-              console.log("Item with image:", itemWithImage);
-              console.log("Image URL:", itemWithImage.image); // Debug: Log item data
-              console.log("Item type:", item.type); // Debug pet food type
-              console.log("User has pet:", !!userData?.currentPet); // Debug pet status
-              if (userData?.currentPet) {
-                console.log("Current pet:", userData.currentPet);
-              }
-              if (
-                itemWithImage.name?.toLowerCase().includes("book") ||
-                itemWithImage.type === "book"
-              ) {
-                console.log("Book item found:", itemWithImage);
-              }
 
               // Mat og potions kan spises/drikkes
               const isEdible =
@@ -210,18 +191,6 @@ const Inventory = () => {
                         }
                         alt={itemWithImage.name}
                         className={styles.itemImage}
-                        onLoad={() =>
-                          console.log(
-                            "Inventory image loaded for:",
-                            itemWithImage.name
-                          )
-                        }
-                        onError={() =>
-                          console.log(
-                            "Inventory image failed to load for:",
-                            itemWithImage.name
-                          )
-                        }
                       />
                     </div>
                     <div className={styles.itemTextContent}>
@@ -279,12 +248,6 @@ const Inventory = () => {
                           item.description?.toLowerCase().includes("pet"));
                       const hasPet = !!userData?.currentPet;
 
-                      console.log(
-                        `${item.name} - isPetFood: ${isPetFood}, hasPet: ${hasPet}`
-                      );
-                      console.log(
-                        `${item.name} - type: ${item.type}, category: ${item.category}, description: ${item.description}`
-                      );
 
                       return isPetFood && hasPet;
                     })() && (
@@ -346,9 +309,6 @@ const Inventory = () => {
                             cacheHelpers.clearUserCache(user.uid);
 
                             const restoreAmount = item.petHpRestore || 100;
-                            console.log(
-                              `Fed pet with ${item.name}, ${restoreAmount}% HP restored!`
-                            );
                           } catch (error) {
                             console.error("Error feeding pet:", error);
                           }
@@ -372,8 +332,6 @@ const Inventory = () => {
                             if (!user) return;
 
                             try {
-                              console.log("Setting pet:", item.name);
-
                               // Create simple pet object
                               const petData = {
                                 name: item.name,
@@ -382,8 +340,6 @@ const Inventory = () => {
                                 customName: null,
                               };
 
-                              console.log("Pet data to save:", petData);
-
                               const userRef = doc(db, "users", user.uid);
 
                               // Try to update just currentPet field
@@ -391,7 +347,6 @@ const Inventory = () => {
                                 currentPet: petData,
                               });
 
-                              console.log("Pet saved successfully!");
                               alert(`${item.name} is now your pet!`);
 
                               // Clear cache and refresh
@@ -582,7 +537,6 @@ const Inventory = () => {
                           className={styles.readBtn}
                           title="Read this book"
                           onClick={() => {
-                            console.log("Read button clicked for:", item);
                             setBookViewer({ open: true, book: item });
                           }}
                           style={{
