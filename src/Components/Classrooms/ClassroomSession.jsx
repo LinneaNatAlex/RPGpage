@@ -8,6 +8,9 @@ import { getRPGCalendar } from "../../utils/rpgCalendar";
 
 // Helper: get year from user object (default 1)
 function getUserYear(user) {
+  if (user?.graduate) {
+    return 'graduate';
+  }
   return user?.year || 1;
 }
 import PotionList from "../PotionList/PotionList";
@@ -328,6 +331,44 @@ const ClassroomSession = () => {
     );
   };
 
+  // Check if user is eligible for graduate exam (7th year, passed all 7 subjects)
+  const isEligibleForGraduateExam = () => {
+    if (userYear !== 7) return false;
+    if (!userData?.takenQuizzes) return false;
+    
+    const rpgCalendar = getRPGCalendar();
+    const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
+    
+    // Count passed subjects (grade E and above) for current month
+    const passedSubjects = userData.takenQuizzes.filter(quiz => 
+      quiz.month === currentMonth && 
+      quiz.gradeLevel === 7 && 
+      quiz.grade && 
+      ['A', 'B', 'C', 'D', 'E'].includes(quiz.grade)
+    );
+    
+    return passedSubjects.length >= 7; // Need to pass 7 out of 7 subjects
+  };
+
+  // Handle graduate exam completion
+  const handleGraduateExamComplete = async (result) => {
+    if (result.passed) {
+      // Mark user as graduate
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        graduate: true,
+        graduateDate: new Date().toISOString(),
+        graduateExamResult: result
+      });
+      
+      // Clear cache to refresh user data
+      const { cacheHelpers } = await import('../../utils/firebaseCache');
+      cacheHelpers.clearUserCache(user.uid);
+      
+      alert("Congratulations! You have graduated from Vayloria Arcane School!");
+    }
+  };
+
   const handleQuizCreationComplete = async () => {
     setShowQuizCreation(false);
     // Reload class data to get updated quizzes
@@ -367,9 +408,14 @@ const ClassroomSession = () => {
     setShowQuizTaking(true);
   };
 
-  const handleQuizComplete = () => {
+  const handleQuizComplete = async (result) => {
     setShowQuizTaking(false);
     setSelectedQuiz(null);
+    
+    // Check if this was a graduate exam
+    if (result && result.gradeLevel === 'graduate') {
+      await handleGraduateExamComplete(result);
+    }
   };
 
   const handleEditQuiz = (quiz) => {
@@ -583,7 +629,7 @@ const ClassroomSession = () => {
           textAlign: "center",
         }}
       >
-        {classInfo.name} (Year {userYear})
+        {classInfo.name} ({userYear === 'graduate' ? 'Graduate' : `Year ${userYear}`})
       </h2>
 
       {/* Success and Error Messages */}
@@ -1481,6 +1527,95 @@ const ClassroomSession = () => {
             </div>
           )}
         </div>
+
+        {/* Graduate Exam Section - Only for 7th year students */}
+        {userYear === 7 && (
+          <div style={{ marginBottom: "24px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "16px",
+                padding: "16px",
+                background: "rgba(245, 239, 224, 0.1)",
+                borderRadius: "12px",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+              }}
+            >
+              <h3
+                style={{
+                  color: "#D4C4A8",
+                  fontSize: "1.3rem",
+                  fontWeight: 600,
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  margin: 0,
+                }}
+              >
+                🎓 Graduate Exam
+              </h3>
+            </div>
+
+            {isEligibleForGraduateExam() ? (
+              <div
+                style={{
+                  background: "rgba(76, 175, 80, 0.1)",
+                  border: "2px solid #4CAF50",
+                  borderRadius: "12px",
+                  padding: "20px",
+                  textAlign: "center",
+                }}
+              >
+                <p style={{ color: "#4CAF50", fontSize: "1.1rem", margin: "0 0 16px 0" }}>
+                  🎉 Congratulations! You have passed all 7 subjects and are eligible for the Graduate Exam!
+                </p>
+                <button
+                  onClick={() => {
+                    // Create a special graduate exam quiz
+                    const graduateQuiz = {
+                      quizId: 'graduate-exam',
+                      title: 'Graduate Exam',
+                      gradeLevel: 'graduate',
+                      description: 'Final examination to graduate from Vayloria Arcane School'
+                    };
+                    setSelectedQuiz(graduateQuiz);
+                    setShowQuizTaking(true);
+                  }}
+                  style={{
+                    background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                    color: "#000",
+                    border: "2px solid #FFD700",
+                    borderRadius: "8px",
+                    padding: "12px 24px",
+                    fontSize: "1rem",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    transition: "all 0.3s ease",
+                    fontFamily: '"Cinzel", serif',
+                    letterSpacing: "0.5px",
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  }}
+                >
+                  🎓 Take Graduate Exam
+                </button>
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: "rgba(255, 193, 7, 0.1)",
+                  border: "2px solid #FFC107",
+                  borderRadius: "12px",
+                  padding: "20px",
+                  textAlign: "center",
+                }}
+              >
+                <p style={{ color: "#FFC107", fontSize: "1.1rem", margin: 0 }}>
+                  📚 You need to pass all 7 subjects in Year 7 to be eligible for the Graduate Exam.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Quiz Creation Modal */}
         {showQuizCreation && (

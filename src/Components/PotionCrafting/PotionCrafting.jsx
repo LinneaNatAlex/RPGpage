@@ -636,6 +636,8 @@ const POTION_RECIPES_BY_YEAR = {
 };
 
 const PotionCrafting = ({ userYear = 1 }) => {
+  // Handle graduate status - graduates have access to all recipes
+  const effectiveYear = userYear === 'graduate' ? 7 : userYear;
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
@@ -811,11 +813,11 @@ const PotionCrafting = ({ userYear = 1 }) => {
       </div>
       
       <div className={styles.recipes}>
-        <h4>Available Recipes (Years 1-{userYear}):</h4>
+        <h4>Available Recipes (Years 1-{userYear === 'graduate' ? '7 (Graduate)' : userYear}):</h4>
         {(() => {
           // Get all recipes for years 1 through userYear (cumulative)
           const allRecipes = [];
-          for (let year = 1; year <= userYear; year++) {
+          for (let year = 1; year <= effectiveYear; year++) {
             const yearRecipes = Object.entries(POTION_RECIPES_BY_YEAR[year] || {});
             allRecipes.push(...yearRecipes.map(([name, recipe]) => ({ name, recipe, year })));
           }
@@ -867,8 +869,8 @@ const PotionCrafting = ({ userYear = 1 }) => {
                 );
               })}
               
-              {/* Pagination for 7th year */}
-              {userYear === 7 && totalPages > 1 && (
+              {/* Pagination for 7th year and graduates */}
+              {(effectiveYear === 7 || userYear === 'graduate') && totalPages > 1 && (
                 <div className={styles.pagination}>
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}

@@ -15,6 +15,9 @@ import { useNavigate } from "react-router-dom";
 
 // Helper: get year from user object (default 1)
 function getUserYear(user) {
+  if (user?.graduate) {
+    return 'graduate';
+  }
   return user?.year || 1;
 }
 
