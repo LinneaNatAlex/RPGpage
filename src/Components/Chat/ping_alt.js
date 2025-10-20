@@ -1,44 +1,8 @@
-// Enhanced ping system with sound and notifications
-let lastPingAudio = null;
+// Enhanced ping system with notifications only (no sound)
 let lastPingTime = 0;
 
 export const playPing = () => {
-  console.log("playPing called!");
   const now = Date.now();
-
-  // Prevent overlapping audio - stop previous audio if still playing
-  if (lastPingAudio && !lastPingAudio.paused) {
-    lastPingAudio.pause();
-    lastPingAudio.currentTime = 0;
-  }
-
-  // Play sound with debouncing
-  if (now - lastPingTime > 1000) {
-    console.log("Playing ping sound...");
-    // Minimum 1 second between pings - Bell-like sounds
-    const soundUrls = [
-      "https://actions.google.com/sounds/v1/notification/notification_gentle.ogg", // Gentle bell-like sound
-      "https://actions.google.com/sounds/v1/notification/notification_simple.ogg", // Simple bell sound
-      "https://actions.google.com/sounds/v1/alarms/beep_short.ogg" // Fallback
-    ];
-    
-    const tryPlaySound = (urlIndex = 0) => {
-      if (urlIndex >= soundUrls.length) return;
-      
-      console.log(`Trying sound ${urlIndex}: ${soundUrls[urlIndex]}`);
-      lastPingAudio = new window.Audio(soundUrls[urlIndex]);
-      lastPingAudio.volume = 0.6;
-      lastPingAudio.play().catch((error) => {
-        console.log(`Sound ${urlIndex} failed:`, error);
-        tryPlaySound(urlIndex + 1);
-      });
-    };
-    
-    tryPlaySound();
-    lastPingTime = now;
-  } else {
-    console.log("Ping debounced, too soon");
-  }
 
   // Show browser notification if permission granted and tab is not focused
   if (document.hidden && Notification.permission === "granted") {
@@ -62,8 +26,7 @@ export const requestNotificationPermission = async () => {
   return Notification.permission === "granted";
 };
 
-// Test function to check if ping sound works
+// Test function to check if ping works
 export const testPing = () => {
-  console.log("Testing ping sound...");
   playPing();
 };
