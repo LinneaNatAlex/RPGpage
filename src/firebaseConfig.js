@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { initializeFirestore, memoryLocalCache } from "firebase/firestore";
+import { initializeFirestore, memoryLocalCache, getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { collection, getDocs } from "firebase/firestore";
 
@@ -19,9 +19,21 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Use memory cache to avoid Chrome IndexedDB persistence issues
-export const db = initializeFirestore(app, {
-  localCache: memoryLocalCache(),
-});
+// Check if Firestore is already initialized to avoid duplicate initialization
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: memoryLocalCache(),
+  });
+} catch (error) {
+  // If already initialized, get the existing instance
+  if (error.message.includes("already been called")) {
+    db = getFirestore(app);
+  } else {
+    throw error;
+  }
+}
+export { db };
 
 export const storage = getStorage(app);
 
