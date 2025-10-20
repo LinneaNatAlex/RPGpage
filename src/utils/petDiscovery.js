@@ -5,9 +5,11 @@ import shopItems from '../Components/Shop/itemsList';
 // Pet discovery system - pets find random items from shop
 export class PetDiscoverySystem {
   constructor() {
-    this.discoveryCooldown = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+    this.discoveryCooldown = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
     this.maxDiscoveriesPerDay = 3; // 3 discoveries per day
     this.maxPendingDiscoveries = 3; // Maximum 3 pending discoveries at once
+    this.dailyDiscoveryChance = 0.3; // 30% chance per day to have any discoveries
+    this.discoveryChancePerAttempt = 0.15; // 15% chance per discovery attempt
   }
 
   // Calculate discovery chance based on item price
@@ -117,6 +119,21 @@ export class PetDiscoverySystem {
       const pendingDiscoveries = userData.pendingPetDiscoveries || [];
       if (pendingDiscoveries.length >= this.maxPendingDiscoveries) {
         return false;
+      }
+      
+      // Check if it's a new day and apply daily discovery chance
+      if (lastDiscoveryDate !== today) {
+        // New day - check if user gets any discoveries today
+        const dailyRoll = Math.random();
+        if (dailyRoll > this.dailyDiscoveryChance) {
+          return false; // No discoveries today
+        }
+      }
+      
+      // Apply discovery chance per attempt
+      const attemptRoll = Math.random();
+      if (attemptRoll > this.discoveryChancePerAttempt) {
+        return false; // This attempt fails
       }
       
       return true;
