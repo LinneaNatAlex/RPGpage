@@ -50,6 +50,14 @@ const Shop = ({ open = true }) => {
   const [books, setBooks] = useState([]);
   
   // Get brewed potions for unlock system
+  const [craftedPotions, setCraftedPotions] = useState(new Set());
+
+  // Load crafted potions from user data
+  useEffect(() => {
+    if (userData?.craftedPotions) {
+      setCraftedPotions(new Set(userData.craftedPotions));
+    }
+  }, [userData]);
 
   // Hent varer fra Firestore KUN når Shop er synlig - OPTIMIZED
   useEffect(() => {
@@ -336,7 +344,22 @@ const Shop = ({ open = true }) => {
 
             return !isConverted; // Vis kun ikke-konverterte statiske produkter
           })
-          .filter((item) => item.category === activeCategory)
+          .filter((item) => {
+            // First check category
+            if (item.category !== activeCategory) return false;
+            
+            // For potions, check if they've been crafted
+            if (item.category === "Potions") {
+              // Always show ingredients and equipment
+              if (item.type === "ingredient" || item.type === "equipment") return true;
+              
+              // For potions, only show if they've been crafted
+              return craftedPotions.has(item.name);
+            }
+            
+            // For other categories, show all items
+            return true;
+          })
           .map((item) => {
             const itemWithImage = addImageToItem(item);
             
