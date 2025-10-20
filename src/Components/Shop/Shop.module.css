@@ -65,6 +65,8 @@
   font-size: 1.2rem;
   z-index: 1;
 }
+
+.item {
   padding: 1.5rem 2rem;
   border-radius: 16px;
   gap: 2.2rem;
