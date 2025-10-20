@@ -160,7 +160,6 @@ const Forum = () => {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         const topics = userData.followedTopics || [];
-        console.log("Fetched followed topics:", topics);
         setFollowedTopics(topics);
       }
     } catch (error) {

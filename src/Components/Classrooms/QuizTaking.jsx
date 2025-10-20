@@ -45,7 +45,6 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
     const loadQuiz = async () => {
       try {
         setLoading(true);
-        console.log("Loading quiz:", quizId);
         
         // Check if user has already taken this quiz this month
         const rpgCalendar = getRPGCalendar();
@@ -103,7 +102,6 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
   }, [user, quizId, classId]);
 
   const handleAnswerSelect = (questionIndex, answerIndex) => {
-    console.log("Answer selected:", { questionIndex, answerIndex });
     setAnswers(prev => ({
       ...prev,
       [questionIndex]: answerIndex
@@ -312,7 +310,6 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Option clicked:", { questionIndex: currentQuestion, answerIndex: index });
                   handleAnswerSelect(currentQuestion, index);
                 }}
               >

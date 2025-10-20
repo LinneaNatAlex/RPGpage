@@ -38,18 +38,15 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
   }
 
   const handleQuestionChange = (questionIndex, field, value) => {
-    console.log("handleQuestionChange called:", { questionIndex, field, value });
     const newQuestions = [...quizData.questions];
     if (field === "question") {
       newQuestions[questionIndex].question = value;
     } else if (field === "options") {
       newQuestions[questionIndex].options = value;
     } else if (field === "correctAnswer") {
-      console.log("Setting correct answer to:", value);
       newQuestions[questionIndex].correctAnswer = parseInt(value);
     }
     setQuizData({ ...quizData, questions: newQuestions });
-    console.log("Updated quiz data:", newQuestions[questionIndex]);
   };
 
   const handleSubmit = async () => {
@@ -262,7 +259,6 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log("Correct button clicked for option:", optionIndex);
                       handleQuestionChange(currentQuestion, "correctAnswer", optionIndex);
                     }}
                   >
