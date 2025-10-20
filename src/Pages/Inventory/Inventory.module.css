@@ -26,6 +26,128 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Filter Controls */
+.filterControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(245, 239, 224, 0.1);
+  border-radius: 15px;
+  border: 2px solid #7b6857;
+  backdrop-filter: blur(5px);
+}
+
+.searchContainer {
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #7b6857;
+  border-radius: 8px;
+  background: rgba(245, 239, 224, 0.9);
+  color: #5d4e37;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #d4c4a8;
+  box-shadow: 0 0 0 3px rgba(212, 196, 168, 0.3);
+}
+
+.categoryContainer {
+  min-width: 150px;
+}
+
+.categorySelect {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #7b6857;
+  border-radius: 8px;
+  background: rgba(245, 239, 224, 0.9);
+  color: #5d4e37;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categorySelect:focus {
+  outline: none;
+  border-color: #d4c4a8;
+  box-shadow: 0 0 0 3px rgba(212, 196, 168, 0.3);
+}
+
+.sortContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sortSelect {
+  padding: 0.75rem;
+  border: 2px solid #7b6857;
+  border-radius: 8px;
+  background: rgba(245, 239, 224, 0.9);
+  color: #5d4e37;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: #d4c4a8;
+  box-shadow: 0 0 0 3px rgba(212, 196, 168, 0.3);
+}
+
+.sortOrderButton {
+  padding: 0.75rem;
+  border: 2px solid #7b6857;
+  border-radius: 8px;
+  background: rgba(245, 239, 224, 0.9);
+  color: #5d4e37;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 50px;
+}
+
+.sortOrderButton:hover {
+  background: rgba(212, 196, 168, 0.9);
+  border-color: #d4c4a8;
+}
+
+.resultsCount {
+  display: flex;
+  align-items: center;
+  color: #d4c4a8;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .filterControls {
+    flex-direction: column;
+  }
+  
+  .sortContainer {
+    justify-content: space-between;
+  }
+  
+  .resultsCount {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
+
 .inventoryList {
   list-style: none;
   padding: 0;

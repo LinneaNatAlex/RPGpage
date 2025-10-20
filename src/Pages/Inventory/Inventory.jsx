@@ -35,6 +35,12 @@ const Inventory = () => {
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9; // 3x3 grid
+  
+  // Filtering and sorting state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("name"); // name, type, category, qty
+  const [sortOrder, setSortOrder] = useState("asc"); // asc, desc
 
   // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
   const calculatePetHP = (pet) => {
@@ -96,6 +102,75 @@ const Inventory = () => {
     fetchFirestoreItems();
   }, []);
 
+  // Get unique categories from inventory
+  const getCategories = () => {
+    if (!userData?.inventory) return ["All"];
+    const categories = new Set(["All"]);
+    userData.inventory.forEach(item => {
+      if (item.category) categories.add(item.category);
+      if (item.type) categories.add(item.type);
+    });
+    return Array.from(categories).sort();
+  };
+
+  // Filter and sort inventory
+  const getFilteredAndSortedInventory = () => {
+    if (!userData?.inventory) return [];
+    
+    let filtered = userData.inventory.filter(item => {
+      // Search filter
+      const matchesSearch = !searchTerm || 
+        item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.type?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Category filter
+      const matchesCategory = selectedCategory === "All" || 
+        item.category === selectedCategory || 
+        item.type === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+
+    // Sort items
+    filtered.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (sortBy) {
+        case "name":
+          aValue = a.name || "";
+          bValue = b.name || "";
+          break;
+        case "type":
+          aValue = a.type || "";
+          bValue = b.type || "";
+          break;
+        case "category":
+          aValue = a.category || "";
+          bValue = b.category || "";
+          break;
+        case "qty":
+          aValue = a.qty || 0;
+          bValue = b.qty || 0;
+          break;
+        default:
+          aValue = a.name || "";
+          bValue = b.name || "";
+      }
+      
+      if (sortOrder === "desc") {
+        return bValue > aValue ? 1 : bValue < aValue ? -1 : 0;
+      } else {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      }
+    });
+
+    return filtered;
+  };
+
+  const filteredInventory = getFilteredAndSortedInventory();
+
 
   // Delete item function
   const handleDeleteItem = async () => {
@@ -142,17 +217,72 @@ const Inventory = () => {
   };
 
   // Pagination logic
-  const inventory = userData?.inventory || [];
-  const totalPages = Math.ceil(inventory.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = inventory.slice(startIndex, endIndex);
+  const currentItems = filteredInventory.slice(startIndex, endIndex);
 
   return (
     <div className={styles.inventoryPage}>
       <div className={styles.inventoryContainer}>
         <h1 className={styles.inventoryTitle}>Inventory</h1>
-        {Array.isArray(inventory) && inventory.length > 0 ? (
+        
+        {/* Filter and Sort Controls */}
+        <div className={styles.filterControls}>
+          {/* Search Bar */}
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              placeholder="Search items..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
+          
+          {/* Category Filter */}
+          <div className={styles.categoryContainer}>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className={styles.categorySelect}
+            >
+              {getCategories().map(category => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Sort Controls */}
+          <div className={styles.sortContainer}>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className={styles.sortSelect}
+            >
+              <option value="name">Sort by Name</option>
+              <option value="type">Sort by Type</option>
+              <option value="category">Sort by Category</option>
+              <option value="qty">Sort by Quantity</option>
+            </select>
+            
+            <button
+              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+              className={styles.sortOrderButton}
+              title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
+            >
+              {sortOrder === "asc" ? "↑" : "↓"}
+            </button>
+          </div>
+          
+          {/* Results Count */}
+          <div className={styles.resultsCount}>
+            Showing {filteredInventory.length} of {userData?.inventory?.length || 0} items
+          </div>
+        </div>
+        {Array.isArray(filteredInventory) && filteredInventory.length > 0 ? (
           <ul className={styles.inventoryList}>
             {currentItems.map((item, idx) => {
               // Add image to item if it doesn't have one
@@ -579,7 +709,7 @@ const Inventory = () => {
         )}
         
         {/* Pagination Controls */}
-        {Array.isArray(inventory) && inventory.length > 0 && totalPages > 1 && (
+        {Array.isArray(filteredInventory) && filteredInventory.length > 0 && totalPages > 1 && (
           <div className={styles.pagination}>
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
@@ -592,7 +722,7 @@ const Inventory = () => {
             <div className={styles.pageInfo}>
               Page {currentPage} of {totalPages}
               <span className={styles.itemCount}>
-                ({inventory.length} items total)
+                ({filteredInventory.length} items total)
               </span>
             </div>
             
