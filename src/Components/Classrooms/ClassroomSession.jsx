@@ -11,7 +11,7 @@ function getUserYear(user) {
   return user?.year || 1;
 }
 import PotionList from "../PotionList/PotionList";
-import PotionCrafting from "./PotionCrafting";
+import PotionCrafting from "../PotionCrafting/PotionCrafting";
 import QuizCreation from "./QuizCreation";
 import QuizTaking from "./QuizTaking";
 import QuizEditing from "./QuizEditing";
@@ -781,7 +781,7 @@ const ClassroomSession = () => {
       </div>
 
       {/* Potion Crafting Section - Only show in Potions class */}
-      {classId === "potions" && user && <PotionCrafting user={user} />}
+      {classId === "potions" && user && <PotionCrafting />}
       {/* Leave class button removed as requested */}
       {/* Teachers/Admins in this session */}
       {/* All users in this session */}
