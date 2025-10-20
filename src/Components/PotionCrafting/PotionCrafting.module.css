@@ -139,7 +139,18 @@
   color: #d4af37;
   margin: 0;
   font-size: 1.1rem;
+}
+
+.yearBadge {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  color: #f5efe0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
   font-weight: bold;
+  margin-left: 8px;
+  border: 1px solid #D4AF37;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .dropdownArrow {

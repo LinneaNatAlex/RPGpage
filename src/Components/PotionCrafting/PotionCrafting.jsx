@@ -811,9 +811,15 @@ const PotionCrafting = ({ userYear = 1 }) => {
       </div>
       
       <div className={styles.recipes}>
-        <h4>Available Recipes for Year {userYear}:</h4>
+        <h4>Available Recipes (Years 1-{userYear}):</h4>
         {(() => {
-          const allRecipes = Object.entries(POTION_RECIPES_BY_YEAR[userYear] || {});
+          // Get all recipes for years 1 through userYear (cumulative)
+          const allRecipes = [];
+          for (let year = 1; year <= userYear; year++) {
+            const yearRecipes = Object.entries(POTION_RECIPES_BY_YEAR[year] || {});
+            allRecipes.push(...yearRecipes.map(([name, recipe]) => ({ name, recipe, year })));
+          }
+          
           const totalPages = Math.ceil(allRecipes.length / recipesPerPage);
           const startIndex = (currentPage - 1) * recipesPerPage;
           const endIndex = startIndex + recipesPerPage;
@@ -821,7 +827,7 @@ const PotionCrafting = ({ userYear = 1 }) => {
 
           return (
             <>
-              {currentRecipes.map(([name, recipe]) => {
+              {currentRecipes.map(({ name, recipe, year }) => {
                 const isOpen = openRecipes.has(name);
                 return (
                   <div key={name} className={styles.recipe}>
@@ -829,7 +835,7 @@ const PotionCrafting = ({ userYear = 1 }) => {
                       className={styles.recipeHeader}
                       onClick={() => toggleRecipe(name)}
                     >
-                      <h5>{name}</h5>
+                      <h5>{name} <span className={styles.yearBadge}>(Year {year})</span></h5>
                       <span className={`${styles.dropdownArrow} ${isOpen ? styles.open : ''}`}>
                         ▼
                       </span>
