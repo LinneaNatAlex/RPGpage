@@ -348,13 +348,9 @@ const Shop = ({ open = true }) => {
             // First check category
             if (item.category !== activeCategory) return false;
             
-            // For potions, check if they've been crafted
+            // For potions, show all items (locked if not crafted)
             if (item.category === "Potions") {
-              // Always show ingredients and equipment
-              if (item.type === "ingredient" || item.type === "equipment") return true;
-              
-              // For potions, only show if they've been crafted
-              return craftedPotions.has(item.name);
+              return true; // Show all potions, ingredients, and equipment
             }
             
             // For other categories, show all items
@@ -363,6 +359,10 @@ const Shop = ({ open = true }) => {
           .map((item) => {
             const itemWithImage = addImageToItem(item);
             
+            // Check if potion is locked (not crafted)
+            const isPotionLocked = item.category === "Potions" && 
+              item.type === "potion" && 
+              !craftedPotions.has(item.name);
             
             return (
               <li
@@ -370,7 +370,7 @@ const Shop = ({ open = true }) => {
                   itemWithImage.id +
                   (itemWithImage.firestore ? "-fs" : "-static")
                 }
-                className={styles.item}
+                className={`${styles.item} ${isPotionLocked ? styles.lockedItem : ''}`}
               >
                 
                 <div className={styles.itemInfo}>
@@ -435,7 +435,21 @@ const Shop = ({ open = true }) => {
                   >
                     {itemWithImage.price} Nits
                   </span>
-                  <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
+                  {isPotionLocked ? (
+                    <button 
+                      disabled 
+                      style={{
+                        background: "#666",
+                        color: "#ccc",
+                        cursor: "not-allowed",
+                        opacity: 0.6
+                      }}
+                    >
+                      🔒 Locked - Craft First
+                    </button>
+                  ) : (
+                    <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
+                  )}
                   {/* Delete button for Firestore items, admin/teacher only */}
                   {itemWithImage.firestore && isAdmin && (
                     <button
