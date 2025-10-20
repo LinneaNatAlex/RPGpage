@@ -645,6 +645,8 @@ const PotionCrafting = ({ userYear = 1 }) => {
   const [loading, setLoading] = useState(true);
   const [craftedPotions, setCraftedPotions] = useState(new Set());
   const [openRecipes, setOpenRecipes] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const recipesPerPage = 3;
 
   useEffect(() => {
     if (user) {
@@ -799,45 +801,85 @@ const PotionCrafting = ({ userYear = 1 }) => {
       
       <div className={styles.recipes}>
         <h4>Available Recipes for Year {userYear}:</h4>
-        {Object.entries(POTION_RECIPES_BY_YEAR[userYear] || {}).map(([name, recipe]) => {
-          const isOpen = openRecipes.has(name);
+        {(() => {
+          const allRecipes = Object.entries(POTION_RECIPES_BY_YEAR[userYear] || {});
+          const totalPages = Math.ceil(allRecipes.length / recipesPerPage);
+          const startIndex = (currentPage - 1) * recipesPerPage;
+          const endIndex = startIndex + recipesPerPage;
+          const currentRecipes = allRecipes.slice(startIndex, endIndex);
+
           return (
-            <div key={name} className={styles.recipe}>
-              <div 
-                className={styles.recipeHeader}
-                onClick={() => toggleRecipe(name)}
-              >
-                <h5>{name}</h5>
-                <span className={`${styles.dropdownArrow} ${isOpen ? styles.open : ''}`}>
-                  ▼
-                </span>
-              </div>
-              <div className={`${styles.recipeContent} ${isOpen ? styles.open : ''}`}>
-                <div className={styles.recipeIngredients}>
-                  <p>Required ingredients:</p>
-                  <ul>
-                    {recipe.ingredients.map((ingredient, index) => {
-                      const userAmount = userIngredients[ingredient.name] || 0;
-                      const hasEnough = userAmount >= ingredient.amount;
-                      return (
-                        <li key={index} className={hasEnough ? styles.available : styles.missing}>
-                          {ingredient.name}: {userAmount}/{ingredient.amount}
-                        </li>
-                      );
-                    })}
-                  </ul>
+            <>
+              {currentRecipes.map(([name, recipe]) => {
+                const isOpen = openRecipes.has(name);
+                return (
+                  <div key={name} className={styles.recipe}>
+                    <div 
+                      className={styles.recipeHeader}
+                      onClick={() => toggleRecipe(name)}
+                    >
+                      <h5>{name}</h5>
+                      <span className={`${styles.dropdownArrow} ${isOpen ? styles.open : ''}`}>
+                        ▼
+                      </span>
+                    </div>
+                    <div className={`${styles.recipeContent} ${isOpen ? styles.open : ''}`}>
+                      <div className={styles.recipeIngredients}>
+                        <p>Required ingredients:</p>
+                        <ul>
+                          {recipe.ingredients.map((ingredient, index) => {
+                            const userAmount = userIngredients[ingredient.name] || 0;
+                            const hasEnough = userAmount >= ingredient.amount;
+                            return (
+                              <li key={index} className={hasEnough ? styles.available : styles.missing}>
+                                {ingredient.name}: {userAmount}/{ingredient.amount}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                      <button
+                        className={`${styles.craftButton} ${canCraftPotion(recipe) ? styles.canCraft : styles.cannotCraft}`}
+                        onClick={() => craftPotion(recipe)}
+                        disabled={!canCraftPotion(recipe)}
+                      >
+                        {canCraftPotion(recipe) ? 'Craft Potion' : 'Missing Ingredients'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+              
+              {/* Pagination for 7th year */}
+              {userYear === 7 && totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className={styles.paginationButton}
+                  >
+                    ← Previous
+                  </button>
+                  
+                  <div className={styles.pageInfo}>
+                    Page {currentPage} of {totalPages}
+                    <span className={styles.recipeCount}>
+                      ({allRecipes.length} recipes total)
+                    </span>
+                  </div>
+                  
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className={styles.paginationButton}
+                  >
+                    Next →
+                  </button>
                 </div>
-                <button
-                  className={`${styles.craftButton} ${canCraftPotion(recipe) ? styles.canCraft : styles.cannotCraft}`}
-                  onClick={() => craftPotion(recipe)}
-                  disabled={!canCraftPotion(recipe)}
-                >
-                  {canCraftPotion(recipe) ? 'Craft Potion' : 'Missing Ingredients'}
-                </button>
-              </div>
-            </div>
+              )}
+            </>
           );
-        })}
+        })()}
       </div>
     </div>
   );
