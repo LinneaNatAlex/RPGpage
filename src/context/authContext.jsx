@@ -54,7 +54,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
-const authContext = createContext();
+const authContext = createContext({
+  user: null,
+  loading: true,
+  emailVerified: false,
+  refreshAuthState: () => {}
+});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
