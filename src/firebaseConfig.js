@@ -38,7 +38,6 @@ if (import.meta.env.DEV) {
   console._warn = console.warn;
 }
 
-console.log("DB:", db);
 
 export const getUserTerms = async () => {
   try {
