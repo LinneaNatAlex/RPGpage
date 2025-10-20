@@ -24,7 +24,7 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
   const [loading, setLoading] = useState(true);
 
   // Check if user has permission
-  const canEditQuiz = roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist");
+  const canEditQuiz = roles.includes("teacher") || roles.includes("admin");
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -79,7 +79,7 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
     return (
       <div className={styles.permissionDenied}>
         <h3>Access Denied</h3>
-        <p>Only teachers, admins, and archivists can edit quizzes.</p>
+        <p>Only teachers and admins can edit quizzes.</p>
         <button onClick={onClose} className={styles.closeButton}>
           Close
         </button>

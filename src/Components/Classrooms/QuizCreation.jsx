@@ -23,13 +23,13 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
   const [error, setError] = useState("");
 
   // Check if user has permission
-  const canCreateQuiz = roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist");
+  const canCreateQuiz = roles.includes("teacher") || roles.includes("admin");
 
   if (!canCreateQuiz) {
     return (
       <div className={styles.permissionDenied}>
         <h3>Access Denied</h3>
-        <p>Only teachers, admins, and archivists can create quizzes.</p>
+        <p>Only teachers and admins can create quizzes.</p>
         <button onClick={onClose} className={styles.closeButton}>
           Close
         </button>

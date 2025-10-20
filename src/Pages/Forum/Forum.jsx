@@ -677,7 +677,7 @@ const Forum = () => {
               Back to topics
             </Button>
             {(() => {
-              const isTeacherOrAdmin = roles?.includes("teacher") || roles?.includes("admin");
+              const isTeacherOrAdmin = roles?.includes("teacher") || roles?.includes("admin") || roles?.includes("archivist");
               
               return isTeacherOrAdmin && (
                 <>

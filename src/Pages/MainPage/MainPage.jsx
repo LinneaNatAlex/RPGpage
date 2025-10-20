@@ -41,7 +41,7 @@ const MainPage = () => {
   return (
     <section className={styles.introductionPage}>
       <AnnouncementBanner user={user} />
-      {user?.roles?.includes("admin") || user?.roles?.includes("teacher") ? (
+      {user?.roles?.includes("admin") || user?.roles?.includes("teacher") || user?.roles?.includes("archivist") ? (
         <AnnouncementAdmin user={user} />
       ) : null}
       {user?.roles?.includes("admin") ? (
