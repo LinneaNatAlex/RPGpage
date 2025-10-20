@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
+import { getRPGCalendar } from "../../utils/rpgCalendar";
 import styles from "./QuizTaking.module.css";
 
 const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
@@ -47,7 +48,8 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         console.log("Loading quiz:", quizId);
         
         // Check if user has already taken this quiz this month
-        const currentMonth = new Date().toISOString().slice(0, 7);
+        const rpgCalendar = getRPGCalendar();
+        const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         
@@ -131,7 +133,8 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       };
       
       const passed = score.grade !== 'F'; // E or better is passing (5+ correct answers)
-      const currentMonth = new Date().toISOString().slice(0, 7);
+      const rpgCalendar = getRPGCalendar();
+      const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
       
       // Save quiz result
       const resultId = `${user.uid}_${quizId}_${currentMonth}`;
@@ -195,7 +198,7 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       if (passed) {
         alert(`Congratulations! You passed with ${score.correct}/10 correct answers (Grade: ${score.grade})!${newGrade > (userData.year || 1) ? ` You've advanced to Grade ${newGrade}!` : ''}`);
       } else {
-        alert(`You scored ${score.correct}/10 (Grade: ${score.grade}). You need E grade or better (5+ correct answers) to pass. You can try again next in-game July.`);
+        alert(`You scored ${score.correct}/10 (Grade: ${score.grade}). You need E grade or better (5+ correct answers) to pass. You can try again next in-game month.`);
       }
       
       onComplete();
@@ -234,7 +237,7 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         <div className={styles.quizContent}>
           <div className={styles.alreadyTaken}>
             <h3>Quiz Already Taken</h3>
-            <p>You have already taken this quiz this month. You can try again next in-game July.</p>
+            <p>You have already taken this quiz this month. You can try again next in-game month.</p>
             {previousResult && (
               <div className={styles.previousResult}>
                 <h4>Your Previous Result:</h4>

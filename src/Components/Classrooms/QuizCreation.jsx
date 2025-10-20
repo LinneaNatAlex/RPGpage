@@ -131,7 +131,6 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
       
       await updateDoc(classRef, { quizzes: filteredQuizzes });
       
-      alert("Quiz created successfully!");
       onComplete();
     } catch (error) {
       console.error("Error creating quiz:", error);

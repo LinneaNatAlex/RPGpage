@@ -177,7 +177,6 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
         }
       }
       
-      alert("Quiz updated successfully!");
       onComplete();
     } catch (error) {
       console.error("Error updating quiz:", error);

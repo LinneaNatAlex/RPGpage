@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { db } from "../../firebaseConfig";
+import { doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, addDoc, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import { useAuth } from "../../context/authContext";
+import useUserRoles from "../../hooks/useUserRoles";
+import { getUserYear } from "../../utils/wordCountReward";
+import { getRPGCalendar } from "../../utils/rpgCalendar";
 import PotionList from "../PotionList/PotionList";
 import PotionCrafting from "./PotionCrafting";
 import QuizCreation from "./QuizCreation";
@@ -66,31 +72,21 @@ const potions = [
       "(On the website: You can only send truthful messages for 5 minutes, and your chat bubble gets a blue glow.)",
   },
 ];
-import { useEffect, useRef } from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
-import { db } from "../../firebaseConfig";
-import {
-  doc,
-  onSnapshot,
-  updateDoc,
-  arrayRemove,
-  setDoc,
-  getDoc,
-} from "firebase/firestore";
-import { useAuth } from "../../context/authContext";
 import { classesList } from "../../data/classesList";
-import useUserRoles from "../../hooks/useUserRoles";
 import onlineUserStyles from "../OnlineUsers/OnlineUsers.module.css";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
+import styles from "./ClassroomSession.module.css";
 
-export default function ClassroomSession() {
-  const { users: allUsers = [] } = useUsers();
-  const { classId } = useParams();
+const ClassroomSession = () => {
   const { user } = useAuth();
-  const { roles: userRoles = [] } = useUserRoles();
-  const { wisdomUntil } = useUserData();
+  const { roles } = useUserRoles();
+  const { classId } = useParams();
   const navigate = useNavigate();
+  const { users: allUsers = [] } = useUsers();
+  const { wisdomUntil } = useUserData();
   const [students, setStudents] = useState([]);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -325,7 +321,8 @@ export default function ClassroomSession() {
 
   // Quiz functions
   const hasTakenQuizForGrade = (gradeLevel) => {
-    const currentMonth = new Date().toISOString().slice(0, 7);
+    const rpgCalendar = getRPGCalendar();
+    const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
     return takenQuizzes.some(quiz => 
       quiz.gradeLevel === gradeLevel && 
       quiz.month === currentMonth &&
