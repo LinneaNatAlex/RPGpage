@@ -119,9 +119,6 @@ const ClassroomSession = () => {
   const [selectedYear, setSelectedYear] = useState(user?.year || 1);
   const userYear = isTeacher ? selectedYear : user?.year || 1;
   
-  // Debug logging
-  console.log("User roles:", roles);
-  console.log("Is teacher:", isTeacher);
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
     (u) => u.online && (u.year === userYear || u.year === Number(userYear))
@@ -152,7 +149,6 @@ const ClassroomSession = () => {
           }
           // Load available quizzes
           if (data.quizzes) {
-            console.log("Loading quizzes from class data:", data.quizzes);
             // Load full quiz data from quizzes collection
             const fullQuizzes = [];
             for (const quizInfo of data.quizzes) {
@@ -170,10 +166,8 @@ const ClassroomSession = () => {
                 console.error("Error loading quiz:", quizInfo.quizId, error);
               }
             }
-            console.log("Full quizzes loaded:", fullQuizzes);
             setAvailableQuizzes(fullQuizzes);
           } else {
-            console.log("No quizzes found in class data");
             setAvailableQuizzes([]);
           }
         } else {
@@ -338,12 +332,10 @@ const ClassroomSession = () => {
     setShowQuizCreation(false);
     // Reload class data to get updated quizzes
     try {
-      console.log("Reloading class data after quiz creation...");
       const ref = doc(db, "classDescriptions", classId);
       const snap = await getDoc(ref);
       if (snap.exists()) {
         const data = snap.data();
-        console.log("Loaded class data:", data);
         if (data.quizzes) {
           // Load full quiz data from quizzes collection
           const fullQuizzes = [];
@@ -362,7 +354,6 @@ const ClassroomSession = () => {
               console.error("Error loading quiz:", quizInfo.quizId, error);
             }
           }
-          console.log("Full quizzes loaded:", fullQuizzes);
           setAvailableQuizzes(fullQuizzes);
         }
       }
@@ -372,8 +363,6 @@ const ClassroomSession = () => {
   };
 
   const handleStartQuiz = (quiz) => {
-    console.log("Starting quiz:", quiz);
-    console.log("Quiz ID:", quiz.quizId);
     setSelectedQuiz(quiz);
     setShowQuizTaking(true);
   };
@@ -393,12 +382,10 @@ const ClassroomSession = () => {
     setSelectedQuiz(null);
     // Reload class data to get updated quizzes
     try {
-      console.log("Reloading class data after quiz editing...");
       const ref = doc(db, "classDescriptions", classId);
       const snap = await getDoc(ref);
       if (snap.exists()) {
         const data = snap.data();
-        console.log("Loaded class data:", data);
         if (data.quizzes) {
           // Load full quiz data from quizzes collection
           const fullQuizzes = [];
@@ -417,7 +404,6 @@ const ClassroomSession = () => {
               console.error("Error loading quiz:", quizInfo.quizId, error);
             }
           }
-          console.log("Full quizzes loaded:", fullQuizzes);
           setAvailableQuizzes(fullQuizzes);
         }
       }
@@ -536,10 +522,8 @@ const ClassroomSession = () => {
 
   // Leave class (remove from attendance)
   async function handleLeave() {
-    console.log("Leave clicked");
     try {
       if (!user) {
-        console.log("No user");
         return;
       }
       const ref = doc(db, "classAttendance", `${classId}-year${userYear}`);
@@ -552,7 +536,6 @@ const ClassroomSession = () => {
       // Remove user by uid
       const newStudents = studentsArr.filter((s) => s.uid !== user.uid);
       await updateDoc(ref, { students: newStudents });
-      console.log("Left class, navigating");
       navigate("/ClassRooms");
     } catch (err) {
       console.error("Error leaving class:", err);
@@ -1300,7 +1283,6 @@ const ClassroomSession = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Create Quiz button clicked");
                   setShowQuizCreation(true);
                 }}
                 style={{
@@ -1349,9 +1331,6 @@ const ClassroomSession = () => {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {console.log("Available quizzes:", availableQuizzes)}
-              {console.log("User year:", userYear)}
-              {console.log("Filtered quizzes:", availableQuizzes.filter(quiz => quiz.gradeLevel === userYear))}
               {availableQuizzes
                 .filter(quiz => quiz.gradeLevel === userYear)
                 .map((quiz, index) => (
