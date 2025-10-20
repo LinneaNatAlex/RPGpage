@@ -448,14 +448,14 @@ const ClassroomSession = () => {
     const addSelf = async () => {
       const snap = await getDoc(ref);
       let studentsArr = snap.exists() ? snap.data().students || [] : [];
-      const roles = Array.isArray(roles) ? roles : [];
+      const userRoles = Array.isArray(roles) ? roles : [];
       const userInfo = {
         uid: user.uid,
         displayName: user.displayName || user.email || "Unknown",
         house: user.house || user.race || "?",
         year: userYear,
         attendedAt: 0, // Not used for removal, but keep structure
-        roles: roles,
+        roles: userRoles,
       };
       if (!studentsArr.some((s) => s.uid === user.uid)) {
         await updateDoc(ref, {
