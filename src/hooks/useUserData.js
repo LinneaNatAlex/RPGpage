@@ -39,6 +39,7 @@ const useUserData = () => {
     invisibleUntil: null,
     lastHealthUpdate: null,
     currentPet: null,
+    craftedPotions: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -74,6 +75,7 @@ const useUserData = () => {
         invisibleUntil: null,
         lastHealthUpdate: null,
         currentPet: null,
+        craftedPotions: [],
       });
       setLoading(false);
       return;
@@ -152,6 +154,7 @@ const useUserData = () => {
               invisibleUntil: processedData.invisibleUntil || null,
               lastHealthUpdate: processedData.lastHealthUpdate || null,
               currentPet: processedData.currentPet || null,
+              craftedPotions: processedData.craftedPotions || [],
             });
           }
         } catch (error) {
