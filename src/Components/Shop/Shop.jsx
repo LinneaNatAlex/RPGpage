@@ -358,14 +358,7 @@ const Shop = ({ open = true }) => {
                         src={itemWithImage.image || itemWithImage.coverImage}
                         alt={itemWithImage.name}
                         className={styles.itemImage}
-                        onLoad={() =>
-                          console.log(
-                            "Image loaded for:",
-                            itemWithImage.name,
-                            "URL:",
-                            itemWithImage.image || itemWithImage.coverImage
-                          )
-                        }
+                        onLoad={() => {}}
                         onError={() => {}}
                         style={{
                           border: "2px solid #7B6857",
