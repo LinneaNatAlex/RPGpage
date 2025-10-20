@@ -196,7 +196,6 @@ const Forum = () => {
       }
       
       setFollowerCounts(counts);
-      console.log("Follower counts updated:", counts);
     } catch (error) {
       console.error("Error fetching follower counts:", error);
     }
@@ -205,7 +204,6 @@ const Forum = () => {
   // Fetch followers for a specific topic
   const fetchTopicFollowers = async (topicId) => {
     try {
-      console.log(`Fetching followers for topic: ${topicId}`);
       const usersRef = collection(db, 'users');
       const allUsersSnapshot = await getDocs(usersRef);
       const followers = [];
@@ -222,11 +220,9 @@ const Forum = () => {
             photoURL: userData.photoURL || userData.profileImageUrl,
             roles: userData.roles || []
           });
-          console.log(`Found follower: ${userData.displayName}`);
         }
       });
       
-      console.log(`Total followers found: ${followers.length}`);
       setSelectedTopicFollowers(followers);
       setShowFollowersModal(true);
     } catch (error) {
