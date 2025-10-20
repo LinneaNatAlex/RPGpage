@@ -235,17 +235,13 @@ const Forum = () => {
     if (!user) return;
     
     try {
-      console.log("Follow topic clicked:", topicId, topicTitle);
-      console.log("Current followedTopics:", followedTopics);
       const userRef = doc(db, 'users', user.uid);
       const isFollowing = followedTopics.some(t => t.id === topicId);
-      console.log("Is currently following:", isFollowing);
       
       let updatedFollowedTopics;
       if (isFollowing) {
         // Unfollow
         updatedFollowedTopics = followedTopics.filter(t => t.id !== topicId);
-        console.log("Unfollowing topic, new list:", updatedFollowedTopics);
       } else {
         // Follow
         const newTopic = {
