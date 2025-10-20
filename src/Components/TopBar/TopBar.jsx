@@ -338,7 +338,7 @@ const TopBar = () => {
   // Health decay som fungerer offline/online
   useEffect(() => {
     if (!user) return;
-    const msPerHp = (1.5 * 24 * 60 * 60 * 1000) / 100; // 1,5 dag fra 100 til 0 HP
+    const msPerHp = (3 * 24 * 60 * 60 * 1000) / 100; // 3 dager fra 100 til 0 HP
     const healthPerDecay = 1;
     const userRef = doc(db, "users", user.uid);
 
