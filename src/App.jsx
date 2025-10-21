@@ -124,37 +124,37 @@ function App() {
           const data = userDoc.data();
           startTransition(() => {
             setDarkModeUntil(
-              data.darkModeUntil && data.darkModeUntil > Date.now()
+              data.darkModeUntil && typeof data.darkModeUntil === 'number' && data.darkModeUntil > Date.now()
                 ? data.darkModeUntil
                 : null
             );
             setRetroUntil(
-              data.retroUntil && data.retroUntil > Date.now()
+              data.retroUntil && typeof data.retroUntil === 'number' && data.retroUntil > Date.now()
                 ? data.retroUntil
                 : null
             );
             setMirrorUntil(
-              data.mirrorUntil && data.mirrorUntil > Date.now()
+              data.mirrorUntil && typeof data.mirrorUntil === 'number' && data.mirrorUntil > Date.now()
                 ? data.mirrorUntil
                 : null
             );
             setSpeedUntil(
-              data.speedUntil && data.speedUntil > Date.now()
+              data.speedUntil && typeof data.speedUntil === 'number' && data.speedUntil > Date.now()
                 ? data.speedUntil
                 : null
             );
             setSlowMotionUntil(
-              data.slowMotionUntil && data.slowMotionUntil > Date.now()
+              data.slowMotionUntil && typeof data.slowMotionUntil === 'number' && data.slowMotionUntil > Date.now()
                 ? data.slowMotionUntil
                 : null
             );
             setSurveillanceUntil(
-              data.surveillanceUntil && data.surveillanceUntil > Date.now()
+              data.surveillanceUntil && typeof data.surveillanceUntil === 'number' && data.surveillanceUntil > Date.now()
                 ? data.surveillanceUntil
                 : null
             );
             setSparkleUntil(
-              data.sparkleUntil && data.sparkleUntil > Date.now()
+              data.sparkleUntil && typeof data.sparkleUntil === 'number' && data.sparkleUntil > Date.now()
                 ? data.sparkleUntil
                 : null
             );
@@ -162,7 +162,6 @@ function App() {
         }
       },
       (error) => {
-        console.warn("Error loading potion effects:", error);
         // Don't fail the app if potion effects can't be loaded
       }
     );
@@ -216,7 +215,7 @@ function App() {
         
         /* Dark Mode Potion */
         ${
-          darkModeUntil && darkModeUntil > Date.now()
+          darkModeUntil && typeof darkModeUntil === 'number' && darkModeUntil > Date.now()
             ? `
           html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
             background: #1a1a1a !important;

@@ -89,7 +89,6 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
           setError("Quiz not found");
         }
       } catch (error) {
-        console.error("Error loading quiz:", error);
         setError("Failed to load quiz");
       } finally {
         setLoading(false);
@@ -219,7 +218,6 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       
       onComplete();
     } catch (error) {
-      console.error("Error submitting quiz:", error);
       setError("Failed to submit quiz");
     } finally {
       setIsSubmitting(false);
