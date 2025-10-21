@@ -11,8 +11,12 @@ import { enableMagicalCursor } from "./assets/Cursor/magicalCursor.js";
 if (import.meta.env.DEV) {
   const originalWarn = console.warn;
   console.warn = function (message) {
-    if (typeof message === "string" && message.includes("findDOMNode")) {
-      return; // Suppress findDOMNode warnings
+    if (typeof message === "string" && (
+      message.includes("findDOMNode") || 
+      message.includes("deprecated") ||
+      message.includes("will be removed")
+    )) {
+      return; // Suppress findDOMNode and deprecation warnings
     }
     // Call original console.warn for other messages
     originalWarn.apply(console, arguments);

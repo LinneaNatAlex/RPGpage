@@ -59,17 +59,25 @@ const useBooks = () => {
   // Update an existing book
   const updateBook = async (bookId, bookData) => {
     try {
+      console.log("updateBook called with:", bookId, bookData);
+      
       const bookRef = doc(db, "books", bookId);
       await updateDoc(bookRef, {
         ...bookData,
         updatedAt: serverTimestamp(),
       });
 
+      console.log("Book updated in Firestore, now updating inventories...");
+
       // Update all copies of this book in users' inventories
       await updateBookInAllInventories(bookId, bookData);
 
+      console.log("Inventory updates completed, refetching books...");
+
       // Refetch books to update the list
       await fetchBooks();
+      
+      console.log("Book update process completed");
     } catch (error) {
       console.error("Error updating book: ", error);
       throw error;
