@@ -170,11 +170,13 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       });
       
       // Check if user should advance to next grade
-      let newGrade = userData.year || 1;
-      // Also check class field as fallback
-      if (!userData.year && userData.class) {
+      let newGrade = 1;
+      // Extract year from class field (e.g., "2nd year" -> 2)
+      if (userData.class) {
         const match = userData.class.match(/(\d+)/);
         newGrade = match ? parseInt(match[1]) : 1;
+      } else if (userData.year) {
+        newGrade = userData.year;
       }
       if (passed) {
         // Count passed subjects for current grade
@@ -197,7 +199,6 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
           
           await updateDoc(userRef, {
             takenQuizzes,
-            year: newGrade,
             class: classNames[newGrade] || `${newGrade}th year`,
             points: increment(100) // Bonus points for advancing
           });
@@ -210,7 +211,8 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       
       // Show result
       if (passed) {
-        alert(`Congratulations! You passed with ${score.correct}/10 correct answers (Grade: ${score.grade})!${newGrade > (userData.year || 1) ? ` You've advanced to Grade ${newGrade}!` : ''}`);
+        const currentYear = userData.class ? parseInt(userData.class.match(/(\d+)/)?.[1] || 1) : 1;
+        alert(`Congratulations! You passed with ${score.correct}/10 correct answers (Grade: ${score.grade})!${newGrade > currentYear ? ` You've advanced to Grade ${newGrade}!` : ''}`);
       } else {
         alert(`You scored ${score.correct}/10 (Grade: ${score.grade}). You need E grade or better (5+ correct answers) to pass. You can try again next in-game month.`);
       }

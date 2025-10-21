@@ -366,6 +366,7 @@ const ClassroomSession = () => {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         graduate: true,
+        class: "Graduate",
         graduateDate: new Date().toISOString(),
         graduateExamResult: result
       });
