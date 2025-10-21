@@ -154,6 +154,13 @@ const useBooks = () => {
                 console.error("Found undefined values in updatedItem:", updatedItem);
                 const undefinedFields = Object.entries(updatedItem).filter(([key, value]) => value === undefined);
                 console.error("Undefined fields:", undefinedFields);
+                
+                // Filter out undefined values
+                const cleanUpdatedItem = Object.fromEntries(
+                  Object.entries(updatedItem).filter(([key, value]) => value !== undefined)
+                );
+                console.log("Cleaned updatedItem:", cleanUpdatedItem);
+                return cleanUpdatedItem;
               }
               
               return updatedItem;
