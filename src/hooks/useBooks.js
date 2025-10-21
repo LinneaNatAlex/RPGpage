@@ -60,7 +60,6 @@ const useBooks = () => {
   const updateBook = async (bookId, bookData) => {
     try {
       console.log("updateBook called with:", bookId, bookData);
-      alert("updateBook function called!"); // Temporary test
       
       const bookRef = doc(db, "books", bookId);
       await updateDoc(bookRef, {
@@ -103,12 +102,18 @@ const useBooks = () => {
         totalUsers++;
         
         if (userData.inventory && Array.isArray(userData.inventory)) {
+          // Debug: log all book items in this user's inventory
+          const bookItems = userData.inventory.filter(item => item.type === "book");
+          if (bookItems.length > 0) {
+            console.log(`User ${userDoc.id} has ${bookItems.length} books:`, bookItems);
+          }
           // Find all instances of this book in the user's inventory
           const updatedInventory = userData.inventory.map(item => {
-            // Check if this is the book we're looking for
+            // Check if this is the book we're looking for - be more flexible with matching
             const isTargetBook = item.bookId === bookId || 
                                 (item.type === "book" && item.id === bookId) ||
-                                (item.type === "book" && item.name === bookData.title);
+                                (item.type === "book" && item.name === bookData.title) ||
+                                (item.type === "book" && item.title === bookData.title);
             
             if (isTargetBook) {
               console.log("Found book in user inventory:", userDoc.id, item);
@@ -121,6 +126,7 @@ const useBooks = () => {
                 // Preserve user-specific fields
                 purchaseDate: item.purchaseDate,
                 purchasedFrom: item.purchasedFrom,
+                qty: item.qty, // Preserve quantity
                 // Update book-specific fields
                 title: bookData.title,
                 description: bookData.description,
