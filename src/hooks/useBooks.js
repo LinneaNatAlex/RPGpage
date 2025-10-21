@@ -89,7 +89,7 @@ const useBooks = () => {
     try {
       console.log("Updating book in all inventories:", bookId, bookData);
       
-      // Get all users
+      // Get all users (alert removed)
       const usersRef = collection(db, "users");
       const usersSnapshot = await getDocs(usersRef);
       
