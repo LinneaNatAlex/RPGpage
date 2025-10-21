@@ -37,13 +37,11 @@ const useBooks = () => {
   // Add a new book
   const addBook = async (bookData) => {
     try {
-      console.log("Adding book to Firestore:", bookData);
       const docRef = await addDoc(collection(db, "books"), {
         ...bookData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      console.log("Book added successfully with ID:", docRef.id);
 
       // Refetch books to update the list
       await fetchBooks();
@@ -59,25 +57,17 @@ const useBooks = () => {
   // Update an existing book
   const updateBook = async (bookId, bookData) => {
     try {
-      console.log("updateBook called with:", bookId, bookData);
-      
       const bookRef = doc(db, "books", bookId);
       await updateDoc(bookRef, {
         ...bookData,
         updatedAt: serverTimestamp(),
       });
 
-      console.log("Book updated in Firestore, now updating inventories...");
-
       // Update all copies of this book in users' inventories
       await updateBookInAllInventories(bookId, bookData);
 
-      console.log("Inventory updates completed, refetching books...");
-
       // Refetch books to update the list
       await fetchBooks();
-      
-      console.log("Book update process completed");
     } catch (error) {
       console.error("Error updating book: ", error);
       throw error;
@@ -87,9 +77,6 @@ const useBooks = () => {
   // Update book in all users' inventories
   const updateBookInAllInventories = async (bookId, bookData) => {
     try {
-      console.log("Updating book in all inventories:", bookId, bookData);
-      console.log("Book ID:", bookId);
-      console.log("Book Data:", bookData);
       
       // Get all users (alert removed)
       const usersRef = collection(db, "users");
@@ -104,11 +91,6 @@ const useBooks = () => {
         totalUsers++;
         
         if (userData.inventory && Array.isArray(userData.inventory)) {
-          // Debug: log all book items in this user's inventory
-          const bookItems = userData.inventory.filter(item => item.type === "book");
-          if (bookItems.length > 0) {
-            console.log(`User ${userDoc.id} has ${bookItems.length} books:`, bookItems);
-          }
           // Find all instances of this book in the user's inventory
           const updatedInventory = userData.inventory.map(item => {
             // Check if this is the book we're looking for - be more flexible with matching
@@ -118,7 +100,6 @@ const useBooks = () => {
                                 (item.type === "book" && item.title === bookData.title);
             
             if (isTargetBook) {
-              console.log("Found book in user inventory:", userDoc.id, item);
               usersWithBook++;
               
               // Update the book data while preserving user-specific data like purchase date
@@ -127,8 +108,6 @@ const useBooks = () => {
                 Object.entries(bookData).filter(([key, value]) => value !== undefined)
               );
               
-              console.log("Original bookData:", bookData);
-              console.log("Cleaned bookData:", cleanBookData);
               
               const updatedItem = {
                 ...item,
@@ -148,22 +127,12 @@ const useBooks = () => {
                 updatedAt: new Date().toISOString()
               };
               
-              // Check for undefined values before returning
-              const hasUndefined = Object.entries(updatedItem).some(([key, value]) => value === undefined);
-              if (hasUndefined) {
-                console.error("Found undefined values in updatedItem:", updatedItem);
-                const undefinedFields = Object.entries(updatedItem).filter(([key, value]) => value === undefined);
-                console.error("Undefined fields:", undefinedFields);
-                
-                // Filter out undefined values
-                const cleanUpdatedItem = Object.fromEntries(
-                  Object.entries(updatedItem).filter(([key, value]) => value !== undefined)
-                );
-                console.log("Cleaned updatedItem:", cleanUpdatedItem);
-                return cleanUpdatedItem;
-              }
+              // Filter out undefined values before returning
+              const cleanUpdatedItem = Object.fromEntries(
+                Object.entries(updatedItem).filter(([key, value]) => value !== undefined)
+              );
               
-              return updatedItem;
+              return cleanUpdatedItem;
             }
             return item;
           });
@@ -171,7 +140,6 @@ const useBooks = () => {
           // Only update if inventory actually changed
           const hasChanges = JSON.stringify(updatedInventory) !== JSON.stringify(userData.inventory);
           if (hasChanges) {
-            console.log("Updating inventory for user:", userDoc.id);
             updatePromises.push(
               updateDoc(doc(db, "users", userDoc.id), {
                 inventory: updatedInventory
@@ -181,16 +149,9 @@ const useBooks = () => {
         }
       });
       
-      console.log(`Found book in ${usersWithBook} out of ${totalUsers} users`);
-      console.log(`Number of updates to perform: ${updatePromises.length}`);
-      
       // Execute all updates in parallel
       if (updatePromises.length > 0) {
-        console.log("Executing inventory updates...");
         await Promise.all(updatePromises);
-        console.log(`Successfully updated ${updatePromises.length} user inventories`);
-      } else {
-        console.log("No user inventories needed updating");
       }
     } catch (error) {
       console.error("Error updating book in inventories: ", error);

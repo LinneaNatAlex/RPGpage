@@ -171,7 +171,6 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         coverImage: coverImage,
       };
 
-      console.log("Saving book data:", bookData);
 
       if (book) {
         await updateBook(book.id, bookData);
