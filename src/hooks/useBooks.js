@@ -79,18 +79,32 @@ const useBooks = () => {
   // Update book in all users' inventories
   const updateBookInAllInventories = async (bookId, bookData) => {
     try {
+      console.log("Updating book in all inventories:", bookId, bookData);
+      
       // Get all users
       const usersRef = collection(db, "users");
       const usersSnapshot = await getDocs(usersRef);
       
       const updatePromises = [];
+      let totalUsers = 0;
+      let usersWithBook = 0;
       
       usersSnapshot.forEach((userDoc) => {
         const userData = userDoc.data();
+        totalUsers++;
+        
         if (userData.inventory && Array.isArray(userData.inventory)) {
           // Find all instances of this book in the user's inventory
           const updatedInventory = userData.inventory.map(item => {
-            if (item.bookId === bookId || (item.type === "book" && item.id === bookId)) {
+            // Check if this is the book we're looking for
+            const isTargetBook = item.bookId === bookId || 
+                                (item.type === "book" && item.id === bookId) ||
+                                (item.type === "book" && item.name === bookData.title);
+            
+            if (isTargetBook) {
+              console.log("Found book in user inventory:", userDoc.id, item);
+              usersWithBook++;
+              
               // Update the book data while preserving user-specific data like purchase date
               return {
                 ...item,
@@ -115,6 +129,7 @@ const useBooks = () => {
           // Only update if inventory actually changed
           const hasChanges = JSON.stringify(updatedInventory) !== JSON.stringify(userData.inventory);
           if (hasChanges) {
+            console.log("Updating inventory for user:", userDoc.id);
             updatePromises.push(
               updateDoc(doc(db, "users", userDoc.id), {
                 inventory: updatedInventory
@@ -124,9 +139,14 @@ const useBooks = () => {
         }
       });
       
+      console.log(`Found book in ${usersWithBook} out of ${totalUsers} users`);
+      
       // Execute all updates in parallel
       if (updatePromises.length > 0) {
         await Promise.all(updatePromises);
+        console.log(`Updated ${updatePromises.length} user inventories`);
+      } else {
+        console.log("No user inventories needed updating");
       }
     } catch (error) {
       console.error("Error updating book in inventories: ", error);
