@@ -127,7 +127,10 @@ const useBooks = () => {
                 Object.entries(bookData).filter(([key, value]) => value !== undefined)
               );
               
-              return {
+              console.log("Original bookData:", bookData);
+              console.log("Cleaned bookData:", cleanBookData);
+              
+              const updatedItem = {
                 ...item,
                 ...cleanBookData,
                 // Preserve user-specific fields
@@ -144,6 +147,16 @@ const useBooks = () => {
                 ...(bookData.author && { author: bookData.author }),
                 updatedAt: new Date().toISOString()
               };
+              
+              // Check for undefined values before returning
+              const hasUndefined = Object.entries(updatedItem).some(([key, value]) => value === undefined);
+              if (hasUndefined) {
+                console.error("Found undefined values in updatedItem:", updatedItem);
+                const undefinedFields = Object.entries(updatedItem).filter(([key, value]) => value === undefined);
+                console.error("Undefined fields:", undefinedFields);
+              }
+              
+              return updatedItem;
             }
             return item;
           });
