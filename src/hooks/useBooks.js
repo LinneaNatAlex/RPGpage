@@ -88,6 +88,7 @@ const useBooks = () => {
   const updateBookInAllInventories = async (bookId, bookData) => {
     try {
       console.log("Updating book in all inventories:", bookId, bookData);
+      alert("updateBookInAllInventories called!"); // Temporary test
       
       // Get all users
       const usersRef = collection(db, "users");
