@@ -60,6 +60,7 @@ const useBooks = () => {
   const updateBook = async (bookId, bookData) => {
     try {
       console.log("updateBook called with:", bookId, bookData);
+      alert("updateBook function called!"); // Temporary test
       
       const bookRef = doc(db, "books", bookId);
       await updateDoc(bookRef, {
