@@ -248,14 +248,13 @@ const Forum = () => {
           id: topicId,
           title: topicTitle,
           forum: forumTitle,
+          forumRoom: forumRoom,
           followedAt: new Date().toISOString()
         };
         updatedFollowedTopics = [...followedTopics, newTopic];
-        console.log("Following topic, new list:", updatedFollowedTopics);
       }
       
       // Update database first
-      console.log("Updating database with:", updatedFollowedTopics);
       await updateDoc(userRef, {
         followedTopics: updatedFollowedTopics
       });
@@ -306,6 +305,93 @@ const Forum = () => {
     return !text;
   };
 
+  // Send notifications to users who follow topics in this forum
+  const sendNotificationToForumFollowers = async (topicId, topicTitle) => {
+    try {
+      // Get all users who have followed any topics in this forum
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+      
+      const forumFollowers = [];
+      usersSnapshot.forEach((doc) => {
+        const userData = doc.data();
+        if (userData.followedTopics && Array.isArray(userData.followedTopics)) {
+          // Check if they follow any topics in this forum
+          const followsTopicsInForum = userData.followedTopics.some(topic => 
+            topic.forumRoom === forumRoom
+          );
+          if (followsTopicsInForum && doc.id !== user.uid) { // Don't notify the person who created
+            forumFollowers.push(doc.id);
+          }
+        }
+      });
+
+      // Send notification to each forum follower
+      for (const followerId of forumFollowers) {
+        try {
+          await addDoc(collection(db, "notifications"), {
+            to: followerId,
+            from: user.uid,
+            fromName: user.displayName,
+            type: "new_topic",
+            title: "New Topic in Followed Forum",
+            message: `${user.displayName} created a new topic "${topicTitle}" in ${forumRoom}`,
+            topicId: topicId,
+            forumRoom: forumRoom,
+            read: false,
+            createdAt: serverTimestamp()
+          });
+        } catch (error) {
+          // Skip this notification if it fails
+        }
+      }
+    } catch (error) {
+      // Error fetching followers or sending notifications
+    }
+  };
+
+  // Send notifications to all followers of a topic
+  const sendNotificationToTopicFollowers = async (topicId, topicTitle) => {
+    try {
+      // Get all users who follow this topic
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+      
+      const followers = [];
+      usersSnapshot.forEach((doc) => {
+        const userData = doc.data();
+        if (userData.followedTopics && Array.isArray(userData.followedTopics)) {
+          const isFollowing = userData.followedTopics.some(topic => topic.id === topicId);
+          if (isFollowing && doc.id !== user.uid) { // Don't notify the person who posted
+            followers.push(doc.id);
+          }
+        }
+      });
+
+      // Send notification to each follower
+      for (const followerId of followers) {
+        try {
+          await addDoc(collection(db, "notifications"), {
+            to: followerId,
+            from: user.uid,
+            fromName: user.displayName,
+            type: "topic_reply",
+            title: "New Reply in Followed Topic",
+            message: `${user.displayName} replied to "${topicTitle}"`,
+            topicId: topicId,
+            forumRoom: forumRoom,
+            read: false,
+            createdAt: serverTimestamp()
+          });
+        } catch (error) {
+          // Skip this notification if it fails
+        }
+      }
+    } catch (error) {
+      // Error fetching followers or sending notifications
+    }
+  };
+
   // Create new topic
   const handleCreateTopic = async () => {
     if (!newTopicTitle.trim() || isContentEmpty(newTopicContent)) return;
@@ -350,10 +436,16 @@ const Forum = () => {
       const isAlreadyFollowing = followedTopics.some(t => t.id === topicRef.id);
       if (!isAlreadyFollowing) {
         await handleFollowTopic(topicRef.id, newTopicTitle);
-        console.log("Auto-followed new topic:", topicRef.id);
       }
     } catch (error) {
-      console.error("Error auto-following topic:", error);
+      // Error auto-following topic
+    }
+
+    // Send notifications to users who might be interested in new topics in this forum
+    try {
+      await sendNotificationToForumFollowers(topicRef.id, newTopicTitle);
+    } catch (error) {
+      // Error sending notifications
     }
 
     setNewTopicTitle("");
@@ -473,11 +565,17 @@ const Forum = () => {
         const isAlreadyFollowing = followedTopics.some(t => t.id === selectedTopic);
         if (!isAlreadyFollowing) {
           await handleFollowTopic(selectedTopic, currentTopic.title);
-          console.log("Auto-followed topic after reply:", selectedTopic);
         }
       }
     } catch (error) {
-      console.error("Error auto-following topic after reply:", error);
+      // Error auto-following topic after reply
+    }
+
+    // Send notifications to all followers of this topic
+    try {
+      await sendNotificationToTopicFollowers(selectedTopic, currentTopic?.title || 'Unknown Topic');
+    } catch (error) {
+      // Error sending notifications
     }
 
     setReplyContent("");
@@ -915,3 +1013,4 @@ const Forum = () => {
 };
 
 export default Forum;
+
