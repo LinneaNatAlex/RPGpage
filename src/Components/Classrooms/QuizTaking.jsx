@@ -171,6 +171,11 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       
       // Check if user should advance to next grade
       let newGrade = userData.year || 1;
+      // Also check class field as fallback
+      if (!userData.year && userData.class) {
+        const match = userData.class.match(/(\d+)/);
+        newGrade = match ? parseInt(match[1]) : 1;
+      }
       if (passed) {
         // Count passed subjects for current grade
         const passedSubjects = takenQuizzes.filter(q => 
@@ -180,9 +185,20 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         if (passedSubjects >= 7 && newGrade < 7) {
           newGrade = newGrade + 1;
           // Give bonus points for grade advancement
+          const classNames = {
+            1: "1st year",
+            2: "2nd year", 
+            3: "3rd year",
+            4: "4th year",
+            5: "5th year",
+            6: "6th year",
+            7: "7th year"
+          };
+          
           await updateDoc(userRef, {
             takenQuizzes,
             year: newGrade,
+            class: classNames[newGrade] || `${newGrade}th year`,
             points: increment(100) // Bonus points for advancing
           });
         } else {

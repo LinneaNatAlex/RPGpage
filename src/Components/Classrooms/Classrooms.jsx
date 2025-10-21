@@ -18,6 +18,11 @@ function getUserYear(user) {
   if (user?.graduate) {
     return 'graduate';
   }
+  // Extract year from class field (e.g., "2nd year" -> 2)
+  if (user?.class) {
+    const match = user.class.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 1;
+  }
   return user?.year || 1;
 }
 

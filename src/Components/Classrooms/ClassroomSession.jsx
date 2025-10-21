@@ -11,6 +11,11 @@ function getUserYear(user) {
   if (user?.graduate) {
     return 'graduate';
   }
+  // Extract year from class field (e.g., "2nd year" -> 2)
+  if (user?.class) {
+    const match = user.class.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 1;
+  }
   return user?.year || 1;
 }
 import PotionList from "../PotionList/PotionList";
@@ -119,8 +124,12 @@ const ClassroomSession = () => {
   // For teachers/admins: allow year selection
   const isTeacher =
     roles.includes("teacher") || roles.includes("admin");
-  const [selectedYear, setSelectedYear] = useState(parseInt(user?.year) || 1);
-  const userYear = isTeacher ? selectedYear : parseInt(user?.year) || 1;
+  const [selectedYear, setSelectedYear] = useState(getUserYear(user));
+  
+  // Allow year selection for teachers OR users who are above year 1
+  const userCurrentYear = getUserYear(user);
+  const canSelectYear = isTeacher || userCurrentYear > 1;
+  const userYear = canSelectYear ? selectedYear : userCurrentYear;
   
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
@@ -671,7 +680,7 @@ const ClassroomSession = () => {
         </div>
       )}
 
-      {isTeacher && (
+      {canSelectYear && (
         <div
           style={{
             marginBottom: 24,
@@ -707,11 +716,17 @@ const ClassroomSession = () => {
               fontWeight: 600,
             }}
           >
-            {[1, 2, 3, 4, 5, 6, 7].map((y) => (
-              <option key={y} value={y}>
-                Year {y}
-              </option>
-            ))}
+            {(() => {
+              const availableYears = isTeacher 
+                ? [1, 2, 3, 4, 5, 6, 7] // Teachers can see all years
+                : Array.from({length: userCurrentYear}, (_, i) => i + 1); // Users can only see years they've achieved
+              
+              return availableYears.map((y) => (
+                <option key={y} value={y}>
+                  Year {y}
+                </option>
+              ));
+            })()}
           </select>
         </div>
       )}
