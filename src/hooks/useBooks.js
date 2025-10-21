@@ -65,11 +65,72 @@ const useBooks = () => {
         updatedAt: serverTimestamp(),
       });
 
+      // Update all copies of this book in users' inventories
+      await updateBookInAllInventories(bookId, bookData);
+
       // Refetch books to update the list
       await fetchBooks();
     } catch (error) {
       console.error("Error updating book: ", error);
       throw error;
+    }
+  };
+
+  // Update book in all users' inventories
+  const updateBookInAllInventories = async (bookId, bookData) => {
+    try {
+      // Get all users
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+      
+      const updatePromises = [];
+      
+      usersSnapshot.forEach((userDoc) => {
+        const userData = userDoc.data();
+        if (userData.inventory && Array.isArray(userData.inventory)) {
+          // Find all instances of this book in the user's inventory
+          const updatedInventory = userData.inventory.map(item => {
+            if (item.bookId === bookId || (item.type === "book" && item.id === bookId)) {
+              // Update the book data while preserving user-specific data like purchase date
+              return {
+                ...item,
+                ...bookData,
+                // Preserve user-specific fields
+                purchaseDate: item.purchaseDate,
+                purchasedFrom: item.purchasedFrom,
+                // Update book-specific fields
+                title: bookData.title,
+                description: bookData.description,
+                price: bookData.price,
+                pages: bookData.pages,
+                coverImage: bookData.coverImage,
+                audioUrl: bookData.audioUrl,
+                author: bookData.author,
+                updatedAt: new Date().toISOString()
+              };
+            }
+            return item;
+          });
+          
+          // Only update if inventory actually changed
+          const hasChanges = JSON.stringify(updatedInventory) !== JSON.stringify(userData.inventory);
+          if (hasChanges) {
+            updatePromises.push(
+              updateDoc(doc(db, "users", userDoc.id), {
+                inventory: updatedInventory
+              })
+            );
+          }
+        }
+      });
+      
+      // Execute all updates in parallel
+      if (updatePromises.length > 0) {
+        await Promise.all(updatePromises);
+      }
+    } catch (error) {
+      console.error("Error updating book in inventories: ", error);
+      // Don't throw error here to prevent book update from failing
     }
   };
 
@@ -79,11 +140,52 @@ const useBooks = () => {
       const bookRef = doc(db, "books", bookId);
       await deleteDoc(bookRef);
 
+      // Remove all copies of this book from users' inventories
+      await removeBookFromAllInventories(bookId);
+
       // Refetch books to update the list
       await fetchBooks();
     } catch (error) {
       console.error("Error deleting book: ", error);
       throw error;
+    }
+  };
+
+  // Remove book from all users' inventories
+  const removeBookFromAllInventories = async (bookId) => {
+    try {
+      // Get all users
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+      
+      const updatePromises = [];
+      
+      usersSnapshot.forEach((userDoc) => {
+        const userData = userDoc.data();
+        if (userData.inventory && Array.isArray(userData.inventory)) {
+          // Remove all instances of this book from the user's inventory
+          const updatedInventory = userData.inventory.filter(item => 
+            !(item.bookId === bookId || (item.type === "book" && item.id === bookId))
+          );
+          
+          // Only update if inventory actually changed
+          if (updatedInventory.length !== userData.inventory.length) {
+            updatePromises.push(
+              updateDoc(doc(db, "users", userDoc.id), {
+                inventory: updatedInventory
+              })
+            );
+          }
+        }
+      });
+      
+      // Execute all updates in parallel
+      if (updatePromises.length > 0) {
+        await Promise.all(updatePromises);
+      }
+    } catch (error) {
+      console.error("Error removing book from inventories: ", error);
+      // Don't throw error here to prevent book deletion from failing
     }
   };
 
