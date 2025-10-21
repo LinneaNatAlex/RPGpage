@@ -28,6 +28,11 @@ service cloud.firestore {
             request.resource.data.diff(resource.data).changedKeys().hasOnly(['inventory'])
           )
         ) ||
+        // Admin og teacher kan oppdatere inventory for alle brukere (for bok-oppdateringer)
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(["admin", "teacher"]) &&
+          request.resource.data.diff(resource.data).changedKeys().hasOnly(['inventory'])
+        ) ||
         // VIP system kan oppdatere VIP-relaterte felter for egen bruker
         (
           request.auth.uid == userId &&
