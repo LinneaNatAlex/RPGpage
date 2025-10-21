@@ -88,6 +88,8 @@ const useBooks = () => {
   const updateBookInAllInventories = async (bookId, bookData) => {
     try {
       console.log("Updating book in all inventories:", bookId, bookData);
+      console.log("Book ID:", bookId);
+      console.log("Book Data:", bookData);
       
       // Get all users (alert removed)
       const usersRef = collection(db, "users");
@@ -120,21 +122,26 @@ const useBooks = () => {
               usersWithBook++;
               
               // Update the book data while preserving user-specific data like purchase date
+              // Filter out undefined values to prevent Firestore errors
+              const cleanBookData = Object.fromEntries(
+                Object.entries(bookData).filter(([key, value]) => value !== undefined)
+              );
+              
               return {
                 ...item,
-                ...bookData,
+                ...cleanBookData,
                 // Preserve user-specific fields
                 purchaseDate: item.purchaseDate,
                 purchasedFrom: item.purchasedFrom,
                 qty: item.qty, // Preserve quantity
-                // Update book-specific fields
-                title: bookData.title,
-                description: bookData.description,
-                price: bookData.price,
-                pages: bookData.pages,
-                coverImage: bookData.coverImage,
-                audioUrl: bookData.audioUrl,
-                author: bookData.author,
+                // Update book-specific fields (only if they exist)
+                ...(bookData.title && { title: bookData.title }),
+                ...(bookData.description && { description: bookData.description }),
+                ...(bookData.price !== undefined && { price: bookData.price }),
+                ...(bookData.pages && { pages: bookData.pages }),
+                ...(bookData.coverImage && { coverImage: bookData.coverImage }),
+                ...(bookData.audioUrl && { audioUrl: bookData.audioUrl }),
+                ...(bookData.author && { author: bookData.author }),
                 updatedAt: new Date().toISOString()
               };
             }
@@ -155,11 +162,13 @@ const useBooks = () => {
       });
       
       console.log(`Found book in ${usersWithBook} out of ${totalUsers} users`);
+      console.log(`Number of updates to perform: ${updatePromises.length}`);
       
       // Execute all updates in parallel
       if (updatePromises.length > 0) {
+        console.log("Executing inventory updates...");
         await Promise.all(updatePromises);
-        console.log(`Updated ${updatePromises.length} user inventories`);
+        console.log(`Successfully updated ${updatePromises.length} user inventories`);
       } else {
         console.log("No user inventories needed updating");
       }
