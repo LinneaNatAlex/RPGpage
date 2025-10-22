@@ -121,6 +121,11 @@ export class PetDiscoverySystem {
         return false;
       }
       
+      // Check if pet has HP (not fainted)
+      if (userData.currentPet && userData.currentPet.health <= 0) {
+        return false; // Pet is fainted, can't discover anything
+      }
+      
       // Check if it's a new day and apply daily discovery chance
       if (lastDiscoveryDate !== today) {
         // New day - check if user gets any discoveries today

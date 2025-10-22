@@ -528,3 +528,26 @@
     font-size: 0.9rem;
   }
 }
+
+/* Fainted pet overlay */
+.faintedPetOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.faintedText {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-shadow: 0 0 4px rgba(255, 107, 107, 0.8);
+  transform: rotate(-15deg);
+}

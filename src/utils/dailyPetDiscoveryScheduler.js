@@ -38,8 +38,8 @@ const triggerUserDiscovery = async (user) => {
     
     const userData = userDoc.data();
     
-    // Check if user has active pet
-    if (!userData.currentPet) return false;
+    // Check if user has active pet and pet is not fainted
+    if (!userData.currentPet || userData.currentPet.health <= 0) return false;
     
     // Reset daily count if new day
     await resetDailyCountIfNeeded(userRef, userData);

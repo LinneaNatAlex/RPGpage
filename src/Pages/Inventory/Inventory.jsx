@@ -322,6 +322,13 @@ const Inventory = () => {
                         alt={itemWithImage.name}
                         className={styles.itemImage}
                       />
+                      {/* Fainted pet overlay */}
+                      {userData?.currentPet?.name === itemWithImage.name && 
+                       calculatePetHP(userData.currentPet) <= 0 && (
+                        <div className={styles.faintedPetOverlay}>
+                          <span className={styles.faintedText}>FAINTED</span>
+                        </div>
+                      )}
                     </div>
                     <div className={styles.itemTextContent}>
                       <span className={styles.itemName}>
