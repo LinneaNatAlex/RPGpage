@@ -117,17 +117,16 @@ const runDailyDiscoveryScheduler = async () => {
 // Schedule discoveries throughout the day
 const scheduleDailyDiscoveries = () => {
   
-  // Run immediately
-  runDailyDiscoveryScheduler();
-  
+  // Don't run immediately - let it run on schedule
   // Schedule to run every 2 hours (12 times per day)
   // This gives users multiple chances to get their 3 discoveries
   setInterval(runDailyDiscoveryScheduler, 2 * 60 * 60 * 1000); // 2 hours
   
 };
 
-// Start the scheduler when module loads
-if (typeof window !== 'undefined') {
+// Start the scheduler when module loads (only if not already running)
+if (typeof window !== 'undefined' && !window.petDiscoverySchedulerRunning) {
+  window.petDiscoverySchedulerRunning = true;
   scheduleDailyDiscoveries();
 }
 
