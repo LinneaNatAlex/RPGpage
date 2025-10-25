@@ -12,8 +12,8 @@ export const raceDescriptions = {
     description:
       "Elegant and mysterious, you thrive in the night. Shadows and secrets are your companions, and your charm is legendary.",
   },
-  Witch: {
-    title: "Witch",
+  Wizard: {
+    title: "Wizard",
     description:
       "Creative and wise, you weave spells with a whisper. The arcane arts and hidden wonders are yours to command.",
   },

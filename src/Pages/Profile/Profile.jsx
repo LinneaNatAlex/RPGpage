@@ -104,7 +104,7 @@ const Profile = () => {
   useEffect(() => {
     const updateCountdowns = () => {
       const now = new Date();
-      
+
       // Pet cooldown
       if (lastPet) {
         const lastTime = lastPet.toDate ? lastPet.toDate() : new Date(lastPet);
@@ -113,10 +113,12 @@ const Profile = () => {
         const remaining = Math.max(0, cooldownTime - timeDiff);
         setPetTimeLeft(Math.ceil(remaining / 1000));
       }
-      
+
       // Play cooldown
       if (lastPlay) {
-        const lastTime = lastPlay.toDate ? lastPlay.toDate() : new Date(lastPlay);
+        const lastTime = lastPlay.toDate
+          ? lastPlay.toDate()
+          : new Date(lastPlay);
         const timeDiff = now - lastTime;
         const cooldownTime = 5 * 60 * 1000; // 5 minutes
         const remaining = Math.max(0, cooldownTime - timeDiff);
@@ -133,10 +135,10 @@ const Profile = () => {
   // Pet interaction function
   const handlePetInteraction = async (type, moodChange) => {
     if (!user || !userData?.currentPet || isInteracting) return;
-    
+
     // Check specific cooldown based on type
-    if (type === 'pet' && !canPet()) return;
-    if (type === 'play' && !canPlay()) return;
+    if (type === "pet" && !canPet()) return;
+    if (type === "play" && !canPlay()) return;
 
     setIsInteracting(true);
 
@@ -145,18 +147,18 @@ const Profile = () => {
       const now = serverTimestamp();
 
       // Update pet mood in user's document
-      const userRef = doc(db, 'users', userData.uid || user.uid);
+      const userRef = doc(db, "users", userData.uid || user.uid);
       await updateDoc(userRef, {
-        'currentPet.mood': newMood,
+        "currentPet.mood": newMood,
         [`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`]: now,
-        'currentPet.lastInteractionBy': user.uid,
-        'currentPet.lastInteractionType': type
+        "currentPet.lastInteractionBy": user.uid,
+        "currentPet.lastInteractionType": type,
       });
 
       setPetMood(newMood);
-      if (type === 'pet') {
+      if (type === "pet") {
         setLastPet(now);
-      } else if (type === 'play') {
+      } else if (type === "play") {
         setLastPlay(now);
       }
 
@@ -165,10 +167,9 @@ const Profile = () => {
         setShowPetInteraction(false);
         setIsInteracting(false);
       }, 1000);
-
     } catch (error) {
-      console.error('Error updating pet mood:', error);
-      alert('Error updating pet mood: ' + error.message);
+      console.error("Error updating pet mood:", error);
+      alert("Error updating pet mood: " + error.message);
       setIsInteracting(false);
     }
   };
@@ -587,10 +588,8 @@ const Profile = () => {
                   <p>
                     <strong>Last Login:</strong>
                   </p>{" "}
-                  {auth.currentUser.metadata.lastLoginAt
-                    ? new Date(
-                        Number(auth.currentUser.metadata.lastLoginAt)
-                      ).toLocaleDateString()
+                  {userData.lastLogin
+                    ? userData.lastLogin.toDate().toLocaleString()
                     : "N/A"}
                 </div>
                 <div className={styles.caracterDetails}>
@@ -635,8 +634,10 @@ const Profile = () => {
                             </div>
                             <div className={styles.petHpTextContainer}>
                               <span className={styles.petHpText}>
-                                {Math.round(calculatePetHP(userData.currentPet))}%
-                                HP
+                                {Math.round(
+                                  calculatePetHP(userData.currentPet)
+                                )}
+                                % HP
                               </span>
                               <button
                                 className={styles.petPawButton}
@@ -850,14 +851,14 @@ const Profile = () => {
           </div>
         </div>
       </Suspense>
-      
+
       {/* Pet Interaction Modal */}
       {showPetInteraction && (
         <div className={styles.petInteractionModal}>
           <div className={styles.petInteractionModalContent}>
             <div className={styles.petInteractionHeader}>
               <h3>Pet Interaction</h3>
-              <button 
+              <button
                 className={styles.closeButton}
                 onClick={() => setShowPetInteraction(false)}
               >
@@ -867,34 +868,34 @@ const Profile = () => {
             <div className={styles.petInteractionButtons}>
               <button
                 className={styles.petInteractionBtn}
-                onClick={() => handlePetInteraction('pet', 5)}
+                onClick={() => handlePetInteraction("pet", 5)}
                 disabled={isInteracting || !canPet()}
                 title="Pet the animal (+5 mood)"
               >
-                {isInteracting ? 'Petting...' : 'Pet'}
+                {isInteracting ? "Petting..." : "Pet"}
               </button>
               <button
                 className={styles.petInteractionBtn}
-                onClick={() => handlePetInteraction('play', 10)}
+                onClick={() => handlePetInteraction("play", 10)}
                 disabled={isInteracting || !canPlay()}
                 title="Play with the animal (+10 mood)"
               >
-                {isInteracting ? 'Playing...' : 'Play'}
+                {isInteracting ? "Playing..." : "Play"}
               </button>
             </div>
-            
+
             {!canPet() && lastPet && petTimeLeft > 0 && (
               <div className={styles.cooldownText}>
                 Pet cooldown: {petTimeLeft}s
               </div>
             )}
-            
+
             {!canPlay() && lastPlay && playTimeLeft > 0 && (
               <div className={styles.cooldownText}>
                 Play cooldown: {playTimeLeft}s
               </div>
             )}
-            
+
             <div className={styles.petMoodDisplay}>
               <span className={styles.moodLabel}>Pet Mood:</span>
               <span className={styles.moodValue}>{petMood}/100</span>

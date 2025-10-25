@@ -58,7 +58,7 @@ const authContext = createContext({
   user: null,
   loading: true,
   emailVerified: false,
-  refreshAuthState: () => {}
+  refreshAuthState: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
@@ -80,16 +80,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    
     // Add focus listener to refresh auth when user returns to tab
     const handleFocus = () => {
       refreshAuthState();
     };
-    
-    window.addEventListener('focus', handleFocus);
-    
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
 
+    window.addEventListener("focus", handleFocus);
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       // Set a timeout to prevent infinite loading
       const timeoutId = setTimeout(() => {
         console.warn("Auth loading timeout - forcing loading to false");
@@ -143,7 +141,7 @@ export const AuthProvider = ({ children }) => {
                   email: currentUser.email,
                   roles: ["user"],
                   age: 11,
-                  race: "Witch", // Default race if missing
+                  race: "Wizard", // Default race if missing
                   class: "1st year",
                   currency: 1000,
                   inventory: [],
@@ -151,7 +149,7 @@ export const AuthProvider = ({ children }) => {
                   lastLogin: new Date(),
                   online: true,
                 };
-                
+
                 await setDoc(doc(db, "users", currentUser.uid), basicUserData);
                 setUser({ ...currentUser, ...basicUserData });
               } catch (error) {
@@ -269,12 +267,14 @@ export const AuthProvider = ({ children }) => {
 
     return () => {
       unsubscribe();
-      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener("focus", handleFocus);
     };
   }, []);
 
   return (
-    <authContext.Provider value={{ user, loading, emailVerified, refreshAuthState }}>
+    <authContext.Provider
+      value={{ user, loading, emailVerified, refreshAuthState }}
+    >
       {/* TEMPORARILY DISABLED - ALL BLOCKING LOGIC 
       {blocked.blocked ? (
         blocked.bannedType ? (

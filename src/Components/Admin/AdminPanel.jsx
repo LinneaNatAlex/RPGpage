@@ -8,6 +8,10 @@ import {
   updateDoc,
   increment,
   serverTimestamp,
+  collection,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import firebase from "firebase/compat/app";
@@ -49,6 +53,7 @@ export default function AdminPanel() {
   const [pointsUser, setPointsUser] = useState("");
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsMessage, setPointsMessage] = useState("");
+  const [migrationStatus, setMigrationStatus] = useState("");
 
   const filtered = users.filter(
     (u) =>
@@ -232,6 +237,58 @@ export default function AdminPanel() {
     }
   };
 
+  // Migration function to update Witch to Wizard
+  const handleWitchToWizardMigration = async () => {
+    if (!roles.includes("admin")) {
+      setMigrationStatus("Only admin can run migration.");
+      return;
+    }
+
+    setMigrationStatus("Starting migration...");
+
+    try {
+      // Get all users with race "Witch"
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("race", "==", "Witch"));
+      const querySnapshot = await getDocs(q);
+
+      console.log(`Found ${querySnapshot.size} users with race "Witch"`);
+      setMigrationStatus(`Found ${querySnapshot.size} users with race "Witch"`);
+
+      if (querySnapshot.size === 0) {
+        setMigrationStatus("No users found with race 'Witch'");
+        return;
+      }
+
+      const updatePromises = [];
+
+      querySnapshot.forEach((userDoc) => {
+        const userData = userDoc.data();
+        console.log(
+          `Updating user: ${userDoc.id} (${
+            userData.displayName || userData.email
+          })`
+        );
+
+        const updatePromise = updateDoc(doc(db, "users", userDoc.id), {
+          race: "Wizard",
+        });
+
+        updatePromises.push(updatePromise);
+      });
+
+      // Execute all updates
+      await Promise.all(updatePromises);
+
+      setMigrationStatus(
+        `Successfully updated ${updatePromises.length} users from "Witch" to "Wizard"`
+      );
+    } catch (error) {
+      console.error("Error during migration:", error);
+      setMigrationStatus(`Error: ${error.message}`);
+    }
+  };
+
   return (
     <div
       style={{
@@ -276,8 +333,83 @@ export default function AdminPanel() {
       >
         Admin Panel
       </h2>
-      {(roles.includes("admin") || roles.includes("teacher") || roles.includes("archivist")) && (
-        <ShopProductAdmin />
+      {(roles.includes("admin") ||
+        roles.includes("teacher") ||
+        roles.includes("archivist")) && <ShopProductAdmin />}
+
+      {/* Migration Section */}
+      {roles.includes("admin") && (
+        <div
+          style={{
+            marginBottom: 24,
+            background: "rgba(245, 239, 224, 0.1)",
+            padding: 20,
+            borderRadius: 16,
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow:
+              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <h3
+            style={{
+              color: theme.secondaryText,
+              fontSize: "1.3rem",
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 600,
+              textShadow: isDarkMode
+                ? "0 1px 2px rgba(0, 0, 0, 0.3)"
+                : "0 1px 2px rgba(255, 255, 255, 0.3)",
+              marginBottom: 16,
+            }}
+          >
+            Data Migration
+          </h3>
+          <button
+            onClick={handleWitchToWizardMigration}
+            style={{
+              background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
+              color: "#F5EFE0",
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: 12,
+              padding: "8px 16px",
+              fontWeight: 600,
+              fontSize: "0.9rem",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              boxShadow:
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              fontFamily: '"Cinzel", serif',
+              letterSpacing: "0.5px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-2px)";
+              e.target.style.boxShadow =
+                "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow =
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+            }}
+          >
+            Update Witch → Wizard
+          </button>
+          {migrationStatus && (
+            <div
+              style={{
+                marginTop: 12,
+                padding: 8,
+                background: "rgba(255, 255, 255, 0.1)",
+                borderRadius: 8,
+                fontSize: "0.9rem",
+                color: theme.text,
+              }}
+            >
+              {migrationStatus}
+            </div>
+          )}
+        </div>
       )}
       <button
         onClick={() => setShowBanned((v) => !v)}
@@ -911,7 +1043,9 @@ export default function AdminPanel() {
       {status && <div style={{ color: "#ff0", marginTop: 8 }}>{status}</div>}
 
       {/* Points management section */}
-      {(roles.includes("admin") || roles.includes("teacher") || roles.includes("archivist")) && (
+      {(roles.includes("admin") ||
+        roles.includes("teacher") ||
+        roles.includes("archivist")) && (
         <div
           style={{
             marginTop: 24,

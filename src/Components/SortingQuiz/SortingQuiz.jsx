@@ -9,7 +9,7 @@ const questions = [
     answers: [
       { text: "The full moon and the wild power of nature", race: "Werewolf" },
       { text: "The mysteries of the night and immortality", race: "Vampire" },
-      { text: "Wands, herbs, and magical rituals", race: "Witch" },
+      { text: "Wands, herbs, and magical rituals", race: "Wizard" },
       { text: "Ancient forests and timeless wisdom", race: "Elf" },
     ],
   },
@@ -18,7 +18,7 @@ const questions = [
     answers: [
       { text: "Strong, loyal, and a bit wild", race: "Werewolf" },
       { text: "Elegant, clever, and resourceful", race: "Vampire" },
-      { text: "Creative, intuitive, and curious", race: "Witch" },
+      { text: "Creative, intuitive, and curious", race: "Wizard" },
       { text: "Just, wise, and harmonious", race: "Elf" },
     ],
   },
@@ -30,7 +30,7 @@ const questions = [
         race: "Werewolf",
       },
       { text: "Study ancient tomes about immortality", race: "Vampire" },
-      { text: "Brew potions and master new spells", race: "Witch" },
+      { text: "Brew potions and master new spells", race: "Wizard" },
       { text: "Learn nature’s secrets and protect others", race: "Elf" },
     ],
   },
@@ -39,7 +39,7 @@ const questions = [
     answers: [
       { text: "Earth and animals", race: "Werewolf" },
       { text: "Night and blood", race: "Vampire" },
-      { text: "Fire and magic", race: "Witch" },
+      { text: "Fire and magic", race: "Wizard" },
       { text: "Air and light", race: "Elf" },
     ],
   },
@@ -73,40 +73,40 @@ const SortingQuiz = ({ onClose, onResult }) => {
     <div className={styles.SortingQuizModal}>
       <div className={styles.SortingQuizModalContent}>
         <div className={styles.SortingQuizContent}>
-        {!resultRace ? (
-          <>
-            <div className={styles.questionText}>
-              <h3>Magical Race Sorting Quiz</h3>
-              <p>{questions[currentQuestion].question}</p>
+          {!resultRace ? (
+            <>
+              <div className={styles.questionText}>
+                <h3>Magical Race Sorting Quiz</h3>
+                <p>{questions[currentQuestion].question}</p>
+              </div>
+              <div>
+                {questions[currentQuestion].answers.map((answer) => (
+                  <Button
+                    className={styles.answerButton}
+                    key={answer.text}
+                    onClick={() => handleAnswers(answer.race)}
+                  >
+                    <div className={styles.answerText}>{answer.text}</div>
+                  </Button>
+                ))}
+              </div>
+              <Button onClick={onClose} className={styles.ExitButton}>
+                <strong>✕</strong>
+              </Button>
+            </>
+          ) : (
+            <div className={styles.resultContainer}>
+              <h3>
+                You have been sorted as:{" "}
+                {raceDescriptions[resultRace]?.title || resultRace}
+              </h3>
+              <p>{raceDescriptions[resultRace]?.description}</p>
+              {/* Info link removed, description is now longer and in English */}
+              <Button onClick={onClose} className={styles.ExitButton}>
+                <strong>✕</strong>
+              </Button>
             </div>
-            <div>
-              {questions[currentQuestion].answers.map((answer) => (
-                <Button
-                  className={styles.answerButton}
-                  key={answer.text}
-                  onClick={() => handleAnswers(answer.race)}
-                >
-                  <div className={styles.answerText}>{answer.text}</div>
-                </Button>
-              ))}
-            </div>
-            <Button onClick={onClose} className={styles.ExitButton}>
-              <strong>✕</strong>
-            </Button>
-          </>
-        ) : (
-          <div className={styles.resultContainer}>
-            <h3>
-              You have been sorted as:{" "}
-              {raceDescriptions[resultRace]?.title || resultRace}
-            </h3>
-            <p>{raceDescriptions[resultRace]?.description}</p>
-            {/* Info link removed, description is now longer and in English */}
-            <Button onClick={onClose} className={styles.ExitButton}>
-              <strong>✕</strong>
-            </Button>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </div>
