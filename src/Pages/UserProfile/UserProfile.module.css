@@ -1048,6 +1048,11 @@
   font-size: 0.9rem;
 }
 
+.moodEmoji {
+  font-size: 1.2rem;
+  margin-left: 8px;
+}
+
 .petName {
   color: #ffe4b5 !important;
   font-size: 1.1rem;

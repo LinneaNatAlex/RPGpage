@@ -28,7 +28,7 @@ const UserProfile = () => {
   const [userData, setUserData] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [showPetInteraction, setShowPetInteraction] = useState(false);
-  const [petMood, setPetMood] = useState(50);
+  const [petMood, setPetMood] = useState(userData?.currentPet?.mood || 50);
   const [isInteracting, setIsInteracting] = useState(false);
   const [lastPet, setLastPet] = useState(null);
   const [lastPlay, setLastPlay] = useState(null);
@@ -79,6 +79,17 @@ const UserProfile = () => {
           const data = docSnap.data();
           startTransition(() => {
             setUserData(data);
+            // Oppdater pet mood fra global data
+            if (data.currentPet?.mood !== undefined) {
+              setPetMood(data.currentPet.mood);
+            }
+            // Sett lastPet og lastPlay fra global data
+            if (data.currentPet?.lastPet) {
+              setLastPet(data.currentPet.lastPet);
+            }
+            if (data.currentPet?.lastPlay) {
+              setLastPlay(data.currentPet.lastPlay);
+            }
           });
         } else {
           startTransition(() => {
@@ -137,13 +148,35 @@ const UserProfile = () => {
         const remaining = Math.max(0, cooldownTime - timeDiff);
         setPlayTimeLeft(Math.ceil(remaining / 1000));
       }
+
+      // Mood decay over time (reduce by 1 every 10 minutes)
+      if (userData?.currentPet?.lastInteraction) {
+        const lastInteraction = userData.currentPet.lastInteraction.toDate
+          ? userData.currentPet.lastInteraction.toDate()
+          : new Date(userData.currentPet.lastInteraction);
+        const timeSinceInteraction = now - lastInteraction;
+        const decayInterval = 10 * 60 * 1000; // 10 minutes
+        const decayAmount = Math.floor(timeSinceInteraction / decayInterval);
+
+        if (decayAmount > 0) {
+          const newMood = Math.max(0, petMood - decayAmount);
+          if (newMood !== petMood) {
+            setPetMood(newMood);
+            // Update in Firestore
+            const userRef = doc(db, "users", userData.uid);
+            updateDoc(userRef, {
+              "currentPet.mood": newMood,
+            }).catch(console.error);
+          }
+        }
+      }
     };
 
     updateCountdowns(); // Initial update
     const interval = setInterval(updateCountdowns, 1000); // Update every second
 
     return () => clearInterval(interval);
-  }, [lastPet, lastPlay]);
+  }, [lastPet, lastPlay, userData, petMood]);
 
   // Pet interaction function
   const handlePetInteraction = async (type, moodChange) => {
@@ -156,7 +189,7 @@ const UserProfile = () => {
     setIsInteracting(true);
 
     try {
-      const newMood = Math.max(0, Math.min(100, petMood + moodChange));
+      const newMood = Math.min(100, petMood + moodChange);
       const now = serverTimestamp();
 
       // Update pet mood in user's document
@@ -164,6 +197,7 @@ const UserProfile = () => {
       await updateDoc(userRef, {
         "currentPet.mood": newMood,
         [`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`]: now,
+        "currentPet.lastInteraction": now,
         "currentPet.lastInteractionBy": user.uid,
         "currentPet.lastInteractionType": type,
       });
@@ -955,19 +989,32 @@ const UserProfile = () => {
 
             {!canPet() && lastPet && petTimeLeft > 0 && (
               <div className={styles.cooldownText}>
-                Pet cooldown: {petTimeLeft}s
+                Pet cooldown: {Math.floor(petTimeLeft / 60)}:
+                {(petTimeLeft % 60).toString().padStart(2, "0")}
               </div>
             )}
 
             {!canPlay() && lastPlay && playTimeLeft > 0 && (
               <div className={styles.cooldownText}>
-                Play cooldown: {playTimeLeft}s
+                Play cooldown: {Math.floor(playTimeLeft / 60)}:
+                {(playTimeLeft % 60).toString().padStart(2, "0")}
               </div>
             )}
 
             <div className={styles.petMoodDisplay}>
               <span className={styles.moodLabel}>Pet Mood:</span>
               <span className={styles.moodValue}>{petMood}/100</span>
+              <span className={styles.moodEmoji}>
+                {petMood >= 80
+                  ? "😊"
+                  : petMood >= 60
+                  ? "🙂"
+                  : petMood >= 40
+                  ? "😐"
+                  : petMood >= 20
+                  ? "😔"
+                  : "😢"}
+              </span>
             </div>
           </div>
         </div>
