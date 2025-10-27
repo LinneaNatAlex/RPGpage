@@ -165,6 +165,11 @@ export class PetDiscoverySystem {
         return null;
       }
       
+      // Check if pet has HP (not fainted) - even test discoveries should respect this
+      if (currentPet.health <= 0) {
+        return null; // Pet is fainted, can't discover anything
+      }
+      
       // Check if user has Lucky Potion effect
       const now = Date.now();
       const luckyUntil = userData.luckyUntil || 0;
