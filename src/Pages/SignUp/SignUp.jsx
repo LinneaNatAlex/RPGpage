@@ -13,7 +13,6 @@ import Button from "../../Components/Button/Button";
 import useSignUpValidation from "../../hooks/useSignUpValidation";
 import { db } from "../../firebaseConfig";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
-import Train from "../../assets/VideoBackgrounds/Train.mp4";
 // import VerifyEmail from "../VerifyEmail/VerifyEmail";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import ErrorMessage from "../../Components/ErrorMessage/ErrorMessage";

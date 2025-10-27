@@ -9,10 +9,8 @@ src/assets/
 ├── Cursor/
 │   ├── magicalCursor.css     # CSS styles for magical cursor effects
 │   └── magicalCursor.js      # JavaScript logic for magical cursor system
-├── Variables/
-│   └── Variables.css        # CSS custom properties (design tokens)
-└── VideoBackgrounds/
-    └── Train.mp4            # Background video animation
+└── Variables/
+    └── Variables.css        # CSS custom properties (design tokens)
 
 public/icons/
 ├── avatar.svg              # User avatar/profile icon
@@ -46,14 +44,6 @@ public/icons/
 - Design tokens for colors, fonts, spacing, animations
 - Placeholder for future CSS variable definitions
 - Enables easy theme switching and maintenance
-
-### Video Backgrounds (`src/assets/VideoBackgrounds/`)
-
-**Train.mp4**
-- Background video animation for immersive UI
-- Harry Potter themed moving train scene
-- Optimized for web playback
-- Used for dynamic page backgrounds
 
 ### Icons (`public/icons/`)
 
@@ -94,30 +84,22 @@ public/icons/
 - Style with CSS (fill, stroke, size properties)
 - Maintain aspect ratios when scaling
 
-### Video Files
-- Use for background effects only
-- Consider bandwidth and performance impact
-- Provide fallbacks for unsupported browsers
-
 ## Performance Considerations
 
 - All assets are optimized for web use
 - CSS animations use hardware acceleration
 - SVG icons are scalable and lightweight
-- Video files are compressed for web delivery
 - Mobile devices have reduced effects for performance
 
 ## Accessibility
 
 - Magical cursor effects can be disabled
 - SVG icons maintain accessibility attributes
-- Video backgrounds have proper fallbacks
 - All assets follow WCAG guidelines
 
 ## Maintenance
 
 - Update CSS variables for theme changes
-- Optimize video files for better compression
 - Ensure SVG icons maintain accessibility
 - Test cursor effects across different browsers
 - Monitor performance impact on mobile devices
