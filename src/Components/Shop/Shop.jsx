@@ -18,7 +18,7 @@ import styles from "./Shop.module.css";
 import shopItems from "./itemsList";
 import useUserData from "../../hooks/useUserData";
 
-// itemsList.js varer + Firestore varer vises sammen
+// Static items + Firestore items displayed together
 
 const categories = [
   "Books",
@@ -47,7 +47,7 @@ const Shop = ({ open = true }) => {
   const [activeCategory, setActiveCategory] = useState("Books");
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [books, setBooks] = useState([]);
-  
+
   // Get brewed potions for unlock system
   const [craftedPotions, setCraftedPotions] = useState(new Set());
 
@@ -344,32 +344,34 @@ const Shop = ({ open = true }) => {
           .filter((item) => {
             // First check category
             if (item.category !== activeCategory) return false;
-            
+
             // For potions, show all items (locked if not crafted)
             if (item.category === "Potions") {
               return true; // Show all potions, ingredients, and equipment
             }
-            
+
             // For other categories, show all items
             return true;
           })
           .map((item) => {
             const itemWithImage = addImageToItem(item);
-            
+
             // Check if potion is locked (not crafted)
-            const isPotionLocked = item.category === "Potions" && 
-              item.type === "potion" && 
+            const isPotionLocked =
+              item.category === "Potions" &&
+              item.type === "potion" &&
               !craftedPotions.has(item.name);
-            
+
             return (
               <li
                 key={
                   itemWithImage.id +
                   (itemWithImage.firestore ? "-fs" : "-static")
                 }
-                className={`${styles.item} ${isPotionLocked ? styles.lockedItem : ''}`}
+                className={`${styles.item} ${
+                  isPotionLocked ? styles.lockedItem : ""
+                }`}
               >
-                
                 <div className={styles.itemInfo}>
                   {/* Product Image */}
                   {(itemWithImage.image || itemWithImage.coverImage) && (
@@ -433,19 +435,21 @@ const Shop = ({ open = true }) => {
                     {itemWithImage.price} Nits
                   </span>
                   {isPotionLocked ? (
-                    <button 
-                      disabled 
+                    <button
+                      disabled
                       style={{
                         background: "#666",
                         color: "#ccc",
                         cursor: "not-allowed",
-                        opacity: 0.6
+                        opacity: 0.6,
                       }}
                     >
                       🔒 Locked - Craft First
                     </button>
                   ) : (
-                    <button onClick={() => handleBuy(itemWithImage)}>Buy</button>
+                    <button onClick={() => handleBuy(itemWithImage)}>
+                      Buy
+                    </button>
                   )}
                   {/* Delete button for Firestore items, admin/teacher only */}
                   {itemWithImage.firestore && isAdmin && (

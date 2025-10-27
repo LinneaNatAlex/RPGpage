@@ -1,12 +1,12 @@
-// import nessesary libraries and styles
+// Import necessary libraries and styles
 import styles from "./Button.module.css";
 
 const Button = ({
   type = "button",
   children = "Click",
-  // This ^ shows the the "click" text if nothing else is spessified
+  // This ^ shows the "click" text if nothing else is specified
   onClick,
-  // function that is the function that is called when the button is clicked
+  // function that is called when the button is clicked
   className,
   disabled = false,
   ariaLabel,
@@ -16,7 +16,7 @@ const Button = ({
     <button
       type={type}
       className={`${className} ${styles.button}`}
-      //  combinding the css clases with the className prop. Making sure it is possible to use the styles globaly
+      // combining the css classes with the className prop. Making sure it is possible to use the styles globally
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}
