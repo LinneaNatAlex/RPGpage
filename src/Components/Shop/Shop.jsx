@@ -31,8 +31,7 @@ const categories = [
 ];
 
 const Shop = ({ open = true }) => {
-  // Note: Author payments removed since books now use display names only
-  // Books are now purely for RP purposes and don't affect user accounts
+  // Books use display names only - no author payments
   const { user } = useAuth();
   const { userData } = useUserData();
   // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
@@ -147,8 +146,6 @@ const Shop = ({ open = true }) => {
     }
 
     try {
-      // Note: Books no longer pay authors since they use display names only
-
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) {
