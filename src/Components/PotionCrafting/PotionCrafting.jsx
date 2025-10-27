@@ -688,7 +688,6 @@ const PotionCrafting = ({ userYear = 1 }) => {
         setCraftedPotions(crafted);
       }
     } catch (error) {
-      console.error('Error loading user data:', error);
     } finally {
       setLoading(false);
     }
@@ -773,7 +772,6 @@ const PotionCrafting = ({ userYear = 1 }) => {
       
       setTimeout(() => setCraftingResult(null), 3000);
     } catch (error) {
-      console.error('Error crafting potion:', error);
     }
   };
 

@@ -35,7 +35,6 @@ const InventoryModal = ({ open, onClose }) => {
 
   if (!open) return null;
 
-  console.log("InventoryModal opened, inventory:", userData?.inventory || []);
 
   return (
     <div className={styles.modalOverlay}>
@@ -45,14 +44,12 @@ const InventoryModal = ({ open, onClose }) => {
           <ul className={styles.inventoryList}>
             {userData.inventory.map((item, idx) => {
               // Debug: Log ALL items to see what's in inventory
-              console.log("Inventory item:", item);
 
               // Debug: Log item data
               if (
                 item.name?.toLowerCase().includes("book") ||
                 item.type === "book"
               ) {
-                console.log("Book item found:", item);
               }
 
               // Mat og potions kan spises/drikkes
@@ -79,8 +76,8 @@ const InventoryModal = ({ open, onClose }) => {
                           src={item.image || item.coverImage}
                           alt={item.name}
                           className={styles.itemImage}
-                          onLoad={() => console.log('InventoryModal image loaded for:', item.name)}
-                          onError={() => console.log('InventoryModal image failed to load for:', item.name)}
+                          onLoad={() => {}}
+                          onError={() => {}}
                         />
                       </div>
                     )}
@@ -286,7 +283,6 @@ const InventoryModal = ({ open, onClose }) => {
                           className={styles.readBtn}
                           title="Read this book"
                           onClick={() => {
-                            console.log("Read button clicked for:", item);
                             setBookViewer({ open: true, book: item });
                           }}
                           style={{

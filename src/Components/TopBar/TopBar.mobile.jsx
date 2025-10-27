@@ -136,7 +136,6 @@ const TopBar = () => {
                           className="mobile-item-btn"
                           onClick={() => {
                             // Open book viewer - you'll need to implement this
-                            console.log("Read book:", item);
                           }}
                         >
                           📖 Read

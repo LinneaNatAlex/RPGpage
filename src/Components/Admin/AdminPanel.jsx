@@ -252,7 +252,6 @@ export default function AdminPanel() {
       const q = query(usersRef, where("race", "==", "Witch"));
       const querySnapshot = await getDocs(q);
 
-      console.log(`Found ${querySnapshot.size} users with race "Witch"`);
       setMigrationStatus(`Found ${querySnapshot.size} users with race "Witch"`);
 
       if (querySnapshot.size === 0) {
@@ -264,11 +263,6 @@ export default function AdminPanel() {
 
       querySnapshot.forEach((userDoc) => {
         const userData = userDoc.data();
-        console.log(
-          `Updating user: ${userDoc.id} (${
-            userData.displayName || userData.email
-          })`
-        );
 
         const updatePromise = updateDoc(doc(db, "users", userDoc.id), {
           race: "Wizard",
@@ -284,7 +278,6 @@ export default function AdminPanel() {
         `Successfully updated ${updatePromises.length} users from "Witch" to "Wizard"`
       );
     } catch (error) {
-      console.error("Error during migration:", error);
       setMigrationStatus(`Error: ${error.message}`);
     }
   };

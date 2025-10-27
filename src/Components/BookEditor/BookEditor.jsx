@@ -91,7 +91,6 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         setCoverImage(imageUrl);
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
       alert("Kunne ikke laste opp bilde. Prøv igjen.");
     } finally {
       setUploadingImage(false);
@@ -134,7 +133,6 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         setPages(newPages);
       }
     } catch (error) {
-      console.error("Error uploading audio:", error);
       alert("Kunne ikke laste opp lydfil. Prøv igjen.");
     } finally {
       setUploadingAudio((prev) => ({ ...prev, [pageIndex]: false }));
@@ -180,7 +178,6 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
       onSave?.();
     } catch (error) {
-      console.error("Error saving book:", error);
       alert(`Error saving book: ${error.message || "Please try again."}`);
     } finally {
       setSaving(false);

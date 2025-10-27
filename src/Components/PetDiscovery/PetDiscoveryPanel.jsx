@@ -39,7 +39,6 @@ const PetDiscoveryPanel = () => {
     
     const success = await acceptDiscovery(0); // Always accept the first one
     if (success) {
-      console.log('Discovery accepted!');
       setShowPopup(false);
       setCurrentDiscovery(null);
     }
@@ -50,7 +49,6 @@ const PetDiscoveryPanel = () => {
     
     const success = await declineDiscovery(0); // Always decline the first one
     if (success) {
-      console.log('Discovery declined!');
       setShowPopup(false);
       setCurrentDiscovery(null);
     }

@@ -77,7 +77,6 @@ const Shop = ({ open = true }) => {
         }));
         setFirestoreItems(arr);
       } catch (error) {
-        console.error("Error fetching shop items:", error);
       }
     };
 
@@ -111,7 +110,6 @@ const Shop = ({ open = true }) => {
         }));
         setBooks(arr);
       } catch (error) {
-        console.error("Error fetching books:", error);
       }
     };
 
@@ -241,7 +239,6 @@ const Shop = ({ open = true }) => {
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(""), 5000);
     } catch (error) {
-      console.error("Error buying item:", error);
       setErrorMessage(`Failed to purchase ${item.name}: ${error.message}`);
       setTimeout(() => setErrorMessage(""), 5000);
     }
@@ -488,7 +485,6 @@ const Shop = ({ open = true }) => {
                             );
                             setTimeout(() => setSuccessMessage(""), 5000);
                           } catch (error) {
-                            console.error("Error deleting product:", error);
                             setErrorMessage(
                               `Failed to delete product: ${error.message}`
                             );

@@ -63,7 +63,6 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
           }
         }
       } catch (error) {
-        console.error("Error loading quiz:", error);
         setError("Failed to load quiz");
       } finally {
         setLoading(false);
@@ -175,7 +174,6 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
       
       onComplete();
     } catch (error) {
-      console.error("Error updating quiz:", error);
       setError(error.message);
     } finally {
       setIsSubmitting(false);

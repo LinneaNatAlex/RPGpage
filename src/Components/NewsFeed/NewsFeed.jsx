@@ -81,7 +81,6 @@ const NewsFeed = () => {
           .filter((item) => item.type === "nyhet");
         setNewsList(newData.slice(0, 10));
       } catch (error) {
-        console.error("Error fetching news:", error);
         setNewsList([]);
       }
     };

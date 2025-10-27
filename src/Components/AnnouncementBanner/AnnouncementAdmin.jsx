@@ -22,7 +22,6 @@ export default function AnnouncementAdmin({ user }) {
       });
       setText("");
     } catch (err) {
-      console.error("Failed to add announcement:", err);
       setError(
         "Failed to add announcement. Check your permissions and network."
       );

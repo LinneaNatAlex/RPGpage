@@ -83,7 +83,6 @@ const TopBar = () => {
         setFollowedTopics(topics);
       }
     } catch (error) {
-      console.error("Error fetching followed topics:", error);
     }
   };
 
@@ -387,7 +386,6 @@ const TopBar = () => {
           await updateDoc(userRef, { lastHealthUpdate: now });
         }
       } catch (error) {
-        console.error("Error in decayHealth:", error);
       }
     }
 
@@ -421,7 +419,6 @@ const TopBar = () => {
           setInfirmaryEnd(null);
         }
       } catch (error) {
-        console.error("Error in infirmary countdown:", error);
       }
     }, 1000);
     return () => clearInterval(timer);
@@ -476,7 +473,6 @@ const TopBar = () => {
         cacheHelpers.setNotifications(user.uid, notifications);
         setNotifications(notifications);
       } catch (error) {
-        console.error("Error fetching notifications:", error);
       }
     };
 

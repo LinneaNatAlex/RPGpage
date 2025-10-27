@@ -51,8 +51,6 @@ export default function ShopProductAdmin() {
       }));
       setExistingProducts(products);
     } catch (error) {
-      console.error("Error fetching products:", error);
-      console.error("Error details:", error.code, error.message);
       setStatus(
         "Error fetching products: " +
           error.message +
@@ -95,7 +93,6 @@ export default function ShopProductAdmin() {
         setForm((f) => ({ ...f, image: imageUrl }));
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
       alert("Could not upload image. Please try again.");
     } finally {
       setUploadingImage(false);
@@ -196,9 +193,6 @@ export default function ShopProductAdmin() {
 
       cancelEdit();
     } catch (err) {
-      console.error("Update error:", err);
-      console.error("Product ID:", editingProduct.id);
-      console.error("Product data:", editingProduct);
       setStatus("Error updating: " + err.message + " (Code: " + err.code + ")");
     }
   };
@@ -263,7 +257,6 @@ export default function ShopProductAdmin() {
       // Refresh produkter fra Firestore
       await fetchProducts();
     } catch (err) {
-      console.error("Conversion error:", err);
       setStatus(
         "Error converting: " + err.message + " (Code: " + err.code + ")"
       );
@@ -329,7 +322,6 @@ export default function ShopProductAdmin() {
           );
         }
       } catch (err) {
-        console.error(`Error converting ${staticProduct.name}:`, err);
         errors++;
       }
     }

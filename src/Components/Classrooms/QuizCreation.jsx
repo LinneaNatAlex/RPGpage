@@ -130,7 +130,6 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
       
       onComplete();
     } catch (error) {
-      console.error("Error creating quiz:", error);
       setError(error.message);
     } finally {
       setIsSubmitting(false);

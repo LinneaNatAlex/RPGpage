@@ -188,7 +188,6 @@ const ClassroomSession = () => {
                   });
                 }
               } catch (error) {
-                console.error("Error loading quiz:", quizInfo.quizId, error);
               }
             }
             setAvailableQuizzes(fullQuizzes);
@@ -204,7 +203,6 @@ const ClassroomSession = () => {
           });
         }
       } catch (error) {
-        console.error("Error loading class data:", error);
         setCustomDescription(classInfo?.description || "");
         setCustomClassInfo({
           points: classInfo?.points || 10,
@@ -230,7 +228,6 @@ const ClassroomSession = () => {
           setTakenQuizzes(userData.takenQuizzes || []);
         }
       } catch (error) {
-        console.error("Error loading taken quizzes:", error);
       }
     };
 
@@ -273,7 +270,6 @@ const ClassroomSession = () => {
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(""), 5000);
     } catch (error) {
-      console.error("Detailed error saving class description:", error);
 
       if (error.code === "permission-denied") {
         setErrorMessage(
@@ -325,7 +321,6 @@ const ClassroomSession = () => {
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(""), 5000);
     } catch (error) {
-      console.error("Error saving class info:", error);
 
       // Check for specific Firebase errors
       if (error.code === "permission-denied") {
@@ -428,7 +423,6 @@ const ClassroomSession = () => {
         }
       }
     } catch (error) {
-      console.error("Error reloading class data:", error);
     }
   };
 
@@ -483,7 +477,6 @@ const ClassroomSession = () => {
         }
       }
     } catch (error) {
-      console.error("Error reloading class data:", error);
     }
   };
 
@@ -611,7 +604,6 @@ const ClassroomSession = () => {
       await updateDoc(ref, { students: newStudents });
       navigate("/ClassRooms");
     } catch (err) {
-      console.error("Error leaving class:", err);
     }
   }
 

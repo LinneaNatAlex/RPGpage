@@ -52,10 +52,6 @@ function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
                     message.id
                   );
                   await deleteDoc(messageRef);
-                  console.log(
-                    "Message deleted successfully from Firestore using ID:",
-                    message.id
-                  );
                 } else {
                   console.error("Message ID not found, cannot delete");
                   alert("Kunne ikke slette meldingen - mangler ID.");
@@ -320,11 +316,6 @@ const PrivateChat = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log(
-        "Private chat messages updated:",
-        messages.length,
-        "messages"
-      );
       setSelectedMessages(messages);
     });
   }, [currentUser, selectedUser, isCollapsed]);
@@ -395,7 +386,6 @@ const PrivateChat = () => {
           editingMessage.id
         );
         await updateDoc(messageRef, { text: message });
-        console.log("Message edited successfully using ID:", editingMessage.id);
       } else {
         console.error("Editing message ID not found");
         alert("Kunne ikke redigere meldingen - mangler ID.");

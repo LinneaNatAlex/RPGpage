@@ -111,7 +111,6 @@ const MobileLayout = ({ children }) => {
       setShowDashboard(false);
       navigate("/");
     } catch (error) {
-      console.error("Error signing out:", error);
     }
   };
 

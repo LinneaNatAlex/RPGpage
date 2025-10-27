@@ -130,7 +130,6 @@ const Chat = () => {
           );
         }
       } catch (error) {
-        console.error("Error fetching user potions:", error);
       }
     };
 
