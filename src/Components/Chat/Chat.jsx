@@ -32,7 +32,6 @@ const Chat = () => {
   const [showEmoji, setShowEmoji] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [mentionActiveIdx, setMentionActiveIdx] = useState(0);
-  // Note: Notification permission handled globally in App.jsx
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = localStorage.getItem("mainChatCollapsed");
@@ -67,8 +66,6 @@ const Chat = () => {
   useEffect(() => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
   }, [isCollapsed]);
-
-  // Note: Notification permission handled globally in App.jsx
 
   // Load user's potion effects
   // QUOTA OPTIMIZATION: Use polling instead of real-time listener
@@ -278,8 +275,6 @@ const Chat = () => {
       playPing();
     }
   }, [messages]);
-
-  // Note: Ping logic is now handled globally in App.jsx
 
   // ----------------------FORMATTING FUNCTION-----------------------
   const formatMessage = (text) => {
