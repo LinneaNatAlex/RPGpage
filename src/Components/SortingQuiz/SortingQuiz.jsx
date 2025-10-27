@@ -296,8 +296,8 @@ const SortingQuiz = ({ onClose, onResult }) => {
   // Randomize questions on component mount
   useEffect(() => {
     const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    // Select 8 random questions for each quiz
-    const selectedQuestions = shuffled.slice(0, 8);
+    // Select 10 random questions for each quiz
+    const selectedQuestions = shuffled.slice(0, 10);
 
     // Randomize the order of answers for each question
     const randomizedQuestions = selectedQuestions.map((question) => ({
