@@ -42,7 +42,6 @@ export const checkWordCountReward = async (userId, wordCount, previousWordCount 
     
     return { awarded: false, nits: 0 };
   } catch (error) {
-    console.error('Error awarding nits:', error);
     return { awarded: false, nits: 0, error: error.message };
   }
 };
@@ -58,7 +57,6 @@ export const getUserWordCount = async (userId) => {
     }
     return 0;
   } catch (error) {
-    console.error('Error getting user word count:', error);
     return 0;
   }
 };
@@ -114,7 +112,6 @@ export const updateUserWordCount = async (userId, additionalWords) => {
     
     return newWordCount;
   } catch (error) {
-    console.error('Error updating user word count:', error);
     return 0;
   }
 };

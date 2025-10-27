@@ -143,7 +143,6 @@ export class PetDiscoverySystem {
       
       return true;
     } catch (error) {
-      console.error('Error checking discovery eligibility:', error);
       return false;
     }
   }
@@ -217,7 +216,6 @@ export class PetDiscoverySystem {
         luckyEffect: hasLuckyEffect
       };
     } catch (error) {
-      console.error('Error in test discovery:', error);
       return null;
     }
   }
@@ -297,7 +295,6 @@ export class PetDiscoverySystem {
 
       return discoveryData;
     } catch (error) {
-      console.error('Error triggering pet discovery:', error);
       return null;
     }
   }
@@ -344,7 +341,6 @@ export class PetDiscoverySystem {
       
       return true;
     } catch (error) {
-      console.error('Error accepting discovery:', error);
       return false;
     }
   }
@@ -372,7 +368,6 @@ export class PetDiscoverySystem {
       
       return true;
     } catch (error) {
-      console.error('Error declining discovery:', error);
       return false;
     }
   }
@@ -388,7 +383,6 @@ export class PetDiscoverySystem {
       const userData = userDoc.data();
       return userData.pendingPetDiscoveries || [];
     } catch (error) {
-      console.error('Error getting pending discoveries:', error);
       return [];
     }
   }
@@ -404,7 +398,6 @@ export class PetDiscoverySystem {
       const userData = userDoc.data();
       return !!userData.currentPet;
     } catch (error) {
-      console.error('Error checking active pet:', error);
       return false;
     }
   }

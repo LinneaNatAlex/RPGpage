@@ -37,7 +37,6 @@ class SmartPaginator {
 
     // Check cache first
     if (this.cache.has(cacheKey)) {
-      console.log(
         `📖 Using cached page ${pageNumber} for ${this.collectionName}`
       );
       return this.cache.get(cacheKey);
@@ -96,12 +95,10 @@ class SmartPaginator {
         );
       }
 
-      console.log(
         `📥 Loaded page ${pageNumber} for ${this.collectionName} (${docs.length} items)`
       );
       return docs;
     } catch (error) {
-      console.error(
         `Error loading page ${pageNumber} for ${this.collectionName}:`,
         error
       );
@@ -152,7 +149,6 @@ class SmartPaginator {
 
       return this.totalCache;
     } catch (error) {
-      console.error(
         `Error getting total count for ${this.collectionName}:`,
         error
       );

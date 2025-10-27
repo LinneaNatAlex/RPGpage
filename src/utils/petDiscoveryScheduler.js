@@ -15,7 +15,6 @@ export class PetDiscoveryScheduler {
     if (this.isRunning) return;
     
     this.isRunning = true;
-    console.log('Pet Discovery Scheduler started');
     
     // Run immediately, then on interval
     this.checkForDiscoveries();
@@ -31,13 +30,11 @@ export class PetDiscoveryScheduler {
       this.intervalId = null;
     }
     this.isRunning = false;
-    console.log('Pet Discovery Scheduler stopped');
   }
 
   // Check for users who should get discoveries
   async checkForDiscoveries() {
     try {
-      console.log('Checking for pet discoveries...');
       
       // Get all users with active pets
       const usersWithPets = await this.getUsersWithActivePets();
@@ -52,18 +49,14 @@ export class PetDiscoveryScheduler {
             const shouldDiscover = Math.random() < 0.5;
             
             if (shouldDiscover) {
-              console.log(`Triggering discovery for user: ${user.uid}`);
               await petDiscovery.triggerDiscovery(user.uid, user.currentPet.name);
             }
           }
         } catch (error) {
-          console.error(`Error processing user ${user.uid}:`, error);
         }
       }
       
-      console.log(`Checked ${usersWithPets.length} users with pets`);
     } catch (error) {
-      console.error('Error in discovery check:', error);
     }
   }
 
@@ -79,7 +72,6 @@ export class PetDiscoveryScheduler {
         ...doc.data()
       }));
     } catch (error) {
-      console.error('Error getting users with pets:', error);
       return [];
     }
   }
@@ -90,7 +82,6 @@ export class PetDiscoveryScheduler {
       const discovery = await petDiscovery.triggerDiscovery(userId, 'Test Pet');
       return discovery;
     } catch (error) {
-      console.error('Error triggering test discovery:', error);
       return null;
     }
   }

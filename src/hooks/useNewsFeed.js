@@ -18,7 +18,6 @@ const useNewsFeed = () => {
       }));
       setNews(newsData);
     } catch (error) {
-      console.error("Error fetching news: ", error);
     }
   };
   //  USE EFFECT HOOK uset to gather the news data when the component is mounted

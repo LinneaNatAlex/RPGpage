@@ -60,7 +60,6 @@ const SignIn = () => {
 
       //  Check if the user's email is verified BEFORE allowing them to navigate to the home page.
       await user.reload();
-      console.log(user.emailVerified);
 
       if (!user.emailVerified) {
         setError(
@@ -85,9 +84,7 @@ const SignIn = () => {
             online: true,
           });
           localStorage.removeItem("tempUserData");
-          console.log("Created Firestore document for newly verified user");
         } catch (firestoreError) {
-          console.error("Failed to create user document:", firestoreError);
           // Continue anyway - authContext will handle missing document
         }
       }
@@ -99,7 +96,6 @@ const SignIn = () => {
       // navigate to the main page after successful sign-in
       navigate("/");
     } catch (error) {
-      console.error("Sign in error:", error);
 
       // More specific error messages
       if (error.code === "auth/user-not-found") {

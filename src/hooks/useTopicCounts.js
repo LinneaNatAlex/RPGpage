@@ -76,7 +76,6 @@ const useTopicCounts = () => {
             const topicsSnap = await getDocs(topicsRef);
             counts[room] = topicsSnap.size;
           } catch (error) {
-            console.error(`Error fetching topics for ${room}:`, error);
             counts[room] = 0;
           }
         }
@@ -89,7 +88,6 @@ const useTopicCounts = () => {
             const topicsSnap = await getDocs(topicsRef);
             totalCommonroomTopics += topicsSnap.size;
           } catch (error) {
-            console.error(`Error fetching topics for ${room}:`, error);
           }
         }
         counts.commonroom = totalCommonroomTopics;
@@ -100,7 +98,6 @@ const useTopicCounts = () => {
         
         setTopicCounts(counts);
       } catch (error) {
-        console.error("Error fetching topic counts:", error);
       } finally {
         setLoading(false);
       }

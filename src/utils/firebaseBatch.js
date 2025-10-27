@@ -28,7 +28,6 @@ class FirebaseBatchManager {
     const existing = this.pendingUpdates.get(userId);
     this.pendingUpdates.set(userId, { ...existing, ...updates });
 
-    console.log(`📝 Queued update for user ${userId}:`, updates);
 
     // Schedule batch execution
     this.scheduleBatchExecution();
@@ -49,7 +48,6 @@ class FirebaseBatchManager {
   async executeBatch() {
     if (this.pendingUpdates.size === 0) return;
 
-    console.log(`🚀 Executing batch with ${this.pendingUpdates.size} updates`);
 
     try {
       const batch = writeBatch(db);
@@ -57,7 +55,6 @@ class FirebaseBatchManager {
 
       for (const [userId, updates] of this.pendingUpdates.entries()) {
         if (operationCount >= this.MAX_BATCH_SIZE) {
-          console.warn(
             "⚠️ Batch size limit reached, splitting into multiple batches"
           );
           break;
@@ -73,7 +70,6 @@ class FirebaseBatchManager {
       }
 
       await batch.commit();
-      console.log(
         `✅ Batch executed successfully with ${operationCount} operations`
       );
 
@@ -91,7 +87,7 @@ class FirebaseBatchManager {
         this.scheduleBatchExecution();
       }
     } catch (error) {
-      console.error("❌ Batch execution failed:", error);
+"❌ Batch execution failed:", error);
       // Keep updates for retry
       setTimeout(() => this.executeBatch(), 5000); // Retry after 5 seconds
     }

@@ -52,7 +52,6 @@ const fetchUserStats = async () => {
       dailyActiveUsers
     });
   } catch (error) {
-    console.error('UserStatsCache: Error fetching stats:', error);
     // Keep current stats on error
   }
 };

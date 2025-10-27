@@ -75,15 +75,14 @@ const TopBar = () => {
   const fetchFollowedTopics = async () => {
     if (!user) return;
     try {
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
         const userData = userSnap.data();
         const topics = userData.followedTopics || [];
         setFollowedTopics(topics);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -104,7 +103,7 @@ const TopBar = () => {
   useEffect(() => {
     if (!user) return;
 
-    const userRef = doc(db, 'users', user.uid);
+    const userRef = doc(db, "users", user.uid);
     const unsubscribe = onSnapshot(userRef, (doc) => {
       if (doc.exists()) {
         const userData = doc.data();
@@ -121,34 +120,39 @@ const TopBar = () => {
 
     const unsubscribeFunctions = [];
 
-    followedTopics.forEach(topic => {
+    followedTopics.forEach((topic) => {
       // Listen to posts in this topic
-      const postsRef = collection(db, `forums/${topic.forum.toLowerCase().replace(' ', '')}/topics/${topic.id}/posts`);
-      const q = query(postsRef, orderBy('createdAt', 'desc'), limit(1));
-      
+      const postsRef = collection(
+        db,
+        `forums/${topic.forum.toLowerCase().replace(" ", "")}/topics/${
+          topic.id
+        }/posts`
+      );
+      const q = query(postsRef, orderBy("createdAt", "desc"), limit(1));
+
       const unsubscribe = onSnapshot(q, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
-          if (change.type === 'added') {
+          if (change.type === "added") {
             const post = change.doc.data();
             // Check if this is a new post (not the first one)
             if (post.createdAt && post.createdAt.toDate) {
               const postTime = post.createdAt.toDate();
               const now = new Date();
               const timeDiff = now - postTime;
-              
+
               // Only notify if post is very recent (within last 30 seconds)
               if (timeDiff < 30000 && post.uid !== user.uid) {
                 // Create notification
-                addDoc(collection(db, 'notifications'), {
+                addDoc(collection(db, "notifications"), {
                   userId: user.uid,
-                  type: 'topic_reply',
+                  type: "topic_reply",
                   topicId: topic.id,
                   topicTitle: topic.title,
                   forum: topic.forum,
                   author: post.author,
                   content: post.content,
                   createdAt: serverTimestamp(),
-                  read: false
+                  read: false,
                 });
               }
             }
@@ -160,7 +164,7 @@ const TopBar = () => {
     });
 
     return () => {
-      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+      unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
     };
   }, [user, followedTopics]);
 
@@ -352,13 +356,13 @@ const TopBar = () => {
           await updateDoc(userRef, { lastHealthUpdate: Date.now() });
           return;
         }
-        
+
         // If infirmaryEnd has expired, recover the user
         if (data.infirmaryEnd && data.infirmaryEnd <= Date.now()) {
           await updateDoc(userRef, {
             health: 100,
             infirmaryEnd: null,
-            lastHealthUpdate: Date.now()
+            lastHealthUpdate: Date.now(),
           });
           return;
         }
@@ -385,8 +389,7 @@ const TopBar = () => {
           // Sett første gang
           await updateDoc(userRef, { lastHealthUpdate: now });
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     }
 
     decayHealth();
@@ -418,8 +421,7 @@ const TopBar = () => {
           setInfirmary(false);
           setInfirmaryEnd(null);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     }, 1000);
     return () => clearInterval(timer);
   }, [infirmary, infirmaryEnd, user]);
@@ -472,8 +474,7 @@ const TopBar = () => {
         // Cache the notifications
         cacheHelpers.setNotifications(user.uid, notifications);
         setNotifications(notifications);
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     // Fetch initially
@@ -694,7 +695,7 @@ const TopBar = () => {
           onClick={() => navigate("/inventory")}
           title="Inventory"
           disabled={infirmary}
-          style={{ position: 'relative' }}
+          style={{ position: "relative" }}
         >
           <img
             src="/icons/magic-school.svg"
@@ -702,24 +703,24 @@ const TopBar = () => {
             className={styles.chestIcon}
           />
           {notifications.length > 0 && (
-            <span 
+            <span
               style={{
-                position: 'absolute',
-                top: '-5px',
-                right: '-5px',
-                background: '#ff5e5e',
-                color: 'white',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: '2px solid #fff',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                zIndex: 10
+                position: "absolute",
+                top: "-5px",
+                right: "-5px",
+                background: "#ff5e5e",
+                color: "white",
+                borderRadius: "50%",
+                width: "20px",
+                height: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "12px",
+                fontWeight: "bold",
+                border: "2px solid #fff",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+                zIndex: 10,
               }}
             >
               !
@@ -908,20 +909,20 @@ const TopBar = () => {
               setNotifications([]);
             }}
           >
-            ! {notifications[0].type === 'topic_reply' 
+            !{" "}
+            {notifications[0].type === "topic_reply"
               ? `New reply in "${notifications[0].topicTitle}" by ${notifications[0].author}`
-              : `You received a gift from ${notifications[0].from}: ${notifications[0].item}`
-            }
+              : `You received a gift from ${notifications[0].from}: ${notifications[0].item}`}
           </div>
         )}
-        
+
         {/* Followed Topics Modal */}
         {showFollowedTopics && (
           <div className={styles.followedTopicsModal}>
             <div className={styles.followedTopicsContent}>
               <div className={styles.followedTopicsHeader}>
                 <h3>Followed Topics</h3>
-                <button 
+                <button
                   className={styles.closeButton}
                   onClick={() => setShowFollowedTopics(false)}
                 >
@@ -934,11 +935,13 @@ const TopBar = () => {
                 ) : (
                   currentTopics.map((topic) => (
                     <div key={topic.id} className={styles.followedTopicItem}>
-                      <div 
+                      <div
                         className={styles.topicClickableArea}
                         onClick={() => {
                           // Navigate directly to the specific topic
-                          const forumPath = topic.forum.toLowerCase().replace(/\s+/g, '');
+                          const forumPath = topic.forum
+                            .toLowerCase()
+                            .replace(/\s+/g, "");
                           navigate(`/forum/${forumPath}?topic=${topic.id}`);
                           setShowFollowedTopics(false);
                         }}
@@ -946,25 +949,27 @@ const TopBar = () => {
                         <span className={styles.topicTitle}>{topic.title}</span>
                         <span className={styles.topicForum}>{topic.forum}</span>
                       </div>
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           // Remove from followed topics
-                          const updatedTopics = followedTopics.filter(t => t.id !== topic.id);
+                          const updatedTopics = followedTopics.filter(
+                            (t) => t.id !== topic.id
+                          );
                           setFollowedTopics(updatedTopics);
                           // Update database
-                          updateDoc(doc(db, 'users', user.uid), {
-                            followedTopics: updatedTopics
+                          updateDoc(doc(db, "users", user.uid), {
+                            followedTopics: updatedTopics,
                           });
                         }}
                         style={{
-                          background: '#ff6b6b',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          padding: '4px 8px',
-                          fontSize: '12px',
-                          cursor: 'pointer'
+                          background: "#ff6b6b",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          padding: "4px 8px",
+                          fontSize: "12px",
+                          cursor: "pointer",
                         }}
                       >
                         Remove
@@ -973,7 +978,7 @@ const TopBar = () => {
                   ))
                 )}
               </div>
-              
+
               {/* Pagination Controls */}
               {followedTopics.length > topicsPerPage && (
                 <div className={styles.paginationControls}>
@@ -984,11 +989,11 @@ const TopBar = () => {
                   >
                     ← Previous
                   </button>
-                  
+
                   <span className={styles.pageInfo}>
                     Page {currentPage} of {totalPages}
                   </span>
-                  
+
                   <button
                     className={styles.paginationBtn}
                     onClick={() => handlePageChange(currentPage + 1)}

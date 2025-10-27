@@ -67,7 +67,6 @@ const triggerUserDiscovery = async (user) => {
     
     return false;
   } catch (error) {
-    console.error(`Error triggering discovery for ${user.uid}:`, error);
     return false;
   }
 };
@@ -84,7 +83,6 @@ const getUsersWithActivePets = async () => {
     });
     return users;
   } catch (error) {
-    console.error('Error getting users with pets:', error);
     return [];
   }
 };
@@ -109,7 +107,6 @@ const runDailyDiscoveryScheduler = async () => {
     
     return results;
   } catch (error) {
-    console.error('Error in daily discovery scheduler:', error);
     return [];
   }
 };

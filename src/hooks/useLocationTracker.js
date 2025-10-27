@@ -17,7 +17,6 @@ const useLocationTracker = () => {
           lastSeen: Date.now()
         });
       } catch (error) {
-        console.error('Error updating location:', error);
       }
     };
 

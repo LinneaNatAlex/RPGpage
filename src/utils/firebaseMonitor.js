@@ -44,9 +44,6 @@ class FirebaseUsageMonitor {
     } else if (action === "REMOVE") {
       this.listeners.delete(source);
     }
-    console.log(
-      `🎯 ${action} listener: ${source}. Total active: ${this.listeners.size}`
-    );
   }
 
   // Log operation details
@@ -67,7 +64,6 @@ class FirebaseUsageMonitor {
     }
 
     if (import.meta.env.DEV) {
-      console.log(`📊 Firebase ${type}: ${source} (${count})`);
     }
   }
 
@@ -78,24 +74,21 @@ class FirebaseUsageMonitor {
     const deletePercent = (this.deletes / this.quotaLimits.deletes) * 100;
 
     if (readPercent > 80) {
-      console.warn(
         `⚠️ Firebase reads at ${readPercent.toFixed(1)}% of daily quota`
       );
     }
     if (writePercent > 80) {
-      console.warn(
         `⚠️ Firebase writes at ${writePercent.toFixed(1)}% of daily quota`
       );
     }
     if (deletePercent > 80) {
-      console.warn(
         `⚠️ Firebase deletes at ${deletePercent.toFixed(1)}% of daily quota`
       );
     }
 
     // Critical warnings
     if (readPercent > 95 || writePercent > 95 || deletePercent > 95) {
-      console.error("🚨 CRITICAL: Firebase quota nearly exceeded!");
+"🚨 CRITICAL: Firebase quota nearly exceeded!");
     }
   }
 
@@ -150,7 +143,7 @@ class FirebaseUsageMonitor {
     this.deletes = 0;
     this.operationLog = [];
     this.startTime = Date.now();
-    console.log("📊 Firebase usage monitor reset");
+"📊 Firebase usage monitor reset");
   }
 
   // Display usage report
@@ -159,9 +152,9 @@ class FirebaseUsageMonitor {
     const topSources = this.getTopSources(5);
 
     console.group("📊 Firebase Usage Report");
-    console.log("Current Usage:", stats);
-    console.log("Top Sources:", topSources);
-    console.log("Active Listeners:", Array.from(this.listeners));
+"Current Usage:", stats);
+"Top Sources:", topSources);
+"Active Listeners:", Array.from(this.listeners));
     console.groupEnd();
   }
 }

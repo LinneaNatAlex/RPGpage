@@ -28,7 +28,6 @@ const useBooks = () => {
       }));
       setBooks(booksData);
     } catch (error) {
-      console.error("Error fetching books: ", error);
     } finally {
       setLoading(false);
     }
@@ -48,8 +47,6 @@ const useBooks = () => {
 
       return docRef.id;
     } catch (error) {
-      console.error("Error adding book: ", error);
-      console.error("Error details:", error.code, error.message);
       throw error;
     }
   };
@@ -69,7 +66,6 @@ const useBooks = () => {
       // Refetch books to update the list
       await fetchBooks();
     } catch (error) {
-      console.error("Error updating book: ", error);
       throw error;
     }
   };
@@ -154,7 +150,6 @@ const useBooks = () => {
         await Promise.all(updatePromises);
       }
     } catch (error) {
-      console.error("Error updating book in inventories: ", error);
       // Don't throw error here to prevent book update from failing
     }
   };
@@ -171,7 +166,6 @@ const useBooks = () => {
       // Refetch books to update the list
       await fetchBooks();
     } catch (error) {
-      console.error("Error deleting book: ", error);
       throw error;
     }
   };
@@ -209,7 +203,6 @@ const useBooks = () => {
         await Promise.all(updatePromises);
       }
     } catch (error) {
-      console.error("Error removing book from inventories: ", error);
       // Don't throw error here to prevent book deletion from failing
     }
   };

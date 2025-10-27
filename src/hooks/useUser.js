@@ -67,7 +67,6 @@ const useUsers = () => {
         setLoading(false);
       },
       (error) => {
-        console.error("Real-time users listener error:", error);
 
         // Fallback to manual fetch if real-time fails
         import("../firebaseConfig").then(({ getUserTerms }) => {
@@ -77,7 +76,6 @@ const useUsers = () => {
               setLoading(false);
             })
             .catch((fallbackError) => {
-              console.error("Fallback fetch also failed:", fallbackError);
               setUsers([]);
               setLoading(false);
             });

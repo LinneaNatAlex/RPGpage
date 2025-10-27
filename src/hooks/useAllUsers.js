@@ -25,7 +25,6 @@ const useAllUsers = () => {
 
         setUsers(usersList);
       } catch (error) {
-        console.error("Error fetching users:", error);
       } finally {
         setLoading(false);
       }

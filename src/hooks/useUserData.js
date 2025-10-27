@@ -98,7 +98,6 @@ const useUserData = () => {
             
             // If infirmaryEnd exists but has expired, recover the user
             if (data.infirmaryEnd && data.infirmaryEnd <= now) {
-              console.log('Infirmary period expired, recovering user to 100% HP');
               processedData = {
                 ...data,
                 health: 100,
@@ -115,7 +114,6 @@ const useUserData = () => {
                     infirmaryEnd: null,
                     lastHealthUpdate: now
                   }).catch(error => {
-                    console.error('Error updating user recovery:', error);
                   });
                 });
               });
@@ -158,13 +156,11 @@ const useUserData = () => {
             });
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
         } finally {
           setLoading(false);
         }
       },
       (error) => {
-        console.error("Error listening to user data:", error);
         setLoading(false);
       }
     );

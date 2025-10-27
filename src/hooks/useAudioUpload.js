@@ -37,18 +37,15 @@ export const useAudioUpload = () => {
 
       if (!response.ok) {
         const errorData = await response.text();
-        console.error("Cloudinary response error:", errorData);
         throw new Error(
           `Failed to upload audio file: ${response.status} ${response.statusText}`
         );
       }
 
       const data = await response.json();
-      console.log("Audio upload successful:", data);
       return data.secure_url;
       // returning the audio file url
     } catch (error) {
-      console.error("Audio upload error:", error);
       throw error;
     }
   };

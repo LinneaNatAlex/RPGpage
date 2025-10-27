@@ -76,8 +76,7 @@ const Shop = ({ open = true }) => {
           firestore: true,
         }));
         setFirestoreItems(arr);
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     fetchItems();
@@ -109,8 +108,7 @@ const Shop = ({ open = true }) => {
           type: "book",
         }));
         setBooks(arr);
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     fetchBooks();

@@ -31,7 +31,6 @@ export const usePetDiscovery = () => {
         setHasActivePet(false);
       }
     }, (error) => {
-      console.error('Error listening to pet discovery updates:', error);
     });
 
     return () => unsubscribe();
@@ -47,7 +46,6 @@ export const usePetDiscovery = () => {
       // No need to reload - real-time listener will update automatically
       return success;
     } catch (error) {
-      console.error('Error accepting discovery:', error);
       return false;
     } finally {
       setLoading(false);
@@ -64,7 +62,6 @@ export const usePetDiscovery = () => {
       // No need to reload - real-time listener will update automatically
       return success;
     } catch (error) {
-      console.error('Error declining discovery:', error);
       return false;
     } finally {
       setLoading(false);
@@ -81,7 +78,6 @@ export const usePetDiscovery = () => {
       // No need to reload - real-time listener will update automatically
       return discovery;
     } catch (error) {
-      console.error('Error triggering discovery:', error);
       return null;
     } finally {
       setLoading(false);

@@ -21,7 +21,6 @@ export const useImageUpload = () => {
       return data.secure_url;
       // returning the image url
     } catch (error) {
-      console.log(error);
     }
   };
   return { uploadImage };

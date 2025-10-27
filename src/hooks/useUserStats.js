@@ -17,7 +17,6 @@ const useUserStats = () => {
     const unsubscribe = onSnapshot(usersRef, (snapshot) => {
       const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
-      console.log('UserStats: Fetched users:', users.length);
       
       // Calculate online users (last active within 5 minutes)
       const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
@@ -40,7 +39,6 @@ const useUserStats = () => {
       // Total registered users
       const totalUsers = users.length;
       
-      console.log('UserStats: Online:', onlineUsers, 'Daily Active:', dailyActiveUsers, 'Total:', totalUsers);
       
       setStats({
         onlineUsers,
@@ -49,7 +47,6 @@ const useUserStats = () => {
       });
       setLoading(false);
     }, (error) => {
-      console.error('Error fetching user stats:', error);
       setLoading(false);
     });
 

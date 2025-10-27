@@ -94,7 +94,6 @@ const SignUp = () => {
         profilePicture: file,
         previewUrl: previewUrl,
       }));
-      console.log("file selected:", file);
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -145,9 +144,7 @@ const SignUp = () => {
       
       try {
         await sendEmailVerification(user);
-        console.log("Email verification sent successfully");
       } catch (emailError) {
-        console.error("Failed to send email verification:", emailError);
         setError("Account created but failed to send verification email. Please try to resend from the verify email page.");
       }
       

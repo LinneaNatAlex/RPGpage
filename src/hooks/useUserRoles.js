@@ -35,7 +35,6 @@ const useUserRoles = () => {
           setRoles([]);
         }
       } catch (error) {
-        console.error("Error fetching user roles:", error);
         // Set empty roles on error to prevent app from hanging
         setRoles([]);
       } finally {
