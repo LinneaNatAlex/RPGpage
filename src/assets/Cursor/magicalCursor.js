@@ -1,3 +1,30 @@
+/* ===========================================
+   MAGICAL CURSOR TRAIL EFFECT - JAVASCRIPT
+   ===========================================
+   
+   This file contains the JavaScript logic for the magical cursor effect system.
+   It creates interactive cursor effects including:
+   - Custom magical cursor that replaces the default cursor
+   - Trail particles that follow mouse movement
+   - Sparkle effects triggered by clicks and movements
+   - Dynamic cleanup of DOM elements for performance
+   - Mobile detection and automatic disabling
+   
+   Main Class: MagicalCursor
+   Exports: initMagicalCursor, enableMagicalCursor, disableMagicalCursor, toggleMagicalCursor
+   
+   Features:
+   - Event-driven particle system
+   - Memory management (automatic cleanup)
+   - Mobile/touch device detection
+   - Performance optimized (throttled animations)
+   - Accessibility support (can be disabled)
+   
+   Used by: Various components throughout the application
+   CSS Companion: src/assets/Cursor/magicalCursor.css
+   
+   =========================================== */
+
 // Magical Cursor Trail Effect
 class MagicalCursor {
   constructor() {
@@ -8,21 +35,21 @@ class MagicalCursor {
     this.lastX = 0;
     this.lastY = 0;
     this.trailDelay = 0;
-    
+
     this.init();
   }
 
   init() {
     // Create cursor element
-    this.cursor = document.createElement('div');
-    this.cursor.className = 'magical-cursor';
+    this.cursor = document.createElement("div");
+    this.cursor.className = "magical-cursor";
     document.body.appendChild(this.cursor);
 
     // Add event listeners
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    document.addEventListener('mousedown', this.handleMouseDown.bind(this));
-    document.addEventListener('mouseup', this.handleMouseUp.bind(this));
-    
+    document.addEventListener("mousemove", this.handleMouseMove.bind(this));
+    document.addEventListener("mousedown", this.handleMouseDown.bind(this));
+    document.addEventListener("mouseup", this.handleMouseUp.bind(this));
+
     // Clean up old trails periodically
     setInterval(this.cleanupTrails.bind(this), 100);
   }
@@ -34,12 +61,13 @@ class MagicalCursor {
     const y = e.clientY;
 
     // Update cursor position
-    this.cursor.style.left = x - 12 + 'px';
-    this.cursor.style.top = y - 12 + 'px';
+    this.cursor.style.left = x - 12 + "px";
+    this.cursor.style.top = y - 12 + "px";
 
     // Create trail particles
     this.trailDelay++;
-    if (this.trailDelay % 3 === 0) { // Create trail every 3rd movement
+    if (this.trailDelay % 3 === 0) {
+      // Create trail every 3rd movement
       this.createTrail(x, y);
     }
 
@@ -54,7 +82,7 @@ class MagicalCursor {
 
   handleMouseDown(e) {
     if (!this.isEnabled) return;
-    
+
     // Create burst of sparkles on click
     for (let i = 0; i < 8; i++) {
       setTimeout(() => {
@@ -65,23 +93,26 @@ class MagicalCursor {
 
   handleMouseUp(e) {
     if (!this.isEnabled) return;
-    
+
     // Create small trail burst
     for (let i = 0; i < 5; i++) {
-      this.createTrail(e.clientX + (Math.random() - 0.5) * 20, e.clientY + (Math.random() - 0.5) * 20);
+      this.createTrail(
+        e.clientX + (Math.random() - 0.5) * 20,
+        e.clientY + (Math.random() - 0.5) * 20
+      );
     }
   }
 
   createTrail(x, y) {
-    const trail = document.createElement('div');
-    trail.className = 'cursor-trail';
-    trail.style.left = x - 5 + 'px';
-    trail.style.top = y - 5 + 'px';
-    
+    const trail = document.createElement("div");
+    trail.className = "cursor-trail";
+    trail.style.left = x - 5 + "px";
+    trail.style.top = y - 5 + "px";
+
     // Add some randomness to trail position
-    trail.style.left = (x - 5 + (Math.random() - 0.5) * 12) + 'px';
-    trail.style.top = (y - 5 + (Math.random() - 0.5) * 12) + 'px';
-    
+    trail.style.left = x - 5 + (Math.random() - 0.5) * 12 + "px";
+    trail.style.top = y - 5 + (Math.random() - 0.5) * 12 + "px";
+
     document.body.appendChild(trail);
     this.trails.push(trail);
 
@@ -90,20 +121,20 @@ class MagicalCursor {
       if (trail.parentNode) {
         trail.parentNode.removeChild(trail);
       }
-      this.trails = this.trails.filter(t => t !== trail);
+      this.trails = this.trails.filter((t) => t !== trail);
     }, 800);
   }
 
   createSparkle(x, y) {
-    const sparkle = document.createElement('div');
-    sparkle.className = 'cursor-sparkle';
-    sparkle.style.left = x - 3 + 'px';
-    sparkle.style.top = y - 3 + 'px';
-    
+    const sparkle = document.createElement("div");
+    sparkle.className = "cursor-sparkle";
+    sparkle.style.left = x - 3 + "px";
+    sparkle.style.top = y - 3 + "px";
+
     // Add random offset for sparkle
-    sparkle.style.left = (x - 3 + (Math.random() - 0.5) * 18) + 'px';
-    sparkle.style.top = (y - 3 + (Math.random() - 0.5) * 18) + 'px';
-    
+    sparkle.style.left = x - 3 + (Math.random() - 0.5) * 18 + "px";
+    sparkle.style.top = y - 3 + (Math.random() - 0.5) * 18 + "px";
+
     document.body.appendChild(sparkle);
     this.sparkles.push(sparkle);
 
@@ -112,20 +143,20 @@ class MagicalCursor {
       if (sparkle.parentNode) {
         sparkle.parentNode.removeChild(sparkle);
       }
-      this.sparkles = this.sparkles.filter(s => s !== sparkle);
+      this.sparkles = this.sparkles.filter((s) => s !== sparkle);
     }, 1200);
   }
 
   cleanupTrails() {
     // Remove any orphaned trail elements
-    this.trails = this.trails.filter(trail => {
+    this.trails = this.trails.filter((trail) => {
       if (!trail.parentNode) {
         return false;
       }
       return true;
     });
 
-    this.sparkles = this.sparkles.filter(sparkle => {
+    this.sparkles = this.sparkles.filter((sparkle) => {
       if (!sparkle.parentNode) {
         return false;
       }
@@ -135,22 +166,22 @@ class MagicalCursor {
 
   enable() {
     this.isEnabled = true;
-    document.body.classList.add('magical-cursor-enabled');
-    this.cursor.style.display = 'block';
+    document.body.classList.add("magical-cursor-enabled");
+    this.cursor.style.display = "block";
   }
 
   disable() {
     this.isEnabled = false;
-    document.body.classList.remove('magical-cursor-enabled');
-    this.cursor.style.display = 'none';
-    
+    document.body.classList.remove("magical-cursor-enabled");
+    this.cursor.style.display = "none";
+
     // Clean up all trails and sparkles
-    this.trails.forEach(trail => {
+    this.trails.forEach((trail) => {
       if (trail.parentNode) {
         trail.parentNode.removeChild(trail);
       }
     });
-    this.sparkles.forEach(sparkle => {
+    this.sparkles.forEach((sparkle) => {
       if (sparkle.parentNode) {
         sparkle.parentNode.removeChild(sparkle);
       }
@@ -199,8 +230,8 @@ export function toggleMagicalCursor() {
 }
 
 // Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMagicalCursor);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initMagicalCursor);
 } else {
   initMagicalCursor();
 }

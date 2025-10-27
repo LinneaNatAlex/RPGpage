@@ -1,3 +1,26 @@
+/* ===========================================
+   MAGICAL CURSOR TRAIL EFFECT - CSS STYLES
+   ===========================================
+   
+   This file contains all CSS styles for the magical cursor effect system.
+   It provides visual effects for mouse cursor interactions including:
+   - Golden magical cursor with sparkle animations
+   - Trail particles that follow mouse movement
+   - Sparkle effects on clicks and movements
+   - Special hover effects for different UI elements
+   - Mobile responsiveness (disabled on touch devices)
+   
+   Used by: src/assets/Cursor/magicalCursor.js
+   Imported in: Various components that need magical cursor effects
+   
+   Features:
+   - Responsive design (disabled on mobile/touch devices)
+   - Performance optimized animations
+   - Accessibility considerations (can be disabled)
+   - Cross-browser compatibility
+   
+   =========================================== */
+
 /* Magical Cursor Trail Effect */
 .magical-cursor {
   position: fixed;
