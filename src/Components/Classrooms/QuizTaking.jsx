@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
-import { getRPGCalendar } from "../../utils/rpgCalendar";
+import { getRPGCalendar, isExamPeriod } from "../../utils/rpgCalendar";
 import styles from "./QuizTaking.module.css";
 
 const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
@@ -19,25 +19,32 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
   // Calculate grade based on correct answers
   const calculateGrade = (correct, total) => {
     const percentage = (correct / total) * 100;
-    
-    if (percentage >= 90) return 'A';
-    if (percentage >= 80) return 'B';
-    if (percentage >= 70) return 'C';
-    if (percentage >= 60) return 'D';
-    if (percentage >= 50) return 'E'; // New grade E
-    return 'F';
+
+    if (percentage >= 90) return "A";
+    if (percentage >= 80) return "B";
+    if (percentage >= 70) return "C";
+    if (percentage >= 60) return "D";
+    if (percentage >= 50) return "E"; // New grade E
+    return "F";
   };
 
   // Get color for grade display
   const getGradeColor = (grade) => {
     switch (grade) {
-      case 'A': return '#4caf50'; // Green
-      case 'B': return '#8bc34a'; // Light green
-      case 'C': return '#ffc107'; // Yellow
-      case 'D': return '#ff9800'; // Orange
-      case 'E': return '#ff5722'; // Deep orange (for E)
-      case 'F': return '#f44336'; // Red
-      default: return '#757575'; // Gray
+      case "A":
+        return "#4caf50"; // Green
+      case "B":
+        return "#8bc34a"; // Light green
+      case "C":
+        return "#ffc107"; // Yellow
+      case "D":
+        return "#ff9800"; // Orange
+      case "E":
+        return "#ff5722"; // Deep orange (for E)
+      case "F":
+        return "#f44336"; // Red
+      default:
+        return "#757575"; // Gray
     }
   };
 
@@ -45,31 +52,44 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
     const loadQuiz = async () => {
       try {
         setLoading(true);
-        
+
+        // Check if it's exam period
+        if (!isExamPeriod()) {
+          setError(
+            "Exams are only available during exam period (July & August)"
+          );
+          setLoading(false);
+          return;
+        }
+
         // Check if user has already taken this quiz this month
         const rpgCalendar = getRPGCalendar();
-        const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
+        const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth
+          .toString()
+          .padStart(2, "0")}`;
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
-        
+
         if (userSnap.exists()) {
           const userData = userSnap.data();
           const takenQuizzes = userData.takenQuizzes || [];
-          
+
           // Check if user has taken this specific quiz this month
-          const hasTaken = takenQuizzes.some(quiz => 
-            quiz.quizId === quizId && 
-            quiz.month === currentMonth &&
-            quiz.classId === classId
+          const hasTaken = takenQuizzes.some(
+            (quiz) =>
+              quiz.quizId === quizId &&
+              quiz.month === currentMonth &&
+              quiz.classId === classId
           );
-          
+
           if (hasTaken) {
             setHasTakenQuiz(true);
             // Find the previous result to show
-            const previousQuiz = takenQuizzes.find(quiz => 
-              quiz.quizId === quizId && 
-              quiz.month === currentMonth &&
-              quiz.classId === classId
+            const previousQuiz = takenQuizzes.find(
+              (quiz) =>
+                quiz.quizId === quizId &&
+                quiz.month === currentMonth &&
+                quiz.classId === classId
             );
             if (previousQuiz) {
               setPreviousResult(previousQuiz);
@@ -78,11 +98,11 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
             return;
           }
         }
-        
+
         // Load quiz data directly from quizzes collection
         const quizRef = doc(db, "quizzes", quizId);
         const quizSnap = await getDoc(quizRef);
-        
+
         if (quizSnap.exists()) {
           setQuiz(quizSnap.data());
         } else {
@@ -101,18 +121,24 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
   }, [user, quizId, classId]);
 
   const handleAnswerSelect = (questionIndex, answerIndex) => {
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
-      [questionIndex]: answerIndex
+      [questionIndex]: answerIndex,
     }));
   };
 
   const handleSubmit = async () => {
     if (!quiz || !user) return;
-    
+
+    // Check if it's exam period
+    if (!isExamPeriod()) {
+      setError("Exams are only available during exam period (July & August)");
+      return;
+    }
+
     setIsSubmitting(true);
     setError("");
-    
+
     try {
       // Calculate score
       let correct = 0;
@@ -121,22 +147,24 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
           correct++;
         }
       });
-      
+
       const score = {
         correct,
         total: quiz.questions.length,
         percentage: (correct / quiz.questions.length) * 100,
-        grade: calculateGrade(correct, quiz.questions.length)
+        grade: calculateGrade(correct, quiz.questions.length),
       };
-      
-      const passed = score.grade !== 'F'; // E or better is passing (5+ correct answers)
+
+      const passed = score.grade !== "F"; // E or better is passing (5+ correct answers)
       const rpgCalendar = getRPGCalendar();
-      const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
-      
+      const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth
+        .toString()
+        .padStart(2, "0")}`;
+
       // Save quiz result
       const resultId = `${user.uid}_${quizId}_${currentMonth}`;
       const resultRef = doc(db, "quizResults", resultId);
-      
+
       await setDoc(resultRef, {
         userId: user.uid,
         quizId,
@@ -148,15 +176,15 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         grade: score.grade,
         passed,
         takenAt: new Date().toISOString(),
-        month: currentMonth
+        month: currentMonth,
       });
-      
+
       // Update user's taken quizzes
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
       const userData = userSnap.exists() ? userSnap.data() : {};
       const takenQuizzes = userData.takenQuizzes || [];
-      
+
       takenQuizzes.push({
         quizId,
         classId,
@@ -165,9 +193,9 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         passed,
         score: score.correct,
         grade: score.grade,
-        takenAt: new Date().toISOString()
+        takenAt: new Date().toISOString(),
       });
-      
+
       // Check if user should advance to next grade
       let newGrade = 1;
       // Extract year from class field (e.g., "2nd year" -> 2)
@@ -179,27 +207,27 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       }
       if (passed) {
         // Count passed subjects for current grade
-        const passedSubjects = takenQuizzes.filter(q => 
-          q.passed && q.month === currentMonth
+        const passedSubjects = takenQuizzes.filter(
+          (q) => q.passed && q.month === currentMonth
         ).length;
-        
+
         if (passedSubjects >= 7 && newGrade < 7) {
           newGrade = newGrade + 1;
           // Give bonus points for grade advancement
           const classNames = {
             1: "1st year",
-            2: "2nd year", 
+            2: "2nd year",
             3: "3rd year",
             4: "4th year",
             5: "5th year",
             6: "6th year",
-            7: "7th year"
+            7: "7th year",
           };
-          
+
           await updateDoc(userRef, {
             takenQuizzes,
             class: classNames[newGrade] || `${newGrade}th year`,
-            points: increment(100) // Bonus points for advancing
+            points: increment(100), // Bonus points for advancing
           });
         } else {
           await updateDoc(userRef, { takenQuizzes });
@@ -207,15 +235,27 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       } else {
         await updateDoc(userRef, { takenQuizzes });
       }
-      
+
       // Show result
       if (passed) {
-        const currentYear = userData.class ? parseInt(userData.class.match(/(\d+)/)?.[1] || 1) : 1;
-        alert(`Congratulations! You passed with ${score.correct}/10 correct answers (Grade: ${score.grade})!${newGrade > currentYear ? ` You've advanced to Grade ${newGrade}!` : ''}`);
+        const currentYear = userData.class
+          ? parseInt(userData.class.match(/(\d+)/)?.[1] || 1)
+          : 1;
+        alert(
+          `Congratulations! You passed with ${
+            score.correct
+          }/10 correct answers (Grade: ${score.grade})!${
+            newGrade > currentYear
+              ? ` You've advanced to Grade ${newGrade}!`
+              : ""
+          }`
+        );
       } else {
-        alert(`You scored ${score.correct}/10 (Grade: ${score.grade}). You need E grade or better (5+ correct answers) to pass. You can try again next in-game month.`);
+        alert(
+          `You scored ${score.correct}/10 (Grade: ${score.grade}). You need E grade or better (5+ correct answers) to pass. You can try again next in-game month.`
+        );
       }
-      
+
       onComplete();
     } catch (error) {
       setError("Failed to submit quiz");
@@ -239,7 +279,9 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       <div className={styles.quizOverlay}>
         <div className={styles.quizContent}>
           <div className={styles.errorMessage}>{error}</div>
-          <button onClick={onClose} className={styles.closeButton}>Close</button>
+          <button onClick={onClose} className={styles.closeButton}>
+            Close
+          </button>
         </div>
       </div>
     );
@@ -251,16 +293,21 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         <div className={styles.quizContent}>
           <div className={styles.alreadyTaken}>
             <h3>Quiz Already Taken</h3>
-            <p>You have already taken this quiz this month. You can try again next in-game month.</p>
+            <p>
+              You have already taken this quiz this month. You can try again
+              next in-game month.
+            </p>
             {previousResult && (
               <div className={styles.previousResult}>
                 <h4>Your Previous Result:</h4>
                 <p>Score: {previousResult.score}/10</p>
-                <p>Grade: {previousResult.grade || 'N/A'}</p>
-                <p>Status: {previousResult.passed ? 'Passed' : 'Failed'}</p>
+                <p>Grade: {previousResult.grade || "N/A"}</p>
+                <p>Status: {previousResult.passed ? "Passed" : "Failed"}</p>
               </div>
             )}
-            <button onClick={onClose} className={styles.closeButton}>Close</button>
+            <button onClick={onClose} className={styles.closeButton}>
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -272,7 +319,9 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       <div className={styles.quizOverlay}>
         <div className={styles.quizContent}>
           <div className={styles.errorMessage}>Quiz not found</div>
-          <button onClick={onClose} className={styles.closeButton}>Close</button>
+          <button onClick={onClose} className={styles.closeButton}>
+            Close
+          </button>
         </div>
       </div>
     );
@@ -286,43 +335,65 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
       <div className={styles.quizContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.quizHeader}>
           <h2>{quiz.title}</h2>
-          <button onClick={onClose} className={styles.closeButton}>×</button>
+          <button onClick={onClose} className={styles.closeButton}>
+            ×
+          </button>
         </div>
 
         <div className={styles.quizInfo}>
           <p>{quiz.description}</p>
-          <p>Grade Level: {gradeLevel} | Questions: {quiz.questions.length}</p>
+          <p>
+            Grade Level: {gradeLevel} | Questions: {quiz.questions.length}
+          </p>
           <p>You need E grade or better (5+ correct answers) to pass.</p>
           <div className={styles.gradeInfo}>
             <h4>Grading Scale:</h4>
             <div className={styles.gradeScale}>
-              <span style={{ color: getGradeColor('A') }}>A: 90-100% (9-10 correct) - Excellent</span>
-              <span style={{ color: getGradeColor('B') }}>B: 80-89% (8 correct) - Very Good</span>
-              <span style={{ color: getGradeColor('C') }}>C: 70-79% (7 correct) - Good</span>
-              <span style={{ color: getGradeColor('D') }}>D: 60-69% (6 correct) - Satisfactory</span>
-              <span style={{ color: getGradeColor('E') }}>E: 50-59% (5 correct) - Sufficient</span>
-              <span style={{ color: getGradeColor('F') }}>F: Below 50% (0-4 correct) - Failed</span>
+              <span style={{ color: getGradeColor("A") }}>
+                A: 90-100% (9-10 correct) - Excellent
+              </span>
+              <span style={{ color: getGradeColor("B") }}>
+                B: 80-89% (8 correct) - Very Good
+              </span>
+              <span style={{ color: getGradeColor("C") }}>
+                C: 70-79% (7 correct) - Good
+              </span>
+              <span style={{ color: getGradeColor("D") }}>
+                D: 60-69% (6 correct) - Satisfactory
+              </span>
+              <span style={{ color: getGradeColor("E") }}>
+                E: 50-59% (5 correct) - Sufficient
+              </span>
+              <span style={{ color: getGradeColor("F") }}>
+                F: Below 50% (0-4 correct) - Failed
+              </span>
             </div>
           </div>
         </div>
 
         <div className={styles.progressBar}>
-          <div 
-            className={styles.progressFill} 
+          <div
+            className={styles.progressFill}
             style={{ width: `${progress}%` }}
           />
         </div>
 
         <div className={styles.questionSection}>
-          <h3>Question {currentQuestion + 1} of {quiz.questions.length}</h3>
+          <h3>
+            Question {currentQuestion + 1} of {quiz.questions.length}
+          </h3>
           <p className={styles.questionText}>{currentQ.question}</p>
-          
+
           <div className={styles.optionsList}>
             {currentQ.options.map((option, index) => (
               <button
                 key={index}
                 type="button"
-                className={`${styles.optionButton} ${answers[currentQuestion] === index ? styles.selectedOption : ''}`}
+                className={`${styles.optionButton} ${
+                  answers[currentQuestion] === index
+                    ? styles.selectedOption
+                    : ""
+                }`}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -330,7 +401,7 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
                 }}
               >
                 <div className={styles.optionIndicator}>
-                  {answers[currentQuestion] === index ? '✓' : '○'}
+                  {answers[currentQuestion] === index ? "✓" : "○"}
                 </div>
                 <span className={styles.optionText}>{option}</span>
               </button>
@@ -346,11 +417,11 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
           >
             Previous
           </button>
-          
+
           <span className={styles.questionCounter}>
             {currentQuestion + 1} / {quiz.questions.length}
           </span>
-          
+
           {currentQuestion === quiz.questions.length - 1 ? (
             <button
               onClick={handleSubmit}
@@ -361,7 +432,11 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
             </button>
           ) : (
             <button
-              onClick={() => setCurrentQuestion(Math.min(quiz.questions.length - 1, currentQuestion + 1))}
+              onClick={() =>
+                setCurrentQuestion(
+                  Math.min(quiz.questions.length - 1, currentQuestion + 1)
+                )
+              }
               className={styles.navButton}
             >
               Next
@@ -369,9 +444,7 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
           )}
         </div>
 
-        {error && (
-          <div className={styles.errorMessage}>{error}</div>
-        )}
+        {error && <div className={styles.errorMessage}>{error}</div>}
       </div>
     </div>
   );

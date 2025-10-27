@@ -1,15 +1,29 @@
 import { useState, useEffect, useRef } from "react";
 import { db } from "../../firebaseConfig";
-import { doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, addDoc, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+  serverTimestamp,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 // getUserYear function will be defined locally
-import { getRPGCalendar } from "../../utils/rpgCalendar";
+import { getRPGCalendar, isExamPeriod } from "../../utils/rpgCalendar";
 
 // Helper: get year from user object (default 1)
 function getUserYear(user) {
   if (user?.graduate) {
-    return 'graduate';
+    return "graduate";
   }
   // Extract year from class field (e.g., "2nd year" -> 2)
   if (user?.class) {
@@ -122,15 +136,14 @@ const ClassroomSession = () => {
   const chatRef = useRef(null);
 
   // For teachers/admins: allow year selection
-  const isTeacher =
-    roles.includes("teacher") || roles.includes("admin");
+  const isTeacher = roles.includes("teacher") || roles.includes("admin");
   const [selectedYear, setSelectedYear] = useState(getUserYear(user));
-  
+
   // Allow year selection for teachers OR users who are above year 1
   const userCurrentYear = getUserYear(user);
   const canSelectYear = isTeacher || userCurrentYear > 1;
   const userYear = canSelectYear ? selectedYear : userCurrentYear;
-  
+
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
     (u) => u.online && (u.year === userYear || u.year === Number(userYear))
@@ -171,7 +184,7 @@ const ClassroomSession = () => {
                   const quizData = quizSnap.data();
                   fullQuizzes.push({
                     ...quizInfo,
-                    ...quizData
+                    ...quizData,
                   });
                 }
               } catch (error) {
@@ -332,11 +345,14 @@ const ClassroomSession = () => {
   // Quiz functions
   const hasTakenQuizForGrade = (gradeLevel) => {
     const rpgCalendar = getRPGCalendar();
-    const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
-    return takenQuizzes.some(quiz => 
-      quiz.gradeLevel === gradeLevel && 
-      quiz.month === currentMonth &&
-      quiz.classId === classId
+    const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth
+      .toString()
+      .padStart(2, "0")}`;
+    return takenQuizzes.some(
+      (quiz) =>
+        quiz.gradeLevel === gradeLevel &&
+        quiz.month === currentMonth &&
+        quiz.classId === classId
     );
   };
 
@@ -344,18 +360,21 @@ const ClassroomSession = () => {
   const isEligibleForGraduateExam = () => {
     if (userYear !== 7) return false;
     if (!takenQuizzes || takenQuizzes.length === 0) return false;
-    
+
     const rpgCalendar = getRPGCalendar();
-    const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth.toString().padStart(2, '0')}`;
-    
+    const currentMonth = `${rpgCalendar.rpgYear}-${rpgCalendar.rpgMonth
+      .toString()
+      .padStart(2, "0")}`;
+
     // Count passed subjects (grade E and above) for current month
-    const passedSubjects = takenQuizzes.filter(quiz => 
-      quiz.month === currentMonth && 
-      quiz.gradeLevel === 7 && 
-      quiz.grade && 
-      ['A', 'B', 'C', 'D', 'E'].includes(quiz.grade)
+    const passedSubjects = takenQuizzes.filter(
+      (quiz) =>
+        quiz.month === currentMonth &&
+        quiz.gradeLevel === 7 &&
+        quiz.grade &&
+        ["A", "B", "C", "D", "E"].includes(quiz.grade)
     );
-    
+
     return passedSubjects.length >= 7; // Need to pass 7 out of 7 subjects
   };
 
@@ -368,13 +387,13 @@ const ClassroomSession = () => {
         graduate: true,
         class: "Graduate",
         graduateDate: new Date().toISOString(),
-        graduateExamResult: result
+        graduateExamResult: result,
       });
-      
+
       // Clear cache to refresh user data
-      const { cacheHelpers } = await import('../../utils/firebaseCache');
+      const { cacheHelpers } = await import("../../utils/firebaseCache");
       cacheHelpers.clearUserCache(user.uid);
-      
+
       alert("Congratulations! You have graduated from Vayloria Arcane School!");
     }
   };
@@ -398,7 +417,7 @@ const ClassroomSession = () => {
                 const quizData = quizSnap.data();
                 fullQuizzes.push({
                   ...quizInfo,
-                  ...quizData
+                  ...quizData,
                 });
               }
             } catch (error) {
@@ -421,9 +440,9 @@ const ClassroomSession = () => {
   const handleQuizComplete = async (result) => {
     setShowQuizTaking(false);
     setSelectedQuiz(null);
-    
+
     // Check if this was a graduate exam
-    if (result && result.gradeLevel === 'graduate') {
+    if (result && result.gradeLevel === "graduate") {
       await handleGraduateExamComplete(result);
     }
   };
@@ -453,7 +472,7 @@ const ClassroomSession = () => {
                 const quizData = quizSnap.data();
                 fullQuizzes.push({
                   ...quizInfo,
-                  ...quizData
+                  ...quizData,
                 });
               }
             } catch (error) {
@@ -568,9 +587,7 @@ const ClassroomSession = () => {
     const ref = doc(db, "classChats", `${classId}-year${userYear}`);
     const msgToDelete = messages[idx];
     // Only allow if user is admin/teacher
-    const canDelete =
-      roles.includes("admin") ||
-      roles.includes("teacher");
+    const canDelete = roles.includes("admin") || roles.includes("teacher");
     if (!canDelete) return;
     const newMessages = messages.filter((_, i) => i !== idx);
     await updateDoc(ref, { messages: newMessages });
@@ -639,7 +656,8 @@ const ClassroomSession = () => {
           textAlign: "center",
         }}
       >
-        {classInfo.name} ({userYear === 'graduate' ? 'Graduate' : `Year ${userYear}`})
+        {classInfo.name} (
+        {userYear === "graduate" ? "Graduate" : `Year ${userYear}`})
       </h2>
 
       {/* Success and Error Messages */}
@@ -718,10 +736,10 @@ const ClassroomSession = () => {
             }}
           >
             {(() => {
-              const availableYears = isTeacher 
+              const availableYears = isTeacher
                 ? [1, 2, 3, 4, 5, 6, 7] // Teachers can see all years
-                : Array.from({length: userCurrentYear}, (_, i) => i + 1); // Users can only see years they've achieved
-              
+                : Array.from({ length: userCurrentYear }, (_, i) => i + 1); // Users can only see years they've achieved
+
               return availableYears.map((y) => (
                 <option key={y} value={y}>
                   Year {y}
@@ -891,8 +909,7 @@ const ClassroomSession = () => {
           )}
           {messages.map((m, i) => {
             const canDelete =
-              roles.includes("admin") ||
-              roles.includes("teacher");
+              roles.includes("admin") || roles.includes("teacher");
             return (
               <div
                 key={i}
@@ -1262,7 +1279,9 @@ const ClassroomSession = () => {
               >
                 Points for attending:{" "}
                 <b style={{ color: "#D4C4A8" }}>
-                  {wisdomUntil && wisdomUntil > Date.now() ? "6 (Wisdom Potion active!)" : "2"}
+                  {wisdomUntil && wisdomUntil > Date.now()
+                    ? "6 (Wisdom Potion active!)"
+                    : "2"}
                 </b>
               </li>
               <li
@@ -1327,7 +1346,14 @@ const ClassroomSession = () => {
 
         {/* Quiz Section */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 16,
+            }}
+          >
             <h3
               style={{
                 color: "#D4C4A8",
@@ -1348,7 +1374,8 @@ const ClassroomSession = () => {
                   setShowQuizCreation(true);
                 }}
                 style={{
-                  background: "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
+                  background:
+                    "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
                   color: "#fff",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: "8px",
@@ -1376,7 +1403,8 @@ const ClassroomSession = () => {
             )}
           </div>
 
-          {availableQuizzes.length === 0 ? (
+          {/* Check if it's exam period */}
+          {!isExamPeriod() ? (
             <div
               style={{
                 color: "#D4C4A8",
@@ -1389,142 +1417,29 @@ const ClassroomSession = () => {
                 border: "2px solid rgba(255, 255, 255, 0.2)",
               }}
             >
-              {isTeacher ? "No quizzes available. Create one to get started!" : "No quizzes available for this class."}
+              📚 Exams are only available during exam period (July & August).
+              <br />
+              Current RPG month: {getRPGCalendar().rpgMonth} -{" "}
+              {
+                [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ][getRPGCalendar().rpgMonth - 1]
+              }
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {availableQuizzes
-                .filter(quiz => quiz.gradeLevel === userYear)
-                .map((quiz, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      background: "rgba(245, 239, 224, 0.1)",
-                      borderRadius: "12px",
-                      padding: "16px 20px",
-                      border: "2px solid rgba(255, 255, 255, 0.2)",
-                      boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <h4
-                        style={{
-                          color: "#F5EFE0",
-                          fontSize: "1.2rem",
-                          fontFamily: '"Cinzel", serif',
-                          fontWeight: 600,
-                          margin: "0 0 8px 0",
-                          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                        }}
-                      >
-                        {quiz.title}
-                      </h4>
-                      <p
-                        style={{
-                          color: "#D4C4A8",
-                          fontSize: "0.9rem",
-                          margin: "0 0 4px 0",
-                        }}
-                      >
-                        Grade {quiz.gradeLevel} • Created: {new Date(quiz.createdAt).toLocaleDateString()}
-                      </p>
-                      <p
-                        style={{
-                          color: "#D4C4A8",
-                          fontSize: "0.85rem",
-                          margin: 0,
-                          fontStyle: "italic",
-                        }}
-                      >
-                        Pass with E grade or better (5+ correct answers) to advance
-                      </p>
-                      {hasTakenQuizForGrade(quiz.gradeLevel) && (
-                        <div
-                          style={{
-                            background: "rgba(76, 175, 80, 0.2)",
-                            border: "1px solid #4caf50",
-                            borderRadius: "6px",
-                            padding: "8px 12px",
-                            marginTop: "8px",
-                            color: "#4caf50",
-                            fontSize: "0.9rem",
-                            fontWeight: "600",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          ✓ You have taken the exam for this year's class
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                      <button
-                        onClick={() => handleStartQuiz(quiz)}
-                        style={{
-                          background: "linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%)",
-                          color: "#F5EFE0",
-                          border: "2px solid rgba(255, 255, 255, 0.2)",
-                          borderRadius: "8px",
-                          padding: "10px 20px",
-                          fontSize: "1rem",
-                          cursor: "pointer",
-                          fontWeight: "600",
-                          transition: "all 0.3s ease",
-                          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
-                          fontFamily: '"Cinzel", serif',
-                          letterSpacing: "0.5px",
-                          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.transform = "translateY(-2px)";
-                          e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.transform = "translateY(0)";
-                          e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
-                        }}
-                      >
-                        Take Exam
-                      </button>
-                      {isTeacher && (
-                        <button
-                          onClick={() => handleEditQuiz(quiz)}
-                          style={{
-                            background: "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
-                            color: "#fff",
-                            border: "2px solid rgba(255, 255, 255, 0.2)",
-                            borderRadius: "8px",
-                            padding: "10px 16px",
-                            fontSize: "0.9rem",
-                            cursor: "pointer",
-                            fontWeight: "600",
-                            transition: "all 0.3s ease",
-                            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
-                            fontFamily: '"Cinzel", serif',
-                            letterSpacing: "0.5px",
-                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.transform = "translateY(-2px)";
-                            e.target.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.3)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.transform = "translateY(0)";
-                            e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
-                          }}
-                        >
-                          Edit Quiz
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              
-              {availableQuizzes.filter(quiz => quiz.gradeLevel === userYear).length === 0 && availableQuizzes.length > 0 && (
+            <>
+              {availableQuizzes.length === 0 ? (
                 <div
                   style={{
                     color: "#D4C4A8",
@@ -1537,15 +1452,192 @@ const ClassroomSession = () => {
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                   }}
                 >
-                  No quizzes available for Grade {userYear}. Check other grade levels or ask your teacher to create one.
+                  {isTeacher
+                    ? "No quizzes available. Create one to get started!"
+                    : "No quizzes available for this class."}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  {availableQuizzes
+                    .filter((quiz) => quiz.gradeLevel === userYear)
+                    .map((quiz, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: "rgba(245, 239, 224, 0.1)",
+                          borderRadius: "12px",
+                          padding: "16px 20px",
+                          border: "2px solid rgba(255, 255, 255, 0.2)",
+                          boxShadow:
+                            "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <h4
+                            style={{
+                              color: "#F5EFE0",
+                              fontSize: "1.2rem",
+                              fontFamily: '"Cinzel", serif',
+                              fontWeight: 600,
+                              margin: "0 0 8px 0",
+                              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                            }}
+                          >
+                            {quiz.title}
+                          </h4>
+                          <p
+                            style={{
+                              color: "#D4C4A8",
+                              fontSize: "0.9rem",
+                              margin: "0 0 4px 0",
+                            }}
+                          >
+                            Grade {quiz.gradeLevel} • Created:{" "}
+                            {new Date(quiz.createdAt).toLocaleDateString()}
+                          </p>
+                          <p
+                            style={{
+                              color: "#D4C4A8",
+                              fontSize: "0.85rem",
+                              margin: 0,
+                              fontStyle: "italic",
+                            }}
+                          >
+                            Pass with E grade or better (5+ correct answers) to
+                            advance
+                          </p>
+                          {hasTakenQuizForGrade(quiz.gradeLevel) && (
+                            <div
+                              style={{
+                                background: "rgba(76, 175, 80, 0.2)",
+                                border: "1px solid #4caf50",
+                                borderRadius: "6px",
+                                padding: "8px 12px",
+                                marginTop: "8px",
+                                color: "#4caf50",
+                                fontSize: "0.9rem",
+                                fontWeight: "600",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              ✓ You have taken the exam for this year's class
+                            </div>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "12px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <button
+                            onClick={() => handleStartQuiz(quiz)}
+                            style={{
+                              background:
+                                "linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%)",
+                              color: "#F5EFE0",
+                              border: "2px solid rgba(255, 255, 255, 0.2)",
+                              borderRadius: "8px",
+                              padding: "10px 20px",
+                              fontSize: "1rem",
+                              cursor: "pointer",
+                              fontWeight: "600",
+                              transition: "all 0.3s ease",
+                              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+                              fontFamily: '"Cinzel", serif',
+                              letterSpacing: "0.5px",
+                              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.transform = "translateY(-2px)";
+                              e.target.style.boxShadow =
+                                "0 6px 20px rgba(0, 0, 0, 0.3)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.transform = "translateY(0)";
+                              e.target.style.boxShadow =
+                                "0 4px 16px rgba(0, 0, 0, 0.2)";
+                            }}
+                          >
+                            Take Exam
+                          </button>
+                          {isTeacher && (
+                            <button
+                              onClick={() => handleEditQuiz(quiz)}
+                              style={{
+                                background:
+                                  "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
+                                color: "#fff",
+                                border: "2px solid rgba(255, 255, 255, 0.2)",
+                                borderRadius: "8px",
+                                padding: "10px 16px",
+                                fontSize: "0.9rem",
+                                cursor: "pointer",
+                                fontWeight: "600",
+                                transition: "all 0.3s ease",
+                                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+                                fontFamily: '"Cinzel", serif',
+                                letterSpacing: "0.5px",
+                                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.transform = "translateY(-2px)";
+                                e.target.style.boxShadow =
+                                  "0 6px 20px rgba(0, 0, 0, 0.3)";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.transform = "translateY(0)";
+                                e.target.style.boxShadow =
+                                  "0 4px 16px rgba(0, 0, 0, 0.2)";
+                              }}
+                            >
+                              Edit Quiz
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+
+                  {availableQuizzes.filter(
+                    (quiz) => quiz.gradeLevel === userYear
+                  ).length === 0 &&
+                    availableQuizzes.length > 0 && (
+                      <div
+                        style={{
+                          color: "#D4C4A8",
+                          fontSize: "1.1rem",
+                          textAlign: "center",
+                          fontStyle: "italic",
+                          padding: "20px",
+                          background: "rgba(245, 239, 224, 0.1)",
+                          borderRadius: "12px",
+                          border: "2px solid rgba(255, 255, 255, 0.2)",
+                        }}
+                      >
+                        No quizzes available for Grade {userYear}. Check other
+                        grade levels or ask your teacher to create one.
+                      </div>
+                    )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
 
         {/* Graduate Exam Section - Only for 7th year students */}
-        {userYear === 7 && (
+        {userYear === 7 && isExamPeriod() && (
           <div style={{ marginBottom: "24px" }}>
             <div
               style={{
@@ -1582,23 +1674,32 @@ const ClassroomSession = () => {
                   textAlign: "center",
                 }}
               >
-                <p style={{ color: "#4CAF50", fontSize: "1.1rem", margin: "0 0 16px 0" }}>
-                  🎉 Congratulations! You have passed all 7 subjects and are eligible for the Graduate Exam!
+                <p
+                  style={{
+                    color: "#4CAF50",
+                    fontSize: "1.1rem",
+                    margin: "0 0 16px 0",
+                  }}
+                >
+                  🎉 Congratulations! You have passed all 7 subjects and are
+                  eligible for the Graduate Exam!
                 </p>
                 <button
                   onClick={() => {
                     // Create a special graduate exam quiz
                     const graduateQuiz = {
-                      quizId: 'graduate-exam',
-                      title: 'Graduate Exam',
-                      gradeLevel: 'graduate',
-                      description: 'Final examination to graduate from Vayloria Arcane School'
+                      quizId: "graduate-exam",
+                      title: "Graduate Exam",
+                      gradeLevel: "graduate",
+                      description:
+                        "Final examination to graduate from Vayloria Arcane School",
                     };
                     setSelectedQuiz(graduateQuiz);
                     setShowQuizTaking(true);
                   }}
                   style={{
-                    background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                    background:
+                      "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
                     color: "#000",
                     border: "2px solid #FFD700",
                     borderRadius: "8px",
@@ -1626,7 +1727,8 @@ const ClassroomSession = () => {
                 }}
               >
                 <p style={{ color: "#FFC107", fontSize: "1.1rem", margin: 0 }}>
-                  📚 You need to pass all 7 subjects in Year 7 to be eligible for the Graduate Exam.
+                  📚 You need to pass all 7 subjects in Year 7 to be eligible
+                  for the Graduate Exam.
                 </p>
               </div>
             )}
@@ -1665,6 +1767,6 @@ const ClassroomSession = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ClassroomSession;
