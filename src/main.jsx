@@ -7,22 +7,6 @@ import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.jsx";
 import "./assets/Cursor/magicalCursor.css";
 import { enableMagicalCursor } from "./assets/Cursor/magicalCursor.js";
 
-// Suppress findDOMNode warnings from react-quill in development
-if (import.meta.env.DEV) {
-  const originalWarn = console.warn;
-  console.warn = function (message) {
-    if (typeof message === "string" && (
-      message.includes("findDOMNode") || 
-      message.includes("deprecated") ||
-      message.includes("will be removed")
-    )) {
-      return; // Suppress findDOMNode and deprecation warnings
-    }
-    // Call original console.warn for other messages
-    originalWarn.apply(console, arguments);
-  };
-}
-
 // root element for the application
 createRoot(document.getElementById("root")).render(
   <ErrorBoundary>
