@@ -37,7 +37,6 @@ import GreatHall from "../Pages/Rpg/GreateHall/GreatHall.jsx";
 import Forum from "../Pages/Forum/Forum.jsx";
 import RaceInfo from "../Pages/RaceInfo/RaceInfo.jsx";
 import Shop from "../Components/Shop/Shop.jsx";
-import WerewolfIframe from "../Components/WerewolfIframe.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 import Admin from "../Pages/Admin.jsx";
@@ -196,14 +195,6 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <Shop />
-          </RouteGuard>
-        }
-      />
-      <Route
-        path="werewolf"
-        element={
-          <RouteGuard>
-            <WerewolfIframe />
           </RouteGuard>
         }
       />

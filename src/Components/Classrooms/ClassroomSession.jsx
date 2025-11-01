@@ -105,6 +105,7 @@ import { classesList } from "../../data/classesList";
 import onlineUserStyles from "../OnlineUsers/OnlineUsers.module.css";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
+import TextareaWithSynonyms from "../TextareaWithSynonyms/TextareaWithSynonyms";
 
 const ClassroomSession = () => {
   const { user } = useAuth();
@@ -1023,7 +1024,7 @@ const ClassroomSession = () => {
           onSubmit={handleSend}
           style={{ display: "flex", flexDirection: "column", gap: 12 }}
         >
-          <textarea
+          <TextareaWithSynonyms
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             style={{
@@ -1044,6 +1045,7 @@ const ClassroomSession = () => {
             }}
             placeholder="Type your message... (You can write long messages here)"
             maxLength={1000}
+            enableSynonyms={true}
             onFocus={(e) => {
               e.target.style.borderColor = "#7B6857";
               e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";

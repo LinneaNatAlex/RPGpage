@@ -132,7 +132,6 @@ const Navbar = () => {
                   <span>18+ Forum</span>
                   <span>({topicCounts['16plus'] || 0})</span>
                 </NavLink>
-                <NavLink to="/werewolf">Werewolf</NavLink>
               </div>
             </div>
             <div className={styles.dropdown}>

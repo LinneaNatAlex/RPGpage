@@ -1,0 +1,66 @@
+.synonymPopup {
+  background: #2c2c2c;
+  border: 2px solid #7b6857;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  min-width: 200px;
+  max-width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox - hide scrollbar */
+  -ms-overflow-style: none; /* IE and Edge - hide scrollbar */
+}
+
+.synonymList {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.synonymItem {
+  padding: 8px 16px;
+  color: #d4c4a8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.synonymItem:hover {
+  background: rgba(123, 104, 87, 0.3);
+  color: #f5efe0;
+}
+
+.synonymItem:active {
+  background: rgba(123, 104, 87, 0.5);
+}
+
+.loading,
+.error,
+.noResults {
+  padding: 12px 16px;
+  color: #d4c4a8;
+  text-align: center;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+/* Hide scrollbar but keep scrolling functionality */
+.synonymPopup::-webkit-scrollbar {
+  width: 0px;
+  display: none;
+}
+
+.synonymPopup::-webkit-scrollbar-track {
+  display: none;
+}
+
+.synonymPopup::-webkit-scrollbar-thumb {
+  display: none;
+}
+

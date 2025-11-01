@@ -93,6 +93,49 @@ const GeneralRules = () => {
           ))}
         </ul>
       </div>
+
+      {/* API Attribution Section */}
+      <div
+        style={{
+          marginTop: 40,
+          padding: 20,
+          background: "rgba(245, 239, 224, 0.1)",
+          borderRadius: 16,
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.95rem",
+          textAlign: "center",
+          color: window.innerWidth <= 768 ? "#FFD700" : "#D4C4A8",
+        }}
+      >
+        <h3
+          style={{
+            color: window.innerWidth <= 768 ? "#FFD700" : "#F5EFE0",
+            fontFamily: '"Cinzel", serif',
+            fontSize: window.innerWidth <= 768 ? "1.2rem" : "1.4rem",
+            marginBottom: 12,
+          }}
+        >
+          API Attribution
+        </h3>
+        <p style={{ marginBottom: 8, lineHeight: 1.6 }}>
+          This website uses external APIs for enhanced features:
+        </p>
+        <p style={{ lineHeight: 1.6 }}>
+          Synonym suggestions powered by{" "}
+          <a
+            href="https://datamuse.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: window.innerWidth <= 768 ? "#FFD700" : "#D4C4A8",
+              textDecoration: "underline",
+              fontWeight: 600,
+            }}
+          >
+            Datamuse API
+          </a>
+        </p>
+      </div>
     </div>
   );
 };

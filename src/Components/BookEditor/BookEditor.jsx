@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ReactQuill from "react-quill";
+import ReactQuillWithSynonyms from "../ReactQuillWithSynonyms/ReactQuillWithSynonyms";
 import "react-quill/dist/quill.snow.css";
 import { useAuth } from "../../context/authContext";
 import useBooks from "../../hooks/useBooks";
@@ -395,7 +395,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
                 </div>
               </>
             ) : (
-              <ReactQuill
+              <ReactQuillWithSynonyms
                 value={page.content}
                 onChange={(content) => updatePage(index, content)}
                 theme="snow"
@@ -410,6 +410,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
                   ],
                 }}
                 className={styles.pageContent}
+                enableSynonyms={true}
               />
             )}
           </div>

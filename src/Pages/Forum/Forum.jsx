@@ -44,9 +44,9 @@ import {
   updateUserWordCount,
 } from "../../utils/wordCountReward";
 
-// Rich text editor (install react-quill if not present)
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+// Rich text editor with synonym suggestions
+import ReactQuillWithSynonyms from "../../Components/ReactQuillWithSynonyms/ReactQuillWithSynonyms";
+import RepetitionWarningComponent from "../../Components/RepetitionWarning/RepetitionWarningComponent";
 
 const forumNames = {
   commonroom: "Commonroom",
@@ -644,7 +644,7 @@ const Forum = () => {
               placeholder="New topic title"
               className={styles.newTopicInput}
             />
-            <ReactQuill
+            <ReactQuillWithSynonyms
               value={newTopicContent}
               onChange={(val) => {
                 setNewTopicContent(val);
@@ -652,7 +652,9 @@ const Forum = () => {
                 setNewTopicWordCount(wordCount);
               }}
               className={styles.newTopicEditor}
+              enableSynonyms={true}
             />
+            <RepetitionWarningComponent text={newTopicContent} />
             <div
               style={{
                 color: newTopicWordCount < 300 ? "#ff6b6b" : "#ffd86b",
@@ -809,11 +811,13 @@ const Forum = () => {
                 style={{ marginBottom: 16, width: "100%" }}
                 placeholder="Edit topic title"
               />
-              <ReactQuill
+              <ReactQuillWithSynonyms
                 value={editTopicContent}
                 onChange={setEditTopicContent}
                 className={styles.quill}
+                enableSynonyms={true}
               />
+              <RepetitionWarningComponent text={editTopicContent} />
               <div style={{ marginTop: 16 }}>
                 <Button
                   onClick={handleSaveTopicEdit}
@@ -864,11 +868,13 @@ const Forum = () => {
                   </div>
                   {editingId === post.id ? (
                     <>
-                      <ReactQuill
+                      <ReactQuillWithSynonyms
                         value={editContent}
                         onChange={setEditContent}
                         className={styles.quill}
+                        enableSynonyms={true}
                       />
+                      <RepetitionWarningComponent text={editContent} />
                       <Button
                         onClick={() => handleEdit(post.id)}
                         className={styles.saveButton}
@@ -926,7 +932,7 @@ const Forum = () => {
           )}
           {/* Reply box */}
           <div className={styles.replyBox}>
-            <ReactQuill
+            <ReactQuillWithSynonyms
               value={replyContent}
               onChange={(val) => {
                 setReplyContent(val);
@@ -934,7 +940,9 @@ const Forum = () => {
                 setReplyWordCount(wordCount);
               }}
               className={styles.quill}
+              enableSynonyms={true}
             />
+            <RepetitionWarningComponent text={replyContent} />
             <div
               style={{
                 color: replyWordCount < 300 ? "#ff6b6b" : "#ffd86b",
