@@ -1053,6 +1053,35 @@
   margin-left: 8px;
 }
 
+.petStatsDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background: rgba(93, 78, 55, 0.1);
+  border-radius: 6px;
+  border: 1px solid #5d4e37;
+}
+
+.petStatItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statLabel {
+  color: #5d4e37;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.statValue {
+  color: #8b7a6b;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
 .petName {
   color: #ffe4b5 !important;
   font-size: 1.1rem;

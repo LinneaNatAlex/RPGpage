@@ -1,6 +1,6 @@
 // import the necessary libraries and components
 import { useState, useEffect, startTransition } from "react";
-import { isBirthdayToday } from "../../utils/rpgCalendar";
+import { isBirthdayToday, getRPGCalendar } from "../../utils/rpgCalendar";
 import useUsers from "../../hooks/useUser";
 import { useParams } from "react-router-dom";
 import {
@@ -192,17 +192,41 @@ const UserProfile = () => {
       const newMood = Math.min(100, petMood + moodChange);
       const now = serverTimestamp();
 
-      // Update pet mood in user's document
+      // Get current counts and increment
+      const currentPetCount = userData.currentPet.petCount || 0;
+      const currentPlayCount = userData.currentPet.playCount || 0;
+
+      // Update pet mood and counts in user's document
       const userRef = doc(db, "users", userData.uid);
-      await updateDoc(userRef, {
+      const updateData = {
         "currentPet.mood": newMood,
         [`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`]: now,
         "currentPet.lastInteraction": now,
         "currentPet.lastInteractionBy": user.uid,
         "currentPet.lastInteractionType": type,
-      });
+      };
 
+      // Increment count based on type
+      if (type === "pet") {
+        updateData["currentPet.petCount"] = currentPetCount + 1;
+      } else if (type === "play") {
+        updateData["currentPet.playCount"] = currentPlayCount + 1;
+      }
+
+      await updateDoc(userRef, updateData);
+
+      // Update local state
       setPetMood(newMood);
+      setUserData((prev) => ({
+        ...prev,
+        currentPet: {
+          ...prev.currentPet,
+          mood: newMood,
+          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
+          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
+        },
+      }));
+
       if (type === "pet") {
         setLastPet(now);
       } else if (type === "play") {
@@ -230,25 +254,26 @@ const UserProfile = () => {
       ageChecked
     )
       return;
-    const currentYear = new Date().getFullYear();
+    const now = new Date();
+    const { rpgYear } = getRPGCalendar(now);
     if (
-      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay) &&
+      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now) &&
       user?.uid === userData.uid &&
-      userData.lastBirthdayYear !== currentYear
+      userData.lastBirthdayYear !== rpgYear
     ) {
-      // Oppdater alder og siste feirede år i Firestore
+      // Oppdater alder og siste feirede RPG-år i Firestore
       const newAge = (userData.age || 0) + 1;
       const userRef = doc(db, "users", userData.uid);
       updateDoc(userRef, {
         age: newAge,
-        lastBirthdayYear: currentYear,
+        lastBirthdayYear: rpgYear,
       })
         .then(() => {
           startTransition(() => {
             setUserData({
               ...userData,
               age: newAge,
-              lastBirthdayYear: currentYear,
+              lastBirthdayYear: rpgYear,
             });
           });
           startTransition(() => {
@@ -573,16 +598,6 @@ const UserProfile = () => {
                   }
                   , Day {userData.birthdayDay}
                 </span>
-                {user?.uid === userData.uid && !birthdaySaved && (
-                  <button
-                    onClick={() =>
-                      startTransition(() => setEditingBirthday(true))
-                    }
-                    style={{ marginLeft: 8, fontSize: 11 }}
-                  >
-                    Edit
-                  </button>
-                )}
               </p>
             ) : user?.uid === userData.uid ? (
               <div style={{ margin: "8px 0" }}>
@@ -1015,6 +1030,17 @@ const UserProfile = () => {
                   ? "😔"
                   : "😢"}
               </span>
+            </div>
+
+            <div className={styles.petStatsDisplay}>
+              <div className={styles.petStatItem}>
+                <span className={styles.statLabel}>Times Petted:</span>
+                <span className={styles.statValue}>{userData?.currentPet?.petCount || 0}</span>
+              </div>
+              <div className={styles.petStatItem}>
+                <span className={styles.statLabel}>Times Played:</span>
+                <span className={styles.statValue}>{userData?.currentPet?.playCount || 0}</span>
+              </div>
             </div>
           </div>
         </div>

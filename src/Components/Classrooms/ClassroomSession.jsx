@@ -613,11 +613,11 @@ const ClassroomSession = () => {
   return (
     <div
       style={{
-        maxWidth: 900,
-        margin: "2rem auto",
+        maxWidth: window.innerWidth <= 768 ? "95%" : 900,
+        margin: window.innerWidth <= 768 ? "1rem auto" : "2rem auto",
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: "#F5EFE0",
-        padding: 40,
+        padding: window.innerWidth <= 768 ? 20 : 40,
         borderRadius: 20,
         boxShadow:
           "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -874,17 +874,21 @@ const ClassroomSession = () => {
         </h3>
         <div
           ref={chatRef}
+          className="classroom-messages-container"
           style={{
             background: "rgba(245, 239, 224, 0.1)",
             minHeight: 300,
             maxHeight: 600,
             overflowY: "auto",
+            overflowX: "hidden",
             borderRadius: 12,
-            padding: 16,
+            padding: window.innerWidth <= 768 ? 12 : 16,
             marginBottom: 16,
             border: "2px solid rgba(255, 255, 255, 0.2)",
             boxShadow:
               "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
           {messages.length === 0 && (
@@ -1027,11 +1031,13 @@ const ClassroomSession = () => {
           <TextareaWithSynonyms
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            className="classroom-textarea"
             style={{
               width: "100%",
+              boxSizing: "border-box",
               borderRadius: 12,
               border: "2px solid #D4C4A8",
-              padding: "12px 16px",
+              padding: window.innerWidth <= 768 ? "14px 18px" : "12px 16px",
               background: "#F5EFE0",
               color: "#2C2C2C",
               fontSize: "1rem",

@@ -30,6 +30,7 @@ const GeneralRules = () => {
         border: "3px solid #7B6857",
         position: "relative",
         overflow: "hidden",
+        zIndex: 1,
       }}
     >
       <div

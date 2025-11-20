@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getRPGCalendar } from "../utils/rpgCalendar";
+import { getRPGCalendar, isBirthdayToday, getRPGMonthLength } from "../utils/rpgCalendar";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { Link } from "react-router-dom";
+import { getRaceColor } from "../utils/raceColors";
 
 export default function RPGCalendarSidebar() {
   const today = new Date();
@@ -22,6 +26,12 @@ export default function RPGCalendarSidebar() {
     rpgMonth: 1,
     dayRange: { start: 1, end: 7 }
   });
+
+  // Birthday users state
+  const [birthdayUsers, setBirthdayUsers] = useState([]);
+  const [loadingBirthdays, setLoadingBirthdays] = useState(true);
+  const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
+  const [loadingUpcoming, setLoadingUpcoming] = useState(true);
 
   // Update RPG Time every second
   useEffect(() => {
@@ -68,6 +78,98 @@ export default function RPGCalendarSidebar() {
     // Update every second
     const interval = setInterval(updateRPGTime, 1000);
     
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch users with birthdays today
+  useEffect(() => {
+    const fetchBirthdayUsers = async () => {
+      try {
+        setLoadingBirthdays(true);
+        const now = new Date();
+        const snapshot = await getDocs(collection(db, "users"));
+        const usersWithBirthday = [];
+        
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          if (
+            userData.birthdayMonth &&
+            userData.birthdayDay &&
+            isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now)
+          ) {
+            usersWithBirthday.push({
+              uid: doc.id,
+              displayName: userData.displayName || userData.email || "Unknown",
+              profileImageUrl: userData.profileImageUrl,
+              roles: userData.roles || [],
+              race: userData.race,
+            });
+          }
+        });
+
+        setBirthdayUsers(usersWithBirthday);
+      } catch (error) {
+        console.error("Error fetching birthday users:", error);
+      } finally {
+        setLoadingBirthdays(false);
+      }
+    };
+
+    fetchBirthdayUsers();
+    
+    // Refresh every hour to catch new birthdays
+    const interval = setInterval(fetchBirthdayUsers, 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch upcoming birthdays for next month
+  useEffect(() => {
+    const fetchUpcomingBirthdays = async () => {
+      try {
+        setLoadingUpcoming(true);
+        const now = new Date();
+        const calendar = getRPGCalendar(now);
+        const { rpgMonth, rpgYear } = calendar;
+        
+        // Calculate next month (wraps around to month 1 if month 12)
+        const nextMonth = rpgMonth === 12 ? 1 : rpgMonth + 1;
+        const nextYear = rpgMonth === 12 ? rpgYear + 1 : rpgYear;
+        
+        const snapshot = await getDocs(collection(db, "users"));
+        const upcoming = [];
+        
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          if (
+            userData.birthdayMonth &&
+            userData.birthdayDay &&
+            userData.birthdayMonth === nextMonth
+          ) {
+            upcoming.push({
+              uid: doc.id,
+              displayName: userData.displayName || userData.email || "Unknown",
+              profileImageUrl: userData.profileImageUrl,
+              birthdayDay: userData.birthdayDay,
+              roles: userData.roles || [],
+              race: userData.race,
+            });
+          }
+        });
+
+        // Sort by birthday day
+        upcoming.sort((a, b) => a.birthdayDay - b.birthdayDay);
+        setUpcomingBirthdays(upcoming);
+      } catch (error) {
+        console.error("Error fetching upcoming birthdays:", error);
+      } finally {
+        setLoadingUpcoming(false);
+      }
+    };
+
+    fetchUpcomingBirthdays();
+    
+    // Refresh every hour
+    const interval = setInterval(fetchUpcomingBirthdays, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -295,6 +397,224 @@ export default function RPGCalendarSidebar() {
         The highlighted day shows today. The numbers below each day show which
         RPG days are covered by that real day.
       </div>
+
+      {/* Birthday Users List */}
+      {birthdayUsers.length > 0 && (
+        <div
+          style={{
+            marginTop: 16,
+            paddingTop: 16,
+            borderTop: "1px solid rgba(212, 196, 168, 0.3)",
+            width: "100%",
+          }}
+        >
+          <div
+            style={{
+              color: "#D4C4A8",
+              fontSize: 14,
+              fontWeight: 600,
+              marginBottom: 8,
+              textAlign: "center",
+            }}
+          >
+            Birthdays Today
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+              maxHeight: 200,
+              overflowY: "auto",
+            }}
+          >
+            {birthdayUsers.map((user) => {
+              // Determine name color based on role or race
+              let nameColor = "#F5EFE0"; // Default color
+              if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
+                nameColor = "#fff";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "teacher")) {
+                nameColor = "gold";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
+                nameColor = "#1ecb8c";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "admin")) {
+                nameColor = "#ff5e5e";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "archivist")) {
+                nameColor = "#a084e8";
+              } else {
+                // Use race color for students without roles
+                nameColor = getRaceColor(user.race);
+              }
+
+              return (
+                <Link
+                  key={user.uid}
+                  to={`/user/${user.uid}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: 6,
+                    borderRadius: 6,
+                    background: "rgba(212, 196, 168, 0.1)",
+                    textDecoration: "none",
+                    color: "#F5EFE0",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.1)";
+                  }}
+                >
+                  <img
+                    src={user.profileImageUrl || "/icons/avatar.svg"}
+                    alt={user.displayName}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      border: "1px solid rgba(212, 196, 168, 0.3)",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 12,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      flex: 1,
+                      color: nameColor,
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    {user.displayName}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming Birthdays List */}
+      {upcomingBirthdays.length > 0 && (
+        <div
+          style={{
+            marginTop: 16,
+            paddingTop: 16,
+            borderTop: "1px solid rgba(212, 196, 168, 0.3)",
+            width: "100%",
+          }}
+        >
+          <div
+            style={{
+              color: "#D4C4A8",
+              fontSize: 14,
+              fontWeight: 600,
+              marginBottom: 8,
+              textAlign: "center",
+            }}
+          >
+            Upcoming Birthdays Next Month
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+              maxHeight: 250,
+              overflowY: "auto",
+            }}
+          >
+            {upcomingBirthdays.map((user) => {
+              // Determine name color based on role or race
+              let nameColor = "#F5EFE0"; // Default color
+              if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
+                nameColor = "#fff";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "teacher")) {
+                nameColor = "gold";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
+                nameColor = "#1ecb8c";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "admin")) {
+                nameColor = "#ff5e5e";
+              } else if (user.roles?.some((r) => r.toLowerCase() === "archivist")) {
+                nameColor = "#a084e8";
+              } else {
+                // Use race color for students without roles
+                nameColor = getRaceColor(user.race);
+              }
+
+              return (
+                <Link
+                  key={user.uid}
+                  to={`/user/${user.uid}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: 6,
+                    borderRadius: 6,
+                    background: "rgba(212, 196, 168, 0.1)",
+                    textDecoration: "none",
+                    color: "#F5EFE0",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.1)";
+                  }}
+                >
+                  <img
+                    src={user.profileImageUrl || "/icons/avatar.svg"}
+                    alt={user.displayName}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      border: "1px solid rgba(212, 196, 168, 0.3)",
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 12,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        color: nameColor,
+                        textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+                      }}
+                    >
+                      {user.displayName}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        color: "#B8A082",
+                      }}
+                    >
+                      Day {user.birthdayDay}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
       
     </aside>
   );

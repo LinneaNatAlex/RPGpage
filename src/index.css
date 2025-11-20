@@ -33,6 +33,40 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Hide scrollbars in classroom but keep functionality */
+.classroom-messages-container {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+.classroom-messages-container::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+}
+
+.classroom-textarea {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+.classroom-textarea::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+}
+
+/* Mobile responsive for classroom */
+@media (max-width: 768px) {
+  .classroom-messages-container {
+    width: 100% !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .classroom-textarea {
+    width: 100% !important;
+    padding: 14px 18px !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* Scrollbar styling to match the earthy theme */
 body,
 * {

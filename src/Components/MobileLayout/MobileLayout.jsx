@@ -135,7 +135,6 @@ const MobileLayout = ({ children }) => {
       <header className="mobile-header">
         <div className="mobile-header-content">
           <div className="mobile-logo-section">
-            <div className="mobile-logo-icon">⚡</div>
             <h1 className="mobile-logo-text">Vayloria</h1>
           </div>
         </div>

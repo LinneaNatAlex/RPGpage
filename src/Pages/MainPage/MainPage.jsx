@@ -43,21 +43,26 @@ const MainPage = () => {
   const HeaderContent = () => (
     <>
       <h1 className={styles.introductionTitle}>
-        {" "}
-        Welcome {displayName || "Werewolf/Witch/Vampire/Fairy"}{" "}
+        {user ? (
+          <>Welcome {displayName || "Werewolf/Witch/Vampire/Elf"}</>
+        ) : (
+          <>Welcome to Vayloria Arcane School</>
+        )}
       </h1>
       <p className={styles.introductionText}>
-        Your mystical journey continues. Check the notice board for updates,
-        attend classes and quests, and keep an eye on your magical race points.
-        Remember: magic is shaped by the choices you make.
-        {/* if not user the text below wil show */}
-        {!user && (
+        {user ? (
           <>
-            Are you ready to begin your journey as a werewolf, witch, vampire,
-            or fairy? Here you can discover your magical race, attend mystical
-            classes like Alchemy and Enchantments, and write your own Vayloria
-            Arcane School story. Join a thriving community and experience the
-            magic like never before.
+            Your mystical journey continues. Check the notice board for updates,
+            attend classes and quests, and keep an eye on your magical race points.
+            Remember: magic is shaped by the choices you make.
+          </>
+        ) : (
+          <>
+            Step into a world where magic flows through every word you write. 
+            Vayloria Arcane School is a text-based roleplaying community where 
+            writers become students of the mystical arts. Create your character, 
+            discover your magical race, and weave your story alongside fellow 
+            werewolves, witches, vampires, and elves.
           </>
         )}
       </p>
@@ -94,6 +99,149 @@ const MainPage = () => {
                 {loading ? "..." : stats.totalUsers}
               </span>
               <span className={styles.statLabel}>Total Students</span>
+            </div>
+          </div>
+
+          {/* Features Section */}
+          <div className={styles.featuresSection}>
+            <h2 className={styles.featuresTitle}>Discover Your Magical Path</h2>
+            <div className={styles.featuresGrid}>
+              <div className={styles.featureCard}>
+                <h3 className={styles.featureCardTitle}>Roleplay & Storytelling</h3>
+                <p className={styles.featureCardText}>
+                  Enter Starshade Hall, our live roleplay chat where your character 
+                  comes to life. Write, interact, and create stories in real-time 
+                  with other students. Every message is part of your character's 
+                  journey through Vayloria.
+                </p>
+              </div>
+              <div className={styles.featureCard}>
+                <h3 className={styles.featureCardTitle}>Mystical Classes</h3>
+                <p className={styles.featureCardText}>
+                  Attend classes like Alchemy, Potions, Astronomy, Ancient Languages, 
+                  and more. Each class offers unique knowledge and rewards. Learn the 
+                  arts that shape the magical world and earn points for your house.
+                </p>
+              </div>
+              <div className={styles.featureCard}>
+                <h3 className={styles.featureCardTitle}>Discover Your Race</h3>
+                <p className={styles.featureCardText}>
+                  Through our sorting quiz, discover whether you are a Werewolf, 
+                  Witch, Vampire, or Elf. Each race has its own unique traits, 
+                  history, and magical abilities. Your race shapes your journey.
+                </p>
+              </div>
+              <div className={styles.featureCard}>
+                <h3 className={styles.featureCardTitle}>Write Your Story</h3>
+                <p className={styles.featureCardText}>
+                  Create detailed character profiles, write backstories, and 
+                  craft your own Vayloria Arcane School narrative. Share your 
+                  character's journey and explore others' stories in the forums.
+                </p>
+              </div>
+              <div className={styles.featureCard}>
+                <h3 className={styles.featureCardTitle}>Community Forums</h3>
+                <p className={styles.featureCardText}>
+                  Join discussions, share ideas, and connect with fellow writers. 
+                  Our forums are spaces for both in-character roleplay and 
+                  out-of-character community building.
+                </p>
+              </div>
+              <div className={styles.featureCard}>
+                <h3 className={styles.featureCardTitle}>Live Chat & Events</h3>
+                <p className={styles.featureCardText}>
+                  Chat with other students in real-time, participate in school 
+                  events, and stay updated with the latest news from Vayloria. 
+                  The magical world is always alive and evolving.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* How It Works Section */}
+          <div className={styles.howItWorksSection}>
+            <h2 className={styles.howItWorksTitle}>How Vayloria Works</h2>
+            <div className={styles.howItWorksSteps}>
+              <div className={styles.stepCard}>
+                <div className={styles.stepNumber}>1</div>
+                <h3 className={styles.stepTitle}>Create Your Character</h3>
+                <p className={styles.stepText}>
+                  Sign up and create your student character. Choose a name, 
+                  design your profile, and prepare to discover your magical race.
+                </p>
+              </div>
+              <div className={styles.stepCard}>
+                <div className={styles.stepNumber}>2</div>
+                <h3 className={styles.stepTitle}>Take the Sorting Quiz</h3>
+                <p className={styles.stepText}>
+                  Complete our sorting quiz to discover whether you're a Werewolf, 
+                  Witch, Vampire, or Elf. Your race determines your magical path.
+                </p>
+              </div>
+              <div className={styles.stepCard}>
+                <div className={styles.stepNumber}>3</div>
+                <h3 className={styles.stepTitle}>Enter Starshade Hall</h3>
+                <p className={styles.stepText}>
+                  Join the live roleplay chat and start interacting with other 
+                  students. Write as your character and watch your story unfold.
+                </p>
+              </div>
+              <div className={styles.stepCard}>
+                <div className={styles.stepNumber}>4</div>
+                <h3 className={styles.stepTitle}>Attend Classes & Explore</h3>
+                <p className={styles.stepText}>
+                  Enroll in mystical classes, participate in forums, write stories, 
+                  and build relationships with other characters. The school is yours to explore.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* User-Generated World Section */}
+          <div className={styles.userGeneratedSection}>
+            <h2 className={styles.userGeneratedTitle}>A World Built by You</h2>
+            <p className={styles.userGeneratedText}>
+              Vayloria Arcane School is not a fandom or a pre-written universe. 
+              It's a fantasy world that grows and evolves with every story you write, 
+              every character you create, and every interaction you have. The more 
+              content you and other students contribute, the more of the world 
+              unfolds and develops. You're not just playing in someone else's 
+              universe—you're actively building and shaping Vayloria as you go. 
+              Every post, every class, every roleplay session adds to the living, 
+              breathing world that we create together.
+            </p>
+          </div>
+
+          {/* Promotional Section */}
+          <div className={styles.promotionalSection}>
+            <h2 className={styles.promotionalTitle}>A World of Magic Awaits</h2>
+            <p className={styles.promotionalText}>
+              Vayloria Arcane School is more than a roleplaying game—it's a 
+              community of writers, storytellers, and magical beings. Whether 
+              you're crafting epic adventures, attending classes, or simply 
+              chatting with fellow students, every moment is part of your 
+              character's unique journey. Join us and become part of a thriving 
+              magical community where your words create the magic.
+            </p>
+            <div className={styles.promotionalHighlights}>
+              <div className={styles.highlightItem}>
+                <span className={styles.highlightText}>Text-Based Roleplay</span>
+              </div>
+              <div className={styles.highlightItem}>
+                <span className={styles.highlightText}>Character Creation</span>
+              </div>
+              <div className={styles.highlightItem}>
+                <span className={styles.highlightText}>Magical Classes</span>
+              </div>
+              <div className={styles.highlightItem}>
+                <span className={styles.highlightText}>Four Magical Races</span>
+              </div>
+              <div className={styles.highlightItem}>
+                <span className={styles.highlightText}>Rewards & Points</span>
+              </div>
+              <div className={styles.highlightItem}>
+                <span className={styles.highlightText}>Active Community</span>
+              </div>
             </div>
           </div>
         </>

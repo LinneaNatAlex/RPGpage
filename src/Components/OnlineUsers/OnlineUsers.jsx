@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { Link } from "react-router-dom";
 import GearIcon from "../Icons/Gear.svg";
 
 const OnlineUsers = () => {
@@ -157,53 +158,66 @@ const OnlineUsers = () => {
               24 * 60 * 60 * 1000;
           return (
             <li key={u.id} className={style.onlineUserItem}>
-              <img
-                src={u.profileImageUrl || "/icons/avatar.svg"}
-                alt="User Avatar"
-                className={roleClass}
+              <Link
+                to={`/user/${u.id}`}
                 style={{
-                  boxShadow: inLove ? "0 0 12px 2px #ffb6e6" : undefined,
-                  border: isNewUser ? "2px solid #4da3ff" : undefined,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  textDecoration: "none",
+                  color: "inherit",
+                  flex: 1,
+                  minWidth: 0,
                 }}
-              />
-              <span className={nameClass}>
-                {u.displayName}
-                {inDarkMode && (
-                  <span
-                    style={{
-                      background: "#1a1a1a",
-                      color: "#e0e0e0",
-                      borderRadius: 6,
-                      fontSize: "0.8em",
-                      fontWeight: 700,
-                      marginLeft: 6,
-                      padding: "2px 7px",
-                      boxShadow: "0 0 8px #444",
-                      verticalAlign: "middle",
-                      border: "1px solid #444",
-                    }}
-                  >
-                    /Dark
-                  </span>
-                )}
-                {isNewUser && (
-                  <span
-                    style={{
-                      background: "#4da3ff",
-                      color: "#fff",
-                      borderRadius: 6,
-                      fontSize: "0.8em",
-                      fontWeight: 700,
-                      marginLeft: 6,
-                      padding: "2px 7px",
-                      boxShadow: "0 0 8px #4da3ff",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    NY!
-                  </span>
-                )}
-              </span>
+              >
+                <img
+                  src={u.profileImageUrl || "/icons/avatar.svg"}
+                  alt="User Avatar"
+                  className={roleClass}
+                  style={{
+                    boxShadow: inLove ? "0 0 12px 2px #ffb6e6" : undefined,
+                    border: isNewUser ? "2px solid #4da3ff" : undefined,
+                  }}
+                />
+                <span className={nameClass}>
+                  {u.displayName}
+                  {inDarkMode && (
+                    <span
+                      style={{
+                        background: "#1a1a1a",
+                        color: "#e0e0e0",
+                        borderRadius: 6,
+                        fontSize: "0.8em",
+                        fontWeight: 700,
+                        marginLeft: 6,
+                        padding: "2px 7px",
+                        boxShadow: "0 0 8px #444",
+                        verticalAlign: "middle",
+                        border: "1px solid #444",
+                      }}
+                    >
+                      /Dark
+                    </span>
+                  )}
+                  {isNewUser && (
+                    <span
+                      style={{
+                        background: "#4da3ff",
+                        color: "#fff",
+                        borderRadius: 6,
+                        fontSize: "0.8em",
+                        fontWeight: 700,
+                        marginLeft: 6,
+                        padding: "2px 7px",
+                        boxShadow: "0 0 8px #4da3ff",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      NY!
+                    </span>
+                  )}
+                </span>
+              </Link>
               {inLove && u.inLoveWith && (
                 <span
                   style={{
@@ -221,7 +235,11 @@ const OnlineUsers = () => {
                 <button
                   className={style.gearButton}
                   title="Admin controls (timeout/detention)"
-                  onClick={() => handleTimeoutClick(u)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleTimeoutClick(u);
+                  }}
                   style={{
                     background: "none",
                     border: "none",

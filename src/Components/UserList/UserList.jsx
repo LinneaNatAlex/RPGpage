@@ -153,6 +153,8 @@ const UserList = ({ userQuery }) => {
               <td data-label="Name">
                 {(() => {
                   let nameClass = styles.userName;
+                  
+                  // Only apply role colors if user has a role
                   if (user.roles?.some((r) => r.toLowerCase() === "headmaster"))
                     nameClass += ` ${styles.headmasterName}`;
                   else if (
@@ -169,7 +171,13 @@ const UserList = ({ userQuery }) => {
                     user.roles?.some((r) => r.toLowerCase() === "archivist")
                   )
                     nameClass += ` ${styles.archivistName}`;
-                  return <span className={nameClass}>{user.displayName}</span>;
+                  // If no role, userName class will use default brown color (#b8860b)
+                  
+                  return (
+                    <span className={nameClass}>
+                      {user.displayName}
+                    </span>
+                  );
                 })()}
               </td>
               <td data-label="Location" className={styles.locationCell}>
@@ -285,7 +293,11 @@ const UserList = ({ userQuery }) => {
                   {isThird && <span className={styles.medal}>🥉</span>}
                   <span 
                     className={styles.raceName}
-                    style={{ color: getRaceColor(race) }}
+                    style={{ 
+                      color: getRaceColor(race),
+                      fontWeight: "bold",
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+                    }}
                   >
                     {displayRace}
                   </span>

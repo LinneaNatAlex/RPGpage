@@ -8,7 +8,7 @@ import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
 import Chat from "../../Components/Chat/Chat";
 import FriendsList from "../../Components/FriendsList/FriendsList";
-import { isBirthdayToday } from "../../utils/rpgCalendar";
+import { isBirthdayToday, getRPGCalendar } from "../../utils/rpgCalendar";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
@@ -168,17 +168,41 @@ const Profile = () => {
       const newMood = Math.min(100, petMood + moodChange);
       const now = serverTimestamp();
 
-      // Update pet mood in user's document
+      // Get current counts and increment
+      const currentPetCount = userData.currentPet.petCount || 0;
+      const currentPlayCount = userData.currentPet.playCount || 0;
+
+      // Update pet mood and counts in user's document
       const userRef = doc(db, "users", userData.uid || user.uid);
-      await updateDoc(userRef, {
+      const updateData = {
         "currentPet.mood": newMood,
         [`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`]: now,
         "currentPet.lastInteraction": now,
         "currentPet.lastInteractionBy": user.uid,
         "currentPet.lastInteractionType": type,
-      });
+      };
 
+      // Increment count based on type
+      if (type === "pet") {
+        updateData["currentPet.petCount"] = currentPetCount + 1;
+      } else if (type === "play") {
+        updateData["currentPet.playCount"] = currentPlayCount + 1;
+      }
+
+      await updateDoc(userRef, updateData);
+
+      // Update local state
       setPetMood(newMood);
+      setUserData((prev) => ({
+        ...prev,
+        currentPet: {
+          ...prev.currentPet,
+          mood: newMood,
+          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
+          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
+        },
+      }));
+
       if (type === "pet") {
         setLastPet(now);
       } else if (type === "play") {
@@ -235,24 +259,25 @@ const Profile = () => {
   // Automatisk aldersøkning med fellesmodul
   useEffect(() => {
     if (!userData || !userData.birthdayMonth || !userData.birthdayDay) return;
-    const currentYear = new Date().getFullYear();
+    const now = new Date();
+    const { rpgYear } = getRPGCalendar(now);
     if (
-      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay) &&
-      userData.lastBirthdayYear !== currentYear
+      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now) &&
+      userData.lastBirthdayYear !== rpgYear
     ) {
-      // Oppdater alder og siste feirede år i Firestore
+      // Oppdater alder og siste feirede RPG-år i Firestore
       const newAge = (userData.age || 0) + 1;
       startTransition(() => {
         updateDoc(doc(db, "users", user.uid), {
           age: newAge,
-          lastBirthdayYear: currentYear,
+          lastBirthdayYear: rpgYear,
         })
           .then(() => {
             startTransition(() => {
               setUserData((prev) => ({
                 ...prev,
                 age: newAge,
-                lastBirthdayYear: currentYear,
+                lastBirthdayYear: rpgYear,
               }));
             });
           })
@@ -946,6 +971,17 @@ const Profile = () => {
                   ? "😔"
                   : "😢"}
               </span>
+            </div>
+
+            <div className={styles.petStatsDisplay}>
+              <div className={styles.petStatItem}>
+                <span className={styles.statLabel}>Times Petted:</span>
+                <span className={styles.statValue}>{userData?.currentPet?.petCount || 0}</span>
+              </div>
+              <div className={styles.petStatItem}>
+                <span className={styles.statLabel}>Times Played:</span>
+                <span className={styles.statValue}>{userData?.currentPet?.playCount || 0}</span>
+              </div>
             </div>
           </div>
         </div>
