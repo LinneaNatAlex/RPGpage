@@ -24,6 +24,7 @@ const Profile = () => {
   const [birthdayDay, setBirthdayDay] = useState(1);
   const [birthdaySaved, setBirthdaySaved] = useState(false);
   const [editingBirthday, setEditingBirthday] = useState(false);
+  const [ageChecked, setAgeChecked] = useState(false);
 
   // Pet states
   const [editingPetName, setEditingPetName] = useState(false);
@@ -256,35 +257,39 @@ const Profile = () => {
     fetchUserData();
   }, [user, loading]);
 
-  // Automatisk aldersøkning med fellesmodul
+  // Automatisk aldersøkning på RPG-bursdag (samme logikk som UserProfile)
   useEffect(() => {
-    if (!userData || !userData.birthdayMonth || !userData.birthdayDay) return;
+    if (
+      !userData ||
+      !userData.birthdayMonth ||
+      !userData.birthdayDay ||
+      ageChecked
+    )
+      return;
     const now = new Date();
     const { rpgYear } = getRPGCalendar(now);
     if (
       isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now) &&
-      userData.lastBirthdayYear !== rpgYear
+      Number(userData.lastBirthdayYear) !== rpgYear
     ) {
-      // Oppdater alder og siste feirede RPG-år i Firestore
       const newAge = (userData.age || 0) + 1;
-      startTransition(() => {
-        updateDoc(doc(db, "users", user.uid), {
-          age: newAge,
-          lastBirthdayYear: rpgYear,
+      const userRef = doc(db, "users", user.uid);
+      updateDoc(userRef, { age: newAge, lastBirthdayYear: rpgYear })
+        .then(() => {
+          startTransition(() => {
+            setUserData((prev) => ({
+              ...prev,
+              age: newAge,
+              lastBirthdayYear: rpgYear,
+            }));
+            setAgeChecked(true);
+          });
         })
-          .then(() => {
-            startTransition(() => {
-              setUserData((prev) => ({
-                ...prev,
-                age: newAge,
-                lastBirthdayYear: rpgYear,
-              }));
-            });
-          })
-          .catch((err) => console.error("Failed to update age:", err));
-      });
+        .catch(() => setAgeChecked(true));
+    } else {
+      setAgeChecked(true);
     }
-  }, [userData, user]);
+  }, [userData, ageChecked, user]);
 
   const [uploading, setUploading] = useState(false);
   const { uploadImage } = useImageUpload();

@@ -90,7 +90,6 @@ export const router = createBrowserRouter(
       <Route path="sign-in" element={<SignIn />} />
       <Route path="sign-up" element={<SignUp />} />
       <Route path="race-info/:race" element={<RaceInfo />} />
-      <Route path="*" element={<MainPage />} />
       <Route path="verify-email" element={<VerifyEmail />} />
       {/*---------------------------------- Protected routes --------------------------*/}
       <Route
@@ -238,6 +237,8 @@ export const router = createBrowserRouter(
           </RouteGuard>
         }
       />
+      {/* Catch-all last so specific routes match first */}
+      <Route path="*" element={<MainPage />} />
     </Route>
   )
 );

@@ -259,7 +259,7 @@ const UserProfile = () => {
     if (
       isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now) &&
       user?.uid === userData.uid &&
-      userData.lastBirthdayYear !== rpgYear
+      Number(userData.lastBirthdayYear) !== rpgYear
     ) {
       // Oppdater alder og siste feirede RPG-år i Firestore
       const newAge = (userData.age || 0) + 1;

@@ -143,7 +143,7 @@ export default function RPGCalendarSidebar() {
           if (
             userData.birthdayMonth &&
             userData.birthdayDay &&
-            userData.birthdayMonth === nextMonth
+            Number(userData.birthdayMonth) === nextMonth
           ) {
             upcoming.push({
               uid: doc.id,

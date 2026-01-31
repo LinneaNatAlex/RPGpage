@@ -7,8 +7,24 @@ import { auth } from "../../firebaseConfig";
 import React, { Suspense } from "react";
 const Chat = React.lazy(() => import("../Chat/Chat"));
 const PrivateChat = React.lazy(() => import("../Chat/PrivateChat"));
-const TopBar = React.lazy(() => import("../TopBar/TopBar"));
 const RPGClock = React.lazy(() => import("../RPGClock/RPGClock"));
+
+const PROTECTED_PATHS = [
+  "/Profile",
+  "/userMap",
+  "/ClassRooms",
+  "/Rpg",
+  "/shop",
+  "/admin",
+  "/teacher",
+  "/housepoints",
+  "/inventory",
+];
+const isProtectedPath = (pathname) => {
+  if (PROTECTED_PATHS.some((p) => pathname === p || pathname === p + "/")) return true;
+  if (pathname.startsWith("/forum") || pathname.startsWith("/user/") || pathname.startsWith("/classrooms/") || pathname.startsWith("/Rpg/")) return true;
+  return false;
+};
 import "./MobileLayout.css";
 
 const MobileLayout = ({ children }) => {
@@ -25,7 +41,7 @@ const MobileLayout = ({ children }) => {
     closeAllOverlays();
     overlaySetter(true);
   };
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(false);
@@ -114,9 +130,22 @@ const MobileLayout = ({ children }) => {
     }
   };
 
+  // Redirect to sign-in if accessing protected route while not logged in
+  useEffect(() => {
+    if (!isMobile || authLoading) return;
+    if (!user && isProtectedPath(location.pathname)) {
+      navigate("/sign-in", { replace: true });
+    }
+  }, [isMobile, user, authLoading, location.pathname, navigate]);
+
   // Don't render mobile layout on desktop
   if (!isMobile) {
     return children;
+  }
+
+  // Show nothing (or loading) while redirecting unauthenticated user from protected route
+  if (!authLoading && !user && isProtectedPath(location.pathname)) {
+    return null;
   }
 
   return (
@@ -140,15 +169,8 @@ const MobileLayout = ({ children }) => {
         </div>
       </header>
 
-      {/* Mobile Main Content */}
+      {/* Mobile Main Content - TopBar not shown on mobile per design */}
       <main className="mobile-main">
-        {/* Mobile TopBar - Always visible */}
-        <div className="mobile-topbar-container">
-          <Suspense fallback={null}>
-            <TopBar />
-          </Suspense>
-        </div>
-
         {/* Render actual page content - let React Router handle all routing */}
         <div className="mobile-page-content">
           <Outlet />

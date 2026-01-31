@@ -78,15 +78,17 @@ export function getRPGCalendar(now = new Date()) {
 }
 
 // Sjekk om bursdag faller i denne IRL-dagens RPG-dager (for synkronisering)
+// birthdayMonth/birthdayDay kan komme som tall eller streng fra Firestore
 export function isBirthdayToday(birthdayMonth, birthdayDay, now = new Date()) {
+  const m = Number(birthdayMonth);
+  const d = Number(birthdayDay);
+  if (Number.isNaN(m) || Number.isNaN(d) || m < 1 || m > 12 || d < 1 || d > 31)
+    return false;
   const { rpgMonth, rpgDaysThisWeek } = getRPGCalendar(now);
-  // Finn hvilken dag i IRL-uken det er
   const dayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1;
   const rpgRange = rpgDaysThisWeek[dayOfWeek];
   return (
-    birthdayMonth === rpgMonth &&
-    birthdayDay >= rpgRange.start &&
-    birthdayDay <= rpgRange.end
+    m === rpgMonth && d >= rpgRange.start && d <= rpgRange.end
   );
 }
 
