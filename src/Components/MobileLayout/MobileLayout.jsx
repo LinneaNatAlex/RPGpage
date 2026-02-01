@@ -21,8 +21,15 @@ const PROTECTED_PATHS = [
   "/inventory",
 ];
 const isProtectedPath = (pathname) => {
-  if (PROTECTED_PATHS.some((p) => pathname === p || pathname === p + "/")) return true;
-  if (pathname.startsWith("/forum") || pathname.startsWith("/user/") || pathname.startsWith("/classrooms/") || pathname.startsWith("/Rpg/")) return true;
+  if (PROTECTED_PATHS.some((p) => pathname === p || pathname === p + "/"))
+    return true;
+  if (
+    pathname.startsWith("/forum") ||
+    pathname.startsWith("/user/") ||
+    pathname.startsWith("/classrooms/") ||
+    pathname.startsWith("/Rpg/")
+  )
+    return true;
   return false;
 };
 import "./MobileLayout.css";
@@ -126,8 +133,7 @@ const MobileLayout = ({ children }) => {
       await signOut(auth);
       setShowDashboard(false);
       navigate("/");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   // Redirect to sign-in if accessing protected route while not logged in
@@ -388,11 +394,11 @@ const MobileLayout = ({ children }) => {
 
       {/* Forum Selection Modal */}
       {showForumSelection && (
-        <div 
+        <div
           className="mobile-forum-selection-overlay"
           onClick={() => setShowForumSelection(false)}
         >
-          <div 
+          <div
             className="mobile-forum-selection-content"
             onClick={(e) => e.stopPropagation()}
           >
@@ -415,7 +421,7 @@ const MobileLayout = ({ children }) => {
               >
                 <span className="mobile-forum-selection-label">Commonroom</span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -423,9 +429,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">Ritual Room</span>
+                <span className="mobile-forum-selection-label">
+                  Ritual Room
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -433,9 +441,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">Moon Garden</span>
+                <span className="mobile-forum-selection-label">
+                  Moon Garden
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -445,7 +455,7 @@ const MobileLayout = ({ children }) => {
               >
                 <span className="mobile-forum-selection-label">Blood Bank</span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -453,9 +463,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">Night Library</span>
+                <span className="mobile-forum-selection-label">
+                  Night Library
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -463,9 +475,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">The Gymnasium</span>
+                <span className="mobile-forum-selection-label">
+                  The Gymnasium
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -475,7 +489,7 @@ const MobileLayout = ({ children }) => {
               >
                 <span className="mobile-forum-selection-label">Infirmary</span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -483,9 +497,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">The Greenhouse</span>
+                <span className="mobile-forum-selection-label">
+                  The Greenhouse
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -493,9 +509,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">The Art Studio</span>
+                <span className="mobile-forum-selection-label">
+                  The Art Studio
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -505,7 +523,7 @@ const MobileLayout = ({ children }) => {
               >
                 <span className="mobile-forum-selection-label">Kitchen</span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
@@ -513,9 +531,11 @@ const MobileLayout = ({ children }) => {
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">Detention Classroom</span>
+                <span className="mobile-forum-selection-label">
+                  Detention Classroom
+                </span>
               </button>
-              
+
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {

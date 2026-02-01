@@ -36,7 +36,6 @@ body,
   justify-content: center;
   height: auto;
   min-height: auto;
-  border: 2px solid #7b6857;
   background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   margin: 0 auto;
   padding: 1.5rem;
@@ -49,17 +48,6 @@ body,
   gap: 2rem;
 }
 
-.profileContainer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #7b6857 0%, #8b7a6b 50%, #7b6857 100%);
-  z-index: 1;
-}
-
 .profileTextContainer {
   display: flex;
   flex-direction: column;
@@ -69,7 +57,6 @@ body,
   background: transparent; /* Transparent background for all themes */
   border-radius: 16px;
   padding: 2rem;
-  border: 2px solid rgba(212, 196, 168, 0.3); /* Semi-transparent border */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
@@ -100,7 +87,6 @@ body,
   background: transparent; /* Transparent background for all themes */
   border-radius: 16px;
   padding: 2rem;
-  border: 2px solid rgba(212, 196, 168, 0.3); /* Semi-transparent border */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
   word-break: break-word;
@@ -143,7 +129,6 @@ body,
 }
 
 .profileTextContent blockquote {
-  border-left: 3px solid #7b6857;
   padding-left: 1rem;
   margin: 0.5rem 0;
   background: rgba(123, 104, 87, 0.05);
@@ -199,7 +184,6 @@ body,
 }
 
 .profileText blockquote {
-  border-left: 3px solid #7b6857;
   padding-left: 1rem;
   margin: 0.5rem 0;
 }
@@ -301,15 +285,12 @@ body,
   border-radius: 4px;
 }
 
+/* Fjern linja – ::before skal ikke vises (overstyrer eventuell cache) */
 .profileText::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #7b6857 0%, #8b7a6b 50%, #7b6857 100%);
-  z-index: 1;
+  display: none !important;
+  content: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
 
 .imageContainer {
@@ -815,7 +796,7 @@ body,
 /* Mobile responsive design - completely different layout */
 @media screen and (max-width: 768px) {
   .profileWrapper {
-    padding: 0.5rem;
+    padding: 0.35rem;
     background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
     min-height: 100vh;
     width: 100%;
@@ -833,7 +814,6 @@ body,
     margin: 0 auto;
     border-radius: 8px;
     background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-    border: 2px solid #7b6857;
     color: #f5efe0;
   }
 
@@ -864,7 +844,6 @@ body,
     gap: 0.2rem;
     padding: 0.5rem;
     background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-    border: 2px solid #7b6857;
     border-radius: 8px;
     /* Make it more compact on mobile */
     min-height: auto;
@@ -951,17 +930,20 @@ body,
 
   .profileTextContainer {
     width: 100%;
+    max-width: 100%;
     margin-top: 1rem;
+    padding: 0.5rem 0.5rem;
+    box-sizing: border-box;
   }
 
   .profileText {
     width: 100%;
     max-width: 100%;
-    padding: 1rem;
+    padding: 0.75rem 0.6rem;
     background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border: 2px solid #d4c4a8;
     border-radius: 16px;
     margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .profileText h2 {

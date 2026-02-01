@@ -33,8 +33,8 @@ const Chat = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Don't render on mobile - handled by MobileLayout
-  if (isMobile) {
+  // Only render on mobile
+  if (!isMobile) {
     return null;
   }
 
@@ -74,8 +74,7 @@ const Chat = () => {
         timestamp: serverTimestamp(),
       });
       setNewMessage("");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   if (!user) return null;

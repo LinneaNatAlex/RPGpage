@@ -54,6 +54,7 @@ export default function AdminPanel() {
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsMessage, setPointsMessage] = useState("");
   const [migrationStatus, setMigrationStatus] = useState("");
+  const [unfaintStatus, setUnfaintStatus] = useState("");
 
   const filtered = users.filter(
     (u) =>
@@ -205,6 +206,28 @@ export default function AdminPanel() {
     }
     setIpBanStatus(`IP ${ip} unbanned for all users.`);
   }
+
+  const handleUnfaintUser = async () => {
+    if (!selected) return;
+    if (!roles.includes("admin")) {
+      setUnfaintStatus("Only admin can unfaint users.");
+      return;
+    }
+    setUnfaintStatus("Working...");
+    try {
+      const ref = doc(db, "users", selected.uid);
+      await updateDoc(ref, {
+        health: 100,
+        infirmaryEnd: null,
+      });
+      setUnfaintStatus(
+        `${selected.displayName || selected.email || selected.uid} has been recovered from the infirmary.`
+      );
+      setTimeout(() => setUnfaintStatus(""), 5000);
+    } catch (err) {
+      setUnfaintStatus("Error: " + err.message);
+    }
+  };
 
   const handlePointsUpdate = async () => {
     setPointsMessage("");
@@ -637,6 +660,80 @@ export default function AdminPanel() {
               "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
           }}
         >
+          {/* Unfaint user (Infirmary) – admin kan hente brukere ut av infirmary */}
+          <div style={{ marginBottom: 20 }}>
+            <h3
+              style={{
+                color: theme.secondaryText,
+                fontSize: "1.15rem",
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                textShadow: isDarkMode
+                  ? "0 1px 2px rgba(0, 0, 0, 0.3)"
+                  : "0 1px 2px rgba(255, 255, 255, 0.3)",
+                marginBottom: 10,
+              }}
+            >
+              Unfaint user (Infirmary)
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                color: theme.text,
+                opacity: 0.9,
+                marginBottom: 10,
+              }}
+            >
+              Velg bruker over og klikk for å hente dem ut av infirmary (health 100, ingen ventetid).
+            </p>
+            <button
+              onClick={handleUnfaintUser}
+              style={{
+                background: "linear-gradient(135deg, #2196F3 0%, #1976D2 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              Unfaint selected user
+            </button>
+            {unfaintStatus && (
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: "8px 12px",
+                  background: "rgba(33, 150, 243, 0.15)",
+                  borderRadius: 8,
+                  border: "1px solid rgba(33, 150, 243, 0.3)",
+                  fontSize: "0.9rem",
+                  color: theme.text,
+                }}
+              >
+                {unfaintStatus}
+              </div>
+            )}
+          </div>
+
           <h3
             style={{
               color: theme.secondaryText,

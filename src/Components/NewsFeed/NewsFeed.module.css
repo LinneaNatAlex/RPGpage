@@ -33,20 +33,9 @@
   background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
-  border: 2px solid #d4c4a8;
   padding: 2rem;
   position: relative;
   overflow: hidden;
-}
-
-.newsFeedWrapper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #7b6857 0%, #8b7a6b 50%, #7b6857 100%);
 }
 
 .newsContainer {

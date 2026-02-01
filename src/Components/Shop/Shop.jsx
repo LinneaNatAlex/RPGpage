@@ -17,6 +17,7 @@ import { addImageToItem } from "../../utils/itemImages";
 import styles from "./Shop.module.css";
 import shopItems from "./itemsList";
 import useUserData from "../../hooks/useUserData";
+import useUserRoles from "../../hooks/useUserRoles";
 
 // Static items + Firestore items displayed together
 
@@ -34,12 +35,13 @@ const Shop = ({ open = true }) => {
   // Books use display names only - no author payments
   const { user } = useAuth();
   const { userData } = useUserData();
-  // Sjekk om bruker er admin (for enkelhets skyld, bruk roller fra user-objekt hvis tilgjengelig)
+  const { roles } = useUserRoles();
+  // Admin/teacher/archivist kan kjøpe alle eliksirer (for testing)
   const isAdmin =
     user &&
-    (user.roles?.includes("admin") ||
-      user.roles?.includes("teacher") ||
-      user.roles?.includes("archivist"));
+    (roles?.some((r) => String(r).toLowerCase() === "admin") ||
+      roles?.some((r) => String(r).toLowerCase() === "teacher") ||
+      roles?.some((r) => String(r).toLowerCase() === "archivist"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
@@ -351,8 +353,9 @@ const Shop = ({ open = true }) => {
           .map((item) => {
             const itemWithImage = addImageToItem(item);
 
-            // Check if potion is locked (not crafted)
+            // Check if potion is locked (not crafted) – Admin/teacher/archivist kan alltid kjøpe alle eliksirer (for testing)
             const isPotionLocked =
+              !isAdmin &&
               item.category === "Potions" &&
               item.type === "potion" &&
               !craftedPotions.has(item.name);

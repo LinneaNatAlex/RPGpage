@@ -15,7 +15,6 @@
 
 /* Force dark mode for all mobile content */
 
-
 .mobile-app .mobile-page-content * {
   color: #f5efe0 !important;
 }
@@ -1595,8 +1594,6 @@
 
 /* Specific mobile forum content styling */
 @media (max-width: 768px) {
- 
-
   .mobile-page-content p {
     color: #e0e0e0 !important;
     font-family: "Georgia", "Times New Roman", serif !important;
@@ -1769,8 +1766,6 @@
   .mobile-page-content {
     padding: 10px;
   }
-
- 
 
   .mobile-dashboard-grid {
     padding: 10px;
@@ -1952,7 +1947,9 @@
 /* ================================ */
 
 /* Fix for mobile input issues */
-input, textarea, select {
+input,
+textarea,
+select {
   font-size: 16px !important; /* Prevents zoom on iOS */
   -webkit-appearance: none !important;
   -webkit-border-radius: 8px !important;
@@ -1963,7 +1960,9 @@ input, textarea, select {
 }
 
 /* Ensure inputs are focusable on mobile */
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   -webkit-user-select: text !important;
   user-select: text !important;
   -webkit-touch-callout: default !important;
@@ -1971,7 +1970,9 @@ input:focus, textarea:focus, select:focus {
 
 /* Fix for mobile Safari input zoom */
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     font-size: 16px !important;
   }
 }
@@ -2029,14 +2030,14 @@ input:focus, textarea:focus, select:focus {
 }
 
 .mobile-forum-selection-content {
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   border-radius: 20px;
   padding: 20px;
   width: 100%;
   max-width: 500px;
   max-height: 85vh;
   overflow: hidden;
-  border: 3px solid #7B6857;
+  border: 3px solid #7b6857;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
   position: relative;
   display: flex;
@@ -2053,7 +2054,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .mobile-forum-selection-header h2 {
-  color: #F5EFE0;
+  color: #f5efe0;
   font-family: "Cinzel", serif;
   font-size: 1.5rem;
   font-weight: 700;
@@ -2067,7 +2068,7 @@ input:focus, textarea:focus, select:focus {
   border-radius: 50%;
   width: 35px;
   height: 35px;
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -2124,7 +2125,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .mobile-forum-selection-label {
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1rem;
   font-weight: 600;
   font-family: "Cinzel", serif;
@@ -2133,7 +2134,11 @@ input:focus, textarea:focus, select:focus {
 
 /* Light mode for forum selection */
 .mobile-app-light .mobile-forum-selection-content {
-  background: linear-gradient(135deg, rgba(232, 221, 212, 0.95) 0%, rgba(245, 239, 224, 0.95) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(232, 221, 212, 0.95) 0%,
+    rgba(245, 239, 224, 0.95) 100%
+  );
   border: 3px solid rgba(139, 122, 107, 0.4);
 }
 

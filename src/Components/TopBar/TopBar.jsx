@@ -22,6 +22,7 @@ import { useRef } from "react";
 import GiftModal from "./GiftModal";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
+import useUserRoles from "../../hooks/useUserRoles";
 import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
 import { cacheHelpers } from "../../utils/firebaseCache";
 
@@ -53,8 +54,10 @@ function HealthBar({ health = 100, maxHealth = 100 }) {
 const TopBar = () => {
   const { user } = useAuth();
   const { userData, loading: userDataLoading } = useUserData();
+  const { roles } = useUserRoles();
   const navigate = useNavigate();
   const [infirmary, setInfirmary] = useState(false);
+  const isAdmin = roles?.some((r) => String(r).toLowerCase() === "admin");
   const [detentionUntil, setDetentionUntil] = useState(null);
   const [infirmaryEnd, setInfirmaryEnd] = useState(null);
   const [countdown, setCountdown] = useState(0);
@@ -488,7 +491,8 @@ const TopBar = () => {
 
   return (
     <>
-      {infirmary && (
+      {/* Fainted overlay – admin kan alltid bruke menyen og gå til Admin Panel */}
+      {infirmary && !isAdmin && (
         <div
           style={{
             position: "fixed",

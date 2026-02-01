@@ -683,23 +683,23 @@
     margin: 10px;
     max-width: calc(100vw - 20px);
   }
-  
+
   .followersModalHeader {
     padding: 15px 20px;
   }
-  
+
   .followersModalHeader h3 {
     font-size: 1.1rem;
   }
-  
+
   .followersList {
     padding: 15px 20px;
   }
-  
+
   .followerItem {
     padding: 10px 0;
   }
-  
+
   .followerAvatar {
     width: 35px;
     height: 35px;

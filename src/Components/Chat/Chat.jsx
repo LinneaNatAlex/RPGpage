@@ -129,8 +129,7 @@ const Chat = () => {
               : null
           );
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     // Fetch initially
@@ -260,17 +259,18 @@ const Chat = () => {
   // Ping notification for mentions
   useEffect(() => {
     if (!auth.currentUser || messages.length === 0) return;
-    
+
     const latestMessage = messages[messages.length - 1];
     const messageText = latestMessage.text || "";
     const userName = auth.currentUser.displayName || "";
     const messageSender = latestMessage.sender || "";
-    
-    
+
     // Only ping if user is mentioned and it's not their own message
-    if (messageSender !== userName && 
-        (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
-         messageText.toLowerCase().includes("@all"))) {
+    if (
+      messageSender !== userName &&
+      (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) ||
+        messageText.toLowerCase().includes("@all"))
+    ) {
       playPing();
     }
   }, [messages]);
@@ -278,14 +278,23 @@ const Chat = () => {
   // ----------------------FORMATTING FUNCTION-----------------------
   const formatMessage = (text) => {
     // Handle /i for italic - matches /i followed by text until end or another command
-    let formattedText = text.replace(/\/i\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g, '<em>$1</em>');
-    
+    let formattedText = text.replace(
+      /\/i\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g,
+      "<em>$1</em>"
+    );
+
     // Handle /b for bold
-    formattedText = formattedText.replace(/\/b\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g, '<strong>$1</strong>');
-    
+    formattedText = formattedText.replace(
+      /\/b\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g,
+      "<strong>$1</strong>"
+    );
+
     // Handle /u for underline
-    formattedText = formattedText.replace(/\/u\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g, '<u>$1</u>');
-    
+    formattedText = formattedText.replace(
+      /\/u\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g,
+      "<u>$1</u>"
+    );
+
     return formattedText;
   };
 
@@ -420,29 +429,39 @@ const Chat = () => {
     }
   };
 
+  const isPc = window.innerWidth > 768;
   return (
     <div
       style={{
-        position: window.innerWidth <= 768 ? "relative" : "fixed",
-        bottom: window.innerWidth <= 768 ? "auto" : 0,
-        right: window.innerWidth <= 768 ? "auto" : 0,
-        width: window.innerWidth <= 768 ? "100%" : 350,
-        zIndex: window.innerWidth <= 768 ? 1 : 10005,
-     
+        position: isPc ? "fixed" : "relative",
+        top: isPc && !isCollapsed ? 0 : "auto",
+        bottom: isPc ? 0 : "auto",
+        right: isPc ? 0 : "auto",
+        width: isPc ? 350 : "100%",
+        zIndex: isPc ? 10005 : 1,
+        display: isPc ? "flex" : "block",
+        flexDirection: isPc
+          ? isCollapsed
+            ? "column-reverse"
+            : "column"
+          : undefined,
       }}
     >
-      {window.innerWidth > 768 && (
+      {isPc && (
         <div
           style={{
+            flexShrink: 0,
             background: "#5D4E37",
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
             padding: "0.5rem 1rem",
             display: "flex",
             alignItems: "center",
             cursor: "pointer",
             border: "1px solid #7B6857",
-            borderBottom: "none",
+            borderBottom: isCollapsed ? "1px solid #7B6857" : "none",
           }}
           onClick={() => setIsCollapsed((prev) => !prev)}
         >
@@ -462,18 +481,19 @@ const Chat = () => {
           </button>
         </div>
       )}
-      {(window.innerWidth > 768 ? !isCollapsed : true) && (
+      {(isPc ? !isCollapsed : true) && (
         <div
-          className={styles.chatContainer}
+          className={`${styles.chatContainer} ${
+            isPc ? styles.chatContainerPc : ""
+          }`}
           style={{
-            borderTopLeftRadius: window.innerWidth <= 768 ? 12 : 0,
-            borderTopRightRadius: window.innerWidth <= 768 ? 12 : 0,
-            borderTop: window.innerWidth <= 768 ? "1px solid #7B6857" : "none",
-            height: "39.5pc",
-            minHeight: 200,
+            borderTopLeftRadius: !isPc ? 12 : 0,
+            borderTopRightRadius: !isPc ? 12 : 0,
+            borderTop: !isPc ? "1px solid #7B6857" : "none",
+            ...(!isPc && { height: "60vh", minHeight: 200 }),
           }}
         >
-          {window.innerWidth <= 768 && (
+          {!isPc && (
             <div
               style={{
                 background: "#5D4E37",
@@ -637,11 +657,23 @@ const Chat = () => {
                     style={getMessageStyle(message)}
                   >
                     :{" "}
-                    <span dangerouslySetInnerHTML={{
-                      __html: getDisplayText(message.text, message)
-                        ?.replace(/@([^\s@]+(?:\s+[^\s@]+)*)/g, '<span class="' + styles.mentionHighlight + '">@$1</span>')
-                        ?.replace(/@all/gi, '<span class="' + styles.mentionAll + '">@all</span>')
-                    }} />
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: getDisplayText(message.text, message)
+                          ?.replace(
+                            /@([^\s@]+(?:\s+[^\s@]+)*)/g,
+                            '<span class="' +
+                              styles.mentionHighlight +
+                              '">@$1</span>'
+                          )
+                          ?.replace(
+                            /@all/gi,
+                            '<span class="' +
+                              styles.mentionAll +
+                              '">@all</span>'
+                          ),
+                      }}
+                    />
                   </span>
                 </div>
               );

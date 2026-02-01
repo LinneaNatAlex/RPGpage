@@ -1,6 +1,6 @@
 /* Main page container */
 .introductionPage {
-  background-color: #E8DDD4;
+  background-color: #e8ddd4;
   min-height: auto;
   padding: 0;
 }
@@ -13,7 +13,11 @@
   gap: 3rem;
   margin: 2rem 0;
   padding: 2rem;
-  background: linear-gradient(135deg, rgba(245, 239, 224, 0.8) 0%, rgba(232, 221, 212, 0.6) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 239, 224, 0.8) 0%,
+    rgba(232, 221, 212, 0.6) 100%
+  );
   border-radius: 16px;
   border: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
@@ -34,15 +38,15 @@
 .statNumber {
   font-size: 3.5rem;
   font-weight: 300;
-  color: #7B6857;
-  font-family: 'Cinzel', serif;
+  color: #7b6857;
+  font-family: "Cinzel", serif;
   line-height: 1;
   margin-bottom: 0.25rem;
 }
 
 .statLabel {
   font-size: 0.75rem;
-  color: #A0907D;
+  color: #a0907d;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 400;
@@ -77,14 +81,15 @@
   bottom: 6.5rem;
   right: 2rem;
   z-index: 2000;
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   width: 60px;
   height: 60px;
   font-size: 1.8rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,14 +101,16 @@
 }
 
 .fabChatBtn:hover {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .fabChatBtn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
 }
 
 .chatModalOverlay {
@@ -121,29 +128,17 @@
 }
 
 .chatModal {
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   width: 95vw;
   max-width: 500px;
   border-radius: 20px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7B6857;
   padding: 0;
   min-height: 60vh;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-}
-
-.chatModal::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 20px 20px 0 0;
 }
 
 .chatModalTabs {
@@ -153,12 +148,11 @@
   background: rgba(245, 239, 224, 0.1);
   border-radius: 20px 20px 0 0;
   padding: 0.8rem 1rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 .chatModalTabs button {
   background: rgba(245, 239, 224, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1rem;
   font-weight: 600;
   margin-right: 0.5rem;
@@ -171,9 +165,10 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .chatModalTabs .activeTab {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
 }
 
 .chatModalTabs button:hover {
@@ -182,7 +177,7 @@
 }
 .closeModalBtn {
   margin-left: auto;
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1.2rem;
   background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -191,7 +186,8 @@
   height: 35px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
@@ -201,7 +197,8 @@
 .closeModalBtn:hover {
   background: linear-gradient(135deg, #ff5722 0%, #e53935 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 .chatModalContent {
   flex: 1;
@@ -219,7 +216,7 @@
 }
 /* --------------------BUTTON -------------------- */
 .ctaBtn {
-  background: linear-gradient(90deg, #7B6857 0%, #8B7A6B 100%);
+  background: linear-gradient(90deg, #7b6857 0%, #8b7a6b 100%);
   color: #181820;
   padding: 12px 24px;
   border: none;
@@ -238,21 +235,21 @@
 }
 .ctaBtn:hover {
   background: #fff;
-  color: #7B6857;
+  color: #7b6857;
 }
 /* --------------------INTRODUCTION HEADER -------------------- */
 .introductionHeader {
-  background-color: #E8DDD4;
+  background-color: #e8ddd4;
   padding: 1.5rem;
-  color: #2C2C2C;
+  color: #2c2c2c;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #D4C4A8;
+  border: 1px solid #d4c4a8;
   margin-bottom: 1rem;
 }
 
 .introductionTitle {
-  color: #8B4513;
+  color: #8b4513;
   font-size: 2.2rem;
   font-family: "Cinzel", serif;
   margin-bottom: 1rem;
@@ -260,7 +257,7 @@
 }
 
 .introductionText {
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 1rem;
@@ -305,7 +302,7 @@
 }
 
 .featuresTitle {
-  color: #8B4513;
+  color: #8b4513;
   font-size: 2rem;
   font-family: "Cinzel", serif;
   text-align: center;
@@ -323,7 +320,11 @@
 }
 
 .featureCard {
-  background: linear-gradient(135deg, rgba(245, 239, 224, 0.9) 0%, rgba(232, 221, 212, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 239, 224, 0.9) 0%,
+    rgba(232, 221, 212, 0.8) 100%
+  );
   border-radius: 12px;
   padding: 1.5rem;
   border: 2px solid rgba(123, 104, 87, 0.2);
@@ -337,7 +338,7 @@
 }
 
 .featureCardTitle {
-  color: #7B6857;
+  color: #7b6857;
   font-size: 1.3rem;
   font-family: "Cinzel", serif;
   margin-bottom: 0.75rem;
@@ -345,7 +346,7 @@
 }
 
 .featureCardText {
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 1rem;
   line-height: 1.6;
   margin: 0;
@@ -356,12 +357,16 @@
   margin: 3rem 0;
   padding: 2rem 0;
   width: 100%;
-  background: linear-gradient(135deg, rgba(245, 239, 224, 0.3) 0%, rgba(232, 221, 212, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 239, 224, 0.3) 0%,
+    rgba(232, 221, 212, 0.2) 100%
+  );
   border-radius: 16px;
 }
 
 .howItWorksTitle {
-  color: #8B4513;
+  color: #8b4513;
   font-size: 2rem;
   font-family: "Cinzel", serif;
   text-align: center;
@@ -391,8 +396,8 @@
 .stepNumber {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -405,7 +410,7 @@
 }
 
 .stepTitle {
-  color: #7B6857;
+  color: #7b6857;
   font-size: 1.2rem;
   font-family: "Cinzel", serif;
   margin-bottom: 0.75rem;
@@ -413,7 +418,7 @@
 }
 
 .stepText {
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0;
@@ -424,7 +429,11 @@
   margin: 3rem 0;
   padding: 2.5rem 2rem;
   width: 100%;
-  background: linear-gradient(135deg, rgba(123, 104, 87, 0.15) 0%, rgba(139, 122, 107, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(123, 104, 87, 0.15) 0%,
+    rgba(139, 122, 107, 0.1) 100%
+  );
   border-radius: 16px;
   border: 2px solid rgba(123, 104, 87, 0.3);
   max-width: 1000px;
@@ -433,7 +442,7 @@
 }
 
 .userGeneratedTitle {
-  color: #8B4513;
+  color: #8b4513;
   font-size: 2rem;
   font-family: "Cinzel", serif;
   text-align: center;
@@ -442,7 +451,7 @@
 }
 
 .userGeneratedText {
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 1.1rem;
   line-height: 1.8;
   text-align: center;
@@ -455,7 +464,11 @@
   margin: 3rem 0;
   padding: 2.5rem 2rem;
   width: 100%;
-  background: linear-gradient(135deg, rgba(123, 104, 87, 0.1) 0%, rgba(139, 122, 107, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(123, 104, 87, 0.1) 0%,
+    rgba(139, 122, 107, 0.05) 100%
+  );
   border-radius: 16px;
   border: 2px solid rgba(123, 104, 87, 0.2);
   max-width: 1000px;
@@ -464,7 +477,7 @@
 }
 
 .promotionalTitle {
-  color: #8B4513;
+  color: #8b4513;
   font-size: 2rem;
   font-family: "Cinzel", serif;
   text-align: center;
@@ -473,7 +486,7 @@
 }
 
 .promotionalText {
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 1.1rem;
   line-height: 1.8;
   text-align: center;
@@ -513,7 +526,7 @@
 }
 
 .highlightText {
-  color: #7B6857;
+  color: #7b6857;
   font-size: 0.9rem;
   font-weight: 500;
   text-align: center;
@@ -526,7 +539,7 @@
   display: none;
   position: fixed;
   background-color: var(--background-color);
-  color: #F5EFE0;
+  color: #f5efe0;
   font-size: 1.5rem;
   border: none;
 }
@@ -555,7 +568,7 @@
     align-items: center;
     gap: 5rem;
     bottom: 0;
-    background-color: #5D4E37;
+    background-color: #5d4e37;
     font-size: 1.2rem;
     height: 5rem;
   }
@@ -611,7 +624,7 @@
     max-width: 400px;
     gap: 0.8rem;
   }
-  
+
   .ctaBtn {
     font-size: 0.9rem;
     padding: 10px 16px;
@@ -637,19 +650,19 @@
   .introductionPage {
     padding: 1rem;
   }
-  
+
   /* Hide desktop components on mobile */
   .onlineUsersContainer,
   .newsFeedContainer,
   .rpgCalendarSidebarContainer {
     display: none !important;
   }
-  
+
   .mainContentHome {
     padding: 0;
     margin: 0;
   }
-  
+
   .introductionHeader {
     padding: 1.2rem;
     margin-bottom: 1rem;
@@ -675,29 +688,29 @@
     font-size: 0.65rem;
     letter-spacing: 1px;
   }
-  
+
   .introductionHeader h1 {
     font-size: 1.8rem;
   }
-  
+
   .introductionHeader p {
     font-size: 1rem;
   }
-  
+
   .chatModal {
     max-width: 95vw;
     min-height: 50vh;
   }
-  
+
   .chatModalTabs {
     padding: 0.4rem 0.8rem;
   }
-  
+
   .chatModalTabs button {
     font-size: 1rem;
     padding: 0.4rem 0.8rem;
   }
-  
+
   .fabChatBtn {
     width: 50px;
     height: 50px;
@@ -711,16 +724,16 @@
   .introductionPage {
     padding: 0.5rem;
   }
-  
+
   .introductionHeader {
     padding: 1rem;
     margin-bottom: 0.8rem;
   }
-  
+
   .introductionHeader h1 {
     font-size: 1.5rem;
   }
-  
+
   .introductionHeader p {
     font-size: 0.9rem;
   }
@@ -837,21 +850,21 @@
   .highlightText {
     font-size: 0.8rem;
   }
-  
+
   .chatModal {
     max-width: 98vw;
     min-height: 45vh;
   }
-  
+
   .chatModalTabs {
     padding: 0.3rem 0.6rem;
   }
-  
+
   .chatModalTabs button {
     font-size: 0.9rem;
     padding: 0.3rem 0.6rem;
   }
-  
+
   .fabChatBtn {
     width: 45px;
     height: 45px;
