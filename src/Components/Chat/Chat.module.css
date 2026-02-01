@@ -398,6 +398,110 @@
 .emojiBtn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* Admin: News / notification in chat */
+.notificationBtn {
+  background: none;
+  border: none;
+  color: #f5efe0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.25rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.notificationBtn:hover,
+.notificationBtn:focus {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.notificationMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  border: 1px solid #d4c4a8;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.notificationLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d4c4a8;
+}
+.notificationContent {
+  font-size: 0.95rem;
+  color: #f5efe0;
+  line-height: 1.4;
+}
+
+/* Admin: Notification modal */
+.notificationModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10020;
+}
+.notificationModal {
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  border: 2px solid #7b6857;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+.notificationModalTitle {
+  margin: 0 0 0.5rem 0;
+  color: #f5efe0;
+  font-size: 1.2rem;
+}
+.notificationModalHint {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #d4c4a8;
+}
+.notificationModalLabel {
+  display: block;
+  margin-bottom: 6px;
+  color: #f5efe0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.notificationModalInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 2px solid #7b6857;
+  background: #f5efe0;
+  color: #2c2c2c;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+.notificationModalInput:focus {
+  outline: none;
+  border-color: #d4c4a8;
+}
+.notificationModalActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+.notificationModalCancel {
+  background: #4a3f35 !important;
+  color: #d4c4a8 !important;
+}
+
 /* ------------RESPONSIVE---------------------- */
 @media screen and (max-width: 768px) {
   .chatContainer {

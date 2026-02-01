@@ -32,6 +32,8 @@ const Chat = () => {
   const [showEmoji, setShowEmoji] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [mentionActiveIdx, setMentionActiveIdx] = useState(0);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationText, setNotificationText] = useState("");
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = localStorage.getItem("mainChatCollapsed");
@@ -237,12 +239,34 @@ const Chat = () => {
     )
   );
 
+  const canSendNotification = currentUserObj?.roles?.some(
+    (r) => r.toLowerCase() === "admin"
+  );
+
   // Slett melding
   const handleDeleteMessage = async (id) => {
     try {
       await deleteDoc(doc(db, "messages", id));
     } catch (err) {
       setError("Could not delete message.");
+    }
+  };
+
+  // Send admin notification (news) to chat
+  const handleSendNotification = async (e) => {
+    e.preventDefault();
+    if (!notificationText.trim()) return;
+    try {
+      await addDoc(collection(db, "messages"), {
+        text: notificationText.trim(),
+        type: "notification",
+        sender: "News",
+        timestamp: serverTimestamp(),
+      });
+      setNotificationText("");
+      setShowNotificationModal(false);
+    } catch (err) {
+      setError("Could not send notification.");
     }
   };
 
@@ -468,7 +492,22 @@ const Chat = () => {
           <span style={{ flex: 1, color: "#F5EFE0", fontWeight: 600 }}>
             Chat
           </span>
+          {canSendNotification && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowNotificationModal(true);
+              }}
+              className={styles.notificationBtn}
+              title="Send news / notification to chat"
+              aria-label="Send news notification"
+            >
+              📢
+            </button>
+          )}
           <button
+            type="button"
             style={{
               background: "none",
               border: "none",
@@ -502,6 +541,9 @@ const Chat = () => {
                 borderTopRightRadius: 12,
                 borderBottom: "1px solid #7B6857",
                 marginBottom: "1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
               <h3
@@ -516,10 +558,37 @@ const Chat = () => {
               >
                 Main Chat
               </h3>
+              {canSendNotification && (
+                <button
+                  type="button"
+                  onClick={() => setShowNotificationModal(true)}
+                  className={styles.notificationBtn}
+                  title="Send news / notification to chat"
+                  aria-label="Send news notification"
+                >
+                  📢
+                </button>
+              )}
             </div>
           )}
           <div className={styles.chatMessages} ref={chatBoxRef}>
             {messages.map((message) => {
+              if (message.type === "notification") {
+                return (
+                  <div key={message.id} className={styles.notificationMessage}>
+                    <span className={styles.notificationLabel}>📢 News</span>
+                    <span
+                      className={styles.notificationContent}
+                      dangerouslySetInnerHTML={{
+                        __html: formatMessage(
+                          (message.text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                        ),
+                      }}
+                    />
+                  </div>
+                );
+              }
+
               const userObj = users.find(
                 (u) =>
                   u.displayName &&
@@ -759,6 +828,60 @@ const Chat = () => {
             </div>
             {error && <ErrorMessage message={error} />}
           </form>
+        </div>
+      )}
+
+      {/* Admin: News / notification popup */}
+      {showNotificationModal && (
+        <div
+          className={styles.notificationModalOverlay}
+          onClick={() => setShowNotificationModal(false)}
+          onKeyDown={(e) => e.key === "Escape" && setShowNotificationModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="notification-modal-title"
+        >
+          <div
+            className={styles.notificationModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="notification-modal-title" className={styles.notificationModalTitle}>
+              📢 News / notification
+            </h3>
+            <p className={styles.notificationModalHint}>
+              This will appear as a small news message in the chat for everyone.
+            </p>
+            <form onSubmit={handleSendNotification}>
+              <label htmlFor="chat-notification-input" className={styles.notificationModalLabel}>
+                Message
+              </label>
+              <textarea
+                id="chat-notification-input"
+                name="chatNotification"
+                className={styles.notificationModalInput}
+                value={notificationText}
+                onChange={(e) => setNotificationText(e.target.value)}
+                placeholder="e.g. Reminder: House meeting tonight at 8!"
+                rows={3}
+                autoComplete="off"
+              />
+              <div className={styles.notificationModalActions}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setShowNotificationModal(false);
+                    setNotificationText("");
+                  }}
+                  className={styles.notificationModalCancel}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={!notificationText.trim()}>
+                  Send to chat
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

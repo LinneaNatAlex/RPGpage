@@ -51,17 +51,15 @@ const UserList = ({ userQuery }) => {
     return "Left the school";
   };
 
-  // Filter users by search query if provided and exclude current user
-  const filteredUsers = (
-    userQuery
-      ? users.filter(
-          (u) =>
-            u.displayName?.toLowerCase().includes(userQuery.toLowerCase()) ||
-            u.race?.toLowerCase().includes(userQuery.toLowerCase()) ||
-            u.className?.toLowerCase().includes(userQuery.toLowerCase())
-        )
-      : users
-  ).filter((u) => u.uid !== currentUser?.uid);
+  // Filter users by search query if provided; include current user so they can see themselves
+  const filteredUsers = userQuery
+    ? users.filter(
+        (u) =>
+          u.displayName?.toLowerCase().includes(userQuery.toLowerCase()) ||
+          u.race?.toLowerCase().includes(userQuery.toLowerCase()) ||
+          u.className?.toLowerCase().includes(userQuery.toLowerCase())
+      )
+    : users;
 
   // Calculate total points per race
   const racePoints = {};
@@ -138,13 +136,22 @@ const UserList = ({ userQuery }) => {
           </tr>
         </thead>
         <tbody>
-          {currentUsers.map((user, idx) => (
+          {currentUsers.map((user, idx) => {
+            const isCurrentUser = user.uid === currentUser?.uid;
+            return (
             <tr
               key={user.uid}
+              className={isCurrentUser ? styles.currentUserRow : undefined}
               style={
-                idx === 0
+                idx === 0 && !isCurrentUser
                   ? {
                       background: "rgba(245, 239, 224, 0.2)",
+                      fontWeight: "bold",
+                    }
+                  : isCurrentUser
+                  ? {
+                      background: "rgba(123, 104, 87, 0.25)",
+                      borderLeft: "4px solid #7b6857",
                       fontWeight: "bold",
                     }
                   : {}
@@ -225,12 +232,17 @@ const UserList = ({ userQuery }) => {
                 {user.points || 0}
               </td>
               <td data-label="Profile">
-                <Link to={`/user/${user.uid}`} className={styles.profileLink}>
-                  View Profile
-                </Link>
+                {isCurrentUser ? (
+                  <span className={styles.youHere}>—</span>
+                ) : (
+                  <Link to={`/user/${user.uid}`} className={styles.profileLink}>
+                    View Profile
+                  </Link>
+                )}
               </td>
             </tr>
-          ))}
+          );
+          })}
         </tbody>
       </table>
       
