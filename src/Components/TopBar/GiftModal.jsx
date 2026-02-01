@@ -56,6 +56,8 @@ export default function GiftModal({
       <div className={styles.giftModal}>
         <h4>Gift {item.name}</h4>
         <input
+          id="gift-search-user"
+          name="giftSearchUser"
           placeholder="Search user..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -76,6 +78,8 @@ export default function GiftModal({
           <label>
             Disguise as:
             <select
+              id="gift-disguise"
+              name="giftDisguise"
               value={disguise ? disguise.name : item.name}
               onChange={(e) => {
                 const val = e.target.value;

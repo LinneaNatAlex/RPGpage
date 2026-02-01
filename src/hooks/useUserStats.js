@@ -48,6 +48,8 @@ const useUserStats = () => {
       setLoading(false);
     }, (error) => {
       setLoading(false);
+      if (error?.code === "permission-denied") return;
+      if (process.env.NODE_ENV === "development") console.warn("useUserStats snapshot error:", error);
     });
 
     return () => unsubscribe();

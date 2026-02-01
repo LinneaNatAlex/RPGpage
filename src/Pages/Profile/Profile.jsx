@@ -408,6 +408,8 @@ const Profile = () => {
                       style={{ marginTop: 20, display: "block" }}
                     >
                       <input
+                        id="profile-avatar-upload"
+                        name="profileAvatar"
                         type="file"
                         accept="image/*"
                         style={{ display: "none" }}
@@ -585,6 +587,8 @@ const Profile = () => {
                           <label style={{ fontSize: 13, marginRight: 6 }}>
                             Month:
                             <select
+                              id="profile-birthday-month"
+                              name="birthdayMonth"
                               value={birthdayMonth}
                               onChange={(e) =>
                                 startTransition(() =>
@@ -603,6 +607,8 @@ const Profile = () => {
                           <label style={{ fontSize: 13, marginRight: 6 }}>
                             Day:
                             <select
+                              id="profile-birthday-day"
+                              name="birthdayDay"
                               value={birthdayDay}
                               onChange={(e) =>
                                 startTransition(() =>
@@ -737,6 +743,8 @@ const Profile = () => {
                         ) : (
                           <div className={styles.petNameInputContainer}>
                             <input
+                              id="profile-pet-name"
+                              name="petName"
                               type="text"
                               value={newPetName}
                               onChange={(e) => setNewPetName(e.target.value)}

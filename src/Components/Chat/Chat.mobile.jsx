@@ -114,6 +114,8 @@ const Chat = () => {
           <form onSubmit={sendMessage} className="mobile-chat-form">
             <div className="mobile-chat-input-container">
               <input
+                id="mobile-chat-message"
+                name="mobileChatMessage"
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}

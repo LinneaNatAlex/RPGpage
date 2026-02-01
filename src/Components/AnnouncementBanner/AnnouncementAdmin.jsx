@@ -32,6 +32,8 @@ export default function AnnouncementAdmin({ user }) {
     <div className={styles.announcementAdminContainer}>
       <form onSubmit={handleAdd} className={styles.announcementForm}>
       <input
+        id="announcement-text"
+        name="announcementText"
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}

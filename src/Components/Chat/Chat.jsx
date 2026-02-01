@@ -690,6 +690,8 @@ const Chat = () => {
                 }}
               >
                 <input
+                  id="chat-message-input"
+                  name="chatMessage"
                   ref={inputRef}
                   value={newMess}
                   onChange={handleInputChange}

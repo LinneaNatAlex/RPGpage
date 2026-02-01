@@ -1,6 +1,6 @@
 // imports the necessary modules and components.
 import styles from "./GreatHall.module.css";
-import LiveRP from "../../../Components/LiveRP/LiveRP";
+import LiveRP from "../../../Components/LiveRP/LiveRP.jsx";
 // Imports Live chat component for role-playing in the Starshade Hall
 const GreatHall = () => {
   return (

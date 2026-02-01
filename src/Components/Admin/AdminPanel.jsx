@@ -81,6 +81,26 @@ export default function AdminPanel() {
     setStatus(`Nits updated: ${newNits}`);
   }
 
+  /** Give nits to all users (or subtract). Uses increment so no read needed per user. */
+  async function handleNitsChangeAll(delta) {
+    if (!roles.includes("admin")) {
+      setStatus("Only admin can change Nits.");
+      return;
+    }
+    if (users.length === 0) {
+      setStatus("No users to update.");
+      return;
+    }
+    setStatus("Working... (updating all users)");
+    let done = 0;
+    for (const u of users) {
+      const ref = doc(db, "users", u.uid);
+      await updateDoc(ref, { currency: increment(delta) });
+      done++;
+    }
+    setStatus(`Nits updated for all ${done} users (${delta >= 0 ? "+" : ""}${delta} each).`);
+  }
+
   // Pause user for X days
   async function handleSuspendUser() {
     if (!selected) return;
@@ -518,7 +538,14 @@ export default function AdminPanel() {
           {ipBanStatus && <div style={{ color: "#ffd86b" }}>{ipBanStatus}</div>}
         </div>
       )}
+      <label htmlFor="admin-user-search" style={{ display: "block", marginBottom: 6, color: theme.secondaryText, fontWeight: 600 }}>
+        Search user
+      </label>
       <input
+        id="admin-user-search"
+        name="adminUserSearch"
+        type="search"
+        autoComplete="off"
         placeholder="Search by name or email..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -756,8 +783,14 @@ export default function AdminPanel() {
               marginBottom: 16,
             }}
           >
+            <label htmlFor="admin-nits-amount" style={{ fontWeight: 600, color: theme.text }}>
+              Amount:
+            </label>
             <input
+              id="admin-nits-amount"
+              name="nitsAmount"
               type="number"
+              autoComplete="off"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
               style={{
@@ -848,22 +881,109 @@ export default function AdminPanel() {
               - Nits
             </button>
           </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginTop: 8,
+              flexWrap: "wrap",
+            }}
+          >
+            <span
+              style={{
+                color: theme.secondaryText,
+                fontSize: "0.9rem",
+                marginRight: 4,
+              }}
+            >
+              Give to all users ({users.length}):
+            </span>
+            <button
+              onClick={() => handleNitsChangeAll(amount)}
+              style={{
+                background: "linear-gradient(135deg, #2196F3 0%, #1976D2 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              + Nits to all
+            </button>
+            <button
+              onClick={() => handleNitsChangeAll(-amount)}
+              style={{
+                background: "linear-gradient(135deg, #ff9800 0%, #e65100 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 12,
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              - Nits to all
+            </button>
+          </div>
           <div style={{ marginTop: 12 }}>
             <h4>Suspend / ban controls</h4>
-            <label>
+            <label htmlFor="admin-suspend-hours">
               Suspension (hours):
               <input
+                id="admin-suspend-hours"
+                name="suspendHours"
                 type="number"
+                autoComplete="off"
                 min={0}
                 value={suspendHours}
                 onChange={(e) => setSuspendHours(Number(e.target.value))}
                 style={{ width: 50, marginLeft: 4 }}
               />
             </label>
-            <label style={{ marginLeft: 8 }}>
+            <label htmlFor="admin-suspend-minutes" style={{ marginLeft: 8 }}>
               Minutes:
               <input
+                id="admin-suspend-minutes"
+                name="suspendMinutes"
                 type="number"
+                autoComplete="off"
                 min={0}
                 max={59}
                 value={suspendMinutes}
@@ -871,8 +991,14 @@ export default function AdminPanel() {
                 style={{ width: 50, marginLeft: 4 }}
               />
             </label>
+            <label htmlFor="admin-suspend-reason" style={{ display: "block", marginTop: 8 }}>
+              Reason (optional):
+            </label>
             <input
+              id="admin-suspend-reason"
+              name="suspendReason"
               type="text"
+              autoComplete="off"
               placeholder="Reason for suspension (optional)"
               value={suspendReason}
               onChange={(e) => setSuspendReason(e.target.value)}
@@ -1160,8 +1286,14 @@ export default function AdminPanel() {
             Add / subtract points
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <label htmlFor="admin-points-username" style={{ fontWeight: 600, color: "#D4C4A8" }}>
+              Username or email
+            </label>
             <input
+              id="admin-points-username"
+              name="pointsUser"
               type="text"
+              autoComplete="username"
               placeholder="Username or email"
               value={pointsUser}
               onChange={(e) => setPointsUser(e.target.value)}
@@ -1186,8 +1318,14 @@ export default function AdminPanel() {
                 e.target.style.boxShadow = "none";
               }}
             />
+            <label htmlFor="admin-points-amount" style={{ fontWeight: 600, color: "#D4C4A8" }}>
+              Number of points (+/-)
+            </label>
             <input
+              id="admin-points-amount"
+              name="pointsAmount"
               type="number"
+              autoComplete="off"
               placeholder="Number of points (+/-)"
               value={pointsAmount}
               onChange={(e) => setPointsAmount(e.target.value)}

@@ -171,6 +171,10 @@ const Inventory = () => {
 
   const filteredInventory = getFilteredAndSortedInventory();
 
+  // Reset to page 1 when filters or sort change so the list is not empty
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, sortBy, sortOrder]);
 
   // Delete item function
   const handleDeleteItem = async () => {
@@ -232,6 +236,8 @@ const Inventory = () => {
           {/* Search Bar */}
           <div className={styles.searchContainer}>
             <input
+              id="inventory-search"
+              name="inventorySearch"
               type="text"
               placeholder="Search items..."
               value={searchTerm}
@@ -243,6 +249,8 @@ const Inventory = () => {
           {/* Category Filter */}
           <div className={styles.categoryContainer}>
             <select
+              id="inventory-category"
+              name="inventoryCategory"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className={styles.categorySelect}
@@ -258,6 +266,8 @@ const Inventory = () => {
           {/* Sort Controls */}
           <div className={styles.sortContainer}>
             <select
+              id="inventory-sort"
+              name="inventorySort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className={styles.sortSelect}

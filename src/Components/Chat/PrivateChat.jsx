@@ -661,6 +661,8 @@ const PrivateChat = () => {
           )}
           <div style={{ padding: "0.5rem 1rem" }}>
             <input
+              id="private-chat-search-user"
+              name="privateChatSearchUser"
               type="text"
               placeholder="Search user..."
               value={search}
@@ -989,6 +991,8 @@ const PrivateChat = () => {
               <form className={styles.chatForm} onSubmit={sendMessage}>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <input
+                    id="private-chat-message"
+                    name="privateChatMessage"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     type="text"

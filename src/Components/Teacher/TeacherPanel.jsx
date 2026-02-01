@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useUsers from "../../hooks/useUser";
 import useBooks from "../../hooks/useBooks";
 import { db } from "../../firebaseConfig";
@@ -17,6 +17,31 @@ export default function TeacherPanel() {
   const [activeTab, setActiveTab] = useState("points");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
+  const [userSearch, setUserSearch] = useState("");
+  const [userPage, setUserPage] = useState(1);
+
+  const USERS_PER_PAGE = 10;
+
+  const filteredUsers = users.filter(
+    (u) =>
+      !userSearch.trim() ||
+      (u.displayName || "")
+        .toLowerCase()
+        .includes(userSearch.toLowerCase()) ||
+      (u.email || "").toLowerCase().includes(userSearch.toLowerCase())
+  );
+  const totalUserPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / USERS_PER_PAGE)
+  );
+  const paginatedUsers = filteredUsers.slice(
+    (userPage - 1) * USERS_PER_PAGE,
+    userPage * USERS_PER_PAGE
+  );
+
+  useEffect(() => {
+    if (userPage > totalUserPages) setUserPage(1);
+  }, [totalUserPages]);
 
   async function handleGivePoints() {
     if (!selected) return;
@@ -186,6 +211,7 @@ export default function TeacherPanel() {
             }}
           >
             <label
+              htmlFor="teacher-user-search"
               style={{
                 color: "#D4C4A8",
                 fontSize: "1.1rem",
@@ -197,29 +223,150 @@ export default function TeacherPanel() {
             >
               Select User:
             </label>
-            <select
-              onChange={(e) =>
-                setSelected(users.find((u) => u.uid === e.target.value))
-              }
-              value={selected?.uid || ""}
+            <input
+              id="teacher-user-search"
+              name="teacherUserSearch"
+              type="text"
+              autoComplete="off"
+              placeholder="Søk bruker (navn eller e-post)..."
+              value={userSearch}
+              onChange={(e) => {
+                setUserSearch(e.target.value);
+                setUserPage(1);
+              }}
               style={{
                 width: "100%",
-                padding: "12px 16px",
+                padding: "10px 12px",
                 borderRadius: 8,
                 background: "#F5EFE0",
                 color: "#2C2C2C",
                 border: "2px solid #D4C4A8",
                 fontSize: "1rem",
-                fontWeight: 600,
+                marginBottom: 10,
+                boxSizing: "border-box",
+              }}
+            />
+            <div
+              style={{
+                maxHeight: 280,
+                overflowY: "auto",
+                background: "rgba(245, 239, 224, 0.08)",
+                borderRadius: 8,
+                border: "2px solid rgba(212, 196, 168, 0.4)",
               }}
             >
-              <option value="">Choose user</option>
-              {users.map((u) => (
-                <option key={u.uid} value={u.uid}>
-                  {u.displayName || u.email}
-                </option>
-              ))}
-            </select>
+              {paginatedUsers.length === 0 ? (
+                <div
+                  style={{
+                    padding: 16,
+                    textAlign: "center",
+                    color: "#D4C4A8",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {userSearch.trim()
+                    ? "Ingen brukere matcher søket"
+                    : "Ingen brukere"}
+                </div>
+              ) : (
+                paginatedUsers.map((u) => (
+                  <div
+                    key={u.uid}
+                    onClick={() => setSelected(u)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelected(u);
+                      }
+                    }}
+                    style={{
+                      padding: "10px 14px",
+                      cursor: "pointer",
+                      borderBottom: "1px solid rgba(123, 104, 87, 0.2)",
+                      background:
+                        selected?.uid === u.uid
+                          ? "rgba(123, 104, 87, 0.5)"
+                          : "transparent",
+                      color: selected?.uid === u.uid ? "#F5EFE0" : "#D4C4A8",
+                      fontWeight: selected?.uid === u.uid ? 600 : 400,
+                    }}
+                  >
+                    {u.displayName || u.email || u.uid}
+                  </div>
+                ))
+              )}
+            </div>
+            {filteredUsers.length > USERS_PER_PAGE && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginTop: 10,
+                  gap: 8,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setUserPage((p) => Math.max(1, p - 1))}
+                  disabled={userPage === 1}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 6,
+                    border: "2px solid #D4C4A8",
+                    background: "#5D4E37",
+                    color: "#F5EFE0",
+                    cursor: userPage === 1 ? "not-allowed" : "pointer",
+                    opacity: userPage === 1 ? 0.6 : 1,
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  ← Forrige
+                </button>
+                <span
+                  style={{
+                    color: "#D4C4A8",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Side {userPage} av {totalUserPages} ({filteredUsers.length}{" "}
+                  treff)
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setUserPage((p) => Math.min(totalUserPages, p + 1))
+                  }
+                  disabled={userPage === totalUserPages}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 6,
+                    border: "2px solid #D4C4A8",
+                    background: "#5D4E37",
+                    color: "#F5EFE0",
+                    cursor:
+                      userPage === totalUserPages ? "not-allowed" : "pointer",
+                    opacity: userPage === totalUserPages ? 0.6 : 1,
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Neste →
+                </button>
+              </div>
+            )}
+            {selected && (
+              <p
+                style={{
+                  marginTop: 10,
+                  color: "#D4C4A8",
+                  fontSize: "0.95rem",
+                }}
+              >
+                Valgt: <strong>{selected.displayName || selected.email}</strong>
+              </p>
+            )}
           </div>
         </>
       )}
@@ -397,6 +544,7 @@ export default function TeacherPanel() {
           }}
         >
           <label
+            htmlFor="teacher-points-amount"
             style={{
               color: "#D4C4A8",
               fontSize: "1.1rem",
@@ -410,7 +558,10 @@ export default function TeacherPanel() {
           </label>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <input
+              id="teacher-points-amount"
+              name="pointsAmount"
               type="number"
+              autoComplete="off"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
               style={{

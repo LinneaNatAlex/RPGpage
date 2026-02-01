@@ -446,6 +446,14 @@ const LiveRP = () => {
               <div ref={messagesEndRef} />
             </div>
             <form className={styles.chatForm} onSubmit={sendtMessage}>
+              <input
+                type="hidden"
+                id="live-rp-message-field"
+                name="liveRpMessage"
+                value={newMess.replace(/<[^>]*>/g, "")}
+                readOnly
+                aria-hidden="true"
+              />
               <div className={styles.formatBar}>
                 <button
                   type="button"
@@ -470,6 +478,9 @@ const LiveRP = () => {
                 </button>
               </div>
               <div
+                id="live-rp-message-input"
+                role="textbox"
+                aria-label="Roleplay message"
                 ref={inputRef}
                 contentEditable
                 onInput={handleInput}
@@ -477,6 +488,7 @@ const LiveRP = () => {
                 placeholder="YOUR MESSAGES..."
                 className={styles.chatInput}
                 suppressContentEditableWarning={true}
+                data-name="liveRpMessage"
               />
               <div style={{ 
                 fontSize: "0.8rem", 

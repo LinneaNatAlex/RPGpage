@@ -13,6 +13,8 @@ const ReactQuillWithSynonyms = ({
   enableSynonyms = true,
   value,
   onChange,
+  id,
+  name,
   ...quillProps
 }) => {
   const quillRef = useRef(null);
@@ -75,6 +77,37 @@ const ReactQuillWithSynonyms = ({
       }
     }
   }, [value]); // Re-check when value changes
+
+  // Set id/name and aria-label on the actual contenteditable (.ql-editor) so browser form-field checks pass
+  useEffect(() => {
+    if (!id || !name || !editorRef.current) return;
+    const applyToEditor = () => {
+      if (!editorRef.current) return;
+      const qlEditor = editorRef.current.querySelector(".ql-editor");
+      if (qlEditor) {
+        qlEditor.setAttribute("id", `${id}-editor`);
+        qlEditor.setAttribute("name", name);
+        qlEditor.setAttribute("aria-label", name.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim());
+      }
+    };
+    const t = setTimeout(applyToEditor, 0);
+    return () => clearTimeout(t);
+  }, [id, name, value]);
+
+  // Quill toolbar contains inputs (e.g. link URL); give them id/name to satisfy form-field checks
+  useEffect(() => {
+    if (!id || !editorRef.current) return;
+    const applyToToolbar = () => {
+      if (!editorRef.current) return;
+      const inputs = editorRef.current.querySelectorAll(".ql-toolbar input, .ql-toolbar select, .ql-toolbar textarea");
+      inputs.forEach((el, i) => {
+        if (!el.id) el.setAttribute("id", `${id}-toolbar-${i}`);
+        if (!el.getAttribute("name")) el.setAttribute("name", `${id}-toolbar-${i}`);
+      });
+    };
+    const t = setTimeout(applyToToolbar, 100);
+    return () => clearTimeout(t);
+  }, [id, value]);
 
   // Handle text changes and selection changes
   useEffect(() => {
@@ -243,7 +276,14 @@ const ReactQuillWithSynonyms = ({
   }, [showPopup, selectedWord]);
 
   return (
-    <div ref={editorRef} style={{ position: "relative" }}>
+    <div
+      ref={editorRef}
+      id={id}
+      data-name={name}
+      role="application"
+      aria-label={name ? undefined : "Rich text editor"}
+      style={{ position: "relative" }}
+    >
       <ReactQuill
         ref={(el) => {
           quillRef.current = el;

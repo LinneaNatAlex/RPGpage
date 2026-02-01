@@ -415,52 +415,70 @@ export default function ShopProductAdmin() {
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: "16px" }}
       >
+        <label htmlFor="shop-product-name">Name</label>
         <input
+          id="shop-product-name"
           name="name"
           value={form.name}
           onChange={handleChange}
           placeholder="Name"
+          autoComplete="off"
         />
-        <select name="category" value={form.category} onChange={handleChange}>
+        <label htmlFor="shop-product-category">Category</label>
+        <select id="shop-product-category" name="category" value={form.category} onChange={handleChange}>
           {categories.map((cat) => (
             <option key={cat} value={cat}>
               {cat}
             </option>
           ))}
         </select>
+        <label htmlFor="shop-product-price">Price (Nits)</label>
         <input
+          id="shop-product-price"
           name="price"
           value={form.price}
           onChange={handleChange}
           placeholder="Price (Nits)"
           type="number"
           min="0"
+          autoComplete="off"
         />
+        <label htmlFor="shop-product-description">Description</label>
         <input
+          id="shop-product-description"
           name="description"
           value={form.description}
           onChange={handleChange}
           placeholder="Description"
+          autoComplete="off"
         />
+        <label htmlFor="shop-product-effect">Effect (optional)</label>
         <input
+          id="shop-product-effect"
           name="effect"
           value={form.effect}
           onChange={handleChange}
           placeholder="Effect (optional)"
+          autoComplete="off"
         />
+        <label htmlFor="shop-product-health">HP restore (valgfritt)</label>
         <input
+          id="shop-product-health"
           name="health"
           value={form.health}
           onChange={handleChange}
           placeholder="HP restore (valgfritt)"
           type="number"
           min="0"
+          autoComplete="off"
         />
 
         {/* Pet Food specific fields */}
         {form.category === "Pet Items" && (
           <>
+            <label htmlFor="shop-product-pet-hp">Pet HP Restore %</label>
             <input
+              id="shop-product-pet-hp"
               name="petHpRestore"
               value={form.petHpRestore}
               onChange={handleChange}
@@ -468,21 +486,25 @@ export default function ShopProductAdmin() {
               type="number"
               min="0"
               max="100"
+              autoComplete="off"
             />
+            <label htmlFor="shop-product-bonus-time">Bonus feeding time (hours)</label>
             <input
+              id="shop-product-bonus-time"
               name="bonusTime"
               value={form.bonusTime}
               onChange={handleChange}
               placeholder="Bonus feeding time in hours (valgfritt)"
               type="number"
               min="0"
+              autoComplete="off"
             />
           </>
         )}
 
         {/* Image Upload Section */}
         <div style={{ marginTop: "1rem" }}>
-          <label
+          <span
             style={{
               display: "block",
               marginBottom: "0.5rem",
@@ -490,7 +512,7 @@ export default function ShopProductAdmin() {
             }}
           >
             Product Image:
-          </label>
+          </span>
           {form.image ? (
             <div
               style={{
@@ -535,8 +557,10 @@ export default function ShopProductAdmin() {
                 gap: "0.5rem",
               }}
             >
-              <label style={{ cursor: "pointer" }}>
+              <label htmlFor="shop-product-image" style={{ cursor: "pointer" }}>
                 <input
+                  id="shop-product-image"
+                  name="productImage"
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
@@ -689,6 +713,7 @@ export default function ShopProductAdmin() {
           }}
         >
           <label
+            htmlFor="shop-category-filter"
             style={{
               display: "block",
               marginBottom: "8px",
@@ -699,6 +724,8 @@ export default function ShopProductAdmin() {
             Filter by category:
           </label>
           <select
+            id="shop-category-filter"
+            name="categoryFilter"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             style={{

@@ -236,6 +236,8 @@ const TextareaWithSynonyms = ({
   return (
     <div style={{ position: "relative" }}>
       <textarea
+        id={textareaProps.id ?? "textarea-with-synonyms"}
+        name={textareaProps.name ?? "textareaContent"}
         ref={textareaRef}
         value={value}
         onChange={onChange}

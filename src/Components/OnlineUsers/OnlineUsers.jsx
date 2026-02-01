@@ -266,6 +266,8 @@ const OnlineUsers = () => {
               <label>
                 Minutes:
                 <input
+                  id="timeout-minutes"
+                  name="timeoutMinutes"
                   type="number"
                   min={1}
                   max={1440}
@@ -278,6 +280,8 @@ const OnlineUsers = () => {
               <label style={{ display: "block", marginTop: 12 }}>
                 Reason (optional):
                 <input
+                  id="suspend-reason"
+                  name="suspendReason"
                   type="text"
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}

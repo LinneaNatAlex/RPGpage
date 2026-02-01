@@ -15,6 +15,8 @@ const SearchBar = ({ setUserQuery }) => {
   return (
     <div className={styles.searchBarContainer}>
       <input
+        id="search-users"
+        name="searchUsers"
         className={styles.searchInput}
         type="text"
         placeholder="Search for users..."

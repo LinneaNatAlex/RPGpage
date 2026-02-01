@@ -638,13 +638,21 @@ const Forum = () => {
       {!selectedTopic && (
         <>
           <div className={styles.newTopicForm}>
+            <label htmlFor="forum-new-topic-title" style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>
+              New topic title
+            </label>
             <input
+              id="forum-new-topic-title"
+              name="newTopicTitle"
+              autoComplete="off"
               value={newTopicTitle}
               onChange={(e) => setNewTopicTitle(e.target.value)}
               placeholder="New topic title"
               className={styles.newTopicInput}
             />
             <ReactQuillWithSynonyms
+              id="forum-new-topic-content"
+              name="newTopicContent"
               value={newTopicContent}
               onChange={(val) => {
                 setNewTopicContent(val);
@@ -804,7 +812,12 @@ const Forum = () => {
                 marginBottom: 24,
               }}
             >
+              <label htmlFor="forum-edit-topic-title" style={{ display: "block", marginBottom: 8, fontWeight: 600 }}>
+                Edit topic title
+              </label>
               <input
+                id="forum-edit-topic-title"
+                name="editTopicTitle"
                 value={editTopicTitle}
                 onChange={(e) => setEditTopicTitle(e.target.value)}
                 className={styles.titleInput}
@@ -812,6 +825,8 @@ const Forum = () => {
                 placeholder="Edit topic title"
               />
               <ReactQuillWithSynonyms
+                id="forum-edit-topic-content"
+                name="editTopicContent"
                 value={editTopicContent}
                 onChange={setEditTopicContent}
                 className={styles.quill}
@@ -869,6 +884,8 @@ const Forum = () => {
                   {editingId === post.id ? (
                     <>
                       <ReactQuillWithSynonyms
+                        id="forum-edit-post-content"
+                        name="editPostContent"
                         value={editContent}
                         onChange={setEditContent}
                         className={styles.quill}
@@ -933,6 +950,8 @@ const Forum = () => {
           {/* Reply box */}
           <div className={styles.replyBox}>
             <ReactQuillWithSynonyms
+              id="forum-reply-content"
+              name="replyContent"
               value={replyContent}
               onChange={(val) => {
                 setReplyContent(val);

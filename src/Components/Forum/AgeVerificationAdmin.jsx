@@ -61,7 +61,12 @@ export default function AgeVerificationAdmin() {
         <div>No users found.</div>
       ) : (
         <>
+          <label htmlFor="age-verification-select-user" style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>
+            Select user
+          </label>
           <select
+            id="age-verification-select-user"
+            name="ageVerificationUser"
             value={selected ? selected.id : ""}
             onChange={(e) => {
               const user = all.find((u) => u.id === e.target.value);

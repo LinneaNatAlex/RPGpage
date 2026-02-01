@@ -67,8 +67,13 @@ const useUsers = () => {
         setLoading(false);
       },
       (error) => {
-
-        // Fallback to manual fetch if real-time fails
+        // Silently handle permission-denied so non-admins don't see console errors
+        if (error?.code === "permission-denied") {
+          setUsers([]);
+          setLoading(false);
+          return;
+        }
+        // Fallback to manual fetch if real-time fails for other reasons
         import("../firebaseConfig").then(({ getUserTerms }) => {
           getUserTerms()
             .then((fallbackUsers) => {

@@ -107,12 +107,19 @@ const TopBar = () => {
     if (!user) return;
 
     const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(userRef, (doc) => {
-      if (doc.exists()) {
-        const userData = doc.data();
-        setFollowedTopics(userData.followedTopics || []);
+    const unsubscribe = onSnapshot(
+      userRef,
+      (doc) => {
+        if (doc.exists()) {
+          const userData = doc.data();
+          setFollowedTopics(userData.followedTopics || []);
+        }
+      },
+      (err) => {
+        if (err?.code === "permission-denied") return;
+        if (process.env.NODE_ENV === "development") console.warn("TopBar followedTopics snapshot error:", err);
       }
-    });
+    );
 
     return () => unsubscribe();
   }, [user]);
@@ -133,35 +140,42 @@ const TopBar = () => {
       );
       const q = query(postsRef, orderBy("createdAt", "desc"), limit(1));
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            const post = change.doc.data();
-            // Check if this is a new post (not the first one)
-            if (post.createdAt && post.createdAt.toDate) {
-              const postTime = post.createdAt.toDate();
-              const now = new Date();
-              const timeDiff = now - postTime;
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const post = change.doc.data();
+              // Check if this is a new post (not the first one)
+              if (post.createdAt && post.createdAt.toDate) {
+                const postTime = post.createdAt.toDate();
+                const now = new Date();
+                const timeDiff = now - postTime;
 
-              // Only notify if post is very recent (within last 30 seconds)
-              if (timeDiff < 30000 && post.uid !== user.uid) {
-                // Create notification
-                addDoc(collection(db, "notifications"), {
-                  userId: user.uid,
-                  type: "topic_reply",
-                  topicId: topic.id,
-                  topicTitle: topic.title,
-                  forum: topic.forum,
-                  author: post.author,
-                  content: post.content,
-                  createdAt: serverTimestamp(),
-                  read: false,
-                });
+                // Only notify if post is very recent (within last 30 seconds)
+                if (timeDiff < 30000 && post.uid !== user.uid) {
+                  // Create notification
+                  addDoc(collection(db, "notifications"), {
+                    userId: user.uid,
+                    type: "topic_reply",
+                    topicId: topic.id,
+                    topicTitle: topic.title,
+                    forum: topic.forum,
+                    author: post.author,
+                    content: post.content,
+                    createdAt: serverTimestamp(),
+                    read: false,
+                  });
+                }
               }
             }
-          }
-        });
-      });
+          });
+        },
+        (err) => {
+          if (err?.code === "permission-denied") return;
+          if (process.env.NODE_ENV === "development") console.warn("TopBar followed topics posts snapshot error:", err);
+        }
+      );
 
       unsubscribeFunctions.push(unsubscribe);
     });

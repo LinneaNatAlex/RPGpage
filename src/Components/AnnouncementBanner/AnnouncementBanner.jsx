@@ -20,9 +20,16 @@ export default function AnnouncementBanner({ user }) {
       collection(db, "announcements"),
       orderBy("createdAt", "desc")
     );
-    const unsub = onSnapshot(q, (snap) => {
-      setAnnouncements(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    });
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        setAnnouncements(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      },
+      (err) => {
+        if (err?.code === "permission-denied") return;
+        if (process.env.NODE_ENV === "development") console.warn("AnnouncementBanner snapshot error:", err);
+      }
+    );
     return () => unsub();
   }, []);
 

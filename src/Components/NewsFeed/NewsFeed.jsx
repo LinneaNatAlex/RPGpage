@@ -110,6 +110,8 @@ const NewsFeed = () => {
       {isAdminOrTeacher && (
         <div className={styles.newsAdminContainer}>
           <input
+            id="news-post-title"
+            name="newsPostTitle"
             type="text"
             value={titles}
             onChange={(e) => setTitles(e.target.value)}
@@ -117,6 +119,8 @@ const NewsFeed = () => {
             required
           />
           <textarea
+            id="news-post-content"
+            name="newsPostContent"
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
             placeholder="news here"

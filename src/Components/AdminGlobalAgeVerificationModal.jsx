@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, onSnapshot, doc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../context/authContext";
+import useUserRoles from "../hooks/useUserRoles";
 
 export default function AdminGlobalAgeVerificationModal() {
   const { user } = useAuth();
+  const { roles = [] } = useUserRoles();
   const [pending, setPending] = useState(null);
   const [open, setOpen] = useState(false);
+  const isAdmin = roles.some((r) => String(r).toLowerCase() === "admin");
 
   useEffect(() => {
-    if (!user || !(user.roles || []).includes("admin")) return;
+    if (!user || !isAdmin) return;
     const unsub = onSnapshot(
       collection(db, "ageVerificationRequests"),
       (snap) => {
@@ -23,10 +26,14 @@ export default function AdminGlobalAgeVerificationModal() {
           setPending(null);
           setOpen(false);
         }
+      },
+      (err) => {
+        if (err?.code === "permission-denied") return;
+        if (process.env.NODE_ENV === "development") console.warn("AdminGlobalAgeVerificationModal snapshot error:", err);
       }
     );
     return () => unsub();
-  }, [user]);
+  }, [user, isAdmin]);
 
   if (!open || !pending) return null;
 
