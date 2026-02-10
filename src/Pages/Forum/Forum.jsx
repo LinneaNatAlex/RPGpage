@@ -87,7 +87,9 @@ const Forum = () => {
   const [isPrivateTopic, setIsPrivateTopic] = useState(false);
   const [allowedUserIds, setAllowedUserIds] = useState([]);
   const [privateTopicSearch, setPrivateTopicSearch] = useState("");
+  const [privateTopicUserPage, setPrivateTopicUserPage] = useState(0);
   const [ageVerifiedUsersList, setAgeVerifiedUsersList] = useState([]);
+  const PRIVATE_TOPIC_USERS_PER_PAGE = 10;
   // New post state (reply)
   const [replyContent, setReplyContent] = useState("");
   const [replyWordCount, setReplyWordCount] = useState(0);
@@ -775,26 +777,54 @@ const Forum = () => {
                 <span style={{ display: "block", marginBottom: 10, fontSize: "1rem", fontWeight: 700, color: "#c4b5fd" }}>
                   Set when creating this first post: private or not, and who can see it
                 </span>
-                <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", marginBottom: 12 }}>
-                  <input
-                    type="checkbox"
-                    checked={isPrivateTopic}
-                    onChange={(e) => {
-                      setIsPrivateTopic(e.target.checked);
-                      if (!e.target.checked) setAllowedUserIds([]);
-                    }}
-                    style={{
-                      width: 20,
-                      height: 20,
-                      minWidth: 20,
-                      minHeight: 20,
-                      accentColor: "#a084e8",
-                      cursor: "pointer",
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span>Private topic (only people you select below can see and reply)</span>
-                </label>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} htmlFor="forum-private-topic-checkbox">
+                    <input
+                      id="forum-private-topic-checkbox"
+                      type="checkbox"
+                      checked={isPrivateTopic}
+                      onChange={(e) => {
+                        setIsPrivateTopic(e.target.checked);
+                        if (!e.target.checked) setAllowedUserIds([]);
+                      }}
+                      style={{
+                        width: 20,
+                        height: 20,
+                        minWidth: 20,
+                        minHeight: 20,
+                        accentColor: "#a084e8",
+                        cursor: "pointer",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span>Private topic (only people you select below can see and reply)</span>
+                  </label>
+                  <div>
+                    {isPrivateTopic ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsPrivateTopic(false);
+                          setAllowedUserIds([]);
+                        }}
+                        style={{
+                          padding: "10px 18px",
+                          background: "#5d4e37",
+                          color: "#f5efe0",
+                          border: "2px solid #a084e8",
+                          borderRadius: 0,
+                          cursor: "pointer",
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Make topic public
+                      </button>
+                    ) : (
+                      <span style={{ color: "#8bc34a", fontSize: "0.95rem", fontWeight: 600 }}>Topic will be public (everyone in 18+ forum can see it)</span>
+                    )}
+                  </div>
+                </div>
                 <div style={{ marginTop: 12 }}>
                   <span style={{ display: "block", marginBottom: 8, fontSize: "0.9rem" }}>
                     Select one or more users who can see and reply (you can select multiple). List shows only 18+ verified users (you are always included):
@@ -803,7 +833,10 @@ const Forum = () => {
                     type="text"
                     placeholder="Search by name or email..."
                     value={privateTopicSearch}
-                    onChange={(e) => setPrivateTopicSearch(e.target.value)}
+                    onChange={(e) => {
+                      setPrivateTopicSearch(e.target.value);
+                      setPrivateTopicUserPage(0);
+                    }}
                     style={{
                       width: "100%",
                       maxWidth: 320,
@@ -832,34 +865,95 @@ const Forum = () => {
                           : "No other 18+ verified users to add."}
                       </span>
                     ) : (
-                      ageVerifiedUsersFiltered.map((u) => (
-                        <label
-                          key={u.uid}
-                          style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={allowedUserIds.includes(u.uid)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setAllowedUserIds((prev) => [...prev, u.uid]);
-                              } else {
-                                setAllowedUserIds((prev) => prev.filter((id) => id !== u.uid));
-                              }
-                            }}
+                      (() => {
+                        const totalPages = Math.max(1, Math.ceil(ageVerifiedUsersFiltered.length / PRIVATE_TOPIC_USERS_PER_PAGE));
+                        const pageStart = privateTopicUserPage * PRIVATE_TOPIC_USERS_PER_PAGE;
+                        const pageUsers = ageVerifiedUsersFiltered.slice(pageStart, pageStart + PRIVATE_TOPIC_USERS_PER_PAGE);
+                        return (
+                          <>
+                            {pageUsers.map((u) => {
+                        const isSelected = allowedUserIds.includes(u.uid);
+                        return (
+                          <label
+                            key={u.uid}
                             style={{
-                              width: 20,
-                              height: 20,
-                              minWidth: 20,
-                              minHeight: 20,
-                              accentColor: "#a084e8",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 10,
                               cursor: "pointer",
-                              flexShrink: 0,
+                              padding: "8px 10px",
+                              background: isSelected ? "rgba(160, 132, 232, 0.4)" : "transparent",
+                              border: isSelected ? "2px solid #a084e8" : "2px solid transparent",
+                              borderRadius: 4,
                             }}
-                          />
-                          <span>{u.displayName || u.email || u.uid}</span>
-                        </label>
-                      ))
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setAllowedUserIds((prev) => [...prev, u.uid]);
+                                } else {
+                                  setAllowedUserIds((prev) => prev.filter((id) => id !== u.uid));
+                                }
+                              }}
+                              style={{
+                                width: 22,
+                                height: 22,
+                                minWidth: 22,
+                                minHeight: 22,
+                                accentColor: "#4ade80",
+                                cursor: "pointer",
+                                flexShrink: 0,
+                              }}
+                            />
+                            <span style={{ flex: 1 }}>{u.displayName || u.email || u.uid}</span>
+                            {isSelected && (
+                              <span style={{ color: "#4ade80", fontWeight: 700, fontSize: "0.95rem" }}>✓ Chosen</span>
+                            )}
+                          </label>
+                        );
+                      })}
+                            <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
+                              <button
+                                type="button"
+                                onClick={() => setPrivateTopicUserPage((p) => Math.max(0, p - 1))}
+                                disabled={privateTopicUserPage === 0}
+                                style={{
+                                  padding: "6px 12px",
+                                  background: privateTopicUserPage === 0 ? "#444" : "#5d4e37",
+                                  color: "#f5efe0",
+                                  border: "1px solid #7b6857",
+                                  borderRadius: 0,
+                                  cursor: privateTopicUserPage === 0 ? "not-allowed" : "pointer",
+                                  fontSize: "0.9rem",
+                                }}
+                              >
+                                Previous page
+                              </button>
+                              <span style={{ color: "#d4c4a8", fontSize: "0.9rem" }}>
+                                Page {privateTopicUserPage + 1} of {totalPages}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setPrivateTopicUserPage((p) => Math.min(totalPages - 1, p + 1))}
+                                disabled={privateTopicUserPage >= totalPages - 1}
+                                style={{
+                                  padding: "6px 12px",
+                                  background: privateTopicUserPage >= totalPages - 1 ? "#444" : "#5d4e37",
+                                  color: "#f5efe0",
+                                  border: "1px solid #7b6857",
+                                  borderRadius: 0,
+                                  cursor: privateTopicUserPage >= totalPages - 1 ? "not-allowed" : "pointer",
+                                  fontSize: "0.9rem",
+                                }}
+                              >
+                                Next page
+                              </button>
+                            </div>
+                          </>
+                        );
+                      })()
                     )}
                   </div>
                   {allowedUserIds.length > 0 && (
