@@ -31,6 +31,12 @@ const categories = [
   "Pet Items",
 ];
 
+const shortCategoryLabels = {
+  Equipment: "Equip",
+  "Pet Items": "Pet it.",
+  Ingredients: "Ingr.",
+};
+
 const Shop = ({ open = true }) => {
   // Books use display names only - no author payments
   const { user } = useAuth();
@@ -49,6 +55,15 @@ const Shop = ({ open = true }) => {
   const [activeCategory, setActiveCategory] = useState("Books");
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [books, setBooks] = useState([]);
+  const [narrowScreen, setNarrowScreen] = useState(
+    typeof window !== "undefined" && window.innerWidth <= 480
+  );
+
+  useEffect(() => {
+    const onResize = () => setNarrowScreen(window.innerWidth <= 480);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // Get brewed potions for unlock system
   const [craftedPotions, setCraftedPotions] = useState(new Set());
@@ -269,8 +284,9 @@ const Shop = ({ open = true }) => {
             key={cat}
             className={cat === activeCategory ? styles.activeTab : styles.tab}
             onClick={() => setActiveCategory(cat)}
+            title={cat}
           >
-            {cat}
+            {narrowScreen && shortCategoryLabels[cat] ? shortCategoryLabels[cat] : cat}
           </button>
         ))}
       </div>
@@ -415,53 +431,33 @@ const Shop = ({ open = true }) => {
                       )}
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end",
-                    gap: "0.7rem",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      fontSize: "1.08rem",
-                      color: "#fff",
-                    }}
-                  >
+                <div className={styles.itemActions}>
+                  <span className={styles.itemPrice}>
                     {itemWithImage.price} Nits
                   </span>
-                  {isPotionLocked ? (
-                    <button
-                      disabled
-                      style={{
-                        background: "#666",
-                        color: "#ccc",
-                        cursor: "not-allowed",
-                        opacity: 0.6,
-                      }}
-                    >
-                      🔒 Locked - Craft First
-                    </button>
-                  ) : (
-                    <button onClick={() => handleBuy(itemWithImage)}>
-                      Buy
-                    </button>
-                  )}
-                  {/* Delete button for Firestore items, admin/teacher only */}
-                  {itemWithImage.firestore && isAdmin && (
-                    <button
-                      style={{
-                        marginTop: 6,
-                        background: "#c44",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 0,
-                        padding: "0.3rem 0.7rem",
-                        cursor: "pointer",
-                      }}
-                      onClick={async () => {
+                  <div className={styles.itemButtons}>
+                    {isPotionLocked ? (
+                      <button
+                        disabled
+                        style={{
+                          background: "#666",
+                          color: "#ccc",
+                          cursor: "not-allowed",
+                          opacity: 0.6,
+                        }}
+                      >
+                        🔒 Locked - Craft First
+                      </button>
+                    ) : (
+                      <button onClick={() => handleBuy(itemWithImage)}>
+                        Buy
+                      </button>
+                    )}
+                    {/* Delete button for Firestore items, admin/teacher only */}
+                    {itemWithImage.firestore && isAdmin && (
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={async () => {
                         if (
                           window.confirm(
                             `Delete the product "${itemWithImage.name}"?`
@@ -493,10 +489,11 @@ const Shop = ({ open = true }) => {
                           }
                         }
                       }}
-                    >
-                      Delete
-                    </button>
-                  )}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </div>
               </li>
             );
