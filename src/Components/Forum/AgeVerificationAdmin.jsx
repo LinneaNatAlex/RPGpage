@@ -48,7 +48,7 @@ export default function AgeVerificationAdmin() {
         background: "#F5EFE0",
         color: "#2C2C2C",
         padding: 24,
-        borderRadius: 12,
+        borderRadius: 0,
         border: "2px solid #D4C4A8",
       }}
     >
@@ -76,7 +76,7 @@ export default function AgeVerificationAdmin() {
             style={{
               width: "100%",
               padding: 8,
-              borderRadius: 6,
+              borderRadius: 0,
               marginBottom: 16,
             }}
           >
@@ -102,7 +102,7 @@ export default function AgeVerificationAdmin() {
                     color: "#23232b",
                     fontWeight: 700,
                     border: 0,
-                    borderRadius: 6,
+                    borderRadius: 0,
                     padding: "6px 18px",
                     cursor: "pointer",
                   }}
@@ -117,7 +117,7 @@ export default function AgeVerificationAdmin() {
                     color: "#fff",
                     fontWeight: 700,
                     border: 0,
-                    borderRadius: 6,
+                    borderRadius: 0,
                     padding: "6px 18px",
                     cursor: "pointer",
                   }}

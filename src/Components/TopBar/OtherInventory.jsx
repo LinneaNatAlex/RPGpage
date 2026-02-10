@@ -18,7 +18,7 @@ export default function OtherInventory({ userId }) {
         background: "#222",
         color: "#fff",
         padding: 16,
-        borderRadius: 8,
+        borderRadius: 0,
         marginTop: 16,
       }}
     >

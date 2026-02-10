@@ -402,7 +402,7 @@ export default function ShopProductAdmin() {
         background: "#F5EFE0",
         color: "#2C2C2C",
         padding: "24px",
-        borderRadius: "12px",
+        borderRadius: 0,
         marginTop: "32px",
         marginBottom: "24px",
         border: "2px solid #D4C4A8",
@@ -528,7 +528,7 @@ export default function ShopProductAdmin() {
                 style={{
                   maxWidth: "150px",
                   maxHeight: "150px",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   border: "2px solid #7B6857",
                   objectFit: "cover",
                 }}
@@ -541,7 +541,7 @@ export default function ShopProductAdmin() {
                   color: "white",
                   border: "none",
                   padding: "0.5rem 1rem",
-                  borderRadius: "4px",
+                  borderRadius: 0,
                   cursor: "pointer",
                 }}
               >
@@ -575,7 +575,7 @@ export default function ShopProductAdmin() {
                       : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                     color: "white",
                     padding: "0.75rem 1.5rem",
-                    borderRadius: "8px",
+                    borderRadius: 0,
                     cursor: uploadingImage ? "not-allowed" : "pointer",
                     fontWeight: "600",
                     transition: "all 0.3s ease",
@@ -601,7 +601,7 @@ export default function ShopProductAdmin() {
               color: "#FFFFFF",
               border: "none",
               padding: "8px 16px",
-              borderRadius: "6px",
+              borderRadius: 0,
               fontSize: "14px",
               fontWeight: "500",
               cursor: "pointer",
@@ -631,7 +631,7 @@ export default function ShopProductAdmin() {
                 color: "#FFFFFF",
                 border: "none",
                 padding: "8px 16px",
-                borderRadius: "6px",
+                borderRadius: 0,
                 fontSize: "14px",
                 fontWeight: "500",
                 cursor: "pointer",
@@ -662,7 +662,7 @@ export default function ShopProductAdmin() {
             marginTop: "16px",
             padding: "12px",
             background: "#E8DDD4",
-            borderRadius: "6px",
+            borderRadius: 0,
             color: "#5D4E37",
           }}
         >
@@ -676,7 +676,7 @@ export default function ShopProductAdmin() {
           marginTop: "48px",
           padding: "24px",
           background: "#FEFEFE",
-          borderRadius: "12px",
+          borderRadius: 0,
           border: "1px solid #E8DDD4",
         }}
       >
@@ -708,7 +708,7 @@ export default function ShopProductAdmin() {
             margin: "20px 0",
             padding: "16px",
             background: "#F9F6F1",
-            borderRadius: "8px",
+            borderRadius: 0,
             border: "1px solid #E8DDD4",
           }}
         >
@@ -730,7 +730,7 @@ export default function ShopProductAdmin() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             style={{
               padding: "8px 12px",
-              borderRadius: "6px",
+              borderRadius: 0,
               border: "2px solid #D4C4A8",
               background: "#FFFFFF",
               color: "#2C2C2C",
@@ -768,7 +768,7 @@ export default function ShopProductAdmin() {
             overflowY: "auto",
             padding: "0.5rem",
             border: "1px solid #E8DDD4",
-            borderRadius: "8px",
+            borderRadius: 0,
             background: "#FEFEFE",
           }}
         >
@@ -783,7 +783,7 @@ export default function ShopProductAdmin() {
                 style={{
                   background: "#FFFFFF",
                   padding: "1rem",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   border: "1px solid #D4C4A8",
                   display: "flex",
                   justifyContent: "space-between",
@@ -800,7 +800,7 @@ export default function ShopProductAdmin() {
                       style={{
                         width: "60px",
                         height: "60px",
-                        borderRadius: "8px",
+                        borderRadius: 0,
                         objectFit: "cover",
                       }}
                     />
@@ -830,7 +830,7 @@ export default function ShopProductAdmin() {
                       color: "white",
                       border: "none",
                       padding: "8px 16px",
-                      borderRadius: "6px",
+                      borderRadius: 0,
                       cursor: "pointer",
                       fontSize: "14px",
                       fontWeight: "600",
@@ -862,7 +862,7 @@ export default function ShopProductAdmin() {
                       color: "white",
                       border: "none",
                       padding: "8px 16px",
-                      borderRadius: "6px",
+                      borderRadius: 0,
                       cursor: "pointer",
                       fontSize: "14px",
                       fontWeight: "600",
@@ -911,7 +911,7 @@ export default function ShopProductAdmin() {
               color: "white",
               border: "none",
               padding: "8px 16px",
-              borderRadius: "6px",
+              borderRadius: 0,
               cursor: "pointer",
               fontSize: "13px",
               fontWeight: "500",
@@ -941,7 +941,7 @@ export default function ShopProductAdmin() {
             overflowY: "auto",
             padding: "0.5rem",
             border: "1px solid #E8DDD4",
-            borderRadius: "8px",
+            borderRadius: 0,
             background: "#FEFEFE",
           }}
         >
@@ -965,7 +965,7 @@ export default function ShopProductAdmin() {
                 style={{
                   background: "#F9F6F1",
                   padding: "1rem",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   border: "1px solid #E8DDD4",
                   display: "flex",
                   justifyContent: "space-between",
@@ -983,7 +983,7 @@ export default function ShopProductAdmin() {
                       style={{
                         width: "60px",
                         height: "60px",
-                        borderRadius: "8px",
+                        borderRadius: 0,
                         objectFit: "cover",
                       }}
                     />
@@ -1032,7 +1032,7 @@ export default function ShopProductAdmin() {
                         color: "white",
                         border: "none",
                         padding: "0.5rem 1rem",
-                        borderRadius: "4px",
+                        borderRadius: 0,
                         cursor: "pointer",
                         fontSize: "0.9rem",
                       }}

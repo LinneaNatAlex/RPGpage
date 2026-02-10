@@ -55,7 +55,7 @@ export default function ForumRules() {
         margin: "40px auto",
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: "#F5EFE0",
-        borderRadius: 20,
+        borderRadius: 0,
         padding: 40,
         boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
         border: "3px solid #7B6857",
@@ -71,7 +71,7 @@ export default function ForumRules() {
           right: 0,
           height: "4px",
           background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "20px 20px 0 0",
+          borderRadius: 0,
         }}
       />
       <h1 style={{ 
@@ -87,7 +87,7 @@ export default function ForumRules() {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 16,
+          borderRadius: 0,
           padding: 24,
           marginBottom: 32,
           border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -130,7 +130,7 @@ export default function ForumRules() {
           fontSize: "1.1rem",
           background: "rgba(212, 196, 168, 0.1)",
           padding: 12,
-          borderRadius: 8,
+          borderRadius: 0,
           border: "1px solid rgba(212, 196, 168, 0.3)"
         }}>
           <b>Tip:</b> Describe actions, feelings, and surroundings to make the
@@ -169,7 +169,7 @@ export default function ForumRules() {
               border: selectedIdx === idx 
                 ? "2px solid #7B6857" 
                 : "2px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: 12,
+              borderRadius: 0,
               padding: "16px 20px",
               fontWeight: 600,
               fontSize: "0.9rem",
@@ -213,7 +213,7 @@ export default function ForumRules() {
           margin: "0 auto",
           maxWidth: 800,
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 16,
+          borderRadius: 0,
           padding: 24,
           minHeight: 120,
           border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -256,7 +256,7 @@ export default function ForumRules() {
         fontStyle: "italic",
         background: "rgba(212, 196, 168, 0.1)",
         padding: 16,
-        borderRadius: 12,
+        borderRadius: 0,
         border: "1px solid rgba(212, 196, 168, 0.3)",
         textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
       }}>

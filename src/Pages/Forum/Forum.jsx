@@ -807,7 +807,7 @@ const Forum = () => {
             <div
               style={{
                 background: "#23232b",
-                borderRadius: 8,
+                borderRadius: 0,
                 padding: 24,
                 marginBottom: 24,
               }}

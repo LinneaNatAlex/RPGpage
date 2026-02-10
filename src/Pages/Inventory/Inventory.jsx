@@ -517,7 +517,7 @@ const Inventory = () => {
                             backgroundColor: "#4CAF50",
                             color: "white",
                             padding: "4px 8px",
-                            borderRadius: "4px",
+                            borderRadius: 0,
                             fontSize: "12px",
                             fontWeight: "bold",
                             textAlign: "center",
@@ -691,7 +691,7 @@ const Inventory = () => {
                             color: "white",
                             border: "2px solid #D4C4A8",
                             padding: "4px 8px",
-                            borderRadius: "4px",
+                            borderRadius: 0,
                             cursor: "pointer",
                           }}
                         >

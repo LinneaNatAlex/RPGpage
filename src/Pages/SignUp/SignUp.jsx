@@ -208,7 +208,7 @@ const SignUp = () => {
                 background: "#ff2a2a",
                 color: "#fff",
                 padding: "0.7rem 1.2rem",
-                borderRadius: "8px",
+                borderRadius: 0,
                 marginBottom: "1rem",
                 fontWeight: "bold",
                 textAlign: "center",

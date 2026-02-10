@@ -1,7 +1,7 @@
 .friendsBox {
   background: #23232b;
   border: 2px solid #a084e8;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 1rem;
   margin-top: 1.5rem;
   width: 100%;
@@ -38,7 +38,7 @@
   background: #a084e8;
   color: #23232b;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 0.5rem 1.2rem;
   font-weight: bold;
   font-size: 1rem;

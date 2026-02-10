@@ -17,7 +17,7 @@ const PrivacySafetyRules = () => {
         margin: "40px auto",
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: "#F5EFE0",
-        borderRadius: 20,
+        borderRadius: 0,
         padding: 40,
         boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
         border: "3px solid #7B6857",
@@ -33,7 +33,7 @@ const PrivacySafetyRules = () => {
           right: 0,
           height: "4px",
           background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "20px 20px 0 0",
+          borderRadius: 0,
         }}
       />
       <h1 style={{ 
@@ -50,7 +50,7 @@ const PrivacySafetyRules = () => {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 16,
+          borderRadius: 0,
           padding: 24,
           border: "2px solid rgba(255, 255, 255, 0.2)",
           boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",

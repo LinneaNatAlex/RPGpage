@@ -17,7 +17,7 @@
   font-size: 18px;
   cursor: pointer;
   padding: 0 4px;
-  border-radius: 4px;
+  border-radius: 0;
   transition: background 0.15s;
 }
 .privateMessageMenuBtn:hover,
@@ -31,7 +31,7 @@
   right: 0;
   background: #5d4e37;
   border: 1px solid #7b6857;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   min-width: 90px;
   z-index: 10;
@@ -46,7 +46,7 @@
   padding: 8px 12px;
   text-align: left;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 0;
   transition: background 0.15s, color 0.15s;
 }
 .privateMessageMenuDropdownBtn:hover,
@@ -76,7 +76,7 @@
   align-items: flex-start;
   background: #5d4e37;
   color: #f5efe0;
-  border-radius: 18px 18px 18px 4px;
+  border-radius: 0;
   padding: 6px 10px;
   font-size: 14px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -90,7 +90,7 @@
 .privateMessageRow.me .privateMessageBubble {
   background: linear-gradient(135deg, #7b6857 60%, #8b7a6b 100%);
   color: #f5efe0;
-  border-radius: 18px 18px 4px 18px;
+  border-radius: 0;
   align-items: flex-start;
   flex-direction: row-reverse;
 }
@@ -165,7 +165,7 @@
   top: 2.1rem;
   background: #5d4e37;
   border: 1px solid #ff5e5e;
-  border-radius: 6px;
+  border-radius: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   z-index: 20;
   min-width: 70px;
@@ -182,7 +182,7 @@
   padding: 0.3rem 1rem;
   text-align: left;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0;
   transition: background 0.15s;
 }
 .deleteOption:hover,
@@ -201,7 +201,7 @@
   color: #ff5e5e;
   font-weight: 600;
   font-size: 0.95rem;
-  border-radius: 6px;
+  border-radius: 0;
   padding: 0.1rem 0.7rem;
   cursor: pointer;
   opacity: 0;
@@ -240,7 +240,7 @@
   flex-direction: column;
   height: 15vh;
   border: none;
-  border-radius: 12px;
+  border-radius: 0;
   background: #d5c2b2;
   color: #2c2c2c;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -251,7 +251,7 @@
   flex: 1 1 0;
   height: 0;
   min-height: 0;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0;
 }
 
 .chatMessages {
@@ -281,7 +281,7 @@
   right: 0;
   background: #5d4e37;
   border: 1px solid #7b6857;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   max-height: 200px;
   overflow-y: auto;
@@ -330,7 +330,7 @@
   background: #7b6857;
   color: #f5efe0;
   padding: 2px 4px;
-  border-radius: 4px;
+  border-radius: 0;
   font-weight: bold;
 }
 
@@ -338,7 +338,7 @@
   background: #ff5e5e;
   color: #f5efe0;
   padding: 2px 4px;
-  border-radius: 4px;
+  border-radius: 0;
   font-weight: bold;
 }
 .messageSender {
@@ -374,12 +374,12 @@
   justify-content: center;
   gap: 1rem;
   padding: 1rem;
-  border-radius: 0 0 0 20px;
+  border-radius: 0;
 }
 
 .chatInput {
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   background: #e8ddd4;
   color: #2c2c2c;
   width: 100%;
@@ -389,7 +389,7 @@
   background: #7b6857;
   color: #f5efe0;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 0.5rem 1rem;
   cursor: pointer;
 }
@@ -405,7 +405,7 @@
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 8px;
+  border-radius: 0;
   transition: background 0.2s;
 }
 
@@ -423,7 +423,7 @@
   transform-origin: bottom right;
   max-height: 55vh;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -442,7 +442,7 @@
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   margin-right: 0.25rem;
-  border-radius: 6px;
+  border-radius: 0;
   transition: background 0.2s;
 }
 .notificationBtn:hover,
@@ -456,7 +456,7 @@
   gap: 4px;
   background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   border: 1px solid #d4c4a8;
-  border-radius: 10px;
+  border-radius: 0;
   padding: 8px 12px;
   margin: 8px 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -485,7 +485,7 @@
 .notificationModal {
   background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   border: 2px solid #7b6857;
-  border-radius: 16px;
+  border-radius: 0;
   padding: 1.5rem;
   max-width: 400px;
   width: 90%;
@@ -511,7 +511,7 @@
 .notificationModalInput {
   width: 100%;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 0;
   border: 2px solid #7b6857;
   background: #f5efe0;
   color: #2c2c2c;

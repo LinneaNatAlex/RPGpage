@@ -670,7 +670,7 @@ const PrivateChat = () => {
               style={{
                 width: "100%",
                 padding: 6,
-                borderRadius: 6,
+                borderRadius: 0,
                 border: "1px solid #7B6857",
                 marginBottom: 8,
                 background: "#6B5B47",
@@ -684,7 +684,7 @@ const PrivateChat = () => {
                 style={{
                   background: "#5D4E37",
                   border: "1px solid #7B6857",
-                  borderRadius: 6,
+                  borderRadius: 0,
                   maxHeight: 120,
                   overflowY: "auto",
                 }}
@@ -753,7 +753,7 @@ const PrivateChat = () => {
                               ? "#ff4d4f"
                               : "#F5EFE0",
                             border: "1px solid #7B6857",
-                            borderRadius: 6,
+                            borderRadius: 0,
                             padding: "4px 10px",
                             cursor: "pointer",
                             position: "relative",

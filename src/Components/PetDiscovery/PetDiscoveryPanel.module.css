@@ -1,7 +1,7 @@
 .panel, .adminPanel {
   background: linear-gradient(135deg, #2C2C2C 0%, #3A2F26 100%);
   border: 2px solid #7B6857;
-  border-radius: 12px;
+  border-radius: 0;
   margin: 20px 0;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -14,7 +14,7 @@
   margin-top: 0;
   background: rgba(212, 196, 168, 0.1);
   border: 1px solid #D4C4A8;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .discoveriesList {
@@ -26,7 +26,7 @@
 .discoveryItem {
   background: rgba(0, 0, 0, 0.1);
   border: 1px solid #D4C4A8;
-  border-radius: 6px;
+  border-radius: 0;
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -64,7 +64,7 @@
 .discoveryActions .acceptBtn, .discoveryActions .declineBtn {
   padding: 6px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -103,13 +103,13 @@
 .adminPanel::-webkit-scrollbar-track,
 .petDiscoveryPanel::-webkit-scrollbar-track {
   background: rgba(212, 196, 168, 0.2);
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 .adminPanel::-webkit-scrollbar-thumb,
 .petDiscoveryPanel::-webkit-scrollbar-thumb {
   background: #D4C4A8;
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 .adminPanel::-webkit-scrollbar-thumb:hover,
@@ -120,7 +120,7 @@
 .status {
   padding: 10px;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
+  border-radius: 0;
   margin-bottom: 15px;
   font-size: 0.9rem;
   color: #E8DDD4;
@@ -171,7 +171,7 @@
   background: linear-gradient(135deg, #7B6857 0%, #6B5B47 100%);
   color: #F5EFE0;
   border: 2px solid #B8860B;
-  border-radius: 6px;
+  border-radius: 0;
   padding: 8px 16px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -223,7 +223,7 @@
 .noPetMessage {
   background: linear-gradient(135deg, #2C2C2C 0%, #3A2F26 100%);
   border: 2px solid #7B6857;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 40px;
   text-align: center;
   margin: 20px 0;

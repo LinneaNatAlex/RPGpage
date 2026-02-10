@@ -143,7 +143,7 @@ export default function Classrooms() {
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: window.innerWidth <= 768 ? "#FFD700" : "#F5EFE0", // Golden text on mobile
         padding: window.innerWidth <= 768 ? 20 : 40,
-        borderRadius: 20,
+        borderRadius: 0,
         boxShadow:
           "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
         border: "3px solid #7B6857",
@@ -160,7 +160,7 @@ export default function Classrooms() {
           height: "4px",
           background:
             "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "20px 20px 0 0",
+          borderRadius: 0,
         }}
       />
       <h2
@@ -198,7 +198,7 @@ export default function Classrooms() {
             background: "linear-gradient(135deg, #dc3545 0%, #c82333 100%)",
             color: "#fff",
             padding: "15px 25px",
-            borderRadius: "12px",
+            borderRadius: 0,
             marginBottom: "25px",
             textAlign: "center",
             fontSize: "1.1rem",
@@ -225,7 +225,7 @@ export default function Classrooms() {
               marginBottom: 32,
               padding: 24,
               background: "rgba(245, 239, 224, 0.1)",
-              borderRadius: 16,
+              borderRadius: 0,
               border: "2px solid rgba(255, 255, 255, 0.2)",
               boxShadow:
                 "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
@@ -272,7 +272,7 @@ export default function Classrooms() {
                       "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 12,
+                    borderRadius: 0,
                     padding: "10px 20px",
                     fontWeight: 600,
                     fontSize: "1rem",
@@ -305,7 +305,7 @@ export default function Classrooms() {
                       "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 12,
+                    borderRadius: 0,
                     padding: "10px 20px",
                     fontWeight: 600,
                     fontSize: "1rem",

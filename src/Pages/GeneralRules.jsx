@@ -23,7 +23,7 @@ const GeneralRules = () => {
         margin: window.innerWidth <= 768 ? "20px auto" : "40px auto",
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: window.innerWidth <= 768 ? "#FFD700" : "#F5EFE0", // Golden text on mobile
-        borderRadius: 20,
+        borderRadius: 0,
         padding: window.innerWidth <= 768 ? 20 : 40,
         boxShadow:
           "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -42,7 +42,7 @@ const GeneralRules = () => {
           height: "4px",
           background:
             "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "20px 20px 0 0",
+          borderRadius: 0,
         }}
       />
       <h1
@@ -63,7 +63,7 @@ const GeneralRules = () => {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 16,
+          borderRadius: 0,
           padding: 24,
           border: "2px solid rgba(255, 255, 255, 0.2)",
           boxShadow:
@@ -101,7 +101,7 @@ const GeneralRules = () => {
           marginTop: 40,
           padding: 20,
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 16,
+          borderRadius: 0,
           border: "2px solid rgba(255, 255, 255, 0.2)",
           fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.95rem",
           textAlign: "center",

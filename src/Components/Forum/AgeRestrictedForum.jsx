@@ -32,7 +32,7 @@ export default function AgeRestrictedForum({ children }) {
               color: "#23232b",
               fontWeight: 700,
               border: 0,
-              borderRadius: 6,
+              borderRadius: 0,
               padding: "10px 24px",
               cursor: "pointer",
             }}

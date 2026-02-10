@@ -21,7 +21,7 @@ export default function HousePoints() {
         background: "#23232b",
         color: "#fff",
         padding: 24,
-        borderRadius: 12,
+        borderRadius: 0,
       }}
     >
       <h2>House Points</h2>

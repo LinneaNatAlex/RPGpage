@@ -113,7 +113,7 @@ export default function TeacherPanel() {
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: "#F5EFE0",
         padding: 40,
-        borderRadius: 20,
+        borderRadius: 0,
         boxShadow:
           "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
         border: "3px solid #7B6857",
@@ -130,7 +130,7 @@ export default function TeacherPanel() {
           height: "4px",
           background:
             "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "20px 20px 0 0",
+          borderRadius: 0,
         }}
       />
       <h2
@@ -153,7 +153,7 @@ export default function TeacherPanel() {
           display: "flex",
           marginBottom: "2rem",
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: "12px",
+          borderRadius: 0,
           padding: "4px",
           border: "2px solid rgba(255, 255, 255, 0.2)",
         }}
@@ -169,7 +169,7 @@ export default function TeacherPanel() {
                 : "transparent",
             color: activeTab === "points" ? "#F5EFE0" : "#D4C4A8",
             border: "none",
-            borderRadius: "8px",
+            borderRadius: 0,
             fontWeight: 600,
             cursor: "pointer",
             transition: "all 0.3s ease",
@@ -188,7 +188,7 @@ export default function TeacherPanel() {
                 : "transparent",
             color: activeTab === "books" ? "#F5EFE0" : "#D4C4A8",
             border: "none",
-            borderRadius: "8px",
+            borderRadius: 0,
             fontWeight: 600,
             cursor: "pointer",
             transition: "all 0.3s ease",
@@ -237,7 +237,7 @@ export default function TeacherPanel() {
               style={{
                 width: "100%",
                 padding: "10px 12px",
-                borderRadius: 8,
+                borderRadius: 0,
                 background: "#F5EFE0",
                 color: "#2C2C2C",
                 border: "2px solid #D4C4A8",
@@ -251,7 +251,7 @@ export default function TeacherPanel() {
                 maxHeight: 280,
                 overflowY: "auto",
                 background: "rgba(245, 239, 224, 0.08)",
-                borderRadius: 8,
+                borderRadius: 0,
                 border: "2px solid rgba(212, 196, 168, 0.4)",
               }}
             >
@@ -314,7 +314,7 @@ export default function TeacherPanel() {
                   disabled={userPage === 1}
                   style={{
                     padding: "6px 12px",
-                    borderRadius: 6,
+                    borderRadius: 0,
                     border: "2px solid #D4C4A8",
                     background: "#5D4E37",
                     color: "#F5EFE0",
@@ -342,7 +342,7 @@ export default function TeacherPanel() {
                   disabled={userPage === totalUserPages}
                   style={{
                     padding: "6px 12px",
-                    borderRadius: 6,
+                    borderRadius: 0,
                     border: "2px solid #D4C4A8",
                     background: "#5D4E37",
                     color: "#F5EFE0",
@@ -382,7 +382,7 @@ export default function TeacherPanel() {
               marginBottom: "1.5rem",
               background: "rgba(245, 239, 224, 0.1)",
               padding: "1rem",
-              borderRadius: "12px",
+              borderRadius: 0,
               border: "2px solid rgba(255, 255, 255, 0.2)",
             }}
           >
@@ -406,7 +406,7 @@ export default function TeacherPanel() {
                   color: "#F5EFE0",
                   border: "none",
                   padding: "8px 16px",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   fontWeight: 600,
                   cursor: "pointer",
                   transition: "all 0.3s ease",
@@ -422,7 +422,7 @@ export default function TeacherPanel() {
                   color: "#F5EFE0",
                   border: "none",
                   padding: "10px 20px",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   fontWeight: 600,
                   cursor: "pointer",
                   transition: "all 0.3s ease",
@@ -438,7 +438,7 @@ export default function TeacherPanel() {
               maxHeight: "400px",
               overflowY: "auto",
               background: "rgba(245, 239, 224, 0.05)",
-              borderRadius: "12px",
+              borderRadius: 0,
               border: "1px solid rgba(123, 104, 87, 0.3)",
             }}
           >
@@ -503,7 +503,7 @@ export default function TeacherPanel() {
                         color: "#F5EFE0",
                         border: "none",
                         padding: "6px 12px",
-                        borderRadius: "6px",
+                        borderRadius: 0,
                         fontSize: "0.8rem",
                         cursor: "pointer",
                       }}
@@ -518,7 +518,7 @@ export default function TeacherPanel() {
                         color: "#F5EFE0",
                         border: "none",
                         padding: "6px 12px",
-                        borderRadius: "6px",
+                        borderRadius: 0,
                         fontSize: "0.8rem",
                         cursor: "pointer",
                       }}
@@ -567,7 +567,7 @@ export default function TeacherPanel() {
               style={{
                 width: 100,
                 padding: "12px 16px",
-                borderRadius: 8,
+                borderRadius: 0,
                 background: "#F5EFE0",
                 color: "#2C2C2C",
                 border: "2px solid #D4C4A8",
@@ -648,7 +648,7 @@ export default function TeacherPanel() {
           <div
             style={{
               background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-              borderRadius: "12px",
+              borderRadius: 0,
               border: "3px solid #7B6857",
               maxWidth: "800px",
               width: "100%",

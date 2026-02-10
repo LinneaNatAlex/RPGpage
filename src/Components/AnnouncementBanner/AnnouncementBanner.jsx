@@ -91,7 +91,7 @@ export default function AnnouncementBanner({ user }) {
                         background: "#e57373",
                         color: "#fff",
                         border: "none",
-                        borderRadius: 4,
+                        borderRadius: 0,
                         padding: "2px 8px",
                         fontSize: "0.95em",
                         cursor: "pointer",

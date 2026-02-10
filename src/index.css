@@ -33,21 +33,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Hide scrollbars in classroom but keep functionality */
-.classroom-messages-container {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
-}
-
-.classroom-messages-container::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
-}
-
+/* Classroom section – skarpe hjørner, skjul scrollbar */
+.classroom-messages-container,
 .classroom-textarea {
+  border-radius: 0 !important;
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE and Edge */
 }
 
+.classroom-messages-container::-webkit-scrollbar,
 .classroom-textarea::-webkit-scrollbar {
   display: none !important; /* Chrome, Safari, Opera */
 }
@@ -67,27 +61,27 @@ body {
   }
 }
 
-/* Scrollbar styling to match the earthy theme */
+/* Scrollbar: kun thumb (dotten) synlig, track usynlig */
 body,
 * {
   scrollbar-width: thin;
-  scrollbar-color: #7b6857 #e8ddd4;
+  scrollbar-color: #7b6857 transparent;
 }
 
-/* For Webkit-browsers */
+/* For Webkit-browsers – kun thumb synlig */
 body::-webkit-scrollbar,
 *::-webkit-scrollbar {
   width: 8px;
-  background: #e8ddd4;
+  background: transparent;
 }
 body::-webkit-scrollbar-thumb,
 *::-webkit-scrollbar-thumb {
   background: #7b6857;
-  border-radius: 8px;
+  border-radius: 0;
 }
 body::-webkit-scrollbar-track,
 *::-webkit-scrollbar-track {
-  background: #e8ddd4;
+  background: transparent;
 }
 
 /* ReactQuill Editor Overrides - Force Light Theme with Dark Text */
@@ -95,7 +89,7 @@ body::-webkit-scrollbar-track,
   background-color: #f5efe0 !important;
   color: #2c2c2c !important;
   border: 2px solid #d4c4a8 !important;
-  border-radius: 12px !important;
+  border-radius: 0 !important;
   padding: 16px !important;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif !important;
   font-size: 1rem !important;
@@ -145,14 +139,14 @@ body::-webkit-scrollbar-track,
   background-color: #f5efe0 !important;
   border: 2px solid #d4c4a8 !important;
   border-bottom: none !important;
-  border-radius: 12px 12px 0 0 !important;
+  border-radius: 0 !important;
   padding: 12px !important;
 }
 
 .ql-container {
   border: 2px solid #d4c4a8 !important;
   border-top: none !important;
-  border-radius: 0 0 12px 12px !important;
+  border-radius: 0 !important;
   background-color: #f5efe0 !important;
 }
 
@@ -168,7 +162,7 @@ body::-webkit-scrollbar-track,
   color: #2c2c2c !important;
   background-color: transparent !important;
   border: 1px solid #d4c4a8 !important;
-  border-radius: 6px !important;
+  border-radius: 0 !important;
   margin: 2px !important;
   padding: 6px !important;
 }
@@ -190,7 +184,7 @@ body::-webkit-scrollbar-track,
 .ql-toolbar .ql-picker-options {
   background-color: #f5efe0 !important;
   border: 2px solid #d4c4a8 !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
 }
 

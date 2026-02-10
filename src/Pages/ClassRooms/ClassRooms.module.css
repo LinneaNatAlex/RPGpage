@@ -5,11 +5,12 @@
   align-items: center;
   padding: 5rem;
   background-color: #23232b;
+  border-radius: 0;
 }
 
 .classromRulesContainer {
   padding: 5rem;
-  border-radius: 10px;
+  border-radius: 0;
   background-color: #23232b;
   border: 2px solid #b0aac2;
   color: #b0aac2;

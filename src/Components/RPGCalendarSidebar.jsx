@@ -219,7 +219,7 @@ export default function RPGCalendarSidebar() {
       style={{
         background: "#E8DDD4",
         color: "#2C2C2C",
-        borderRadius: 12,
+        borderRadius: 0,
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
         border: "1px solid #D4C4A8",
         padding: "1.5rem",
@@ -249,7 +249,7 @@ export default function RPGCalendarSidebar() {
       <div
         style={{
           background: "rgba(212, 196, 168, 0.2)",
-          borderRadius: 8,
+          borderRadius: 0,
           padding: "12px",
           marginBottom: "16px",
           border: "1px solid #D4C4A8",
@@ -351,7 +351,7 @@ export default function RPGCalendarSidebar() {
               style={{
                 textAlign: "center",
                 padding: 5,
-                borderRadius: 7,
+                borderRadius: 0,
                 background: isToday ? "#2C2C2C" : "#E8DDD4",
                 color: isToday ? "#F5EFE0" : "#D4C4A8",
                 fontWeight: isToday ? 700 : 400,
@@ -455,7 +455,7 @@ export default function RPGCalendarSidebar() {
                     alignItems: "center",
                     gap: 8,
                     padding: 6,
-                    borderRadius: 6,
+                    borderRadius: 0,
                     background: "rgba(212, 196, 168, 0.1)",
                     textDecoration: "none",
                     color: "#F5EFE0",
@@ -556,7 +556,7 @@ export default function RPGCalendarSidebar() {
                     alignItems: "center",
                     gap: 8,
                     padding: 6,
-                    borderRadius: 6,
+                    borderRadius: 0,
                     background: "rgba(212, 196, 168, 0.1)",
                     textDecoration: "none",
                     color: "#F5EFE0",

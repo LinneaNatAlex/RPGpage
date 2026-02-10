@@ -13,7 +13,7 @@
 .modalContent {
   background: #23232b;
   color: #b0aac2;
-  border-radius: 14px;
+  border-radius: 0;
   padding: 0;
   max-width: 420px;
   width: 90vw;
@@ -50,7 +50,7 @@
   letter-spacing: 1px;
   padding: 0.6rem 1.3rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
   font-size: 1rem;
   transition: background 0.2s, color 0.2s;
@@ -74,7 +74,7 @@
   letter-spacing: 1px;
   padding: 0.6rem 1.3rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
   font-size: 1rem;
   transition: background 0.2s, color 0.2s;

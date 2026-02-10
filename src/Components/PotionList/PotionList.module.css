@@ -16,7 +16,7 @@
   padding: 0.2rem;
   list-style: none;
   border: var(--navbar-text-color) 1px solid;
-  border-radius: 8px;
+  border-radius: 0;
   background-color: var(--light-background-color);
   padding: 5px;
   width: 100%;
@@ -52,7 +52,7 @@ ul {
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 p {

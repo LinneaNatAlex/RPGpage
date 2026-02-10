@@ -15,7 +15,7 @@
 .modalContent {
   background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
   border: 3px solid #7b6857;
-  border-radius: 16px;
+  border-radius: 0;
   box-shadow: 0 16px 64px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2);
   max-width: 450px;
   width: 90%;
@@ -92,7 +92,7 @@
   border: 2px solid rgba(212, 196, 168, 0.3) !important;
   color: #f5efe0 !important;
   padding: 0.7rem 1.5rem !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
@@ -111,7 +111,7 @@
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
   padding: 0.7rem 1.5rem !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;

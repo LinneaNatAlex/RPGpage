@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuillWithSynonyms from "../ReactQuillWithSynonyms/ReactQuillWithSynonyms";
 import "react-quill/dist/quill.snow.css";
 import Button from "../Button/Button";
@@ -158,7 +158,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                           width: "100%",
                           height: "100%",
                           border: "none",
-                          borderRadius: "4px",
+                          borderRadius: 0,
                         }}
                         title="Preview"
                       />
@@ -220,7 +220,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                 width: "100%",
                 minHeight: "200px",
                 border: "none",
-                borderRadius: "8px",
+                borderRadius: 0,
                 background: "transparent",
               }}
               title="Profile Text"

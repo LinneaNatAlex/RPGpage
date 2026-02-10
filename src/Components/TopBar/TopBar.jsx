@@ -960,7 +960,7 @@ const TopBar = () => {
                           background: "#ff6b6b",
                           color: "white",
                           border: "none",
-                          borderRadius: "4px",
+                          borderRadius: 0,
                           padding: "4px 8px",
                           fontSize: "12px",
                           cursor: "pointer",

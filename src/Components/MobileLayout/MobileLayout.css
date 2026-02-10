@@ -164,7 +164,7 @@
   font-size: 0.6rem;
   font-weight: 700;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 0;
   border: 2px solid white;
 }
 
@@ -183,7 +183,7 @@
 .mobile-welcome-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 25px;
   margin-bottom: 25px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -213,7 +213,7 @@
 .mobile-stat-card {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 20px 15px;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -246,7 +246,7 @@
 .mobile-action-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 25px 20px;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -276,7 +276,7 @@
 .mobile-chat-page {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 20px;
   height: calc(100vh - 200px);
   display: flex;
@@ -300,7 +300,7 @@
 .mobile-chat-switch {
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 8px 16px;
   color: #ffffff;
   font-size: 0.9rem;
@@ -325,12 +325,12 @@
   margin-bottom: 15px;
   padding: 10px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .mobile-message {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 12px 15px;
   margin-bottom: 10px;
 }
@@ -367,7 +367,7 @@
   flex: 1;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
+  border-radius: 0;
   padding: 12px 18px;
   color: #ffffff;
   font-size: 1rem;
@@ -381,7 +381,7 @@
 .mobile-send-btn {
   background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
   border: none;
-  border-radius: 25px;
+  border-radius: 0;
   padding: 12px 20px;
   color: #ffffff;
   font-weight: 600;
@@ -408,7 +408,7 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
+  border-radius: 0;
   padding: 12px 18px;
   color: #ffffff;
   font-size: 1rem;
@@ -430,7 +430,7 @@
   gap: 15px;
   padding: 15px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 0;
   margin-bottom: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -465,7 +465,7 @@
 .mobile-online-page {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 20px;
 }
 
@@ -488,7 +488,7 @@
   gap: 15px;
   padding: 15px;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  border-radius: 0;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -521,7 +521,7 @@
 .mobile-profile-page {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 25px;
   text-align: center;
 }
@@ -574,14 +574,14 @@
   flex: 1;
   height: 8px;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  border-radius: 0;
   overflow: hidden;
 }
 
 .mobile-profile-fill {
   height: 100%;
   background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
-  border-radius: 4px;
+  border-radius: 0;
   transition: width 0.3s ease;
 }
 
@@ -603,7 +603,7 @@
 .mobile-dashboard-btn {
   background: linear-gradient(135deg, #5d4e37 0%, #8b7a6b 100%);
   border: 2px solid #7b6857;
-  border-radius: 50px;
+  border-radius: 0;
   padding: 15px 20px;
   color: #f5efe0;
   font-weight: 600;
@@ -675,7 +675,7 @@
   margin-bottom: 15px;
   padding: 12px;
   background: rgba(139, 69, 19, 0.3);
-  border-radius: 16px;
+  border-radius: 0;
   flex-shrink: 0;
   min-height: 60px;
 }
@@ -725,7 +725,7 @@
   background: rgba(139, 69, 19, 0.2);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(139, 69, 19, 0.4);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 15px 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -943,7 +943,7 @@
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 12px 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1019,7 +1019,7 @@
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 20px 15px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1083,7 +1083,7 @@
 .mobile-forum-list::-webkit-scrollbar-thumb,
 .mobile-rules-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 /* Mobile Component Containers */
@@ -1091,7 +1091,7 @@
 .mobile-topbar-container {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1101,7 +1101,7 @@
 .mobile-page-content {
   background: rgba(45, 26, 21, 0.9);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 15px;
   margin: 5px auto;
   border: 1px solid rgba(93, 78, 55, 0.4);
@@ -1147,7 +1147,7 @@
 .mobile-section-card {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
@@ -1160,7 +1160,7 @@
 .mobile-welcome-card {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 30px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
@@ -1246,7 +1246,7 @@
   margin-bottom: 20px;
   padding: 15px;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .mobile-overlay-header h2 {
@@ -1258,7 +1258,7 @@
 .mobile-overlay-close {
   background: rgba(255, 107, 107, 0.3);
   border: 1px solid rgba(255, 107, 107, 0.5);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 8px 12px;
   color: #ffffff;
   font-size: 1.2rem;
@@ -1273,7 +1273,7 @@
 .mobile-overlay-content {
   flex: 1;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 15px;
   overflow: visible;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1306,14 +1306,14 @@
 
 .mobile-topbar-container::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 .mobile-global-chat-container,
 .mobile-private-chat-container {
   flex: 1;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -1321,7 +1321,7 @@
 .mobile-online-container {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 15px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   max-height: 60vh;
@@ -1347,7 +1347,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-topbar-container .topBar button:hover {
@@ -1361,7 +1361,7 @@
   margin-bottom: 20px;
   padding: 15px;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .mobile-chat-overlay .mobile-chat-header h2 {
@@ -1374,7 +1374,7 @@
 .mobile-chat-overlay .mobile-chat-close {
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 8px 16px;
   color: #ffffff;
   font-size: 0.9rem;
@@ -1410,7 +1410,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 25px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-global-chat-container .chat input::placeholder,
@@ -1423,7 +1423,7 @@
   background: linear-gradient(45deg, #ff6b6b, #ff8e8e) !important;
   border: none !important;
   color: #ffffff !important;
-  border-radius: 25px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-online-container .onlineUsersContainer {
@@ -1444,7 +1444,7 @@
 
 .mobile-online-container .onlineUserItem {
   background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px !important;
+  border-radius: 0 !important;
   padding: 12px !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
@@ -1472,7 +1472,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-overlay-content .newsFeedContainer input,
@@ -1481,7 +1481,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-overlay-content .newsFeedContainer input::placeholder,
@@ -1508,7 +1508,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-overlay-content .inventoryModal button:hover {
@@ -1519,7 +1519,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-overlay-content .inventoryModal input::placeholder {
@@ -1731,7 +1731,7 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
 }
 
 .mobile-page-content button:hover {
@@ -1743,10 +1743,10 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  border-radius: 8px !important;
+  border-radius: 0 !important;
   font-size: 16px !important; /* Prevents zoom on iOS */
   -webkit-appearance: none !important; /* Removes iOS styling */
-  -webkit-border-radius: 8px !important;
+  $10 !important;
   -webkit-tap-highlight-color: transparent !important;
   -webkit-user-select: text !important;
   user-select: text !important;
@@ -1952,7 +1952,7 @@ textarea,
 select {
   font-size: 16px !important; /* Prevents zoom on iOS */
   -webkit-appearance: none !important;
-  -webkit-border-radius: 8px !important;
+  $10 !important;
   -webkit-tap-highlight-color: transparent !important;
   -webkit-user-select: text !important;
   user-select: text !important;
@@ -2031,7 +2031,7 @@ select:focus {
 
 .mobile-forum-selection-content {
   background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 20px;
   width: 100%;
   max-width: 500px;
@@ -2103,7 +2103,7 @@ select:focus {
 .mobile-forum-selection-item {
   background: rgba(245, 239, 224, 0.15);
   border: 2px solid rgba(212, 196, 168, 0.3);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 16px 20px;
   cursor: pointer;
   transition: all 0.3s ease;

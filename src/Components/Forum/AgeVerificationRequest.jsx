@@ -6,7 +6,7 @@ export default function AgeVerificationRequest() {
         margin: "2rem auto",
         background: "#23232b",
         padding: 32,
-        borderRadius: 16,
+        borderRadius: 0,
         color: "#fff",
         textAlign: "center",
       }}
@@ -40,7 +40,7 @@ export default function AgeVerificationRequest() {
         style={{
           background: "#333",
           padding: 16,
-          borderRadius: 8,
+          borderRadius: 0,
           color: "#ffd86b",
           fontWeight: 500,
         }}

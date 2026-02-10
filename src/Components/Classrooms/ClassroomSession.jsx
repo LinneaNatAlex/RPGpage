@@ -618,7 +618,7 @@ const ClassroomSession = () => {
         background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
         color: "#F5EFE0",
         padding: window.innerWidth <= 768 ? 20 : 40,
-        borderRadius: 20,
+        borderRadius: 0,
         boxShadow:
           "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
         border: "3px solid #7B6857",
@@ -635,7 +635,7 @@ const ClassroomSession = () => {
           height: "4px",
           background:
             "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "20px 20px 0 0",
+          borderRadius: 0,
         }}
       />
       <h2
@@ -660,7 +660,7 @@ const ClassroomSession = () => {
             background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
             color: "#fff",
             padding: "12px 20px",
-            borderRadius: "12px",
+            borderRadius: 0,
             marginBottom: "20px",
             textAlign: "center",
             fontSize: "1.1rem",
@@ -679,7 +679,7 @@ const ClassroomSession = () => {
             background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
             color: "#fff",
             padding: "12px 20px",
-            borderRadius: "12px",
+            borderRadius: 0,
             marginBottom: "20px",
             textAlign: "center",
             fontSize: "1.1rem",
@@ -698,7 +698,7 @@ const ClassroomSession = () => {
             marginBottom: 24,
             background: "rgba(245, 239, 224, 0.1)",
             padding: 16,
-            borderRadius: 12,
+            borderRadius: 0,
             border: "2px solid rgba(255, 255, 255, 0.2)",
           }}
         >
@@ -720,7 +720,7 @@ const ClassroomSession = () => {
             style={{
               marginLeft: 12,
               padding: "8px 12px",
-              borderRadius: 8,
+              borderRadius: 0,
               background: "#F5EFE0",
               color: "#2C2C2C",
               border: "2px solid #D4C4A8",
@@ -754,7 +754,7 @@ const ClassroomSession = () => {
                 width: "100%",
                 minHeight: "120px",
                 padding: "16px",
-                borderRadius: "12px",
+                borderRadius: 0,
                 border: "2px solid #D4C4A8",
                 background: "#F5EFE0",
                 color: "#2C2C2C",
@@ -774,7 +774,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -793,7 +793,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -829,7 +829,7 @@ const ClassroomSession = () => {
                       "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: "8px",
+                    borderRadius: 0,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     cursor: "pointer",
@@ -881,7 +881,7 @@ const ClassroomSession = () => {
             maxHeight: 600,
             overflowY: "auto",
             overflowX: "hidden",
-            borderRadius: 12,
+            borderRadius: 0,
             padding: window.innerWidth <= 768 ? 12 : 16,
             marginBottom: 16,
             border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -914,7 +914,7 @@ const ClassroomSession = () => {
                   marginBottom: 16,
                   padding: "16px 20px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 12,
+                  borderRadius: 0,
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   boxShadow:
                     "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
@@ -979,7 +979,7 @@ const ClassroomSession = () => {
                           "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                         color: "#F5EFE0",
                         border: "2px solid rgba(255, 255, 255, 0.2)",
-                        borderRadius: 8,
+                        borderRadius: 0,
                         padding: "6px 12px",
                         fontSize: "0.85rem",
                         cursor: "pointer",
@@ -1014,7 +1014,7 @@ const ClassroomSession = () => {
                     maxWidth: "100%",
                     padding: "8px 12px",
                     background: "rgba(245, 239, 224, 0.05)",
-                    borderRadius: 8,
+                    borderRadius: 0,
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                   }}
                 >
@@ -1035,7 +1035,7 @@ const ClassroomSession = () => {
             style={{
               width: "100%",
               boxSizing: "border-box",
-              borderRadius: 12,
+              borderRadius: 0,
               border: "2px solid #D4C4A8",
               padding: window.innerWidth <= 768 ? "14px 18px" : "12px 16px",
               background: "#F5EFE0",
@@ -1068,7 +1068,7 @@ const ClassroomSession = () => {
                 background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                 color: "#F5EFE0",
                 border: "2px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: 12,
+                borderRadius: 0,
                 padding: "12px 32px",
                 fontWeight: 600,
                 fontSize: "1rem",
@@ -1100,7 +1100,7 @@ const ClassroomSession = () => {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 16,
+          borderRadius: 0,
           padding: 20,
           marginTop: 32,
           border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -1146,7 +1146,7 @@ const ClassroomSession = () => {
                 style={{
                   width: "100px",
                   padding: "8px 12px",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -1178,7 +1178,7 @@ const ClassroomSession = () => {
                 style={{
                   width: "100%",
                   padding: "8px 12px",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -1211,7 +1211,7 @@ const ClassroomSession = () => {
                 style={{
                   width: "100%",
                   padding: "8px 12px",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -1229,7 +1229,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -1245,7 +1245,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -1271,7 +1271,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 8,
+                  borderRadius: 0,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1289,7 +1289,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 8,
+                  borderRadius: 0,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1302,7 +1302,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 8,
+                  borderRadius: 0,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1321,7 +1321,7 @@ const ClassroomSession = () => {
                       "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: "8px",
+                    borderRadius: 0,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     cursor: "pointer",
@@ -1378,7 +1378,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
                   color: "#fff",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   padding: "8px 16px",
                   fontSize: "0.9rem",
                   cursor: "pointer",
@@ -1413,7 +1413,7 @@ const ClassroomSession = () => {
                 fontStyle: "italic",
                 padding: "20px",
                 background: "rgba(245, 239, 224, 0.1)",
-                borderRadius: "12px",
+                borderRadius: 0,
                 border: "2px solid rgba(255, 255, 255, 0.2)",
               }}
             >
@@ -1448,7 +1448,7 @@ const ClassroomSession = () => {
                     fontStyle: "italic",
                     padding: "20px",
                     background: "rgba(245, 239, 224, 0.1)",
-                    borderRadius: "12px",
+                    borderRadius: 0,
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                   }}
                 >
@@ -1471,7 +1471,7 @@ const ClassroomSession = () => {
                         key={index}
                         style={{
                           background: "rgba(245, 239, 224, 0.1)",
-                          borderRadius: "12px",
+                          borderRadius: 0,
                           padding: "16px 20px",
                           border: "2px solid rgba(255, 255, 255, 0.2)",
                           boxShadow:
@@ -1520,7 +1520,7 @@ const ClassroomSession = () => {
                               style={{
                                 background: "rgba(76, 175, 80, 0.2)",
                                 border: "1px solid #4caf50",
-                                borderRadius: "6px",
+                                borderRadius: 0,
                                 padding: "8px 12px",
                                 marginTop: "8px",
                                 color: "#4caf50",
@@ -1549,7 +1549,7 @@ const ClassroomSession = () => {
                                 "linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%)",
                               color: "#F5EFE0",
                               border: "2px solid rgba(255, 255, 255, 0.2)",
-                              borderRadius: "8px",
+                              borderRadius: 0,
                               padding: "10px 20px",
                               fontSize: "1rem",
                               cursor: "pointer",
@@ -1581,7 +1581,7 @@ const ClassroomSession = () => {
                                   "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
                                 color: "#fff",
                                 border: "2px solid rgba(255, 255, 255, 0.2)",
-                                borderRadius: "8px",
+                                borderRadius: 0,
                                 padding: "10px 16px",
                                 fontSize: "0.9rem",
                                 cursor: "pointer",
@@ -1622,7 +1622,7 @@ const ClassroomSession = () => {
                           fontStyle: "italic",
                           padding: "20px",
                           background: "rgba(245, 239, 224, 0.1)",
-                          borderRadius: "12px",
+                          borderRadius: 0,
                           border: "2px solid rgba(255, 255, 255, 0.2)",
                         }}
                       >
@@ -1647,7 +1647,7 @@ const ClassroomSession = () => {
                 marginBottom: "16px",
                 padding: "16px",
                 background: "rgba(245, 239, 224, 0.1)",
-                borderRadius: "12px",
+                borderRadius: 0,
                 border: "2px solid rgba(255, 255, 255, 0.2)",
               }}
             >
@@ -1669,7 +1669,7 @@ const ClassroomSession = () => {
                 style={{
                   background: "rgba(76, 175, 80, 0.1)",
                   border: "2px solid #4CAF50",
-                  borderRadius: "12px",
+                  borderRadius: 0,
                   padding: "20px",
                   textAlign: "center",
                 }}
@@ -1702,7 +1702,7 @@ const ClassroomSession = () => {
                       "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
                     color: "#000",
                     border: "2px solid #FFD700",
-                    borderRadius: "8px",
+                    borderRadius: 0,
                     padding: "12px 24px",
                     fontSize: "1rem",
                     cursor: "pointer",
@@ -1721,7 +1721,7 @@ const ClassroomSession = () => {
                 style={{
                   background: "rgba(255, 193, 7, 0.1)",
                   border: "2px solid #FFC107",
-                  borderRadius: "12px",
+                  borderRadius: 0,
                   padding: "20px",
                   textAlign: "center",
                 }}

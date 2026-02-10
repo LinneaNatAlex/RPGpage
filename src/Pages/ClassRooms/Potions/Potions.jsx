@@ -96,7 +96,7 @@ export default function Potions() {
     <div
       style={{
         background: "#232340",
-        borderRadius: 8,
+        borderRadius: 0,
         padding: 16,
         margin: "24px auto",
         maxWidth: 600,

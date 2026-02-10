@@ -20,7 +20,7 @@
 .popup {
   background: linear-gradient(135deg, #2C2C2C 0%, #3A2F26 100%);
   border: 3px solid #7B6857;
-  border-radius: 12px;
+  border-radius: 0;
   width: 90%;
   max-width: 400px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
@@ -45,7 +45,7 @@
   padding: 15px;
   background: linear-gradient(135deg, #3A2F26 0%, #2C2C2C 100%);
   border-bottom: 2px solid #7B6857;
-  border-radius: 9px 9px 0 0;
+  border-radius: 0;
   position: relative;
 }
 
@@ -95,7 +95,7 @@
   font-size: 1.5rem;
   cursor: pointer;
   padding: 5px;
-  border-radius: 4px;
+  border-radius: 0;
   transition: all 0.2s ease;
 }
 
@@ -127,7 +127,7 @@
   margin: 10px 0 !important;
   padding: 10px;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
+  border-radius: 0;
   border-left: 3px solid #B8860B;
 }
 
@@ -147,7 +147,7 @@
   padding: 5px 10px;
   background: rgba(76, 175, 80, 0.1);
   border: 1px solid #4CAF50;
-  border-radius: 6px;
+  border-radius: 0;
   animation: glow 2s ease-in-out infinite alternate;
 }
 
@@ -166,7 +166,7 @@
 .acceptBtn, .declineBtn {
   padding: 10px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 0;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;

@@ -290,7 +290,7 @@ const InventoryModal = ({ open, onClose }) => {
                             color: "white",
                             border: "2px solid #D4C4A8",
                             padding: "4px 8px",
-                            borderRadius: "4px",
+                            borderRadius: 0,
                             cursor: "pointer",
                           }}
                         >

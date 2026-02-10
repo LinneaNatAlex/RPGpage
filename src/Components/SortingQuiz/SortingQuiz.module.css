@@ -6,7 +6,7 @@
   gap: 1.5rem;
   background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
   color: #F5EFE0;
-  border-radius: 20px;
+  border-radius: 0;
   padding: 2rem 1.5rem;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   border: 3px solid #7B6857;
@@ -22,7 +22,7 @@
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 20px 20px 0 0;
+  border-radius: 0;
 }
 .infoLink {
   color: #D4C4A8;
@@ -55,7 +55,7 @@
   max-width: 95vw;
   max-height: 90vh;
   width: 500px;
-  border-radius: 20px;
+  border-radius: 0;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   border: 3px solid #7B6857;
   overflow: hidden;
@@ -69,7 +69,7 @@
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 20px 20px 0 0;
+  border-radius: 0;
 }
 
 /* --------------QUIZ CONTENT-------------- */
@@ -109,7 +109,7 @@
   padding: 1rem;
   width: 100%;
   margin: 0.5rem 0;
-  border-radius: 12px;
+  border-radius: 0;
   background: rgba(245, 239, 224, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
   color: #F5EFE0;

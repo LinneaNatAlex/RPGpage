@@ -31,7 +31,7 @@
   gap: 16px;
   color: #2c2c2c;
   background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-  border-radius: 16px;
+  border-radius: 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
   padding: 2rem;
   position: relative;
@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: column;
   background: #f5efe0;
-  border-radius: 12px;
+  border-radius: 0;
   border: 2px solid #d4c4a8;
   color: #2c2c2c;
   padding: 2rem;
@@ -76,7 +76,7 @@
   height: 200px;
   width: 100%;
   max-width: 600px;
-  border-radius: var(--main-border-radius);
+  border-radius: 0;
   border: 2px solid #d4c4a8;
   padding: 12px;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
@@ -91,7 +91,7 @@
   max-width: 600px;
   padding: 12px;
   border: 2px solid #d4c4a8;
-  border-radius: var(--main-border-radius);
+  border-radius: 0;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   font-size: 14px;
   box-sizing: border-box;
@@ -144,7 +144,7 @@ iframe {
 
 .newsContent {
   background: #f5efe0;
-  border-radius: 12px;
+  border-radius: 0;
   border: 2px solid #d4c4a8;
   color: #2c2c2c;
   min-height: 200px;
@@ -165,12 +165,12 @@ iframe {
 
 .newsContent::-webkit-scrollbar-track {
   background: #e8ddd4;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .newsContent::-webkit-scrollbar-thumb {
   background: #7b6857;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .newsContent::-webkit-scrollbar-thumb:hover {
@@ -182,7 +182,7 @@ iframe {
   max-width: 600px;
   padding: 12px;
   margin: 0;
-  border-radius: var(--main-border-radius);
+  border-radius: 0;
   background-color: var(--button-background);
   border: 2px solid #d4c4a8;
   color: #2c2c2c;
@@ -198,7 +198,7 @@ iframe {
   color: var(--contrast-text-color);
   border: none;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 0;
   cursor: pointer;
   margin: 1rem;
 }
@@ -226,7 +226,7 @@ iframe {
   .newsFeedWrapper {
     padding: 1rem;
     margin: 0.5rem;
-    border-radius: 12px;
+    border-radius: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     max-height: 80vh;
@@ -248,7 +248,7 @@ iframe {
 .codePostPreview {
   background: linear-gradient(135deg, #f8f4f0 0%, #f0e8dc 100%);
   border: 2px solid #d4c4a8;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 16px;
   text-align: center;
   margin: 8px 0;
@@ -265,7 +265,7 @@ iframe {
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 0;
   cursor: pointer;
   font-weight: bold;
   transition: all 0.3s ease;
@@ -323,7 +323,7 @@ iframe {
   max-width: 1400px;
   height: 90vh;
   background: transparent;
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -449,7 +449,7 @@ iframe {
 .otherNewsItem {
   background: transparent;
   border: 1px solid rgba(212, 196, 168, 0.5);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 12px;
   cursor: pointer;
   transition: all 0.3s ease;

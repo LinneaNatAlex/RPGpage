@@ -31,7 +31,7 @@
   text-align: center;
   padding: 2rem;
   background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
+  border-radius: 0;
   border: 2px solid goldenrod;
   max-width: 600px;
   margin: 2rem;
@@ -54,7 +54,7 @@
   color: goldenrod;
   padding: 1rem 2rem;
   border: 2px solid goldenrod;
-  border-radius: 5px;
+  border-radius: 0;
   cursor: pointer;
   font-size: 1.1rem;
   margin-top: 1rem;

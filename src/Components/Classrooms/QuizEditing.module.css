@@ -14,7 +14,7 @@
 
 .quizEditingContent {
   background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border-radius: 20px;
+  border-radius: 0;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   border: 3px solid #7b6857;
   max-width: 800px;
@@ -32,7 +32,7 @@
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
-  border-radius: 20px 20px 0 0;
+  border-radius: 0;
 }
 
 .quizHeader {
@@ -59,7 +59,7 @@
   font-size: 1.5rem;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: 50%;
+  border-radius: 0;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -81,7 +81,7 @@
   margin-bottom: 24px;
   padding: 20px;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 12px;
+  border-radius: 0;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -102,7 +102,7 @@
   padding: 12px 16px;
   background: rgba(245, 239, 224, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border-radius: 0;
   color: #f5efe0;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -123,7 +123,7 @@
   margin-bottom: 24px;
   padding: 20px;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 12px;
+  border-radius: 0;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -146,7 +146,7 @@
   border: 2px solid rgba(255, 255, 255, 0.2);
   color: #f5efe0;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
@@ -187,7 +187,7 @@
   margin-bottom: 24px;
   padding: 20px;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 12px;
+  border-radius: 0;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -204,7 +204,7 @@
   font-weight: 600;
   background: rgba(76, 175, 80, 0.1);
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: 0;
   border: 1px solid #4caf50;
 }
 
@@ -214,7 +214,7 @@
   font-weight: 600;
   background: rgba(255, 152, 0, 0.1);
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: 0;
   border: 1px solid #ff9800;
 }
 
@@ -238,7 +238,7 @@
   border: 1px solid #5d4e37;
   color: #d4c4a8;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
@@ -275,7 +275,7 @@
   background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
   color: #f5efe0;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 10px 20px;
   font-size: 1rem;
   font-weight: 600;
@@ -308,7 +308,7 @@
   background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: #fff;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 12px 24px;
   font-size: 1.1rem;
   font-weight: 600;
@@ -336,7 +336,7 @@
   color: #fff;
   padding: 12px 20px;
   margin: 20px 24px;
-  border-radius: 12px;
+  border-radius: 0;
   text-align: center;
   font-weight: 600;
   box-shadow: 0 4px 16px rgba(244, 67, 54, 0.3);
