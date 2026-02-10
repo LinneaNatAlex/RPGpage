@@ -95,26 +95,25 @@ const useUserData = () => {
             // Check if infirmaryEnd has expired and handle recovery
             let processedData = { ...data };
             const now = Date.now();
-            
+
             // If infirmaryEnd exists but has expired, recover the user
             if (data.infirmaryEnd && data.infirmaryEnd <= now) {
               processedData = {
                 ...data,
                 health: 100,
                 infirmaryEnd: null,
-                lastHealthUpdate: now
+                lastHealthUpdate: now,
               };
-              
+
               // Update Firebase with recovered state
-              import('../firebaseConfig').then(({ db }) => {
-                import('firebase/firestore').then(({ doc, updateDoc }) => {
+              import("../firebaseConfig").then(({ db }) => {
+                import("firebase/firestore").then(({ doc, updateDoc }) => {
                   const userRef = doc(db, "users", user.uid);
                   updateDoc(userRef, {
                     health: 100,
                     infirmaryEnd: null,
-                    lastHealthUpdate: now
-                  }).catch(error => {
-                  });
+                    lastHealthUpdate: now,
+                  }).catch((error) => {});
                 });
               });
             }

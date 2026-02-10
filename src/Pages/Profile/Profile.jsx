@@ -8,7 +8,6 @@ import { auth } from "../../firebaseConfig";
 import ProfileTextEditor from "../../Components/ProfileTextEditor/ProfileTextEditor";
 import Chat from "../../Components/Chat/Chat";
 import FriendsList from "../../Components/FriendsList/FriendsList";
-import { isBirthdayToday, getRPGCalendar } from "../../utils/rpgCalendar";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
@@ -24,7 +23,6 @@ const Profile = () => {
   const [birthdayDay, setBirthdayDay] = useState(1);
   const [birthdaySaved, setBirthdaySaved] = useState(false);
   const [editingBirthday, setEditingBirthday] = useState(false);
-  const [ageChecked, setAgeChecked] = useState(false);
 
   // Pet states
   const [editingPetName, setEditingPetName] = useState(false);
@@ -199,8 +197,14 @@ const Profile = () => {
         currentPet: {
           ...prev.currentPet,
           mood: newMood,
-          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
-          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
+          petCount:
+            type === "pet"
+              ? currentPetCount + 1
+              : prev.currentPet?.petCount || 0,
+          playCount:
+            type === "play"
+              ? currentPlayCount + 1
+              : prev.currentPet?.playCount || 0,
         },
       }));
 
@@ -256,40 +260,6 @@ const Profile = () => {
     };
     fetchUserData();
   }, [user, loading]);
-
-  // Automatisk aldersøkning på RPG-bursdag (samme logikk som UserProfile)
-  useEffect(() => {
-    if (
-      !userData ||
-      !userData.birthdayMonth ||
-      !userData.birthdayDay ||
-      ageChecked
-    )
-      return;
-    const now = new Date();
-    const { rpgYear } = getRPGCalendar(now);
-    if (
-      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now) &&
-      Number(userData.lastBirthdayYear) !== rpgYear
-    ) {
-      const newAge = (userData.age || 0) + 1;
-      const userRef = doc(db, "users", user.uid);
-      updateDoc(userRef, { age: newAge, lastBirthdayYear: rpgYear })
-        .then(() => {
-          startTransition(() => {
-            setUserData((prev) => ({
-              ...prev,
-              age: newAge,
-              lastBirthdayYear: rpgYear,
-            }));
-            setAgeChecked(true);
-          });
-        })
-        .catch(() => setAgeChecked(true));
-    } else {
-      setAgeChecked(true);
-    }
-  }, [userData, ageChecked, user]);
 
   const [uploading, setUploading] = useState(false);
   const { uploadImage } = useImageUpload();
@@ -490,12 +460,6 @@ const Profile = () => {
                     <strong>Class:</strong>
                   </p>{" "}
                   {userData.class}
-                </div>
-                <div className={styles.caracterDetails}>
-                  <p>
-                    <strong>Age:</strong>
-                  </p>{" "}
-                  {userData.age}
                 </div>
                 <div className={styles.caracterDetails}>
                   <p>
@@ -989,11 +953,15 @@ const Profile = () => {
             <div className={styles.petStatsDisplay}>
               <div className={styles.petStatItem}>
                 <span className={styles.statLabel}>Times Petted:</span>
-                <span className={styles.statValue}>{userData?.currentPet?.petCount || 0}</span>
+                <span className={styles.statValue}>
+                  {userData?.currentPet?.petCount || 0}
+                </span>
               </div>
               <div className={styles.petStatItem}>
                 <span className={styles.statLabel}>Times Played:</span>
-                <span className={styles.statValue}>{userData?.currentPet?.playCount || 0}</span>
+                <span className={styles.statValue}>
+                  {userData?.currentPet?.playCount || 0}
+                </span>
               </div>
             </div>
           </div>

@@ -222,6 +222,19 @@
   word-break: break-word;
 }
 
+/* Desktop: panel klistret til topp og bunn – bruk inset for å strekke høyden */
+.chatPanelSticky {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  width: 350px !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
 .chatContainer {
   display: flex;
   flex-direction: column;
@@ -233,9 +246,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* PC: fyller fra topp til bunn mellom header og vindu */
+/* PC: fyller fra topp til bunn – klistret til bunn */
 .chatContainerPc {
-  flex: 1;
+  flex: 1 1 0;
+  height: 0;
   min-height: 0;
   border-radius: 0 0 12px 12px;
 }
@@ -399,6 +413,26 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* Emoji picker – compact size */
+.emojiPickerWrapper {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  z-index: 9999;
+  transform: scale(0.58);
+  transform-origin: bottom right;
+  max-height: 55vh;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.emojiPickerWrapper > div {
+  font-size: 12px;
+  max-height: 55vh;
+  overflow: hidden;
+}
+
 /* Admin: News / notification in chat */
 .notificationBtn {
   background: none;
@@ -500,40 +534,4 @@
 .notificationModalCancel {
   background: #4a3f35 !important;
   color: #d4c4a8 !important;
-}
-
-/* ------------RESPONSIVE---------------------- */
-@media screen and (max-width: 768px) {
-  .chatContainer {
-    height: 60vh; /* Reasonable mobile height */
-    border-radius: 12px;
-    border: 1px solid #7b6857;
-  }
-  .chatMessages {
-    padding: 0.5rem;
-    color: rgb(47, 36, 24);
-  }
-  .chatForm {
-    padding: 0.5rem;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-  }
-  .chatInput {
-    flex: 1 !important;
-    width: auto !important;
-    min-width: 0 !important;
-    padding: 0.5rem !important;
-    font-size: 1rem !important;
-    background: #e8ddd4 !important;
-    color: #2c2c2c !important;
-    border: 1px solid #7b6857 !important;
-    border-radius: 8px !important;
-  }
-  .chatBtn {
-    flex-shrink: 0 !important;
-    padding: 0.5rem 1rem !important;
-    font-size: 0.9rem !important;
-  }
 }

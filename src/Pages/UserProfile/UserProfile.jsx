@@ -1,6 +1,5 @@
 // import the necessary libraries and components
 import { useState, useEffect, startTransition } from "react";
-import { isBirthdayToday, getRPGCalendar } from "../../utils/rpgCalendar";
 import useUsers from "../../hooks/useUser";
 import { useParams } from "react-router-dom";
 import {
@@ -43,8 +42,6 @@ const UserProfile = () => {
   const [birthdaySaved, setBirthdaySaved] = useState(
     !!userData?.birthdayMonth && !!userData?.birthdayDay
   );
-  // For å hindre dobbel feiring
-  const [ageChecked, setAgeChecked] = useState(false);
 
   // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
   const calculatePetHP = (pet) => {
@@ -222,8 +219,14 @@ const UserProfile = () => {
         currentPet: {
           ...prev.currentPet,
           mood: newMood,
-          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
-          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
+          petCount:
+            type === "pet"
+              ? currentPetCount + 1
+              : prev.currentPet?.petCount || 0,
+          playCount:
+            type === "play"
+              ? currentPlayCount + 1
+              : prev.currentPet?.playCount || 0,
         },
       }));
 
@@ -244,49 +247,6 @@ const UserProfile = () => {
       setIsInteracting(false);
     }
   };
-
-  // --- Automatisk aldersøkning på RPG-bursdag med fellesmodul ---
-  useEffect(() => {
-    if (
-      !userData ||
-      !userData.birthdayMonth ||
-      !userData.birthdayDay ||
-      ageChecked
-    )
-      return;
-    const now = new Date();
-    const { rpgYear } = getRPGCalendar(now);
-    if (
-      isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now) &&
-      user?.uid === userData.uid &&
-      Number(userData.lastBirthdayYear) !== rpgYear
-    ) {
-      // Oppdater alder og siste feirede RPG-år i Firestore
-      const newAge = (userData.age || 0) + 1;
-      const userRef = doc(db, "users", userData.uid);
-      updateDoc(userRef, {
-        age: newAge,
-        lastBirthdayYear: rpgYear,
-      })
-        .then(() => {
-          startTransition(() => {
-            setUserData({
-              ...userData,
-              age: newAge,
-              lastBirthdayYear: rpgYear,
-            });
-          });
-          startTransition(() => {
-            setAgeChecked(true);
-          });
-        })
-        .catch((err) => console.error("Failed to update age:", err));
-    } else {
-      startTransition(() => {
-        setAgeChecked(true);
-      });
-    }
-  }, [userData, ageChecked, user]);
 
   if (notFound)
     return (
@@ -545,25 +505,6 @@ const UserProfile = () => {
                 Class:
               </strong>{" "}
               {userData.class}
-            </p>
-            <p
-              style={{
-                color: "#FFFFFF",
-                fontSize: "1.1rem",
-                margin: "0.5rem 0",
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-              }}
-            >
-              <strong
-                style={{
-                  color: "#FFE4B5",
-                  fontWeight: 700,
-                  marginRight: "0.5rem",
-                }}
-              >
-                Age:
-              </strong>{" "}
-              {userData.age}
             </p>
             {/* Bursdag kun i Character Details, med valgskjema hvis ikke satt */}
             {userData.birthdayMonth && userData.birthdayDay ? (
@@ -1035,11 +976,15 @@ const UserProfile = () => {
             <div className={styles.petStatsDisplay}>
               <div className={styles.petStatItem}>
                 <span className={styles.statLabel}>Times Petted:</span>
-                <span className={styles.statValue}>{userData?.currentPet?.petCount || 0}</span>
+                <span className={styles.statValue}>
+                  {userData?.currentPet?.petCount || 0}
+                </span>
               </div>
               <div className={styles.petStatItem}>
                 <span className={styles.statLabel}>Times Played:</span>
-                <span className={styles.statValue}>{userData?.currentPet?.playCount || 0}</span>
+                <span className={styles.statValue}>
+                  {userData?.currentPet?.playCount || 0}
+                </span>
               </div>
             </div>
           </div>

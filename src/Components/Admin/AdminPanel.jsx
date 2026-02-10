@@ -12,6 +12,7 @@ import {
   getDocs,
   query,
   where,
+  deleteField,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import firebase from "firebase/compat/app";
@@ -54,6 +55,7 @@ export default function AdminPanel() {
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsMessage, setPointsMessage] = useState("");
   const [migrationStatus, setMigrationStatus] = useState("");
+  const [ageCleanupStatus, setAgeCleanupStatus] = useState("");
   const [unfaintStatus, setUnfaintStatus] = useState("");
 
   const filtered = users.filter(
@@ -98,7 +100,11 @@ export default function AdminPanel() {
       await updateDoc(ref, { currency: increment(delta) });
       done++;
     }
-    setStatus(`Nits updated for all ${done} users (${delta >= 0 ? "+" : ""}${delta} each).`);
+    setStatus(
+      `Nits updated for all ${done} users (${
+        delta >= 0 ? "+" : ""
+      }${delta} each).`
+    );
   }
 
   // Pause user for X days
@@ -241,7 +247,9 @@ export default function AdminPanel() {
         infirmaryEnd: null,
       });
       setUnfaintStatus(
-        `${selected.displayName || selected.email || selected.uid} has been recovered from the infirmary.`
+        `${
+          selected.displayName || selected.email || selected.uid
+        } has been recovered from the infirmary.`
       );
       setTimeout(() => setUnfaintStatus(""), 5000);
     } catch (err) {
@@ -325,6 +333,48 @@ export default function AdminPanel() {
     }
   };
 
+  async function removeAgeFromAllUsers() {
+    if (!roles.includes("admin")) {
+      setAgeCleanupStatus("Kun admin kan kjøre dette.");
+      return;
+    }
+    setAgeCleanupStatus("Kjører… henter alle brukere.");
+    try {
+      const usersRef = collection(db, "users");
+      const snapshot = await getDocs(usersRef);
+      let updated = 0;
+      const errors = [];
+      for (const d of snapshot.docs) {
+        const data = d.data();
+        if ("age" in data || "lastBirthdayYear" in data) {
+          const toRemove = {};
+          if ("age" in data) toRemove.age = deleteField();
+          if ("lastBirthdayYear" in data) toRemove.lastBirthdayYear = deleteField();
+          try {
+            await updateDoc(doc(db, "users", d.id), toRemove);
+            updated++;
+          } catch (err) {
+            errors.push(`${d.id}: ${err?.message || err}`);
+          }
+        }
+      }
+      if (errors.length > 0) {
+        console.warn("Noen oppdateringer feilet:", errors);
+        setAgeCleanupStatus(
+          `Ferdig med feil: ${updated} oppdatert. ${errors.length} feilet (sjekk konsoll).`
+        );
+      } else {
+        setAgeCleanupStatus(
+          updated > 0
+            ? `Ferdig. Fjernet age/lastBirthdayYear fra ${updated} brukere. Oppdater Firestore-konsollen (F5) for å se endringen.`
+            : "Ingen brukere hadde age eller lastBirthdayYear."
+        );
+      }
+    } catch (error) {
+      setAgeCleanupStatus(`Feil: ${error.message}`);
+    }
+  }
+
   return (
     <div
       style={{
@@ -341,7 +391,7 @@ export default function AdminPanel() {
           : "0 12px 48px rgba(139, 69, 19, 0.15), 0 4px 16px rgba(139, 69, 19, 0.1)",
         border: `3px solid ${theme.border}`,
         position: "relative",
-        overflow: "hidden",
+        overflow: "visible",
       }}
     >
       <div
@@ -431,6 +481,38 @@ export default function AdminPanel() {
           >
             Update Witch → Wizard
           </button>
+          <button
+            onClick={removeAgeFromAllUsers}
+            style={{
+              marginLeft: 12,
+              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              color: "#F5EFE0",
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: 12,
+              padding: "8px 16px",
+              fontWeight: 600,
+              fontSize: "0.9rem",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              boxShadow:
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              fontFamily: '"Cinzel", serif',
+              letterSpacing: "0.5px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-2px)";
+              e.target.style.boxShadow =
+                "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow =
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+            }}
+          >
+            Fjern age fra alle brukere
+          </button>
           {migrationStatus && (
             <div
               style={{
@@ -443,6 +525,20 @@ export default function AdminPanel() {
               }}
             >
               {migrationStatus}
+            </div>
+          )}
+          {ageCleanupStatus && (
+            <div
+              style={{
+                marginTop: 12,
+                padding: 8,
+                background: "rgba(255, 255, 255, 0.1)",
+                borderRadius: 8,
+                fontSize: "0.9rem",
+                color: theme.text,
+              }}
+            >
+              {ageCleanupStatus}
             </div>
           )}
         </div>
@@ -538,7 +634,15 @@ export default function AdminPanel() {
           {ipBanStatus && <div style={{ color: "#ffd86b" }}>{ipBanStatus}</div>}
         </div>
       )}
-      <label htmlFor="admin-user-search" style={{ display: "block", marginBottom: 6, color: theme.secondaryText, fontWeight: 600 }}>
+      <label
+        htmlFor="admin-user-search"
+        style={{
+          display: "block",
+          marginBottom: 6,
+          color: theme.secondaryText,
+          fontWeight: 600,
+        }}
+      >
         Search user
       </label>
       <input
@@ -582,8 +686,8 @@ export default function AdminPanel() {
           fontStyle: "italic",
         }}
       >
-        Showing {Math.min(filtered.length, 5)} of {filtered.length} users
-        {filtered.length > 5 && " (scroll to see more)"}
+        Showing up to {Math.min(filtered.length, 20)} of {filtered.length} users
+        {filtered.length > 20 && " (scroll to see more)"}
       </div>
 
       <ul
@@ -711,7 +815,8 @@ export default function AdminPanel() {
                 marginBottom: 10,
               }}
             >
-              Velg bruker over og klikk for å hente dem ut av infirmary (health 100, ingen ventetid).
+              Velg bruker over og klikk for å hente dem ut av infirmary (health
+              100, ingen ventetid).
             </p>
             <button
               onClick={handleUnfaintUser}
@@ -783,7 +888,10 @@ export default function AdminPanel() {
               marginBottom: 16,
             }}
           >
-            <label htmlFor="admin-nits-amount" style={{ fontWeight: 600, color: theme.text }}>
+            <label
+              htmlFor="admin-nits-amount"
+              style={{ fontWeight: 600, color: theme.text }}
+            >
               Amount:
             </label>
             <input
@@ -991,7 +1099,10 @@ export default function AdminPanel() {
                 style={{ width: 50, marginLeft: 4 }}
               />
             </label>
-            <label htmlFor="admin-suspend-reason" style={{ display: "block", marginTop: 8 }}>
+            <label
+              htmlFor="admin-suspend-reason"
+              style={{ display: "block", marginTop: 8 }}
+            >
               Reason (optional):
             </label>
             <input
@@ -1286,7 +1397,10 @@ export default function AdminPanel() {
             Add / subtract points
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <label htmlFor="admin-points-username" style={{ fontWeight: 600, color: "#D4C4A8" }}>
+            <label
+              htmlFor="admin-points-username"
+              style={{ fontWeight: 600, color: "#D4C4A8" }}
+            >
               Username or email
             </label>
             <input
@@ -1318,7 +1432,10 @@ export default function AdminPanel() {
                 e.target.style.boxShadow = "none";
               }}
             />
-            <label htmlFor="admin-points-amount" style={{ fontWeight: 600, color: "#D4C4A8" }}>
+            <label
+              htmlFor="admin-points-amount"
+              style={{ fontWeight: 600, color: "#D4C4A8" }}
+            >
               Number of points (+/-)
             </label>
             <input

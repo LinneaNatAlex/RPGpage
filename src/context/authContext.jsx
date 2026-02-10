@@ -140,7 +140,6 @@ export const AuthProvider = ({ children }) => {
                   displayName: currentUser.displayName || currentUser.email,
                   email: currentUser.email,
                   roles: ["user"],
-                  age: 11,
                   race: "Wizard", // Default race if missing
                   class: "1st year",
                   currency: 1000,

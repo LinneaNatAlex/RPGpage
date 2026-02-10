@@ -77,6 +77,25 @@ export function getRPGCalendar(now = new Date()) {
   };
 }
 
+// Sjekk om bursdagen i dette RPG-året allerede har passert (IG-kalenderen har passert måned/dag).
+// Brukes for aldersøkning: når bruker besøker siden etter at bursdagen er passert, øk alder.
+// Sjekker både RPG-måneden og RPG-dagen i måneden, ikke IRL-datoen.
+export function hasHadBirthdayThisRPGYear(
+  birthdayMonth,
+  birthdayDay,
+  now = new Date()
+) {
+  const m = Number(birthdayMonth);
+  const d = Number(birthdayDay);
+  if (Number.isNaN(m) || Number.isNaN(d) || m < 1 || m > 12 || d < 1 || d > 31)
+    return false;
+  const { rpgMonth, rpgDayOfMonth } = getRPGCalendar(now);
+  // Bursdagen har passert hvis:
+  // - Vi er i en senere måned, ELLER
+  // - Vi er i samme måned men på eller etter bursdagsdagen
+  return rpgMonth > m || (rpgMonth === m && rpgDayOfMonth >= d);
+}
+
 // Sjekk om bursdag faller i denne IRL-dagens RPG-dager (for synkronisering)
 // birthdayMonth/birthdayDay kan komme som tall eller streng fra Firestore
 export function isBirthdayToday(birthdayMonth, birthdayDay, now = new Date()) {
@@ -87,9 +106,7 @@ export function isBirthdayToday(birthdayMonth, birthdayDay, now = new Date()) {
   const { rpgMonth, rpgDaysThisWeek } = getRPGCalendar(now);
   const dayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1;
   const rpgRange = rpgDaysThisWeek[dayOfWeek];
-  return (
-    m === rpgMonth && d >= rpgRange.start && d <= rpgRange.end
-  );
+  return m === rpgMonth && d >= rpgRange.start && d <= rpgRange.end;
 }
 
 // Sjekk om det er eksamensperiode (juli og august måned)

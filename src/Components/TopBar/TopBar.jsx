@@ -23,7 +23,6 @@ import GiftModal from "./GiftModal";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import useUserRoles from "../../hooks/useUserRoles";
-import { toggleMagicalCursor } from "../../assets/Cursor/magicalCursor.js";
 import { cacheHelpers } from "../../utils/firebaseCache";
 
 import styles from "./TopBar.module.css";
@@ -68,7 +67,6 @@ const TopBar = () => {
   const [inLoveWith, setInLoveWith] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
   const [inLoveCountdown, setInLoveCountdown] = useState(0);
-  const [magicalCursorEnabled, setMagicalCursorEnabled] = useState(true);
   const [showFollowedTopics, setShowFollowedTopics] = useState(false);
   const [followedTopics, setFollowedTopics] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,7 +115,8 @@ const TopBar = () => {
       },
       (err) => {
         if (err?.code === "permission-denied") return;
-        if (process.env.NODE_ENV === "development") console.warn("TopBar followedTopics snapshot error:", err);
+        if (process.env.NODE_ENV === "development")
+          console.warn("TopBar followedTopics snapshot error:", err);
       }
     );
 
@@ -173,7 +172,8 @@ const TopBar = () => {
         },
         (err) => {
           if (err?.code === "permission-denied") return;
-          if (process.env.NODE_ENV === "development") console.warn("TopBar followed topics posts snapshot error:", err);
+          if (process.env.NODE_ENV === "development")
+            console.warn("TopBar followed topics posts snapshot error:", err);
         }
       );
 
@@ -206,11 +206,6 @@ const TopBar = () => {
   const [mysteryUntil, setMysteryUntil] = useState(null);
   const intervalRef = useRef();
   const { users } = useUsers();
-
-  const handleMagicalCursorToggle = () => {
-    setMagicalCursorEnabled(!magicalCursorEnabled);
-    toggleMagicalCursor();
-  };
 
   // Update local state when userData changes
   useEffect(() => {
@@ -744,25 +739,6 @@ const TopBar = () => {
               !
             </span>
           )}
-        </button>
-        <button
-          className={styles.inventoryIconBtn}
-          onClick={handleMagicalCursorToggle}
-          title={
-            magicalCursorEnabled
-              ? "Disable Magical Cursor"
-              : "Enable Magical Cursor"
-          }
-          style={{
-            background: magicalCursorEnabled
-              ? "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
-              : "#E8DDD4",
-            color: magicalCursorEnabled ? "#2C2C2C" : "#7B6857",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
-        >
-          ✦
         </button>
         <button
           className={styles.inventoryIconBtn}

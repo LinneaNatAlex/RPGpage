@@ -270,13 +270,15 @@ const Chat = () => {
     }
   };
 
-  // Scroll til bunn etter sending
+  // Scroll til bunn – på mobil alltid nyeste melding, på desktop når chat er åpen
   useEffect(() => {
-    if (!isCollapsed && chatBoxRef.current) {
-      // Small delay to ensure DOM is updated
+    const isPc = window.innerWidth > 768;
+    const chatVisible = isPc ? !isCollapsed : true;
+    if (chatVisible && chatBoxRef.current) {
+      const el = chatBoxRef.current;
       setTimeout(() => {
-        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-      }, 100);
+        el.scrollTop = el.scrollHeight;
+      }, 50);
     }
   }, [messages, isCollapsed]);
 
@@ -456,12 +458,14 @@ const Chat = () => {
   const isPc = window.innerWidth > 768;
   return (
     <div
+      className={isPc && !isCollapsed ? styles.chatPanelSticky : undefined}
       style={{
         position: isPc ? "fixed" : "relative",
         top: isPc && !isCollapsed ? 0 : "auto",
         bottom: isPc ? 0 : "auto",
         right: isPc ? 0 : "auto",
         width: isPc ? 350 : "100%",
+        height: isPc && !isCollapsed ? "100vh" : "auto",
         zIndex: isPc ? 10005 : 1,
         display: isPc ? "flex" : "block",
         flexDirection: isPc
@@ -581,7 +585,9 @@ const Chat = () => {
                       className={styles.notificationContent}
                       dangerouslySetInnerHTML={{
                         __html: formatMessage(
-                          (message.text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                          (message.text || "")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
                         ),
                       }}
                     />
@@ -801,14 +807,7 @@ const Chat = () => {
                   😊
                 </button>
                 {showEmoji && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 60,
-                      right: 0,
-                      zIndex: 9999,
-                    }}
-                  >
+                  <div className={styles.emojiPickerWrapper}>
                     <Picker
                       data={data}
                       onEmojiSelect={(emoji) => {
@@ -836,7 +835,9 @@ const Chat = () => {
         <div
           className={styles.notificationModalOverlay}
           onClick={() => setShowNotificationModal(false)}
-          onKeyDown={(e) => e.key === "Escape" && setShowNotificationModal(false)}
+          onKeyDown={(e) =>
+            e.key === "Escape" && setShowNotificationModal(false)
+          }
           role="dialog"
           aria-modal="true"
           aria-labelledby="notification-modal-title"
@@ -845,14 +846,20 @@ const Chat = () => {
             className={styles.notificationModal}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 id="notification-modal-title" className={styles.notificationModalTitle}>
+            <h3
+              id="notification-modal-title"
+              className={styles.notificationModalTitle}
+            >
               📢 News / notification
             </h3>
             <p className={styles.notificationModalHint}>
               This will appear as a small news message in the chat for everyone.
             </p>
             <form onSubmit={handleSendNotification}>
-              <label htmlFor="chat-notification-input" className={styles.notificationModalLabel}>
+              <label
+                htmlFor="chat-notification-input"
+                className={styles.notificationModalLabel}
+              >
                 Message
               </label>
               <textarea

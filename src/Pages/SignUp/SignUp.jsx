@@ -164,7 +164,6 @@ const SignUp = () => {
         roles: ["user"],
         email: user.email,
         profileImageUrl: uploadedImageUrl,
-        age: 11,
         race: formData.race,
         class: formData.class,
         currency: 1000, // Start with 1000 Nits
