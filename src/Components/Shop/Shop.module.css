@@ -89,7 +89,8 @@
   flex-direction: row;
   gap: 1rem;
   flex: 1;
-  align-items: flex-start;
+  min-width: 0;
+  align-items: center;
 }
 
 .itemImageContainer {
@@ -107,26 +108,33 @@
   border-radius: 0;
 }
 
-.itemTextContent {
+.itemInfo .itemName {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
 }
+
 .itemName {
   font-size: 1.3rem;
   font-weight: 700;
   color: #f5efe0;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   letter-spacing: 0.5px;
   font-family: '"Cinzel", serif';
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
+.itemDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
 .itemDesc {
   font-size: 1rem;
   color: #d4c4a8;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0;
   font-weight: 500;
   font-style: italic;
 }
@@ -134,7 +142,7 @@
   font-size: 1rem;
   color: #4caf50;
   font-weight: 600;
-  margin-left: 0.5rem;
+  margin-left: 0;
 }
 .item button {
   background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
@@ -336,18 +344,17 @@
     flex-shrink: 0;
   }
 
-  .itemTextContent {
+  .itemDetails {
     min-width: 0;
+    margin-top: 0.4rem;
   }
 
   .itemName {
     font-size: 1.05rem;
-    margin-bottom: 0.2rem;
   }
 
   .itemDesc {
     font-size: 0.85rem;
-    margin-bottom: 0.2rem;
     overflow-wrap: break-word;
   }
 

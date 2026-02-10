@@ -387,7 +387,7 @@ const Shop = ({ open = true }) => {
                 }`}
               >
                 <div className={styles.itemInfo}>
-                  {/* Product Image */}
+                  {/* Bilde + tittel på én rad */}
                   {(itemWithImage.image || itemWithImage.coverImage) && (
                     <div className={styles.itemImageContainer}>
                       <img
@@ -403,33 +403,34 @@ const Shop = ({ open = true }) => {
                       />
                     </div>
                   )}
-                  <div className={styles.itemTextContent}>
-                    <span className={styles.itemName}>
-                      {itemWithImage.name}
+                  <span className={styles.itemName}>
+                    {itemWithImage.name}
+                  </span>
+                </div>
+                {/* Beskrivelse og effekt under bilde/tittel – full bredde */}
+                <div className={styles.itemDetails}>
+                  {itemWithImage.ingredients &&
+                    Array.isArray(itemWithImage.ingredients) && (
+                      <span className={styles.ingredients}>
+                        [Includes: {itemWithImage.ingredients.join(", ")}]
+                      </span>
+                    )}
+                  {itemWithImage.description && (
+                    <span className={styles.itemDesc}>
+                      {itemWithImage.description}
                     </span>
-                    {itemWithImage.ingredients &&
-                      Array.isArray(itemWithImage.ingredients) && (
-                        <span className={styles.ingredients}>
-                          [Includes: {itemWithImage.ingredients.join(", ")}]
-                        </span>
-                      )}
-                    {itemWithImage.description && (
-                      <span className={styles.itemDesc}>
-                        {itemWithImage.description}
-                      </span>
-                    )}
-                    {itemWithImage.effect && (
+                  )}
+                  {itemWithImage.effect && (
+                    <span className={styles.itemEffect}>
+                      <strong>Effect:</strong> {itemWithImage.effect}
+                    </span>
+                  )}
+                  {typeof itemWithImage.health === "number" &&
+                    itemWithImage.health > 0 && (
                       <span className={styles.itemEffect}>
-                        <strong>Effect:</strong> {itemWithImage.effect}
+                        <strong>HP:</strong> +{itemWithImage.health}
                       </span>
                     )}
-                    {typeof itemWithImage.health === "number" &&
-                      itemWithImage.health > 0 && (
-                        <span className={styles.itemEffect}>
-                          <strong>HP:</strong> +{itemWithImage.health}
-                        </span>
-                      )}
-                  </div>
                 </div>
                 <div className={styles.itemActions}>
                   <span className={styles.itemPrice}>
