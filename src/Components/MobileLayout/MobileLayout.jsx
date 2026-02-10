@@ -32,6 +32,29 @@ const isProtectedPath = (pathname) => {
     return true;
   return false;
 };
+
+const RULES_PATHS = [
+  "/generalrules",
+  "/forumrules",
+  "/aiusagerules",
+  "/contentmediarules",
+  "/privacysafetyrules",
+  "/accountidentityrules",
+  "/communitybehaviorrules",
+  "/technicalsiterules",
+  "/chatrules",
+  "/rpgrules",
+  "/profilecontentrules",
+  "/roleplaycharacterrules",
+  "/livechatrpgrules",
+  "/magicspellrules",
+  "/raceschoolrules",
+  "/datingrelationshiprules",
+  "/18forumrules",
+];
+const isRulesPage = (pathname) =>
+  RULES_PATHS.some((p) => pathname === p || pathname === p + "/");
+
 import "./MobileLayout.css";
 
 const MobileLayout = ({ children }) => {
@@ -177,6 +200,18 @@ const MobileLayout = ({ children }) => {
 
       {/* Mobile Main Content - TopBar not shown on mobile per design */}
       <main className="mobile-main">
+        {/* Back to rules list when viewing a rule page */}
+        {isRulesPage(location.pathname) && (
+          <div className="mobile-rules-back-bar">
+            <button
+              type="button"
+              className="mobile-rules-back-btn"
+              onClick={() => navigate("/rules")}
+            >
+              ← Choose another rule
+            </button>
+          </div>
+        )}
         {/* Render actual page content - let React Router handle all routing */}
         <div className="mobile-page-content">
           <Outlet />
@@ -303,11 +338,11 @@ const MobileLayout = ({ children }) => {
 
             <button
               className={`mobile-dashboard-item ${
-                location.pathname.includes("rules") ? "active" : ""
+                location.pathname === "/rules" || location.pathname.includes("rules") ? "active" : ""
               }`}
               onClick={() => {
                 setShowDashboard(false);
-                navigate("/generalrules");
+                navigate("/rules");
               }}
             >
               <span className="mobile-dashboard-item-icon">📋</span>

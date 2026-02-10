@@ -16,7 +16,7 @@
 /* Force dark mode for all mobile content */
 
 .mobile-app .mobile-page-content * {
-  color: #f5efe0 !important;
+  color: #2c2c2c !important;
 }
 
 /* Mobile App - Light Mode (when logged out) */
@@ -1099,12 +1099,12 @@
 }
 
 .mobile-page-content {
-  background: rgba(45, 26, 21, 0.9);
+  background: rgba(245, 239, 224, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 0;
   padding: 15px;
   margin: 5px auto;
-  border: 1px solid rgba(93, 78, 55, 0.4);
+  border: 1px solid rgba(139, 122, 107, 0.4);
   min-height: auto;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1117,6 +1117,7 @@
   position: relative;
   left: 0;
   right: 0;
+  color: #2c2c2c;
 }
 
 /* Light Mode Mobile Page Content */
@@ -1293,7 +1294,7 @@
   z-index: 10000;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 12px;
 }
 
 .mobile-topbar-container::-webkit-scrollbar {
@@ -1312,6 +1313,11 @@
 .mobile-global-chat-container,
 .mobile-private-chat-container {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0;
   overflow: hidden;
@@ -1526,9 +1532,9 @@
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Override all page content for mobile */
+/* Override all page content for mobile - dark text on light background */
 .mobile-page-content * {
-  color: #ffffff !important;
+  color: #2c2c2c !important;
 }
 
 .mobile-page-content h1,
@@ -1537,17 +1543,17 @@
 .mobile-page-content h4,
 .mobile-page-content h5,
 .mobile-page-content h6 {
-  color: #f5efe0 !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  color: #2c2c2c !important;
+  text-shadow: none;
 }
 
 .mobile-page-content p {
-  color: #e6dac6 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  color: #2c2c2c !important;
+  text-shadow: none;
 }
 
 .mobile-page-content div {
-  color: #e6dac6 !important;
+  color: #2c2c2c !important;
 }
 
 /* Override role-based name colors for mobile */
@@ -1595,7 +1601,7 @@
 /* Specific mobile forum content styling */
 @media (max-width: 768px) {
   .mobile-page-content p {
-    color: #e0e0e0 !important;
+    color: #2c2c2c !important;
     font-family: "Georgia", "Times New Roman", serif !important;
     line-height: 1.8 !important;
     font-size: 1.2rem !important;
@@ -1606,12 +1612,12 @@
   }
 
   .mobile-page-content div {
-    color: #ffffff !important;
+    color: #2c2c2c !important;
   }
 
   /* Override role-based name colors for mobile media query */
   .mobile-page-content .headmasterName {
-    color: #fff !important;
+    color: #4c1d95 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
   .mobile-page-content .teacherName {
@@ -1652,18 +1658,18 @@
   }
 
   .mobile-page-content p {
-    color: #c78632 !important;
+    color: #2c2c2c !important;
     margin-bottom: 1.5rem !important;
     padding: 0 !important;
   }
 
   /* Override role-based name colors for mobile media query - these override span color */
   .mobile-page-content .headmasterName {
-    color: #fff !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    color: #4c1d95 !important;
+    text-shadow: none;
   }
   .mobile-page-content .teacherName {
-    color: gold !important;
+    color: #b45309 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
   .mobile-page-content .shadowPatrolName {
@@ -1700,7 +1706,7 @@
   }
 
   .mobile-page-content div {
-    color: #ffffff !important;
+    color: #2c2c2c !important;
   }
 
   .mobile-page-content h1,
@@ -1709,7 +1715,7 @@
   .mobile-page-content h4,
   .mobile-page-content h5,
   .mobile-page-content h6 {
-    color: #f8f8f8 !important;
+    color: #2c2c2c !important;
     font-family: "Georgia", "Times New Roman", serif !important;
     margin-bottom: 1.5rem !important;
   }
@@ -1721,27 +1727,27 @@
 
   .mobile-page-content li {
     margin-bottom: 0.8rem !important;
-    color: #f8f8f8 !important;
+    color: #2c2c2c !important;
     line-height: 1.8 !important;
   }
 }
 
 .mobile-page-content button {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
+  background: rgba(232, 221, 212, 0.9) !important;
+  border: 1px solid rgba(123, 104, 87, 0.5) !important;
+  color: #2c2c2c !important;
   border-radius: 0 !important;
 }
 
 .mobile-page-content button:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(219, 205, 195, 0.95) !important;
 }
 
 .mobile-page-content input,
 .mobile-page-content textarea {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(123, 104, 87, 0.4) !important;
+  color: #2c2c2c !important;
   border-radius: 0 !important;
   font-size: 16px !important; /* Prevents zoom on iOS */
   -webkit-appearance: none !important; /* Removes iOS styling */
@@ -1753,7 +1759,7 @@
 
 .mobile-page-content input::placeholder,
 .mobile-page-content textarea::placeholder {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(44, 44, 44, 0.6) !important;
 }
 
 /* Mobile Responsive */
@@ -1938,7 +1944,6 @@
 .mobile-app-light [style*="display: flex"],
 .mobile-app-light div[class*="flex"] {
   justify-content: center !important;
-  align-items: center !important;
 }
 
 /* ================================ */
@@ -2161,6 +2166,50 @@ select:focus {
 
 .mobile-app-light .mobile-forum-selection-label {
   color: #2c1810;
+}
+
+/* Back bar on rules pages - open rules list again */
+.mobile-rules-back-bar {
+  width: 100%;
+  padding: 10px 15px;
+  background: rgba(123, 104, 87, 0.2);
+  border-bottom: 1px solid rgba(123, 104, 87, 0.3);
+  flex-shrink: 0;
+}
+
+.mobile-rules-back-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(245, 239, 224, 0.9);
+  border: 1px solid rgba(123, 104, 87, 0.4);
+  border-radius: 0;
+  color: #2c2c2c;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+
+.mobile-rules-back-btn:hover,
+.mobile-rules-back-btn:active {
+  background: rgba(232, 221, 212, 0.95);
+}
+
+.mobile-app-light .mobile-rules-back-bar {
+  background: rgba(139, 122, 107, 0.15);
+  border-bottom-color: rgba(139, 122, 107, 0.25);
+}
+
+.mobile-app-light .mobile-rules-back-btn {
+  background: rgba(245, 239, 224, 0.95);
+  color: #2c2c2c;
+  border-color: rgba(139, 122, 107, 0.4);
+}
+
+.mobile-app-light .mobile-rules-back-btn:hover,
+.mobile-app-light .mobile-rules-back-btn:active {
+  background: rgba(219, 205, 195, 0.95);
 }
 
 /* Light mode container centering */

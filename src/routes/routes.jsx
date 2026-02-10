@@ -24,6 +24,7 @@ import MagicSpellRules from "../Pages/MagicSpellRules.jsx";
 import RaceSchoolRules from "../Pages/RaceSchoolRules.jsx";
 import DatingRelationshipRules from "../Pages/DatingRelationshipRules.jsx";
 import Forum18Rules from "../Pages/18ForumRules.jsx";
+import RulesList from "../Pages/RulesList.jsx";
 import Profile from "../Pages/Profile/Profile.jsx";
 import SignIn from "../Pages/SignIn/SignIn.jsx";
 import SignUp from "../Pages/SignUp/SignUp.jsx";
@@ -146,6 +147,7 @@ export const router = createBrowserRouter(
           </RouteGuard>
         }
       />
+      <Route path="rules" element={<RulesList />} />
       <Route path="forumrules" element={<ForumRules />} />
       <Route path="generalrules" element={<GeneralRules />} />
       <Route path="aiusagerules" element={<AIUsageRules />} />

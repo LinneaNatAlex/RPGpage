@@ -66,9 +66,11 @@
   display: flex;
   align-items: flex-end;
   margin: 12px 0;
+  width: 100%;
 }
 .privateMessageRow.me {
   flex-direction: row-reverse;
+  justify-content: flex-start; /* row-reverse: start = høyre, så boblen går til høyre */
 }
 .privateMessageBubble {
   display: flex;
@@ -77,13 +79,16 @@
   background: #5d4e37;
   color: #f5efe0;
   border-radius: 0;
-  padding: 6px 10px;
+  padding: 10px 12px;
   font-size: 14px;
+  line-height: 1.4;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  max-width: 60%;
-  min-width: auto;
+  max-width: 75%;
+  min-width: 100px;
   width: fit-content;
   word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
   position: relative;
   gap: 8px;
 }
@@ -114,8 +119,9 @@
 .privateMessageContent {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
   width: fit-content;
 }
 .privateMessageRow.me .privateMessageSender {
@@ -130,7 +136,7 @@
   opacity: 0.8;
 }
 .privateMessageRow.me .privateMessageTimestamp {
-  text-align: left;
+  text-align: right;
 }
 .gearMenuWrapper {
   display: flex;
@@ -375,6 +381,12 @@
   gap: 1rem;
   padding: 1rem;
   border-radius: 0;
+}
+
+.privateChatForm {
+  width: 100%;
+  justify-content: flex-start;
+  box-sizing: border-box;
 }
 
 .chatInput {

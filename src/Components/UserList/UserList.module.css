@@ -82,10 +82,10 @@ td .userName[style*="color"] {
   width: 13%;
 } /* Class */
 .userListContainer th:nth-child(5) {
-  width: 12%;
-} /* Points */
+  width: 14%;
+} /* Points – nok plass til tall */
 .userListContainer th:nth-child(6) {
-  width: 15%;
+  width: 14%;
 } /* Profile */
 
 /* Apply same widths to td elements */
@@ -102,10 +102,10 @@ td .userName[style*="color"] {
   width: 13%;
 }
 .userListContainer td:nth-child(5) {
-  width: 12%;
+  width: 14%;
 }
 .userListContainer td:nth-child(6) {
-  width: 15%;
+  width: 14%;
 }
 /* ---------------TABLE HEADER STYLES--------------- */
 .tableHeader {
@@ -131,12 +131,49 @@ td .userName[style*="color"] {
   color: #5d4e37;
 }
 
+.pointsCell {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #2c2c2c;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 td {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid rgba(123, 104, 87, 0.2);
   color: #2c2c2c;
   vertical-align: middle;
+}
+
+/* Race-kolonne: individuelle farger per rase (overstyrer td-farge) */
+.raceValue {
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.raceValue[data-race*="werewolf"],
+.raceValue[data-race*="varulv"] {
+  color: #1e3a8a !important; /* Werewolf – nattblå */
+}
+.raceValue[data-race*="vampire"],
+.raceValue[data-race*="vampyr"] {
+  color: #dc2626 !important; /* Vampire – blodrød */
+}
+.raceValue[data-race*="wizard"],
+.raceValue[data-race*="trollmann"] {
+  color: #166534 !important; /* Wizard – mørk grønn */
+}
+.raceValue[data-race*="elf"],
+.raceValue[data-race*="alv"] {
+  color: #06b6d4 !important; /* Elf – turkis */
+}
+.raceValue[data-race*="witch"],
+.raceValue[data-race*="heks"] {
+  color: #7c3aed !important; /* Witch – lilla */
+}
+.raceValue[data-race*="human"],
+.raceValue[data-race*="menneske"] {
+  color: #d97706 !important; /* Human – gull */
 }
 
 /* First column (Name) - ensure userName gets its own color, not inherited from td */
@@ -328,12 +365,13 @@ td:first-child .archivistName {
 
   .userListContainer th:nth-child(5),
   .userListContainer td:nth-child(5) {
-    width: 10%;
-  } /* Points */
+    width: 14%;
+    font-size: 0.85rem;
+  } /* Points – mindre font på mobil */
 
   .userListContainer th:nth-child(6),
   .userListContainer td:nth-child(6) {
-    width: 25%;
+    width: 24%;
   } /* Profile */
 
   .userListContainer th {
@@ -506,29 +544,29 @@ td:first-child .archivistName {
     color: #8b7355 !important; /* Golden brown instead of dark gray */
     background: linear-gradient(135deg, #f5efe0 0%, #e8ddd4 100%) !important;
   }
-  
+
   /* Ensure pagination buttons are visible on mobile */
   .pagination {
     background: rgba(123, 104, 87, 0.9) !important;
     border: 2px solid rgba(212, 196, 168, 0.5) !important;
   }
-  
+
   .paginationButton {
-    background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%) !important;
-    color: #F5EFE0 !important;
+    background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%) !important;
+    color: #f5efe0 !important;
     border: 2px solid rgba(212, 196, 168, 0.5) !important;
   }
-  
+
   .paginationButton:disabled {
-    background: #6B5B47 !important;
-    color: #8B7A6B !important;
+    background: #6b5b47 !important;
+    color: #8b7a6b !important;
     opacity: 0.6 !important;
   }
-  
+
   .pageInfo {
     color: #2c1810 !important;
   }
-  
+
   .userCount {
     color: #7b6857 !important;
   }
@@ -608,8 +646,8 @@ td:first-child .archivistName {
 }
 
 .paginationButton {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
+  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  color: #f5efe0;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 0;
   padding: 8px 16px;
@@ -622,14 +660,14 @@ td:first-child .archivistName {
 }
 
 .paginationButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .paginationButton:disabled {
-  background: #6B5B47;
-  color: #8B7A6B;
+  background: #6b5b47;
+  color: #8b7a6b;
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -639,14 +677,14 @@ td:first-child .archivistName {
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  color: #F5EFE0;
+  color: #f5efe0;
   font-weight: 600;
   font-size: 1rem;
 }
 
 .userCount {
   font-size: 0.8rem;
-  color: #D4C4A8;
+  color: #d4c4a8;
   font-weight: 400;
 }
 
@@ -657,13 +695,13 @@ td:first-child .archivistName {
     gap: 0.75rem;
     padding: 0.75rem;
   }
-  
+
   .paginationButton {
     width: 100%;
     max-width: 200px;
     padding: 10px 16px;
   }
-  
+
   .pageInfo {
     font-size: 0.9rem;
   }

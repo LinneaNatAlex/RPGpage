@@ -271,15 +271,24 @@ const Chat = () => {
   };
 
   // Scroll til bunn – på mobil alltid nyeste melding, på desktop når chat er åpen
+  const scrollToBottom = () => {
+    const el = chatBoxRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  };
   useEffect(() => {
     const isPc = window.innerWidth > 768;
     const chatVisible = isPc ? !isCollapsed : true;
-    if (chatVisible && chatBoxRef.current) {
-      const el = chatBoxRef.current;
-      setTimeout(() => {
-        el.scrollTop = el.scrollHeight;
-      }, 50);
-    }
+    if (!chatVisible || !chatBoxRef.current) return;
+    let timeoutId = null;
+    const rafId = requestAnimationFrame(() => {
+      scrollToBottom();
+      if (!isPc) timeoutId = setTimeout(scrollToBottom, 150);
+    });
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [messages, isCollapsed]);
 
   // Ping notification for mentions
@@ -533,7 +542,7 @@ const Chat = () => {
             borderTopLeftRadius: !isPc ? 12 : 0,
             borderTopRightRadius: !isPc ? 12 : 0,
             borderTop: !isPc ? "1px solid #7B6857" : "none",
-            ...(!isPc && { height: "60vh", minHeight: 200 }),
+            ...(!isPc && { height: "85vh", minHeight: 280 }),
           }}
         >
           {!isPc && (

@@ -202,13 +202,15 @@ const UserList = ({ userQuery }) => {
                   <span className={styles.locationHidden}>Hidden</span>
                 )}
               </td>
-              <td data-label="Race">
+              <td data-label="Race" className={styles.raceCell}>
                 {user.race && (
                   <span
+                    className={styles.raceValue}
+                    data-race={(user.race || "").toLowerCase()}
                     style={{
                       color: getRaceColor(user.race),
                       fontWeight: "bold",
-                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
                     }}
                   >
                     {["Witch", "witch", "witches", "Witches"].includes(
@@ -220,16 +222,8 @@ const UserList = ({ userQuery }) => {
                 )}
               </td>
               <td data-label="Class">{user.class}</td>
-              <td
-                data-label="Points"
-                style={{
-                  fontWeight: "bold",
-                  color: idx === 0 ? "#2C2C2C" : "#2C2C2C",
-                  fontSize: "1.1rem",
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                {user.points || 0}
+              <td data-label="Points" className={styles.pointsCell}>
+                {user.points ?? 0}
               </td>
               <td data-label="Profile">
                 {isCurrentUser ? (

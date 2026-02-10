@@ -301,8 +301,14 @@ const PrivateChat = () => {
   // Remove the multiple listeners for all active chats to reduce Firebase quota usage
 
   // Only listen for messages for the selected user when chat is open
+  // On mobile the panel is always visible, so subscribe whenever selectedUser is set (ignore isCollapsed)
+  const isPcForSubscription = typeof window !== "undefined" && window.innerWidth > 768;
   useEffect(() => {
-    if (!currentUser || !selectedUser || isCollapsed) {
+    if (!currentUser || !selectedUser) {
+      setSelectedMessages([]);
+      return;
+    }
+    if (isPcForSubscription && isCollapsed) {
       setSelectedMessages([]);
       return;
     }
@@ -318,7 +324,7 @@ const PrivateChat = () => {
       }));
       setSelectedMessages(messages);
     });
-  }, [currentUser, selectedUser, isCollapsed]);
+  }, [currentUser, selectedUser, isCollapsed, isPcForSubscription]);
 
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;
@@ -479,29 +485,47 @@ const PrivateChat = () => {
   // Any chat has unread? (etter at meldinger er lest forsvinner badge umiddelbart)
   const hasUnread = activeChats.some((c) => getUnreadCount(c) > 0);
 
+  const isPc = window.innerWidth > 768;
   return (
     <div
+      className={isPc && !isCollapsed ? styles.chatPanelSticky : undefined}
       style={{
-        position: window.innerWidth <= 768 ? "relative" : "fixed",
-        bottom: window.innerWidth <= 768 ? "auto" : 0,
-        right: window.innerWidth <= 768 ? "auto" : 370,
-        width: window.innerWidth <= 768 ? "100%" : 350,
-        zIndex: window.innerWidth <= 768 ? 1 : 10005,
-        
+        position: isPc ? "fixed" : "relative",
+        top: isPc && !isCollapsed ? 0 : "auto",
+        bottom: isPc ? 0 : "auto",
+        right: isPc ? 370 : "auto",
+        width: isPc ? 350 : "100%",
+        maxWidth: isPc ? undefined : "100%",
+        height: isPc && !isCollapsed ? "100vh" : "auto",
+        flex: isPc ? undefined : 1,
+        minWidth: isPc ? undefined : 0,
+        minHeight: isPc ? undefined : 0,
+        zIndex: isPc ? 10005 : 1,
+        display: isPc ? "flex" : "block",
+        flexDirection: isPc
+          ? isCollapsed
+            ? "column-reverse"
+            : "column"
+          : undefined,
       }}
     >
-      {window.innerWidth > 768 && (
+      {isPc && (
         <div
           style={{
+            flexShrink: 0,
             background: "#5D4E37",
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
             padding: "0.5rem 1rem",
             display: "flex",
             alignItems: "center",
+            cursor: "pointer",
             border: "1px solid #7B6857",
-            borderBottom: "none",
+            borderBottom: isCollapsed ? "1px solid #7B6857" : "none",
           }}
+          onClick={() => setIsCollapsed((prev) => !prev)}
         >
           <span
             style={{
@@ -537,7 +561,11 @@ const PrivateChat = () => {
           </span>
           {/* Mute/unmute icon button */}
           <button
-            onClick={() => setMuted((m) => !m)}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMuted((m) => !m);
+            }}
             style={{
               background: "none",
               border: "none",
@@ -593,6 +621,7 @@ const PrivateChat = () => {
             )}
           </button>
           <button
+            type="button"
             style={{
               background: "none",
               border: "none",
@@ -600,11 +629,15 @@ const PrivateChat = () => {
               fontSize: 18,
               cursor: "pointer",
             }}
-            onClick={() => setIsCollapsed((prev) => !prev)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsCollapsed((prev) => !prev);
+            }}
           >
             {isCollapsed ? "▲" : "▼"}
           </button>
           <button
+            type="button"
             style={{
               background: "none",
               border: "none",
@@ -623,18 +656,19 @@ const PrivateChat = () => {
           </button>
         </div>
       )}
-      {(window.innerWidth > 768 ? !isCollapsed : true) && (
+      {(isPc ? !isCollapsed : true) && (
         <div
-          className={styles.chatContainer}
+          className={`${styles.chatContainer} ${
+            isPc ? styles.chatContainerPc : ""
+          }`}
           style={{
-            borderTopLeftRadius: window.innerWidth <= 768 ? 12 : 0,
-            borderTopRightRadius: window.innerWidth <= 768 ? 12 : 0,
-            borderTop: window.innerWidth <= 768 ? "1px solid #7B6857" : "none",
-            height: 500,
-            minHeight: 200,
+            borderTopLeftRadius: !isPc ? 12 : 0,
+            borderTopRightRadius: !isPc ? 12 : 0,
+            borderTop: !isPc ? "1px solid #7B6857" : "none",
+            ...(!isPc && { height: "85vh", minHeight: 280 }),
           }}
         >
-          {window.innerWidth <= 768 && (
+          {!isPc && (
             <div
               style={{
                 background: "#5D4E37",
@@ -643,6 +677,9 @@ const PrivateChat = () => {
                 borderTopRightRadius: 12,
                 borderBottom: "1px solid #7B6857",
                 marginBottom: "1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
               <h3
@@ -659,7 +696,15 @@ const PrivateChat = () => {
               </h3>
             </div>
           )}
-          <div style={{ padding: "0.5rem 1rem" }}>
+          <div
+            style={{
+              padding: "0.75rem 1rem",
+              width: "100%",
+              boxSizing: "border-box",
+              textAlign: "left",
+              borderBottom: "1px solid rgba(123, 104, 87, 0.3)",
+            }}
+          >
             <input
               id="private-chat-search-user"
               name="privateChatSearchUser"
@@ -669,23 +714,25 @@ const PrivateChat = () => {
               onChange={(e) => setSearch(e.target.value)}
               style={{
                 width: "100%",
-                padding: 6,
+                boxSizing: "border-box",
+                padding: "10px 12px",
                 borderRadius: 0,
                 border: "1px solid #7B6857",
-                marginBottom: 8,
+                marginBottom: 10,
                 background: "#6B5B47",
                 color: "#F5EFE0",
                 outline: "none",
                 transition: "border-color 0.2s ease",
+                fontSize: "1rem",
               }}
             />
             {filteredUsers.length > 0 && (
               <div
                 style={{
-                  background: "#5D4E37",
+                  background: "rgba(93, 78, 55, 0.4)",
                   border: "1px solid #7B6857",
                   borderRadius: 0,
-                  maxHeight: 120,
+                  maxHeight: 140,
                   overflowY: "auto",
                 }}
               >
@@ -861,11 +908,19 @@ const PrivateChat = () => {
             )}
           </div>
           {selectedUser && (
-            <>
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+                width: "100%",
+              }}
+            >
               <div
                 className={styles.chatMessages}
                 ref={chatBoxRef}
-                style={{ minHeight: 200, maxHeight: 300 }}
+                style={{ flex: 1, minHeight: 0 }}
               >
                 {selectedMessages.map((m, i) => {
                   return (
@@ -944,6 +999,8 @@ const PrivateChat = () => {
                               style={{
                                 display: "block",
                                 wordBreak: "break-word",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
                                 ...(m.potionEffects
                                   ? {
                                       ...(m.potionEffects.hairColor
@@ -988,8 +1045,20 @@ const PrivateChat = () => {
                   );
                 })}
               </div>
-              <form className={styles.chatForm} onSubmit={sendMessage}>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <form
+                className={`${styles.chatForm} ${styles.privateChatForm}`}
+                onSubmit={sendMessage}
+                style={{ width: "100%", justifyContent: "flex-start" }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
                   <input
                     id="private-chat-message"
                     name="privateChatMessage"
@@ -1007,7 +1076,7 @@ const PrivateChat = () => {
                     }
                     maxLength={200}
                     className={styles.chatInput}
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, minWidth: 0 }}
                   />
                   <button
                     type="button"
@@ -1063,7 +1132,7 @@ const PrivateChat = () => {
                   </button>
                 </div>
               </form>
-            </>
+            </div>
           )}
         </div>
       )}
