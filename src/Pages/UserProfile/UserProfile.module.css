@@ -26,15 +26,21 @@
 /* --- ROLE AVATAR BORDERS --- */
 .headmasterAvatar {
   border: 4px solid #fff !important;
-  box-shadow: 0 0 18px 4px #fff, 0 0 12px #b0aac2 !important;
+  box-shadow:
+    0 0 18px 4px #fff,
+    0 0 12px #b0aac2 !important;
 }
 .teacherAvatar {
   border: 4px solid gold !important;
-  box-shadow: 0 0 18px 4px gold, 0 0 12px #b0aac2 !important;
+  box-shadow:
+    0 0 18px 4px gold,
+    0 0 12px #b0aac2 !important;
 }
 .shadowPatrolAvatar {
   border: 4px solid #1ecb8c !important;
-  box-shadow: 0 0 18px 4px #1ecb8c, 0 0 12px #b0aac2 !important;
+  box-shadow:
+    0 0 18px 4px #1ecb8c,
+    0 0 12px #b0aac2 !important;
 }
 /* ---------- */
 .profileWrapper {
@@ -63,7 +69,9 @@
   padding: 1.5rem;
   overflow-x: hidden;
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
   max-width: 1200px;
   width: 100%;
@@ -89,19 +97,25 @@
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #7b6857;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* -------------------------ADMIN AVATAR ------------------------- */
 .adminAvatar {
   border: 4px solid #ff2a2a;
-  box-shadow: 0 0 18px 4px #ff2a2a, 0 0 12px #b0aac2;
+  box-shadow:
+    0 0 18px 4px #ff2a2a,
+    0 0 12px #b0aac2;
 }
 
 /* -------------------------ARCHIVIST AVATAR ------------------------- */
 .archivistAvatar {
   border: 4px solid #a084e8;
-  box-shadow: 0 0 18px 4px #a084e8, 0 0 12px #b0aac2;
+  box-shadow:
+    0 0 18px 4px #a084e8,
+    0 0 12px #b0aac2;
 }
 
 /* -------------------------CHARACTER INFO------------------------- */
@@ -129,7 +143,9 @@
   max-width: 1000px;
   width: 100%;
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
 }
 
@@ -165,7 +181,9 @@
   border: none;
   border-radius: 0;
   background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   margin: 0 auto;
 }
 .profileTextContainer {
@@ -179,7 +197,9 @@
   border-radius: 0;
   padding: 2rem;
   border: 2px solid rgba(212, 196, 168, 0.3); /* Semi-transparent border */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
 }
 
@@ -279,7 +299,9 @@
   border-radius: 0;
   padding: 2rem;
   border: 2px solid #d4c4a8;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -558,7 +580,7 @@
     font-size: 1.1rem !important;
     margin-bottom: 0.5rem !important;
     text-align: center;
-    color: #ffd700 !important; /* Golden color for better mobile visibility */
+    /* Golden color for better mobile visibility */
   }
 
   .caracterDetails {
@@ -580,7 +602,7 @@
   }
 
   .caracterDetails strong {
-    color: #ffd700 !important; /* Golden for labels */
+    /* Golden for labels */
     font-weight: 700;
     margin-right: 0.3rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);

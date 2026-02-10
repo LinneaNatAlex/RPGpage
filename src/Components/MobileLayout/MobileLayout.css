@@ -15,10 +15,6 @@
 
 /* Force dark mode for all mobile content */
 
-.mobile-app .mobile-page-content * {
-  color: #2c2c2c !important;
-}
-
 /* Mobile App - Light Mode (when logged out) */
 .mobile-app-light {
   display: flex;
@@ -1533,9 +1529,6 @@
 }
 
 /* Override all page content for mobile - dark text on light background */
-.mobile-page-content * {
-  color: #2c2c2c !important;
-}
 
 .mobile-page-content h1,
 .mobile-page-content h2,
@@ -1601,7 +1594,7 @@
 /* Specific mobile forum content styling */
 @media (max-width: 768px) {
   .mobile-page-content p {
-    color: #2c2c2c !important;
+    color: #ffffff !important;
     font-family: "Georgia", "Times New Roman", serif !important;
     line-height: 1.8 !important;
     font-size: 1.2rem !important;
@@ -1658,7 +1651,7 @@
   }
 
   .mobile-page-content p {
-    color: #2c2c2c !important;
+    color: #ffffff !important;
     margin-bottom: 1.5rem !important;
     padding: 0 !important;
   }
@@ -1706,7 +1699,7 @@
   }
 
   .mobile-page-content div {
-    color: #2c2c2c !important;
+    color: #ffffff !important;
   }
 
   .mobile-page-content h1,
@@ -1715,7 +1708,7 @@
   .mobile-page-content h4,
   .mobile-page-content h5,
   .mobile-page-content h6 {
-    color: #2c2c2c !important;
+    color: #e0aa08 !important;
     font-family: "Georgia", "Times New Roman", serif !important;
     margin-bottom: 1.5rem !important;
   }
@@ -1750,8 +1743,7 @@
   color: #2c2c2c !important;
   border-radius: 0 !important;
   font-size: 16px !important; /* Prevents zoom on iOS */
-  -webkit-appearance: none !important; /* Removes iOS styling */
-  $10 !important;
+  /* Removes iOS styling */
   -webkit-tap-highlight-color: transparent !important;
   -webkit-user-select: text !important;
   user-select: text !important;
@@ -1956,7 +1948,7 @@ textarea,
 select {
   font-size: 16px !important; /* Prevents zoom on iOS */
   -webkit-appearance: none !important;
-  $10 !important;
+
   -webkit-tap-highlight-color: transparent !important;
   -webkit-user-select: text !important;
   user-select: text !important;

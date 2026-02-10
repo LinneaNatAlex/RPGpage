@@ -1,14 +1,20 @@
 .headmasterAvatar {
   border: 4px solid #fff !important;
-  box-shadow: 0 0 18px 4px #fff, 0 0 12px #b0aac2 !important;
+  box-shadow:
+    0 0 18px 4px #fff,
+    0 0 12px #b0aac2 !important;
 }
 .teacherAvatar {
   border: 4px solid gold !important;
-  box-shadow: 0 0 18px 4px gold, 0 0 12px #b0aac2 !important;
+  box-shadow:
+    0 0 18px 4px gold,
+    0 0 12px #b0aac2 !important;
 }
 .shadowPatrolAvatar {
   border: 4px solid #1ecb8c !important;
-  box-shadow: 0 0 18px 4px #1ecb8c, 0 0 12px #b0aac2 !important;
+  box-shadow:
+    0 0 18px 4px #1ecb8c,
+    0 0 12px #b0aac2 !important;
 }
 body,
 #root {
@@ -41,7 +47,9 @@ body,
   padding: 1.5rem;
   overflow-x: hidden;
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
   max-width: none;
   width: 100%;
@@ -57,7 +65,9 @@ body,
   background: transparent; /* Transparent background for all themes */
   border-radius: 0;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .profileTextContainer h2 {
@@ -87,7 +97,9 @@ body,
   background: transparent; /* Transparent background for all themes */
   border-radius: 0;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -328,17 +340,23 @@ body,
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #7b6857;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .adminAvatar {
   border: 4px solid #ff2a2a;
-  box-shadow: 0 0 18px 4px #ff2a2a, 0 0 12px #b0aac2;
+  box-shadow:
+    0 0 18px 4px #ff2a2a,
+    0 0 12px #b0aac2;
 }
 
 .archivistAvatar {
   border: 4px solid #a084e8;
-  box-shadow: 0 0 18px 4px #a084e8, 0 0 12px #b0aac2;
+  box-shadow:
+    0 0 18px 4px #a084e8,
+    0 0 12px #b0aac2;
 }
 
 .characterInfo {
@@ -737,7 +755,9 @@ body,
   max-width: 1000px;
   width: 100%;
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
 }
 
@@ -877,7 +897,7 @@ body,
     font-size: 1.1rem !important;
     margin-bottom: 0.5rem !important;
     text-align: center;
-    color: #ffd700 !important; /* Golden color for better mobile visibility */
+    /* Golden color for better mobile visibility */
   }
 
   .caracterDetails {
@@ -899,7 +919,6 @@ body,
   }
 
   .caracterDetails strong {
-    color: #ffd700 !important; /* Golden for labels */
     font-weight: 700;
     margin-right: 0.3rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
