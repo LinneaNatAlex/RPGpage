@@ -27,6 +27,7 @@ import MobileLayout from "./Components/MobileLayout/MobileLayout";
 import "./utils/dailyPetDiscoveryScheduler"; // Daily pet discovery system
 import PetDiscoveryPopupOnly from "./Components/PetDiscovery/PetDiscoveryPopupOnly";
 import useLocationTracker from "./hooks/useLocationTracker";
+import RotateDevicePopup from "./Components/RotateDevicePopup";
 import "./App.mobile.css";
 
 function App() {
@@ -34,7 +35,6 @@ function App() {
 
   // Track user location for Surveillance Potion
   useLocationTracker();
-
 
   // Safe theme CSS with error handling - TEMPORARILY DISABLED
   let vipThemeCSS = "";
@@ -82,24 +82,24 @@ function App() {
   // Global mention detection - Moved to Chat component for better real-time detection
   // useEffect(() => {
   //   if (!user) return;
-  //   
+  //
   //   const messagesRef = collection(db, "messages");
   //   const q = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
-  //   
+  //
   //   const unsubscribe = onSnapshot(q, (snapshot) => {
   //     if (!snapshot.empty) {
   //       const latestMessage = snapshot.docs[0].data();
   //       const messageText = latestMessage.text || "";
   //       const userName = user.displayName || "";
-  //       
+  //
   //       // Check if user is mentioned in the latest message
-  //       if (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) || 
+  //       if (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) ||
   //           messageText.toLowerCase().includes("@all")) {
   //         playPing();
   //       }
   //     }
   //   });
-  //   
+  //
   //   return () => unsubscribe();
   // }, [user]);
 
@@ -107,7 +107,6 @@ function App() {
   useEffect(() => {
     // DISABLED: This creates excessive Firebase reads and can cause permission errors
     // if (!user) return;
-
     // TODO: Implement more efficient private chat notifications
     // Consider using Firebase Cloud Messaging instead of realtime listeners
   }, [user, lastPrivateMessageId, lastPingTime]);
@@ -124,46 +123,60 @@ function App() {
           const data = userDoc.data();
           startTransition(() => {
             setDarkModeUntil(
-              data.darkModeUntil && typeof data.darkModeUntil === 'number' && data.darkModeUntil > Date.now()
+              data.darkModeUntil &&
+                typeof data.darkModeUntil === "number" &&
+                data.darkModeUntil > Date.now()
                 ? data.darkModeUntil
-                : null
+                : null,
             );
             setRetroUntil(
-              data.retroUntil && typeof data.retroUntil === 'number' && data.retroUntil > Date.now()
+              data.retroUntil &&
+                typeof data.retroUntil === "number" &&
+                data.retroUntil > Date.now()
                 ? data.retroUntil
-                : null
+                : null,
             );
             setMirrorUntil(
-              data.mirrorUntil && typeof data.mirrorUntil === 'number' && data.mirrorUntil > Date.now()
+              data.mirrorUntil &&
+                typeof data.mirrorUntil === "number" &&
+                data.mirrorUntil > Date.now()
                 ? data.mirrorUntil
-                : null
+                : null,
             );
             setSpeedUntil(
-              data.speedUntil && typeof data.speedUntil === 'number' && data.speedUntil > Date.now()
+              data.speedUntil &&
+                typeof data.speedUntil === "number" &&
+                data.speedUntil > Date.now()
                 ? data.speedUntil
-                : null
+                : null,
             );
             setSlowMotionUntil(
-              data.slowMotionUntil && typeof data.slowMotionUntil === 'number' && data.slowMotionUntil > Date.now()
+              data.slowMotionUntil &&
+                typeof data.slowMotionUntil === "number" &&
+                data.slowMotionUntil > Date.now()
                 ? data.slowMotionUntil
-                : null
+                : null,
             );
             setSurveillanceUntil(
-              data.surveillanceUntil && typeof data.surveillanceUntil === 'number' && data.surveillanceUntil > Date.now()
+              data.surveillanceUntil &&
+                typeof data.surveillanceUntil === "number" &&
+                data.surveillanceUntil > Date.now()
                 ? data.surveillanceUntil
-                : null
+                : null,
             );
             setSparkleUntil(
-              data.sparkleUntil && typeof data.sparkleUntil === 'number' && data.sparkleUntil > Date.now()
+              data.sparkleUntil &&
+                typeof data.sparkleUntil === "number" &&
+                data.sparkleUntil > Date.now()
                 ? data.sparkleUntil
-                : null
+                : null,
             );
           });
         }
       },
       (error) => {
         // Don't fail the app if potion effects can't be loaded
-      }
+      },
     );
     return () => unsub();
   }, [user]);
@@ -215,7 +228,9 @@ function App() {
         
         /* Dark Mode Potion */
         ${
-          darkModeUntil && typeof darkModeUntil === 'number' && darkModeUntil > Date.now()
+          darkModeUntil &&
+          typeof darkModeUntil === "number" &&
+          darkModeUntil > Date.now()
             ? `
           html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
             background: #1a1a1a !important;
@@ -359,6 +374,7 @@ function App() {
         }
       `}</style>
 
+      <RotateDevicePopup />
       <MobileLayout>
         <div className={styles.rootContainer}>
           {/* Navbar and TopBar always visible */}
