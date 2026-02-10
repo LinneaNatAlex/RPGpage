@@ -83,52 +83,52 @@ const Chat = () => {
           setHairColorUntil(
             data.hairColorUntil && data.hairColorUntil > Date.now()
               ? data.hairColorUntil
-              : null
+              : null,
           );
           setRainbowUntil(
             data.rainbowUntil && data.rainbowUntil > Date.now()
               ? data.rainbowUntil
-              : null
+              : null,
           );
           setGlowUntil(
             data.glowUntil && data.glowUntil > Date.now()
               ? data.glowUntil
-              : null
+              : null,
           );
           setTranslationUntil(
             data.translationUntil && data.translationUntil > Date.now()
               ? data.translationUntil
-              : null
+              : null,
           );
           setEchoUntil(
             data.echoUntil && data.echoUntil > Date.now()
               ? data.echoUntil
-              : null
+              : null,
           );
           setWhisperUntil(
             data.whisperUntil && data.whisperUntil > Date.now()
               ? data.whisperUntil
-              : null
+              : null,
           );
           setShoutUntil(
             data.shoutUntil && data.shoutUntil > Date.now()
               ? data.shoutUntil
-              : null
+              : null,
           );
           setMysteryUntil(
             data.mysteryUntil && data.mysteryUntil > Date.now()
               ? data.mysteryUntil
-              : null
+              : null,
           );
           setCharmUntil(
             data.charmUntil && data.charmUntil > Date.now()
               ? data.charmUntil
-              : null
+              : null,
           );
           setInLoveUntil(
             data.inLoveUntil && data.inLoveUntil > Date.now()
               ? data.inLoveUntil
-              : null
+              : null,
           );
         }
       } catch (error) {}
@@ -231,16 +231,16 @@ const Chat = () => {
     (u) =>
       u.displayName &&
       u.displayName.toLowerCase() ===
-        auth.currentUser?.displayName?.toLowerCase()
+        auth.currentUser?.displayName?.toLowerCase(),
   );
   const canDelete = currentUserObj?.roles?.some((r) =>
     ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"].includes(
-      r.toLowerCase()
-    )
+      r.toLowerCase(),
+    ),
   );
 
   const canSendNotification = currentUserObj?.roles?.some(
-    (r) => r.toLowerCase() === "admin"
+    (r) => r.toLowerCase() === "admin",
   );
 
   // Slett melding
@@ -315,19 +315,19 @@ const Chat = () => {
     // Handle /i for italic - matches /i followed by text until end or another command
     let formattedText = text.replace(
       /\/i\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g,
-      "<em>$1</em>"
+      "<em>$1</em>",
     );
 
     // Handle /b for bold
     formattedText = formattedText.replace(
       /\/b\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g,
-      "<strong>$1</strong>"
+      "<strong>$1</strong>",
     );
 
     // Handle /u for underline
     formattedText = formattedText.replace(
       /\/u\s+([^\/]+?)(?=\s*$|\s+\/[biu])/g,
-      "<u>$1</u>"
+      "<u>$1</u>",
     );
 
     return formattedText;
@@ -414,7 +414,7 @@ const Chat = () => {
     (u) =>
       u.displayName &&
       (!mentionQuery ||
-        u.displayName.toLowerCase().startsWith(mentionQuery.toLowerCase()))
+        u.displayName.toLowerCase().startsWith(mentionQuery.toLowerCase())),
   );
 
   // Håndter input for @mention
@@ -450,7 +450,8 @@ const Chat = () => {
         e.preventDefault();
       } else if (e.key === "ArrowUp") {
         setMentionActiveIdx(
-          (idx) => (idx - 1 + mentionableUsers.length) % mentionableUsers.length
+          (idx) =>
+            (idx - 1 + mentionableUsers.length) % mentionableUsers.length,
         );
         e.preventDefault();
       } else if (e.key === "Enter") {
@@ -474,14 +475,11 @@ const Chat = () => {
         bottom: isPc ? 0 : "auto",
         right: isPc ? 0 : "auto",
         width: isPc ? 350 : "100%",
-        height: isPc && !isCollapsed ? "100vh" : "auto",
+        height: isPc ? (isCollapsed ? "auto" : "100vh") : "100vh",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
         zIndex: isPc ? 10005 : 1,
-        display: isPc ? "flex" : "block",
-        flexDirection: isPc
-          ? isCollapsed
-            ? "column-reverse"
-            : "column"
-          : undefined,
       }}
     >
       {isPc && (
@@ -535,14 +533,16 @@ const Chat = () => {
       )}
       {(isPc ? !isCollapsed : true) && (
         <div
-          className={`${styles.chatContainer} ${
-            isPc ? styles.chatContainerPc : ""
-          }`}
+          className={`${styles.chatContainer} ${isPc ? styles.chatContainerPc : ""}`}
           style={{
             borderTopLeftRadius: !isPc ? 12 : 0,
             borderTopRightRadius: !isPc ? 12 : 0,
             borderTop: !isPc ? "1px solid #7B6857" : "none",
-            ...(!isPc && { height: "85vh", minHeight: 280 }),
+            flex: 1,
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+            height: isPc ? undefined : "100%",
           }}
         >
           {!isPc && (
@@ -584,7 +584,11 @@ const Chat = () => {
               )}
             </div>
           )}
-          <div className={styles.chatMessages} ref={chatBoxRef}>
+          <div
+            className={styles.chatMessages}
+            ref={chatBoxRef}
+            style={{ flex: 1, minHeight: 0, overflowY: "auto" }}
+          >
             {messages.map((message) => {
               if (message.type === "notification") {
                 return (
@@ -596,7 +600,7 @@ const Chat = () => {
                         __html: formatMessage(
                           (message.text || "")
                             .replace(/</g, "&lt;")
-                            .replace(/>/g, "&gt;")
+                            .replace(/>/g, "&gt;"),
                         ),
                       }}
                     />
@@ -607,7 +611,7 @@ const Chat = () => {
               const userObj = users.find(
                 (u) =>
                   u.displayName &&
-                  u.displayName.toLowerCase() === message.sender?.toLowerCase()
+                  u.displayName.toLowerCase() === message.sender?.toLowerCase(),
               );
 
               let roleClass = styles.messageSender;
@@ -642,7 +646,7 @@ const Chat = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             setMenuOpenId(
-                              menuOpenId === message.id ? null : message.id
+                              menuOpenId === message.id ? null : message.id,
                             );
                           }}
                           aria-label="Options"
@@ -730,7 +734,7 @@ const Chat = () => {
                       (message.text
                         ?.toLowerCase()
                         .includes(
-                          `@${auth.currentUser?.displayName?.toLowerCase()}`
+                          `@${auth.currentUser?.displayName?.toLowerCase()}`,
                         )
                         ? " " + styles.mentionHighlight
                         : "") +
@@ -748,13 +752,13 @@ const Chat = () => {
                             /@([^\s@]+(?:\s+[^\s@]+)*)/g,
                             '<span class="' +
                               styles.mentionHighlight +
-                              '">@$1</span>'
+                              '">@$1</span>',
                           )
                           ?.replace(
                             /@all/gi,
                             '<span class="' +
                               styles.mentionAll +
-                              '">@all</span>'
+                              '">@all</span>',
                           ),
                       }}
                     />
@@ -821,7 +825,7 @@ const Chat = () => {
                       data={data}
                       onEmojiSelect={(emoji) => {
                         setNewMess(
-                          (prev) => prev + (emoji.native || emoji.colons || "")
+                          (prev) => prev + (emoji.native || emoji.colons || ""),
                         );
                         setShowEmoji(false);
                       }}
