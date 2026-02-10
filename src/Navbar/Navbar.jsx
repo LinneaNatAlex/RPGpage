@@ -128,9 +128,9 @@ const Navbar = () => {
                   <span>Detention Classroom</span>
                   <span>({topicCounts.detentionclassroom || 0})</span>
                 </NavLink>
-                <NavLink to="/forum/16plus">
+                <NavLink to="/forum/18plus">
                   <span>18+ Forum</span>
-                  <span>({topicCounts['16plus'] || 0})</span>
+                  <span>({topicCounts['18plus'] || 0})</span>
                 </NavLink>
               </div>
             </div>

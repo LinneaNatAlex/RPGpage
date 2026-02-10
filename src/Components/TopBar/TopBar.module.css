@@ -92,6 +92,17 @@
 .inventoryIconBtn:hover .chestIcon {
   transform: scale(1.1);
 }
+
+.discordIcon {
+  width: 24px;
+  height: 24px;
+  color: #5865F2;
+  transition: transform 0.2s ease;
+}
+a.inventoryIconBtn:hover .discordIcon {
+  transform: scale(1.1);
+  color: #7289da;
+}
 .healthBarWrapper {
   display: flex;
   align-items: center;

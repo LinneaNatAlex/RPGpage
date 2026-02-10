@@ -15,6 +15,10 @@ import {
   doc,
   onSnapshot,
   getDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
@@ -265,6 +269,7 @@ const Chat = () => {
       });
       setNotificationText("");
       setShowNotificationModal(false);
+      trimGeneralChatToLimit(30);
     } catch (err) {
       setError("Could not send notification.");
     }
@@ -333,6 +338,27 @@ const Chat = () => {
     return formattedText;
   };
 
+  // Trim general chat to max 30 messages (delete oldest). Runs after send.
+  const trimGeneralChatToLimit = async (maxCount = 30) => {
+    try {
+      while (true) {
+        const q = query(
+          collection(db, "messages"),
+          orderBy("timestamp", "asc"),
+          limit(100)
+        );
+        const snap = await getDocs(q);
+        if (snap.size <= maxCount) break;
+        const toDelete = snap.docs.slice(0, snap.size - maxCount);
+        for (const d of toDelete) {
+          await deleteDoc(d.ref);
+        }
+      }
+    } catch (err) {
+      // Non-blocking; ignore trim errors
+    }
+  };
+
   // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {
     e.preventDefault();
@@ -394,6 +420,7 @@ const Chat = () => {
           potionEffects:
             Object.keys(potionEffects).length > 0 ? potionEffects : null,
         });
+        trimGeneralChatToLimit(30);
       } else {
         await addDoc(collection(db, "messages"), {
           text: messageText,
@@ -404,6 +431,7 @@ const Chat = () => {
         });
       }
       setNewMess("");
+      trimGeneralChatToLimit(30);
     } catch (err) {
       setError("Could not send message.");
     }

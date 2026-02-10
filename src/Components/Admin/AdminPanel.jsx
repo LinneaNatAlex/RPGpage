@@ -10,9 +10,7 @@ import {
   serverTimestamp,
   collection,
   getDocs,
-  query,
-  where,
-  deleteField,
+  writeBatch,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import firebase from "firebase/compat/app";
@@ -54,9 +52,8 @@ export default function AdminPanel() {
   const [pointsUser, setPointsUser] = useState("");
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsMessage, setPointsMessage] = useState("");
-  const [migrationStatus, setMigrationStatus] = useState("");
-  const [ageCleanupStatus, setAgeCleanupStatus] = useState("");
   const [unfaintStatus, setUnfaintStatus] = useState("");
+  const [chatClearStatus, setChatClearStatus] = useState("");
 
   const filtered = users.filter(
     (u) =>
@@ -288,90 +285,33 @@ export default function AdminPanel() {
     }
   };
 
-  // Migration function to update Witch to Wizard
-  const handleWitchToWizardMigration = async () => {
+  async function clearAllGeneralChatMessages() {
     if (!roles.includes("admin")) {
-      setMigrationStatus("Only admin can run migration.");
+      setChatClearStatus("Only admin can clear chat.");
       return;
     }
-
-    setMigrationStatus("Starting migration...");
-
+    setChatClearStatus("Clearing…");
     try {
-      // Get all users with race "Witch"
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("race", "==", "Witch"));
-      const querySnapshot = await getDocs(q);
-
-      setMigrationStatus(`Found ${querySnapshot.size} users with race "Witch"`);
-
-      if (querySnapshot.size === 0) {
-        setMigrationStatus("No users found with race 'Witch'");
-        return;
+      const messagesRef = collection(db, "messages");
+      const BATCH_SIZE = 500;
+      let totalDeleted = 0;
+      while (true) {
+        const snap = await getDocs(messagesRef);
+        if (snap.empty) break;
+        const batch = writeBatch(db);
+        const toDelete = snap.docs.slice(0, BATCH_SIZE);
+        toDelete.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+        totalDeleted += toDelete.length;
+        if (toDelete.length < BATCH_SIZE) break;
       }
-
-      const updatePromises = [];
-
-      querySnapshot.forEach((userDoc) => {
-        const userData = userDoc.data();
-
-        const updatePromise = updateDoc(doc(db, "users", userDoc.id), {
-          race: "Wizard",
-        });
-
-        updatePromises.push(updatePromise);
-      });
-
-      // Execute all updates
-      await Promise.all(updatePromises);
-
-      setMigrationStatus(
-        `Successfully updated ${updatePromises.length} users from "Witch" to "Wizard"`
+      setChatClearStatus(
+        totalDeleted > 0
+          ? `Done. Deleted ${totalDeleted} message(s) from general chat.`
+          : "General chat was already empty."
       );
     } catch (error) {
-      setMigrationStatus(`Error: ${error.message}`);
-    }
-  };
-
-  async function removeAgeFromAllUsers() {
-    if (!roles.includes("admin")) {
-      setAgeCleanupStatus("Kun admin kan kjøre dette.");
-      return;
-    }
-    setAgeCleanupStatus("Kjører… henter alle brukere.");
-    try {
-      const usersRef = collection(db, "users");
-      const snapshot = await getDocs(usersRef);
-      let updated = 0;
-      const errors = [];
-      for (const d of snapshot.docs) {
-        const data = d.data();
-        if ("age" in data || "lastBirthdayYear" in data) {
-          const toRemove = {};
-          if ("age" in data) toRemove.age = deleteField();
-          if ("lastBirthdayYear" in data) toRemove.lastBirthdayYear = deleteField();
-          try {
-            await updateDoc(doc(db, "users", d.id), toRemove);
-            updated++;
-          } catch (err) {
-            errors.push(`${d.id}: ${err?.message || err}`);
-          }
-        }
-      }
-      if (errors.length > 0) {
-        console.warn("Noen oppdateringer feilet:", errors);
-        setAgeCleanupStatus(
-          `Ferdig med feil: ${updated} oppdatert. ${errors.length} feilet (sjekk konsoll).`
-        );
-      } else {
-        setAgeCleanupStatus(
-          updated > 0
-            ? `Ferdig. Fjernet age/lastBirthdayYear fra ${updated} brukere. Oppdater Firestore-konsollen (F5) for å se endringen.`
-            : "Ingen brukere hadde age eller lastBirthdayYear."
-        );
-      }
-    } catch (error) {
-      setAgeCleanupStatus(`Feil: ${error.message}`);
+      setChatClearStatus(`Error: ${error.message}`);
     }
   }
 
@@ -423,126 +363,6 @@ export default function AdminPanel() {
         roles.includes("teacher") ||
         roles.includes("archivist")) && <ShopProductAdmin />}
 
-      {/* Migration Section */}
-      {roles.includes("admin") && (
-        <div
-          style={{
-            marginBottom: 24,
-            background: "rgba(245, 239, 224, 0.1)",
-            padding: 20,
-            borderRadius: 0,
-            border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow:
-              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <h3
-            style={{
-              color: theme.secondaryText,
-              fontSize: "1.3rem",
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 600,
-              textShadow: isDarkMode
-                ? "0 1px 2px rgba(0, 0, 0, 0.3)"
-                : "0 1px 2px rgba(255, 255, 255, 0.3)",
-              marginBottom: 16,
-            }}
-          >
-            Data Migration
-          </h3>
-          <button
-            onClick={handleWitchToWizardMigration}
-            style={{
-              background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
-              color: "#F5EFE0",
-              border: "2px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: 0,
-              padding: "8px 16px",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              boxShadow:
-                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-              fontFamily: '"Cinzel", serif',
-              letterSpacing: "0.5px",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "translateY(-2px)";
-              e.target.style.boxShadow =
-                "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow =
-                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
-            }}
-          >
-            Update Witch → Wizard
-          </button>
-          <button
-            onClick={removeAgeFromAllUsers}
-            style={{
-              marginLeft: 12,
-              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-              color: "#F5EFE0",
-              border: "2px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: 0,
-              padding: "8px 16px",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              boxShadow:
-                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-              fontFamily: '"Cinzel", serif',
-              letterSpacing: "0.5px",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "translateY(-2px)";
-              e.target.style.boxShadow =
-                "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow =
-                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
-            }}
-          >
-            Fjern age fra alle brukere
-          </button>
-          {migrationStatus && (
-            <div
-              style={{
-                marginTop: 12,
-                padding: 8,
-                background: "rgba(255, 255, 255, 0.1)",
-                borderRadius: 0,
-                fontSize: "0.9rem",
-                color: theme.text,
-              }}
-            >
-              {migrationStatus}
-            </div>
-          )}
-          {ageCleanupStatus && (
-            <div
-              style={{
-                marginTop: 12,
-                padding: 8,
-                background: "rgba(255, 255, 255, 0.1)",
-                borderRadius: 0,
-                fontSize: "0.9rem",
-                color: theme.text,
-              }}
-            >
-              {ageCleanupStatus}
-            </div>
-          )}
-        </div>
-      )}
       <button
         onClick={() => setShowBanned((v) => !v)}
         style={{
@@ -1515,6 +1335,53 @@ export default function AdminPanel() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* General chat – clear all messages (admin only) */}
+      {roles.includes("admin") && (
+        <div
+          style={{
+            marginTop: 32,
+            padding: 20,
+            background: "rgba(245, 239, 224, 0.1)",
+            borderRadius: 0,
+            border: `2px solid ${theme.border}`,
+          }}
+        >
+          <h3
+            style={{
+              color: theme.secondaryText,
+              fontSize: "1.2rem",
+              fontFamily: '"Cinzel", serif',
+              marginBottom: 12,
+            }}
+          >
+            General chat
+          </h3>
+          <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
+            Remove all messages from the general (main) chat in Firestore. This cannot be undone.
+          </p>
+          <button
+            type="button"
+            onClick={clearAllGeneralChatMessages}
+            style={{
+              padding: "10px 20px",
+              background: "#c62828",
+              color: "#fff",
+              border: "none",
+              borderRadius: 0,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Clear all chat messages
+          </button>
+          {chatClearStatus && (
+            <div style={{ marginTop: 12, fontSize: "0.9rem", color: theme.secondaryText }}>
+              {chatClearStatus}
+            </div>
+          )}
         </div>
       )}
 

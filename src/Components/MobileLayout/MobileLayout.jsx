@@ -574,7 +574,7 @@ const MobileLayout = ({ children }) => {
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
-                  navigate("/forum/16plus");
+                  navigate("/forum/18plus");
                   setShowForumSelection(false);
                 }}
               >

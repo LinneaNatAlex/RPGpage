@@ -18,11 +18,11 @@ const useChatMessages = () => {
   // ---------------------------Live Chat---------------------------
   useEffect(() => {
     // Listen to the "messages" collection stored in firestore, in real-time.
-    // QUOTA OPTIMIZATION: Limit to recent 150 messages to reduce Firebase reads
+    // General chat is trimmed to 30 messages; only listen to recent 30
     const querry = query(
       collection(db, "messages"),
       orderBy("timestamp", "desc"),
-      limit(150)
+      limit(30)
     );
     // onSnapshot used to make real-time uppdates in firestore. Making it possible for messages to be sendt back and fourth in real-time
     const unsubscribe = onSnapshot(querry, (snapshot) => {

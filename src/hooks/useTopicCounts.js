@@ -20,7 +20,7 @@ const useTopicCounts = () => {
     artstudio: 0,
     kitchen: 0,
     detentionclassroom: 0,
-    '16plus': 0
+    '18plus': 0
   });
   const [loading, setLoading] = useState(false);
 
@@ -48,7 +48,7 @@ const useTopicCounts = () => {
           artstudio: 0,
           kitchen: 0,
           detentionclassroom: 0,
-          '16plus': 0
+          '18plus': 0
         };
         
         // List of all forum rooms
@@ -63,7 +63,7 @@ const useTopicCounts = () => {
           'artstudio',
           'kitchen',
           'detentionclassroom',
-          '16plus'
+          '18plus'
         ];
 
         // Race-specific commonrooms

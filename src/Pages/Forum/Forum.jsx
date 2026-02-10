@@ -60,6 +60,7 @@ const forumNames = {
   artstudio: "The Art Studio",
   kitchen: "Kitchen",
   detentionclassroom: "Detention Classroom",
+  "18plus": "18+ Forum",
 };
 
 const raceCommonrooms = {
@@ -83,6 +84,10 @@ const Forum = () => {
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
   const [newTopicWordCount, setNewTopicWordCount] = useState(0);
+  const [isPrivateTopic, setIsPrivateTopic] = useState(false);
+  const [allowedUserIds, setAllowedUserIds] = useState([]);
+  const [privateTopicSearch, setPrivateTopicSearch] = useState("");
+  const [ageVerifiedUsersList, setAgeVerifiedUsersList] = useState([]);
   // New post state (reply)
   const [replyContent, setReplyContent] = useState("");
   const [replyWordCount, setReplyWordCount] = useState(0);
@@ -108,6 +113,40 @@ const Forum = () => {
     }
   }
 
+  const is18PlusForum = forumRoom === "18plus";
+
+  // Fetch all 18+ verified users from Firestore for private topic picker (reliable list)
+  useEffect(() => {
+    if (!is18PlusForum) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const q = query(
+          collection(db, "users"),
+          where("ageVerified", "==", true)
+        );
+        const snap = await getDocs(q);
+        if (cancelled) return;
+        const list = snap.docs.map((d) => ({ uid: d.id, ...d.data() }));
+        setAgeVerifiedUsersList(list);
+      } catch (err) {
+        if (!cancelled) setAgeVerifiedUsersList([]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [is18PlusForum]);
+
+  // Searchable list: 18+ users excluding current user, filtered by search
+  const ageVerifiedUsersFiltered = (ageVerifiedUsersList || [])
+    .filter((u) => u.uid !== user?.uid)
+    .filter((u) => {
+      if (!privateTopicSearch.trim()) return true;
+      const term = privateTopicSearch.trim().toLowerCase();
+      const name = (u.displayName || "").toLowerCase();
+      const email = (u.email || "").toLowerCase();
+      return name.includes(term) || email.includes(term);
+    });
+
   // Redirect hvis ikke logget inn
   useEffect(() => {
     if (!loading && !user) navigate("/login");
@@ -123,7 +162,16 @@ const Forum = () => {
         orderBy("createdAt", "desc")
       );
       const snap = await getDocs(q);
-      setTopics(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      let list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (is18PlusForum && user) {
+        list = list.filter(
+          (t) =>
+            !t.isPrivate ||
+            t.uid === user.uid ||
+            (t.allowedUserIds && t.allowedUserIds.includes(user.uid))
+        );
+      }
+      setTopics(list);
     } catch (error) {
       console.error("Error fetching topics:", error);
     }
@@ -131,7 +179,7 @@ const Forum = () => {
 
   useEffect(() => {
     fetchTopics();
-  }, [forumRoom]);
+  }, [forumRoom, is18PlusForum, user?.uid]);
 
   // Fetch follower counts when topics change
   useEffect(() => {
@@ -230,6 +278,19 @@ const Forum = () => {
     }
   };
 
+  // Sanitize topic objects so Firestore never receives undefined (invalid)
+  const sanitizeFollowedTopics = (arr) =>
+    (arr || []).map((t) => {
+      const clean = {
+        id: t.id ?? "",
+        title: t.title ?? "",
+        forum: t.forum ?? "",
+        forumRoom: t.forumRoom ?? "",
+        followedAt: t.followedAt ?? new Date().toISOString(),
+      };
+      return clean;
+    });
+
   // Follow/Unfollow topic
   const handleFollowTopic = async (topicId, topicTitle) => {
     if (!user) return;
@@ -246,21 +307,23 @@ const Forum = () => {
         // Follow
         const newTopic = {
           id: topicId,
-          title: topicTitle,
-          forum: forumTitle,
-          forumRoom: forumRoom,
+          title: topicTitle ?? "",
+          forum: forumTitle ?? "",
+          forumRoom: forumRoom ?? "",
           followedAt: new Date().toISOString()
         };
         updatedFollowedTopics = [...followedTopics, newTopic];
       }
       
-      // Update database first
+      const sanitized = sanitizeFollowedTopics(updatedFollowedTopics);
+      
+      // Update database first (never send undefined to Firestore)
       await updateDoc(userRef, {
-        followedTopics: updatedFollowedTopics
+        followedTopics: sanitized
       });
       
       // Then update state
-      setFollowedTopics(updatedFollowedTopics);
+      setFollowedTopics(sanitized);
       
       // Refresh follower counts after following/unfollowing
       setTimeout(() => {
@@ -398,14 +461,19 @@ const Forum = () => {
 
     const wordCount = countWords(newTopicContent);
 
+    const topicData = {
+      title: newTopicTitle,
+      author: user.displayName,
+      createdAt: serverTimestamp(),
+      uid: user.uid,
+    };
+    if (is18PlusForum && isPrivateTopic) {
+      topicData.isPrivate = true;
+      topicData.allowedUserIds = [user.uid, ...(allowedUserIds || [])];
+    }
     const topicRef = await addDoc(
       collection(db, `forums/${forumRoom}/topics`),
-      {
-        title: newTopicTitle,
-        author: user.displayName,
-        createdAt: serverTimestamp(),
-        uid: user.uid,
-      }
+      topicData
     );
     await addDoc(
       collection(db, `forums/${forumRoom}/topics/${topicRef.id}/posts`),
@@ -441,16 +509,20 @@ const Forum = () => {
       // Error auto-following topic
     }
 
-    // Send notifications to users who might be interested in new topics in this forum
-    try {
-      await sendNotificationToForumFollowers(topicRef.id, newTopicTitle);
-    } catch (error) {
-      // Error sending notifications
+    // Send notifications to users who might be interested in new topics in this forum (skip for private topics)
+    if (!(is18PlusForum && isPrivateTopic)) {
+      try {
+        await sendNotificationToForumFollowers(topicRef.id, newTopicTitle);
+      } catch (error) {
+        // Error sending notifications
+      }
     }
 
     setNewTopicTitle("");
     setNewTopicContent("");
     setNewTopicWordCount(0);
+    setIsPrivateTopic(false);
+    setAllowedUserIds([]);
     setSelectedTopic(topicRef.id);
 
     // Refresh topics list
@@ -638,6 +710,11 @@ const Forum = () => {
       {!selectedTopic && (
         <>
           <div className={styles.newTopicForm}>
+            {is18PlusForum && (
+              <p style={{ marginBottom: 14, padding: "8px 12px", background: "rgba(160, 132, 232, 0.2)", border: "1px solid #a084e8", borderRadius: 0, fontSize: "0.9rem" }}>
+                When you create the first post below, you can choose if the topic is private and who can see it (only 18+ verified users).
+              </p>
+            )}
             <label htmlFor="forum-new-topic-title" style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>
               New topic title
             </label>
@@ -647,6 +724,9 @@ const Forum = () => {
               autoComplete="off"
               value={newTopicTitle}
               onChange={(e) => setNewTopicTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
               placeholder="New topic title"
               className={styles.newTopicInput}
             />
@@ -682,6 +762,114 @@ const Forum = () => {
                 Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
             </div>
+            {is18PlusForum && (
+              <div
+                style={{
+                  marginBottom: 16,
+                  padding: 14,
+                  background: "#2a2a32",
+                  borderRadius: 0,
+                  border: "2px solid #a084e8",
+                }}
+              >
+                <span style={{ display: "block", marginBottom: 10, fontSize: "1rem", fontWeight: 700, color: "#c4b5fd" }}>
+                  Set when creating this first post: private or not, and who can see it
+                </span>
+                <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", marginBottom: 12 }}>
+                  <input
+                    type="checkbox"
+                    checked={isPrivateTopic}
+                    onChange={(e) => {
+                      setIsPrivateTopic(e.target.checked);
+                      if (!e.target.checked) setAllowedUserIds([]);
+                    }}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      minWidth: 20,
+                      minHeight: 20,
+                      accentColor: "#a084e8",
+                      cursor: "pointer",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span>Private topic (only people you select below can see and reply)</span>
+                </label>
+                <div style={{ marginTop: 12 }}>
+                  <span style={{ display: "block", marginBottom: 8, fontSize: "0.9rem" }}>
+                    Select one or more users who can see and reply (you can select multiple). List shows only 18+ verified users (you are always included):
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search by name or email..."
+                    value={privateTopicSearch}
+                    onChange={(e) => setPrivateTopicSearch(e.target.value)}
+                    style={{
+                      width: "100%",
+                      maxWidth: 320,
+                      padding: "8px 12px",
+                      marginBottom: 10,
+                      background: "#1a1a22",
+                      border: "1px solid #444",
+                      borderRadius: 0,
+                      color: "#fff",
+                      fontSize: "0.9rem",
+                    }}
+                  />
+                  <div
+                    style={{
+                      maxHeight: 220,
+                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 8,
+                    }}
+                  >
+                    {ageVerifiedUsersFiltered.length === 0 ? (
+                      <span style={{ color: "#888" }}>
+                        {privateTopicSearch.trim()
+                          ? "No matching 18+ users."
+                          : "No other 18+ verified users to add."}
+                      </span>
+                    ) : (
+                      ageVerifiedUsersFiltered.map((u) => (
+                        <label
+                          key={u.uid}
+                          style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={allowedUserIds.includes(u.uid)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setAllowedUserIds((prev) => [...prev, u.uid]);
+                              } else {
+                                setAllowedUserIds((prev) => prev.filter((id) => id !== u.uid));
+                              }
+                            }}
+                            style={{
+                              width: 20,
+                              height: 20,
+                              minWidth: 20,
+                              minHeight: 20,
+                              accentColor: "#a084e8",
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span>{u.displayName || u.email || u.uid}</span>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  {allowedUserIds.length > 0 && (
+                    <span style={{ display: "block", marginTop: 8, fontSize: "0.85rem", color: "#c4b5fd" }}>
+                      {allowedUserIds.length} user(s) selected. Remember to check &quot;Private topic&quot; above if this topic should be private.
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
             <Button
               onClick={handleCreateTopic}
               className={`${styles.postButton} ${styles.newTopicButton}`}
@@ -720,6 +908,19 @@ const Forum = () => {
                       type="button"
                     >
                       <span className={styles.topicTitle}>{topic.title}</span>
+                      {topic.isPrivate && (
+                        <span
+                          style={{
+                            marginLeft: 8,
+                            fontSize: "0.75rem",
+                            color: "#ffd86b",
+                            fontWeight: 600,
+                          }}
+                          title="Private topic – only selected users can see and reply"
+                        >
+                          🔒 Private
+                        </span>
+                      )}
                       <span className={styles.topicAuthor}>
                         by {topic.author}
                       </span>
@@ -768,7 +969,21 @@ const Forum = () => {
         </>
       )}
       {/* Topic view (posts in topic) */}
-      {selectedTopic && (
+      {selectedTopic && (() => {
+        const currentTopic = topics.find((t) => t.id === selectedTopic);
+        if (!currentTopic) {
+          return (
+            <div className={styles.topicView}>
+              <p style={{ color: "#ffd86b", marginBottom: 16 }}>
+                Topic not found or you don&apos;t have access to this private topic.
+              </p>
+              <Button onClick={() => setSelectedTopic(null)} className={styles.backButton}>
+                Back to topics
+              </Button>
+            </div>
+          );
+        }
+        return (
         <div className={styles.topicView}>
           <div
             style={{
@@ -803,6 +1018,31 @@ const Forum = () => {
               );
             })()}
           </div>
+          {currentTopic.isPrivate && (
+            <div
+              style={{
+                marginBottom: "1.2rem",
+                padding: "10px 14px",
+                background: "rgba(160, 132, 232, 0.15)",
+                border: "1px solid #a084e8",
+                borderRadius: 0,
+                fontSize: "0.9rem",
+              }}
+            >
+              <span style={{ fontWeight: 700, color: "#c4b5fd" }}>Who has access to this topic: </span>
+              {(() => {
+                const creatorUid = currentTopic.uid;
+                const allowedIds = currentTopic.allowedUserIds || [];
+                const allIds = [creatorUid, ...allowedIds.filter((id) => id !== creatorUid)];
+                const nameFor = (id) => {
+                  const u = (users || []).find((x) => x.uid === id) || (ageVerifiedUsersList || []).find((x) => x.uid === id);
+                  return u?.displayName || u?.email || id;
+                };
+                const names = allIds.map((id) => nameFor(id));
+                return names.join(", ");
+              })()}
+            </div>
+          )}
           {editingTopic && (
             <div
               style={{
@@ -990,7 +1230,8 @@ const Forum = () => {
             </Button>
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* Followers Modal */}
       {showFollowersModal && (
