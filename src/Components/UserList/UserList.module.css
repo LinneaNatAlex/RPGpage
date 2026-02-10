@@ -1,3 +1,21 @@
+@media (max-width: 600px) {
+  .userListContainer td,
+  .userListContainer th {
+    font-size: 0.75rem;
+    padding: 3px 2px;
+  }
+  .userListContainer td:nth-child(4),
+  .userListContainer th:nth-child(4) {
+    word-break: keep-all;
+    white-space: nowrap;
+    font-size: 0.7rem;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
 .userName {
   font-weight: bold;
   color: #b8860b;
@@ -61,7 +79,9 @@ td .userName[style*="color"] {
   background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
   color: #2c2c2c;
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
   border: 2px solid #d4c4a8;
   overflow: hidden;
   table-layout: fixed;
@@ -126,6 +146,10 @@ td .userName[style*="color"] {
   text-decoration: underline;
   font-weight: bold;
   transition: color 0.2s;
+  touch-action: manipulation;
+  pointer-events: auto;
+  z-index: 2;
+  position: relative;
 }
 .profileLink:hover {
   color: #5d4e37;

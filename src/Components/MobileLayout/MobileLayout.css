@@ -1,3 +1,118 @@
+.mobile-page-content .characterDetailsContainer,
+.mobile-page-content .characterDetailsContainer *,
+.mobile-page-content .characterDetailsContainer a,
+.mobile-page-content .characterDetailsContainer strong,
+.mobile-page-content .characterDetailsContainer em,
+.mobile-page-content .characterDetailsContainer span,
+.mobile-page-content .characterDetailsContainer pre {
+  font-family: "Segoe UI", "Roboto", "Arial", "sans-serif" !important;
+  color: #7b6857 !important;
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.mobile-page-content .characterDetailsContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: transparent;
+  border-radius: 0;
+  padding: 1rem;
+  border: 2px solid rgba(212, 196, 168, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: none;
+  font-family: "Segoe UI", "Roboto", "Arial", "sans-serif";
+}
+.mobile-page-content .characterDetailsContainer h2 {
+  color: #7b6857;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+.mobile-page-content .characterDetailsContainer p,
+.mobile-page-content .characterDetailsContainer span,
+.mobile-page-content .characterDetailsContainer strong,
+.mobile-page-content .characterDetailsContainer em,
+.mobile-page-content .characterDetailsContainer a {
+  color: #7b6857;
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  text-shadow: none;
+}
+.mobile-page-content .characterDetailsContainer a {
+  text-decoration: underline;
+}
+.mobile-page-content .characterDetailsContainer a:hover {
+  color: #8b7a6b;
+}
+.mobile-page-content .characterDetailsContainer pre {
+  background: rgba(123, 104, 87, 0.1);
+  padding: 0.5rem;
+  font-family: monospace;
+}
+  background: rgba(123, 104, 87, 0.1) !important;
+  padding: 0.5rem !important;
+  font-family: monospace !important;
+}
+/* --- Make characterDetailsContainer on mobile match My Profile --- */
+/* Eksakt kopi av My Profile stil for characterDetailsContainer på mobil */
+.mobile-page-content .characterDetailsContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: transparent;
+  border-radius: 0;
+  padding: 1rem;
+  border: 2px solid rgba(212, 196, 168, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: none;
+  font-family: "Segoe UI", "Roboto", "Arial", "sans-serif";
+}
+
+.mobile-page-content .characterDetailsContainer h2 {
+  color: #7b6857 !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 1.5rem 0 !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  font-family: inherit !important;
+}
+
+.mobile-page-content .characterDetailsContainer p {
+  color: #7b6857 !important;
+  font-size: 1.1rem !important;
+  margin: 0.5rem 0 !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+  font-family: inherit !important;
+}
+/* --- Make characterDetailsContainer on mobile match My Profile --- */
+.mobile-page-content .characterDetailsContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: transparent;
+  border-radius: 0;
+  padding: 1rem;
+  border: 2px solid rgba(212, 196, 168, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: none;
+}
 /* Mobile App - Dark Mode with Red Undertone */
 .mobile-app {
   display: flex;
@@ -1855,27 +1970,28 @@
 
 /* UserProfile Character Details Mobile Styling - Match Profile.jsx */
 .mobile-page-content .characterDetailsContainer p {
-  color: #ffe4b5 !important;
+  color: #7b6857 !important;
   font-size: 1.1rem !important;
   margin: 0.5rem 0 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
   font-weight: 500 !important;
+  text-shadow: none !important;
 }
 
 .mobile-page-content .characterDetailsContainer strong {
-  color: #ffe4b5 !important;
+  color: #7b6857 !important;
   font-weight: 700 !important;
   margin-right: 0.5rem !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  text-shadow: none !important;
+  font-family: inherit !important;
 }
 
 .mobile-page-content .characterDetailsContainer h2 {
-  color: #ffffff !important;
+  color: #7b6857 !important;
   font-size: 2rem !important;
   font-weight: 700 !important;
   margin: 0 0 1.5rem 0 !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
   text-align: center !important;
+  text-shadow: none !important;
 }
 
 /* UserProfile inline style overrides - match Profile colors on mobile */
