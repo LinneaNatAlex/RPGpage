@@ -64,9 +64,12 @@ const NewsFeed = () => {
         setNewsList((prev) =>
           prev.map((p) =>
             p.id === item.id
-              ? { ...p, likedBy: (p.likedBy || []).filter((uid) => uid !== user.uid) }
-              : p
-          )
+              ? {
+                  ...p,
+                  likedBy: (p.likedBy || []).filter((uid) => uid !== user.uid),
+                }
+              : p,
+          ),
         );
       } else {
         await updateDoc(newsRef, { likedBy: arrayUnion(user.uid) });
@@ -74,12 +77,11 @@ const NewsFeed = () => {
           prev.map((p) =>
             p.id === item.id
               ? { ...p, likedBy: [...(p.likedBy || []), user.uid] }
-              : p
-          )
+              : p,
+          ),
         );
         if (item.authorUid && item.authorUid !== user.uid) {
-          const likerName =
-            user.displayName?.trim() || user.email || "Someone";
+          const likerName = user.displayName?.trim() || user.email || "Someone";
           await addDoc(collection(db, "notifications"), {
             to: item.authorUid,
             type: "content_like",
@@ -117,7 +119,7 @@ const NewsFeed = () => {
       const q = query(
         collection(db, "news"),
         orderBy("createdAt", "desc"),
-        limit(25)
+        limit(25),
       );
       const snapshot = await getDocs(q);
       const newData = snapshot.docs
@@ -195,7 +197,7 @@ const NewsFeed = () => {
             const userObj = users.find(
               (u) =>
                 u.displayName &&
-                u.displayName.toLowerCase() === item.author?.toLowerCase()
+                u.displayName.toLowerCase() === item.author?.toLowerCase(),
             );
             let nameClass = styles.posterName;
             if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
@@ -228,7 +230,7 @@ const NewsFeed = () => {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
-                            }
+                            },
                           )}
                         </span>
                       )}
@@ -240,16 +242,30 @@ const NewsFeed = () => {
                             e.stopPropagation();
                             handleLike(item);
                           }}
-                          title={(Array.isArray(item.likedBy) && item.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
-                          aria-label={(Array.isArray(item.likedBy) && item.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                          title={
+                            Array.isArray(item.likedBy) &&
+                            item.likedBy.includes(user?.uid)
+                              ? "Unlike"
+                              : "Like"
+                          }
+                          aria-label={
+                            Array.isArray(item.likedBy) &&
+                            item.likedBy.includes(user?.uid)
+                              ? "Unlike"
+                              : "Like"
+                          }
                         >
-                          {(Array.isArray(item.likedBy) && item.likedBy.includes(user?.uid))
+                          {Array.isArray(item.likedBy) &&
+                          item.likedBy.includes(user?.uid)
                             ? "❤️"
                             : "🤍"}
                         </button>
-                        {(Array.isArray(item.likedBy) && item.likedBy.length > 0) && (
-                          <span className={styles.likeCount}>{item.likedBy.length}</span>
-                        )}
+                        {Array.isArray(item.likedBy) &&
+                          item.likedBy.length > 0 && (
+                            <span className={styles.likeCount}>
+                              {item.likedBy.length}
+                            </span>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -307,14 +323,29 @@ const NewsFeed = () => {
             className={styles.popupContainer}
             onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className={styles.popupContent}
-              dangerouslySetInnerHTML={{
-                __html: selectedPost.content
-                  .replace("{{code}}", "")
-                  .replace("{{/code}}", ""),
-              }}
-            />
+            <div className={styles.popupContent}>
+              <iframe
+                title="News content"
+                className={styles.popupIframe}
+                srcDoc={(() => {
+                  const raw = selectedPost.content
+                    .replace("{{code}}", "")
+                    .replace("{{/code}}", "");
+                  const isDark =
+                    typeof document !== "undefined" &&
+                    !!document.querySelector('[data-theme="dark"]');
+                  const bg = isDark ? "#1a1a1a" : "#f5efe0";
+                  const fg = isDark ? "#e0e0e0" : "#2c2c2c";
+                  return `<!DOCTYPE html>
+<html style="background:${bg}">
+<head><meta charset="utf-8"/>
+<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+</head>
+<body>${raw}</body>
+</html>`;
+                })()}
+              />
+            </div>
             <div className={styles.otherNewsSidebar}>
               <h3>Other News</h3>
               <div className={styles.otherNewsGrid}>
@@ -322,7 +353,7 @@ const NewsFeed = () => {
                   .filter(
                     (post) =>
                       post.id !== selectedPost.id &&
-                      post.content.startsWith("{{code}}")
+                      post.content.startsWith("{{code}}"),
                   )
                   .slice(0, 4)
                   .map((post) => {
@@ -330,12 +361,12 @@ const NewsFeed = () => {
                       (u) =>
                         u.displayName &&
                         u.displayName.toLowerCase() ===
-                          post.author?.toLowerCase()
+                          post.author?.toLowerCase(),
                     );
                     let nameClass = styles.posterName;
                     if (
                       userObj?.roles?.some(
-                        (r) => r.toLowerCase() === "headmaster"
+                        (r) => r.toLowerCase() === "headmaster",
                       )
                     )
                       nameClass += ` ${styles.headmasterName}`;
@@ -345,7 +376,7 @@ const NewsFeed = () => {
                       nameClass += ` ${styles.teacherName}`;
                     else if (
                       userObj?.roles?.some(
-                        (r) => r.toLowerCase() === "archivist"
+                        (r) => r.toLowerCase() === "archivist",
                       )
                     )
                       nameClass += ` ${styles.archivistName}`;
@@ -362,7 +393,7 @@ const NewsFeed = () => {
                           {post.createdAt && (
                             <span className={styles.otherNewsDate}>
                               {new Date(
-                                post.createdAt.toDate()
+                                post.createdAt.toDate(),
                               ).toLocaleDateString("en-US", {
                                 month: "short",
                                 day: "numeric",
@@ -376,7 +407,7 @@ const NewsFeed = () => {
                 {newsList.filter(
                   (post) =>
                     post.id !== selectedPost.id &&
-                    post.content.startsWith("{{code}}")
+                    post.content.startsWith("{{code}}"),
                 ).length === 0 && (
                   <p className={styles.noOtherNews}>No other news available</p>
                 )}

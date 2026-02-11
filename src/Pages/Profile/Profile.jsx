@@ -684,31 +684,28 @@ const Profile = () => {
                 <h2>Profile Text</h2>
                 <iframe
                   srcDoc={(() => {
+                    const raw = (userData.profileText || "")
+                      .replace("{{code}}", "")
+                      .replace("{{/code}}", "");
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');
-                    const bg = isDark ? "#1a1a1a" : "transparent";
-                    const fg = isDark ? "#e0e0e0" : "#cd853f";
-                    return `
-                    <!DOCTYPE html>
-                    <html style="background:${bg}">
-                    <head>
-                      <style>
-                        html, body { margin: 0; padding: 1rem; font-family: "Cinzel", serif; line-height: 1.6; background: ${bg} !important; color: ${fg}; }
-                        ::-webkit-scrollbar { display: none; }
-                        html { scrollbar-width: none; -ms-overflow-style: none; }
-                      </style>
-                    </head>
-                    <body>${userData.profileText}</body>
-                    </html>
-                  `;
+                    const bg = isDark ? "#1a1a1a" : "#f5efe0";
+                    const fg = isDark ? "#e0e0e0" : "#2c2c2c";
+                    return `<!DOCTYPE html>
+<html style="background:${bg}">
+<head><meta charset="utf-8"/>
+<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+</head>
+<body>${raw}</body>
+</html>`;
                   })()}
                   style={{
                     width: "100%",
                     height: "1000vh",
                     border: "none",
                     borderRadius: 0,
-                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "transparent",
+                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#f5efe0",
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                   }}

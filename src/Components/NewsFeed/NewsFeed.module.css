@@ -356,11 +356,24 @@ iframe {
 
 .popupContent {
   flex: 1;
-  padding: 20px;
-  overflow-y: auto;
+  padding: 0;
+  min-width: 0;
+  display: flex;
   background: transparent;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Isolated document – global styles no longer override author HTML/CSS */
+.popupIframe {
+  width: 100%;
+  min-height: 70vh;
+  height: 100%;
+  border: none;
+  background: #f5efe0;
+  display: block;
+}
+
+:global([data-theme="dark"]) .popupIframe {
+  background: #1a1a1a;
 }
 
 .popupContent::-webkit-scrollbar {
