@@ -1,58 +1,58 @@
+// Stats from users collection with cache + polling to reduce reads (was: onSnapshot on full collection).
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import { cacheHelpers } from "../utils/firebaseCache";
 
-// Hook to get user statistics for public display (works for non-authenticated users)
+const CACHE_TTL_MS = 3 * 60 * 1000;
+let lastFetch = 0;
+let cachedStats = null;
+
+const fetchStats = async () => {
+  const cached = cacheHelpers.getUserStats();
+  if (cached && (cached.totalUsers > 0 || cached.onlineUsers >= 0) && Date.now() - lastFetch < CACHE_TTL_MS) {
+    return cached;
+  }
+  const usersRef = collection(db, "users");
+  const snapshot = await getDocs(usersRef);
+  const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+  const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const toMillis = (u) => (u.lastActive?.toMillis ? u.lastActive.toMillis() : u.lastActive);
+  const onlineUsers = users.filter((u) => u.lastActive && toMillis(u) > fiveMinutesAgo).length;
+  const dailyActiveUsers = users.filter((u) => u.lastActive && toMillis(u) > twentyFourHoursAgo).length;
+  const stats = { onlineUsers, totalUsers: users.length, dailyActiveUsers };
+  lastFetch = Date.now();
+  cacheHelpers.setUserStats(stats);
+  return stats;
+};
+
 const useUserStats = () => {
-  const [stats, setStats] = useState({
-    onlineUsers: 0,
-    totalUsers: 0,
-    dailyActiveUsers: 0
-  });
+  const [stats, setStats] = useState(cacheHelpers.getUserStats() || { onlineUsers: 0, totalUsers: 0, dailyActiveUsers: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const usersRef = collection(db, 'users');
-    
-    const unsubscribe = onSnapshot(usersRef, (snapshot) => {
-      const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
-      
-      // Calculate online users (last active within 5 minutes)
-      const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-      const onlineUsers = users.filter(u => {
-        if (!u.lastActive) return false;
-        // Handle different timestamp formats
-        const lastActiveTime = u.lastActive.toMillis ? u.lastActive.toMillis() : u.lastActive;
-        return lastActiveTime > fiveMinutesAgo;
-      }).length;
-      
-      // Calculate daily active users (last active within 24 hours)
-      const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
-      const dailyActiveUsers = users.filter(u => {
-        if (!u.lastActive) return false;
-        // Handle different timestamp formats
-        const lastActiveTime = u.lastActive.toMillis ? u.lastActive.toMillis() : u.lastActive;
-        return lastActiveTime > twentyFourHoursAgo;
-      }).length;
-      
-      // Total registered users
-      const totalUsers = users.length;
-      
-      
-      setStats({
-        onlineUsers,
-        totalUsers,
-        dailyActiveUsers
+    let cancelled = false;
+    fetchStats()
+      .then((s) => {
+        if (!cancelled) {
+          cachedStats = s;
+          setStats(s);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setStats((prev) => prev);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
-      setLoading(false);
-    }, (error) => {
-      setLoading(false);
-      if (error?.code === "permission-denied") return;
-      if (process.env.NODE_ENV === "development") console.warn("useUserStats snapshot error:", error);
-    });
-
-    return () => unsubscribe();
+    const interval = setInterval(() => {
+      fetchStats().then((s) => !cancelled && setStats(s));
+    }, CACHE_TTL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, []);
 
   return { stats, loading };

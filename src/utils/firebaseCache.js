@@ -11,6 +11,8 @@ class FirebaseCache {
       ONLINE_USERS: 30 * 1000, // 30 seconds for online users
       SHOP_ITEMS: 10 * 60 * 1000, // 10 minutes for shop items
       BOOKS: 15 * 60 * 1000, // 15 minutes for books
+      USERS_LIST: 5 * 60 * 1000, // 5 minutes for full users list (reduces reads)
+      USER_STATS: 3 * 60 * 1000, // 3 minutes for online/total stats
     };
   }
 
@@ -100,6 +102,14 @@ export const cacheHelpers = {
   // Cache books
   getBooks: () => firebaseCache.get("BOOKS"),
   setBooks: (data) => firebaseCache.set("BOOKS", data),
+
+  // Cache users list (leaderboard etc.) – single shared fetch reduces reads
+  getUsersList: () => firebaseCache.get("USERS_LIST"),
+  setUsersList: (data) => firebaseCache.set("USERS_LIST", data),
+
+  // Cache user stats (online/total)
+  getUserStats: () => firebaseCache.get("USER_STATS"),
+  setUserStats: (data) => firebaseCache.set("USER_STATS", data),
 
   // Clear user-specific cache (useful when user logs out or data updates)
   clearUserCache: (userId) => {

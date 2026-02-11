@@ -1,49 +1,25 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext.jsx";
-import {
-  doc,
-  onSnapshot,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import useUserData from "../../hooks/useUserData";
 import styles from "./TopBar.module.css";
 import "./TopBar.mobile.css";
 
+// HP/currency/points update on reload only – no snapshot
 const TopBar = () => {
   const { user } = useAuth();
+  const { userData, loading } = useUserData();
   const [isMobile, setIsMobile] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [showInventory, setShowInventory] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
 
-  // Check if device is mobile
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Load user data
-  useEffect(() => {
-    if (!user) return;
-
-    const userRef = doc(db, "users", user.uid);
-    const unsub = onSnapshot(userRef, (userDoc) => {
-      if (userDoc.exists()) {
-        setUserData(userDoc.data());
-      }
-    });
-
-    return () => unsub();
-  }, [user]);
-
-  if (!user || !userData) return null;
+  if (!user || loading || !userData) return null;
 
   return (
     <div className={`mobile-topbar ${isMobile ? "mobile" : "desktop"}`}>
@@ -58,7 +34,7 @@ const TopBar = () => {
           />
           <div className="mobile-user-info">
             <div className="mobile-user-name">{user.displayName}</div>
-            <div className="mobile-user-level">Level {userData.level || 1}</div>
+            <div className="mobile-user-level">Level {userData.level ?? 1}</div>
           </div>
         </div>
 
@@ -77,7 +53,7 @@ const TopBar = () => {
         <div className="mobile-currency-section">
           <div className="mobile-currency-item">
             <span className="mobile-currency-icon">💰</span>
-            <span className="mobile-currency-amount">{userData.nits || 0}</span>
+            <span className="mobile-currency-amount">{userData.currency ?? userData.nits ?? 0}</span>
           </div>
           <div className="mobile-currency-item">
             <span className="mobile-currency-icon">◆</span>

@@ -1,100 +1,32 @@
-// imports the necessary hooks and firebase functions to get the users
+// Shared users list with cache + polling to reduce Firestore reads (was: real-time onSnapshot on full collection).
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/authContext"; // Import auth context
-import { db } from "../firebaseConfig";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
+import { useAuth } from "../context/authContext";
+import * as usersListStore from "../utils/usersListStore";
 
-// costume hook to fetch and return a list of users with REAL-TIME updates
 const useUsers = () => {
-  const [users, setUsers] = useState([]); ///state users, holding the loding state of users.
-  const [loading, setLoading] = useState(true); //state variable, holding the loding state of users.
-  const { user, loading: authLoading } = useAuth(); // Get auth state
+  const [users, setUsers] = useState(usersListStore.getUsers());
+  const [loading, setLoading] = useState(usersListStore.getLoading());
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    // Don't setup listener if auth is still loading or user is not authenticated
     if (authLoading) return;
 
     if (!user) {
+      usersListStore.clear();
       setUsers([]);
       setLoading(false);
       return;
     }
 
+    const unsubscribe = usersListStore.subscribe((u, l) => {
+      setUsers(u);
+      setLoading(l);
+    });
+    usersListStore.fetchIfNeeded();
 
-    // Set up real-time listener for users collection
-    const usersRef = collection(db, "users");
-    // Get all users first, then filter in JavaScript to avoid Firestore query issues
-    const usersQuery = usersRef;
-
-    const unsubscribe = onSnapshot(
-      usersQuery,
-      (snapshot) => {
-
-        const updatedUsers = [];
-        snapshot.forEach((doc) => {
-          const userData = doc.data();
-          // Filter for valid races in JavaScript
-          const validRaces = [
-            "Witch",
-            "witch",
-            "Wizard",
-            "wizard",
-            "Vampire",
-            "vampire",
-            "Werewolf",
-            "werewolf",
-            "Elf",
-            "elf",
-          ];
-          if (userData.race && validRaces.includes(userData.race)) {
-            updatedUsers.push({
-              uid: doc.id,
-              ...userData,
-            });
-          }
-        });
-
-        // Sort by points in JavaScript instead of Firestore
-        updatedUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
-
-        setUsers(updatedUsers);
-        setLoading(false);
-      },
-      (error) => {
-        // Silently handle permission-denied so non-admins don't see console errors
-        if (error?.code === "permission-denied") {
-          setUsers([]);
-          setLoading(false);
-          return;
-        }
-        // Fallback to manual fetch if real-time fails for other reasons
-        import("../firebaseConfig").then(({ getUserTerms }) => {
-          getUserTerms()
-            .then((fallbackUsers) => {
-              setUsers(fallbackUsers);
-              setLoading(false);
-            })
-            .catch((fallbackError) => {
-              setUsers([]);
-              setLoading(false);
-            });
-        });
-      }
-    );
-
-    // Cleanup listener on unmount
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [user, authLoading]);
 
-  // returns user list and loading
   return { users, loading };
 };
 

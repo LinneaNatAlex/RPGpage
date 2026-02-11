@@ -1,27 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/authContext';
 import { petDiscovery } from '../utils/petDiscovery';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
+// Pet discovery: getDoc once (no snapshot) – refresh page to see updates
 export const usePetDiscovery = () => {
   const { user } = useAuth();
   const [pendingDiscoveries, setPendingDiscoveries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasActivePet, setHasActivePet] = useState(false);
 
-  // Load pending discoveries and pet status with real-time updates
-  useEffect(() => {
+  const fetchPetState = useCallback(async () => {
     if (!user) {
       setPendingDiscoveries([]);
       setHasActivePet(false);
       return;
     }
-
-    // Use real-time listener for pending discoveries
-    
-    const userRef = doc(db, 'users', user.uid);
-    const unsubscribe = onSnapshot(userRef, (docSnap) => {
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
         setPendingDiscoveries(data.pendingPetDiscoveries || []);
@@ -30,20 +28,22 @@ export const usePetDiscovery = () => {
         setPendingDiscoveries([]);
         setHasActivePet(false);
       }
-    }, (error) => {
-    });
-
-    return () => unsubscribe();
+    } catch {
+      setPendingDiscoveries([]);
+      setHasActivePet(false);
+    }
   }, [user]);
 
-  // Accept a discovery
+  useEffect(() => {
+    fetchPetState();
+  }, [fetchPetState]);
+
   const acceptDiscovery = async (discoveryIndex) => {
     if (!user) return false;
-    
     setLoading(true);
     try {
       const success = await petDiscovery.acceptDiscovery(user.uid, discoveryIndex);
-      // No need to reload - real-time listener will update automatically
+      if (success) await fetchPetState();
       return success;
     } catch (error) {
       return false;
@@ -52,14 +52,12 @@ export const usePetDiscovery = () => {
     }
   };
 
-  // Decline a discovery
   const declineDiscovery = async (discoveryIndex) => {
     if (!user) return false;
-    
     setLoading(true);
     try {
       const success = await petDiscovery.declineDiscovery(user.uid, discoveryIndex);
-      // No need to reload - real-time listener will update automatically
+      if (success) await fetchPetState();
       return success;
     } catch (error) {
       return false;
@@ -68,14 +66,12 @@ export const usePetDiscovery = () => {
     }
   };
 
-  // Trigger a discovery (for testing or manual triggers)
   const triggerDiscovery = async () => {
     if (!user || !hasActivePet) return null;
-    
     setLoading(true);
     try {
       const discovery = await petDiscovery.triggerDiscovery(user.uid, 'Test Pet');
-      // No need to reload - real-time listener will update automatically
+      if (discovery) await fetchPetState();
       return discovery;
     } catch (error) {
       return null;
@@ -91,6 +87,7 @@ export const usePetDiscovery = () => {
     acceptDiscovery,
     declineDiscovery,
     triggerDiscovery,
-    currentPet: null // Will be populated from user data if needed
+    refetchPetState: fetchPetState,
+    currentPet: null,
   };
 };

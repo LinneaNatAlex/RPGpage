@@ -460,7 +460,8 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [invisibleUntil]);
 
-  // Fetch notifications (to + userId for legacy) and recent news for list
+  // Fetch notifications once on load (no snapshot/polling – user can reload or open panel to refresh)
+  const fetchNotifications = useRef(null);
   useEffect(() => {
     if (!user) return;
 
@@ -493,9 +494,8 @@ const TopBar = () => {
       } catch (e) {}
     };
 
+    fetchNotifications.current = fetchAll;
     fetchAll();
-    const interval = setInterval(fetchAll, 30000);
-    return () => clearInterval(interval);
   }, [user]);
 
   // Recent news for notification list (newer than lastSeenNewsAt)
@@ -754,7 +754,12 @@ const TopBar = () => {
             <button
               type="button"
               className={styles.inventoryIconBtn}
-              onClick={() => setShowNotificationsPanel((v) => !v)}
+              onClick={() => {
+                setShowNotificationsPanel((v) => {
+                  if (!v) fetchNotifications.current?.(); // refresh when opening panel (no polling)
+                  return !v;
+                });
+              }}
               title="Notifications"
               aria-label="Notifications"
               style={{ position: "relative" }}

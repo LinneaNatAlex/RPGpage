@@ -7,7 +7,6 @@ import {
   setDoc,
   arrayRemove,
   increment,
-  onSnapshot,
 } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import { classesList } from "../../data/classesList";
@@ -40,16 +39,15 @@ export default function Classrooms() {
     setLoading(false);
   }, []);
 
-  // Track last attended per class (from user doc)
+  // Load last attended once (no snapshot – points/attendance show after reload)
   useEffect(() => {
     if (!user) return;
     const ref = doc(db, "users", user.uid);
-    const unsub = onSnapshot(ref, (snap) => {
+    getDoc(ref).then((snap) => {
       if (snap.exists()) {
         setLastAttended(snap.data().lastAttendedClass || {});
       }
     });
-    return () => unsub();
   }, [user]);
 
   // Attend a class (add user to attendance list for class+year)

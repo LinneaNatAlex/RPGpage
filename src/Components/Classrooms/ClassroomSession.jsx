@@ -481,12 +481,11 @@ const ClassroomSession = () => {
     }
   };
 
-  // Listen for students in this class/year
+  // Load students list once (no snapshot – list updates after reload)
   useEffect(() => {
     const ref = doc(db, "classAttendance", `${classId}-year${userYear}`);
-    const unsub = onSnapshot(ref, (snap) => {
+    getDoc(ref).then((snap) => {
       let arr = snap.exists() ? snap.data().students || [] : [];
-      // Always show current user in list if attending
       if (user) {
         const exists = arr.some((s) => s.uid === user.uid);
         if (!exists) {
@@ -504,9 +503,8 @@ const ClassroomSession = () => {
         }
       }
       setStudents(arr);
+      setLoading(false);
     });
-    setLoading(false);
-    return () => unsub();
   }, [classId, userYear, user, roles]);
 
   // For teachers/admins: ensure they are in the students list for selected year

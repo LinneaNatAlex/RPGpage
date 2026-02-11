@@ -1,6 +1,8 @@
-// Simple cache for user statistics that works without authentication
+// Simple cache for user statistics that works without authentication.
+// Uses cache TTL to avoid refetching entire users collection on every refresh.
 import { db } from '../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
+import { cacheHelpers } from './firebaseCache';
 
 let statsCache = {
   onlineUsers: 0,
@@ -9,15 +11,19 @@ let statsCache = {
 };
 
 let listeners = [];
-let hasFetched = false;
 
 const updateStats = (newStats) => {
   statsCache = newStats;
+  cacheHelpers.setUserStats(newStats);
   listeners.forEach(callback => callback(newStats));
 };
 
 const fetchUserStats = async () => {
-  
+  const cached = cacheHelpers.getUserStats();
+  if (cached && (cached.totalUsers > 0 || cached.onlineUsers >= 0)) {
+    updateStats(cached);
+    return;
+  }
   try {
     const usersRef = collection(db, 'users');
     const snapshot = await getDocs(usersRef);
@@ -56,9 +62,8 @@ const fetchUserStats = async () => {
   }
 };
 
-// Fetch stats when module is imported (only once)
-if (typeof window !== 'undefined' && !hasFetched) {
-  hasFetched = true;
+// Initial fetch when module loads (respects cache TTL on subsequent imports)
+if (typeof window !== 'undefined') {
   fetchUserStats();
 }
 
