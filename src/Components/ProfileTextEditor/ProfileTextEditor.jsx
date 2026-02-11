@@ -144,7 +144,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     minHeight: "200px",
                     border: "none",
                     borderRadius: 0,
-                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
+                    background: "transparent",
                   }}
                 />
               </div>
@@ -193,7 +193,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                 minHeight: "200px",
                 border: "none",
                 borderRadius: 0,
-                background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
+                background: "transparent",
               }}
               title="Profile Text"
               className={styles.htmlContent}

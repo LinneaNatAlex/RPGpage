@@ -704,7 +704,7 @@ const Profile = () => {
                     height: "1000vh",
                     border: "none",
                     borderRadius: 0,
-                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
+                    background: "transparent",
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                   }}
