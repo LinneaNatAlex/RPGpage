@@ -15,6 +15,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
+import * as usersListStore from "../../utils/usersListStore";
 import firebase from "firebase/compat/app";
 import AgeVerificationAdmin from "../Forum/AgeVerificationAdmin";
 import ShopProductAdmin from "./ShopProductAdmin";
@@ -65,7 +66,7 @@ export default function AdminPanel() {
   const [editRoles, setEditRoles] = useState([]);
   const [editUserStatus, setEditUserStatus] = useState("");
   const AVAILABLE_ROLES = ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
-  const CLASS_OPTIONS = ["1st year", "2nd year", "3rd year", "4th year", "5th year", "6th year", "7th year", "graduate"];
+  const CLASS_OPTIONS = ["1st year", "2nd year", "3rd year", "4th year", "5th year", "6th year", "7th year", "graduated"];
   const RACE_OPTIONS = ["Witch", "Wizard", "Vampire", "Werewolf", "Elf"];
 
   // Global site dark mode (gjelder alle brukere – samme tema som dark mode-potion)
@@ -102,7 +103,11 @@ export default function AdminPanel() {
   useEffect(() => {
     if (selected) {
       setEditDisplayName(selected.displayName || "");
-      setEditClass(selected.graduate ? "graduate" : (selected.class || "1st year"));
+      setEditClass(
+        selected.graduate || (selected.class && /^graduated?$/i.test(String(selected.class)))
+          ? "graduated"
+          : (selected.class || "1st year")
+      );
       setEditRace(selected.race || "");
       setEditRoles(Array.isArray(selected.roles) ? [...selected.roles] : []);
     }
@@ -378,13 +383,14 @@ export default function AdminPanel() {
     setEditUserStatus("Saving...");
     try {
       const ref = doc(db, "users", selected.uid);
-      const isGraduate = editClass === "graduate";
-      const yearNum = isGraduate ? 7 : parseInt(editClass, 10) || 1;
+      const classVal = String(editClass || "").trim().toLowerCase();
+      const isGraduated = classVal === "graduated";
+      const yearNum = isGraduated ? 7 : parseInt(editClass, 10) || 1;
       const newName = (editDisplayName || "").trim() || selected.displayName;
       const update = {
         displayName: newName,
-        class: isGraduate ? "7th year" : editClass,
-        graduate: isGraduate,
+        class: isGraduated ? "Graduated" : editClass,
+        graduate: isGraduated,
         year: yearNum,
         race: editRace || selected.race,
         roles: editRoles,
@@ -393,6 +399,8 @@ export default function AdminPanel() {
       setSelected({ ...selected, ...update });
       setEditUserStatus("Saved. Changes are in Firestore.");
       setTimeout(() => setEditUserStatus(""), 4000);
+      // Oppdater brukerlisten så Graduated vises riktig (ikke cache med gammel «7th year»)
+      usersListStore.invalidateAndRefetch();
     } catch (err) {
       setEditUserStatus(`Error: ${err.message}`);
     }
@@ -499,36 +507,23 @@ export default function AdminPanel() {
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <button
               type="button"
-              onClick={() => handleToggleGlobalDarkMode(true)}
+              onClick={() => handleToggleGlobalDarkMode(!globalDarkMode)}
               style={{
-                background: globalDarkMode ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)" : "rgba(123, 104, 87, 0.4)",
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                 color: "#F5EFE0",
-                border: "2px solid #7B6857",
-                borderRadius: 0,
+                border: "2px solid #D4C4A8",
+                borderRadius: 4,
                 padding: "10px 20px",
                 fontWeight: 600,
                 cursor: "pointer",
+                fontFamily: '"Cinzel", serif',
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
               }}
             >
-              Dark mode On
-            </button>
-            <button
-              type="button"
-              onClick={() => handleToggleGlobalDarkMode(false)}
-              style={{
-                background: !globalDarkMode ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)" : "rgba(123, 104, 87, 0.4)",
-                color: "#F5EFE0",
-                border: "2px solid #7B6857",
-                borderRadius: 0,
-                padding: "10px 20px",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Dark mode Off
+              {globalDarkMode ? "✓ Dark mode On" : "Dark mode Off"}
             </button>
             <span style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>
-              Now: {globalDarkMode ? "Dark mode" : "Light mode"}
+              {globalDarkMode ? "Light mode" : "Dark mode"} available
             </span>
           </div>
           {globalDarkModeStatus && (
@@ -843,7 +838,7 @@ export default function AdminPanel() {
                   }}
                 >
                   {CLASS_OPTIONS.map((c) => (
-                    <option key={c} value={c}>{c === "graduate" ? "Graduate" : c}</option>
+                    <option key={c} value={c}>{c === "graduated" ? "Graduated" : c}</option>
                   ))}
                 </select>
               </div>
@@ -868,7 +863,9 @@ export default function AdminPanel() {
                 </select>
               </div>
               <div>
-                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, color: theme.text }}>Roles</label>
+                <div style={{ marginBottom: 6 }}>
+                  <span style={{ fontWeight: 600, color: theme.text }}>Roles</span>
+                </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {AVAILABLE_ROLES.map((role) => (
                     <label key={role} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
@@ -881,19 +878,44 @@ export default function AdminPanel() {
                     </label>
                   ))}
                 </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setEditRoles([]);
+                  }}
+                  style={{
+                    marginTop: 8,
+                    background: "rgba(123, 104, 87, 0.4)",
+                    color: theme.text,
+                    border: "1px solid " + theme.border,
+                    borderRadius: 4,
+                    padding: "6px 12px",
+                    fontSize: "0.9rem",
+                    cursor: "pointer",
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  No roles (clear all)
+                </button>
+                <p style={{ fontSize: "0.8rem", color: theme.secondaryText, marginTop: 4 }}>Character can have no roles.</p>
               </div>
               <button
                 type="button"
                 onClick={handleSaveUserEdit}
                 style={{
-                  background: "linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)",
+                  background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                   color: "#F5EFE0",
-                  border: "2px solid rgba(255, 255, 255, 0.2)",
-                  borderRadius: 0,
+                  border: "2px solid #D4C4A8",
+                  borderRadius: 4,
                   padding: "10px 20px",
                   fontWeight: 600,
                   cursor: "pointer",
                   alignSelf: "flex-start",
+                  fontFamily: '"Cinzel", serif',
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                 }}
               >
                 Save changes

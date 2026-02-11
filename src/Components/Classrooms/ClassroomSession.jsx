@@ -22,7 +22,7 @@ import { getRPGCalendar, isExamPeriod } from "../../utils/rpgCalendar";
 
 // Helper: get year from user object (default 1)
 function getUserYear(user) {
-  if (user?.graduate) {
+  if (user?.graduate || (user?.class && /^graduated?$/i.test(String(user.class)))) {
     return "graduate";
   }
   // Extract year from class field (e.g., "2nd year" -> 2)
@@ -381,7 +381,7 @@ const ClassroomSession = () => {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         graduate: true,
-        class: "Graduate",
+        class: "Graduated",
         graduateDate: new Date().toISOString(),
         graduateExamResult: result,
       });
@@ -648,7 +648,7 @@ const ClassroomSession = () => {
         }}
       >
         {classInfo.name} (
-        {userYear === "graduate" ? "Graduate" : `Year ${userYear}`})
+        {userYear === "graduate" ? "Graduated" : `Year ${userYear}`})
       </h2>
 
       {/* Success and Error Messages */}

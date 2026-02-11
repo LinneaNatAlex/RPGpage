@@ -62,6 +62,12 @@ export function clear() {
   notify();
 }
 
+/** Clear cache and refetch users list (e.g. after admin edits a user). */
+export function invalidateAndRefetch() {
+  cacheHelpers.clearUsersList();
+  return fetchIfNeeded();
+}
+
 export function fetchIfNeeded() {
   const cached = cacheHelpers.getUsersList();
   if (cached && cached.length >= 0) {

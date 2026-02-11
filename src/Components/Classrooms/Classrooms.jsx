@@ -14,8 +14,8 @@ import { useNavigate } from "react-router-dom";
 
 // Helper: get year from user object (default 1)
 function getUserYear(user) {
-  if (user?.graduate) {
-    return 'graduate';
+  if (user?.graduate || (user?.class && /^graduated?$/i.test(String(user.class)))) {
+    return "graduate";
   }
   // Extract year from class field (e.g., "2nd year" -> 2)
   if (user?.class) {

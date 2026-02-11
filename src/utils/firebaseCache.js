@@ -106,6 +106,7 @@ export const cacheHelpers = {
   // Cache users list (leaderboard etc.) – single shared fetch reduces reads
   getUsersList: () => firebaseCache.get("USERS_LIST"),
   setUsersList: (data) => firebaseCache.set("USERS_LIST", data),
+  clearUsersList: () => firebaseCache.clear("USERS_LIST"),
 
   // Cache user stats (online/total)
   getUserStats: () => firebaseCache.get("USER_STATS"),
