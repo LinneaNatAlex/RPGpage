@@ -61,6 +61,8 @@ function App() {
 
   // Global potion effect states
   const [darkModeUntil, setDarkModeUntil] = useState(null);
+  // Global site dark mode (admin-toggle, gjelder alle brukere)
+  const [globalDarkMode, setGlobalDarkMode] = useState(false);
   const [retroUntil, setRetroUntil] = useState(null);
   const [mirrorUntil, setMirrorUntil] = useState(null);
   const [speedUntil, setSpeedUntil] = useState(null);
@@ -110,6 +112,22 @@ function App() {
     // TODO: Implement more efficient private chat notifications
     // Consider using Firebase Cloud Messaging instead of realtime listeners
   }, [user, lastPrivateMessageId, lastPingTime]);
+
+  // Load global site config (dark mode on/off for hele siden) – leses for alle så tema lastes med en gang
+  useEffect(() => {
+    const configRef = doc(db, "config", "site");
+    const unsub = onSnapshot(
+      configRef,
+      (snap) => {
+        setGlobalDarkMode(snap.exists() && snap.data().globalDarkMode === true);
+      },
+      (err) => {
+        console.warn("Config/site (global dark mode) kunne ikke lastes:", err?.message);
+        setGlobalDarkMode(false);
+      }
+    );
+    return () => unsub();
+  }, []);
 
   // Load user's potion effects
   useEffect(() => {
@@ -226,11 +244,12 @@ function App() {
         /* VIP Themes */
         ${vipThemeCSS}
         
-        /* Dark Mode Potion */
+        /* Dark Mode: global (admin) eller potion per bruker */
         ${
-          darkModeUntil &&
-          typeof darkModeUntil === "number" &&
-          darkModeUntil > Date.now()
+          globalDarkMode ||
+          (darkModeUntil &&
+            typeof darkModeUntil === "number" &&
+            darkModeUntil > Date.now())
             ? `
           [data-theme="dark"] {
             background: #1a1a1a !important;
@@ -382,9 +401,10 @@ function App() {
         <div
           className={styles.rootContainer}
           data-theme={
-            darkModeUntil &&
-            typeof darkModeUntil === "number" &&
-            darkModeUntil > Date.now()
+            globalDarkMode ||
+            (darkModeUntil &&
+              typeof darkModeUntil === "number" &&
+              darkModeUntil > Date.now())
               ? "dark"
               : undefined
           }

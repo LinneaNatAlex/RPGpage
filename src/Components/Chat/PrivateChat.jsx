@@ -380,7 +380,10 @@ const PrivateChat = () => {
   // Når brukeren kommer tilbake til fanen: scroll til siste melding
   useEffect(() => {
     const onVisibility = () => {
-      if (document.visibilityState === "visible" && selectedMessages.length > 0) {
+      if (
+        document.visibilityState === "visible" &&
+        selectedMessages.length > 0
+      ) {
         setTimeout(scrollToLatest, 100);
       }
     };
@@ -439,6 +442,7 @@ const PrivateChat = () => {
   // Send or edit message in active chat (Firestore)
   const sendMessage = async (e) => {
     e.preventDefault();
+    preparePrivateChatSound();
     if (!message.trim() || !selectedUser || !currentUser) return;
     if (editingMessage) {
       // Edit existing message
@@ -609,18 +613,18 @@ const PrivateChat = () => {
             border: "1px solid #7B6857",
             borderBottom: isCollapsed ? "1px solid #7B6857" : "none",
           }}
-onClick={() => {
+          onClick={() => {
             preparePrivateChatSound();
             setIsCollapsed((prev) => !prev);
           }}
         >
           <span
-          style={{
-            flex: 1,
-            color: "#F5EFE0",
-            fontWeight: 600,
-            position: "relative",
-          }}
+            style={{
+              flex: 1,
+              color: "#F5EFE0",
+              fontWeight: 600,
+              position: "relative",
+            }}
           >
             Private Chat
             {hasUnread && (
@@ -1167,6 +1171,7 @@ onClick={() => {
                     name="privateChatMessage"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    onFocus={preparePrivateChatSound}
                     type="text"
                     placeholder={
                       editingMessage
@@ -1190,7 +1195,10 @@ onClick={() => {
                       cursor: "pointer",
                       color: "#F5EFE0",
                     }}
-                    onClick={() => setShowEmoji((v) => !v)}
+                    onClick={() => {
+                      preparePrivateChatSound();
+                      setShowEmoji((v) => !v);
+                    }}
                     aria-label="Add emoji"
                   >
                     😊

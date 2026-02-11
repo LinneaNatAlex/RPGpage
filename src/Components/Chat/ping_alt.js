@@ -112,9 +112,19 @@ export const playPrivateChatPling = () => {
   } catch (_) {}
 };
 
-/** Unlock sound for private chat (same as main chat – one shared pling). */
+/** Unlock sound for private chat – kjør stille avspilling ved brukerhandling så nettleseren tillater lyd. Kalles ved fokus/klikk i privat chat. */
 export const preparePrivateChatSound = () => {
-  preparePingSound();
+  try {
+    const audio = getPingAudio();
+    if (!audio) return;
+    const v = audio.volume;
+    audio.volume = 0;
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = v;
+    }).catch(() => {});
+  } catch (_) {}
 };
 
 // Request notification permission

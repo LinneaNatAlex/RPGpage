@@ -350,7 +350,7 @@ const Chat = () => {
         const q = query(
           collection(db, "messages"),
           orderBy("timestamp", "asc"),
-          limit(100)
+          limit(100),
         );
         const snap = await getDocs(q);
         if (snap.size <= maxCount) break;

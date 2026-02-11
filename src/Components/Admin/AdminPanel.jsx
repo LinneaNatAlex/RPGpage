@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 import { db } from "../../firebaseConfig";
 import {
   doc,
   getDoc,
+  setDoc,
   updateDoc,
   increment,
   serverTimestamp,
   collection,
   getDocs,
   writeBatch,
+  onSnapshot,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import firebase from "firebase/compat/app";
@@ -56,11 +58,55 @@ export default function AdminPanel() {
   const [potionClearStatus, setPotionClearStatus] = useState("");
   const [chatClearStatus, setChatClearStatus] = useState("");
 
+  // Rediger bruker: navn, klassetrinn, rase, roller
+  const [editDisplayName, setEditDisplayName] = useState("");
+  const [editClass, setEditClass] = useState("1st year");
+  const [editRace, setEditRace] = useState("");
+  const [editRoles, setEditRoles] = useState([]);
+  const [editUserStatus, setEditUserStatus] = useState("");
+  const AVAILABLE_ROLES = ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
+  const CLASS_OPTIONS = ["1st year", "2nd year", "3rd year", "4th year", "5th year", "6th year", "7th year", "graduate"];
+  const RACE_OPTIONS = ["Witch", "Wizard", "Vampire", "Werewolf", "Elf"];
+
+  // Global site dark mode (gjelder alle brukere – samme tema som dark mode-potion)
+  const [globalDarkMode, setGlobalDarkMode] = useState(false);
+  const [globalDarkModeStatus, setGlobalDarkModeStatus] = useState("");
+  useEffect(() => {
+    if (!roles.includes("admin")) return;
+    const configRef = doc(db, "config", "site");
+    const unsub = onSnapshot(configRef, (snap) => {
+      setGlobalDarkMode(snap.exists() && snap.data().globalDarkMode === true);
+    }, () => setGlobalDarkMode(false));
+    return () => unsub();
+  }, [roles]);
+
+  async function handleToggleGlobalDarkMode(on) {
+    if (!roles.includes("admin")) return;
+    setGlobalDarkModeStatus("Saving...");
+    try {
+      await setDoc(doc(db, "config", "site"), { globalDarkMode: on }, { merge: true });
+      setGlobalDarkModeStatus(on ? "Dark mode is on for the entire site." : "Dark mode is off for the entire site.");
+      setTimeout(() => setGlobalDarkModeStatus(""), 3000);
+    } catch (err) {
+      setGlobalDarkModeStatus(`Error: ${err.message}`);
+    }
+  }
+
   const filtered = users.filter(
     (u) =>
       (u.displayName || "").toLowerCase().includes(search.toLowerCase()) ||
       (u.email || "").toLowerCase().includes(search.toLowerCase())
   );
+
+  // Synk rediger-feltene når valgt bruker endres
+  useEffect(() => {
+    if (selected) {
+      setEditDisplayName(selected.displayName || "");
+      setEditClass(selected.graduate ? "graduate" : (selected.class || "1st year"));
+      setEditRace(selected.race || "");
+      setEditRoles(Array.isArray(selected.roles) ? [...selected.roles] : []);
+    }
+  }, [selected]);
 
   // Banned users/IPs
   const bannedUsers = users.filter((u) => u.banned || u.bannedIp);
@@ -327,6 +373,37 @@ export default function AdminPanel() {
     }
   };
 
+  async function handleSaveUserEdit() {
+    if (!selected || !roles.includes("admin")) return;
+    setEditUserStatus("Saving...");
+    try {
+      const ref = doc(db, "users", selected.uid);
+      const isGraduate = editClass === "graduate";
+      const yearNum = isGraduate ? 7 : parseInt(editClass, 10) || 1;
+      const newName = (editDisplayName || "").trim() || selected.displayName;
+      const update = {
+        displayName: newName,
+        class: isGraduate ? "7th year" : editClass,
+        graduate: isGraduate,
+        year: yearNum,
+        race: editRace || selected.race,
+        roles: editRoles,
+      };
+      await updateDoc(ref, update);
+      setSelected({ ...selected, ...update });
+      setEditUserStatus("Saved. Changes are in Firestore.");
+      setTimeout(() => setEditUserStatus(""), 4000);
+    } catch (err) {
+      setEditUserStatus(`Error: ${err.message}`);
+    }
+  }
+
+  function toggleEditRole(role) {
+    setEditRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    );
+  }
+
   async function clearAllGeneralChatMessages() {
     if (!roles.includes("admin")) {
       setChatClearStatus("Only admin can clear chat.");
@@ -401,6 +478,65 @@ export default function AdminPanel() {
       >
         Admin Panel
       </h2>
+
+      {/* Global dark mode for hele siden – kun admin */}
+      {roles.includes("admin") && (
+        <div
+          style={{
+            marginBottom: 24,
+            padding: 16,
+            background: "rgba(123, 104, 87, 0.15)",
+            border: `2px solid ${theme.border}`,
+            borderRadius: 0,
+          }}
+        >
+          <h3 style={{ color: theme.secondaryText, fontSize: "1.1rem", marginBottom: 8, fontFamily: '"Cinzel", serif' }}>
+            Site theme (dark mode)
+          </h3>
+          <p style={{ fontSize: "0.9rem", color: theme.text, marginBottom: 12 }}>
+            Turn dark mode off or on for the <strong>entire site</strong> – all users see the same theme (same look as the dark mode potion).
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={() => handleToggleGlobalDarkMode(true)}
+              style={{
+                background: globalDarkMode ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)" : "rgba(123, 104, 87, 0.4)",
+                color: "#F5EFE0",
+                border: "2px solid #7B6857",
+                borderRadius: 0,
+                padding: "10px 20px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Dark mode On
+            </button>
+            <button
+              type="button"
+              onClick={() => handleToggleGlobalDarkMode(false)}
+              style={{
+                background: !globalDarkMode ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)" : "rgba(123, 104, 87, 0.4)",
+                color: "#F5EFE0",
+                border: "2px solid #7B6857",
+                borderRadius: 0,
+                padding: "10px 20px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Dark mode Off
+            </button>
+            <span style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>
+              Now: {globalDarkMode ? "Dark mode" : "Light mode"}
+            </span>
+          </div>
+          {globalDarkModeStatus && (
+            <div style={{ marginTop: 10, fontSize: "0.9rem", color: theme.secondaryText }}>{globalDarkModeStatus}</div>
+          )}
+        </div>
+      )}
+
       {(roles.includes("admin") ||
         roles.includes("teacher") ||
         roles.includes("archivist")) && (
@@ -661,6 +797,113 @@ export default function AdminPanel() {
               "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
           }}
         >
+          {/* Rediger bruker: navn, klassetrinn, rase, roller */}
+          <div style={{ marginBottom: 24 }}>
+            <h3
+              style={{
+                color: theme.secondaryText,
+                fontSize: "1.15rem",
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                marginBottom: 12,
+              }}
+            >
+              Edit user (Firestore)
+            </h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <label style={{ display: "block", marginBottom: 4, fontWeight: 600, color: theme.text }}>Name</label>
+                <input
+                  type="text"
+                  value={editDisplayName}
+                  onChange={(e) => setEditDisplayName(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: `2px solid ${theme.border}`,
+                    borderRadius: 0,
+                    background: theme.background,
+                    color: theme.text,
+                  }}
+                  placeholder="Display name"
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: 4, fontWeight: 600, color: theme.text }}>Class year</label>
+                <select
+                  value={editClass}
+                  onChange={(e) => setEditClass(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: `2px solid ${theme.border}`,
+                    borderRadius: 0,
+                    background: theme.background,
+                    color: theme.text,
+                  }}
+                >
+                  {CLASS_OPTIONS.map((c) => (
+                    <option key={c} value={c}>{c === "graduate" ? "Graduate" : c}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: 4, fontWeight: 600, color: theme.text }}>Race</label>
+                <select
+                  value={editRace}
+                  onChange={(e) => setEditRace(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: `2px solid ${theme.border}`,
+                    borderRadius: 0,
+                    background: theme.background,
+                    color: theme.text,
+                  }}
+                >
+                  <option value="">— Select race —</option>
+                  {RACE_OPTIONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: 6, fontWeight: 600, color: theme.text }}>Roles</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {AVAILABLE_ROLES.map((role) => (
+                    <label key={role} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={editRoles.includes(role)}
+                        onChange={() => toggleEditRole(role)}
+                      />
+                      <span style={{ color: theme.text }}>{role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleSaveUserEdit}
+                style={{
+                  background: "linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)",
+                  color: "#F5EFE0",
+                  border: "2px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: 0,
+                  padding: "10px 20px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  alignSelf: "flex-start",
+                }}
+              >
+                Save changes
+              </button>
+              {editUserStatus && (
+                <div style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>{editUserStatus}</div>
+              )}
+            </div>
+          </div>
+
           {/* Unfaint user (Infirmary) – admin kan hente brukere ut av infirmary */}
           <div style={{ marginBottom: 20 }}>
             <h3
