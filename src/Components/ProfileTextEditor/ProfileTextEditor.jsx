@@ -124,7 +124,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');
-                    const bg = isDark ? "#1a1a1a" : "#f5efe0";
+                    const bg = isDark ? "#1a1a1a" : "#f0e8db";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                     const body = mode === "code" ? getRawBody(codeContent) : richContent;
                     const quillColors = `
@@ -180,7 +180,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                 const isDark =
                   typeof document !== "undefined" &&
                   !!document.querySelector('[data-theme="dark"]');
-                const bg = isDark ? "#1a1a1a" : "#f5efe0";
+                const bg = isDark ? "#1a1a1a" : "#f0e8db";
                 const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                 return `<!DOCTYPE html>
 <html style="background:${bg}">
