@@ -232,6 +232,9 @@ function App() {
           typeof darkModeUntil === "number" &&
           darkModeUntil > Date.now()
             ? `
+          [data-theme="dark"] {
+            background: #1a1a1a !important;
+          }
           html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
             background: #1a1a1a !important;
             color: #e0e0e0 !important;

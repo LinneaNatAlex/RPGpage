@@ -928,39 +928,32 @@ const UserProfile = () => {
         <div className={styles.profileTextContainer}>
           <h2>Profile Text</h2>
           <iframe
-            srcDoc={`
+            srcDoc={(() => {
+              const isDark =
+                typeof document !== "undefined" &&
+                !!document.querySelector('[data-theme="dark"]');
+              const bg = isDark ? "#1a1a1a" : "transparent";
+              const fg = isDark ? "#e0e0e0" : "#cd853f";
+              return `
               <!DOCTYPE html>
-              <html>
+              <html style="background:${bg}">
               <head>
               <style>
-                body { 
-                  margin: 0; 
-                  padding: 1rem; 
-                  font-family: "Cinzel", serif;
-                  color: #cd853f; /* Strong golden brown for unformatted text */
-                  line-height: 1.6;
-                }
-                /* Hide scrollbars but allow scrolling */
-                ::-webkit-scrollbar {
-                  display: none;
-                }
-                html {
-                  scrollbar-width: none;
-                  -ms-overflow-style: none;
-                }
+                html, body { margin: 0; padding: 1rem; font-family: "Cinzel", serif; line-height: 1.6; background: ${bg} !important; color: ${fg}; }
+                ::-webkit-scrollbar { display: none; }
+                html { scrollbar-width: none; -ms-overflow-style: none; }
               </style>
               </head>
-              <body>
-                ${userData.profileText}
-              </body>
+              <body>${userData.profileText}</body>
               </html>
-            `}
+            `;
+            })()}
             style={{
               width: "100%",
               height: "1000vh",
               border: "none",
               borderRadius: 0,
-
+              background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "transparent",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}
