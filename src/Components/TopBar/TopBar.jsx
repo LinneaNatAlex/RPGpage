@@ -126,66 +126,67 @@ const TopBar = () => {
     return () => unsubscribe();
   }, [user]);
 
-  // Listen for new posts in followed topics
+  // Poll for new posts in followed topics (avoids N snapshot listeners per user)
+  const followedTopicsPollRef = useRef(Date.now());
   useEffect(() => {
     if (!user || followedTopics.length === 0) return;
 
-    const unsubscribeFunctions = [];
+    const POLL_MS = 2 * 60 * 1000; // 2 minutes
 
-    followedTopics.forEach((topic) => {
-      // Listen to posts in this topic
-      const postsRef = collection(
-        db,
-        `forums/${topic.forum.toLowerCase().replace(" ", "")}/topics/${
-          topic.id
-        }/posts`,
-      );
-      const q = query(postsRef, orderBy("createdAt", "desc"), limit(1));
+    const poll = async () => {
+      const now = Date.now();
+      const lastPoll = followedTopicsPollRef.current;
+      followedTopicsPollRef.current = now;
 
-      const unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-              const post = change.doc.data();
-              // Check if this is a new post (not the first one)
-              if (post.createdAt && post.createdAt.toDate) {
-                const postTime = post.createdAt.toDate();
-                const now = new Date();
-                const timeDiff = now - postTime;
-
-                // Only notify if post is very recent (within last 30 seconds)
-                if (timeDiff < 30000 && post.uid !== user.uid) {
-                  addDoc(collection(db, "notifications"), {
-                    to: user.uid,
-                    type: "topic_reply",
-                    topicId: topic.id,
-                    topicTitle: topic.title,
-                    forum: topic.forum,
-                    author: post.author,
-                    content: post.content,
-                    createdAt: serverTimestamp(),
-                    created: Date.now(),
-                    read: false,
-                  });
-                }
-              }
-            }
-          });
-        },
-        (err) => {
-          if (err?.code === "permission-denied") return;
+      for (const topic of followedTopics) {
+        try {
+          const postsRef = collection(
+            db,
+            `forums/${topic.forum.toLowerCase().replace(" ", "")}/topics/${
+              topic.id
+            }/posts`,
+          );
+          const q = query(
+            postsRef,
+            orderBy("createdAt", "desc"),
+            limit(1),
+          );
+          const snap = await getDocs(q);
+          const doc = snap.docs[0];
+          if (!doc) continue;
+          const post = doc.data();
+          const postTime =
+            post.createdAt?.toMillis?.() ??
+            (post.createdAt && typeof post.createdAt.toDate === "function"
+              ? post.createdAt.toDate().getTime()
+              : 0);
+          if (
+            postTime > lastPoll &&
+            post.uid !== user.uid
+          ) {
+            await addDoc(collection(db, "notifications"), {
+              to: user.uid,
+              type: "topic_reply",
+              topicId: topic.id,
+              topicTitle: topic.title,
+              forum: topic.forum,
+              author: post.author,
+              content: post.content,
+              createdAt: serverTimestamp(),
+              created: Date.now(),
+              read: false,
+            });
+          }
+        } catch (e) {
           if (process.env.NODE_ENV === "development")
-            console.warn("TopBar followed topics posts snapshot error:", err);
-        },
-      );
-
-      unsubscribeFunctions.push(unsubscribe);
-    });
-
-    return () => {
-      unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
+            console.warn("TopBar followed topics poll error:", e);
+        }
+      }
     };
+
+    const t = setInterval(poll, POLL_MS);
+    poll(); // run once soon after mount (uses current lastPoll so no stale notifications)
+    return () => clearInterval(t);
   }, [user, followedTopics]);
 
   // New potion effect states
