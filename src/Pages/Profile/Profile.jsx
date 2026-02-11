@@ -50,7 +50,7 @@ const Profile = () => {
     // Pet loses HP gradually over 3 days (72 hours)
     const hpPercentage = Math.max(
       0,
-      100 - (timeSinceFed / maxStarvationTime) * 100
+      100 - (timeSinceFed / maxStarvationTime) * 100,
     );
     return Math.round(hpPercentage);
   };
@@ -114,7 +114,9 @@ const Profile = () => {
   const getPlayCountToday = () => {
     const today = getTodayString();
     const lastReset = userData?.currentPet?.lastResetDate || "";
-    return lastReset === today ? (userData?.currentPet?.playCountToday ?? 0) : 0;
+    return lastReset === today
+      ? (userData?.currentPet?.playCountToday ?? 0)
+      : 0;
   };
 
   // Mood decay over time (reduce by 1 every 5 minutes when not interacted with)
@@ -172,11 +174,15 @@ const Profile = () => {
         "currentPet.playCountToday":
           type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
       };
-      updateData[`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`] = now;
+      updateData[
+        `currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`
+      ] = now;
       const currentPetCount = userData.currentPet.petCount || 0;
       const currentPlayCount = userData.currentPet.playCount || 0;
-      if (type === "pet") updateData["currentPet.petCount"] = currentPetCount + 1;
-      if (type === "play") updateData["currentPet.playCount"] = currentPlayCount + 1;
+      if (type === "pet")
+        updateData["currentPet.petCount"] = currentPetCount + 1;
+      if (type === "play")
+        updateData["currentPet.playCount"] = currentPlayCount + 1;
 
       await updateDoc(userRef, updateData);
 
@@ -191,8 +197,14 @@ const Profile = () => {
             type === "pet" ? currentPetCountToday + 1 : currentPetCountToday,
           playCountToday:
             type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
-          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
-          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
+          petCount:
+            type === "pet"
+              ? currentPetCount + 1
+              : prev.currentPet?.petCount || 0,
+          playCount:
+            type === "play"
+              ? currentPlayCount + 1
+              : prev.currentPet?.playCount || 0,
         },
       }));
 
@@ -219,7 +231,10 @@ const Profile = () => {
           const data = userDoc.data();
           const todayStr = new Date().toISOString().slice(0, 10);
           let dataToSet = data;
-          if (data.currentPet && (data.currentPet.lastResetDate || "") !== todayStr) {
+          if (
+            data.currentPet &&
+            (data.currentPet.lastResetDate || "") !== todayStr
+          ) {
             const reset = {
               "currentPet.petCountToday": 0,
               "currentPet.playCountToday": 0,
@@ -237,14 +252,18 @@ const Profile = () => {
             };
           }
           setUserData(dataToSet);
-          if (dataToSet.birthdayMonth) setBirthdayMonth(dataToSet.birthdayMonth);
+          if (dataToSet.birthdayMonth)
+            setBirthdayMonth(dataToSet.birthdayMonth);
           if (dataToSet.birthdayDay) setBirthdayDay(dataToSet.birthdayDay);
-          if (dataToSet.birthdayMonth && dataToSet.birthdayDay) setBirthdaySaved(true);
+          if (dataToSet.birthdayMonth && dataToSet.birthdayDay)
+            setBirthdaySaved(true);
           if (dataToSet.currentPet?.mood !== undefined) {
             setPetMood(dataToSet.currentPet.mood);
           }
-          if (dataToSet.currentPet?.lastPet) setLastPet(dataToSet.currentPet.lastPet);
-          if (dataToSet.currentPet?.lastPlay) setLastPlay(dataToSet.currentPet.lastPlay);
+          if (dataToSet.currentPet?.lastPet)
+            setLastPet(dataToSet.currentPet.lastPet);
+          if (dataToSet.currentPet?.lastPlay)
+            setLastPlay(dataToSet.currentPet.lastPlay);
         } else {
         }
       } catch (error) {
@@ -270,7 +289,7 @@ const Profile = () => {
     } catch (err) {
       console.error("Bildeopplasting feilet:", err);
       alert(
-        "Kunne ikke laste opp bilde. Prøv igjen.\n" + (err?.message || err)
+        "Kunne ikke laste opp bilde. Prøv igjen.\n" + (err?.message || err),
       );
     } finally {
       startTransition(() => setUploading(false));
@@ -346,7 +365,7 @@ const Profile = () => {
                   roleClass += ` ${styles.teacherAvatar}`;
                 else if (
                   userData.roles?.some(
-                    (r) => r.toLowerCase() === "shadowpatrol"
+                    (r) => r.toLowerCase() === "shadowpatrol",
                   )
                 )
                   roleClass += ` ${styles.shadowPatrolAvatar}`;
@@ -402,7 +421,9 @@ const Profile = () => {
                     </label>
                     {/* Profile likes overview – how many have liked your profile */}
                     <div className={styles.profileLikesOverview}>
-                      <span className={styles.profileLikesOverviewIcon}>❤️</span>
+                      <span className={styles.profileLikesOverviewIcon}>
+                        ❤️
+                      </span>
                       <span className={styles.profileLikesOverviewText}>
                         {Array.isArray(userData.profileLikedBy)
                           ? userData.profileLikedBy.length
@@ -558,7 +579,7 @@ const Profile = () => {
                               value={birthdayMonth}
                               onChange={(e) =>
                                 startTransition(() =>
-                                  setBirthdayMonth(Number(e.target.value))
+                                  setBirthdayMonth(Number(e.target.value)),
                                 )
                               }
                               style={{ marginLeft: 4 }}
@@ -578,7 +599,7 @@ const Profile = () => {
                               value={birthdayDay}
                               onChange={(e) =>
                                 startTransition(() =>
-                                  setBirthdayDay(Number(e.target.value))
+                                  setBirthdayDay(Number(e.target.value)),
                                 )
                               }
                               style={{ marginLeft: 4 }}
@@ -769,7 +790,7 @@ const Profile = () => {
                         } catch (error) {
                           console.error(
                             "Error fetching updated user data:",
-                            error
+                            error,
                           );
                         }
                       }}
@@ -845,7 +866,7 @@ const Profile = () => {
                       setNewPetName(
                         userData.currentPet.customName ||
                           userData.currentPet.name ||
-                          ""
+                          "",
                       );
                     }}
                     className={styles.editPetNameBtn}
@@ -888,11 +909,12 @@ const Profile = () => {
                 )}
               </div>
             </div>
-            {userData?.currentPet && calculatePetHP(userData.currentPet) <= 0 && (
-              <div className={styles.cooldownText}>
-                Feed your pet to restore HP before petting or playing.
-              </div>
-            )}
+            {userData?.currentPet &&
+              calculatePetHP(userData.currentPet) <= 0 && (
+                <div className={styles.cooldownText}>
+                  Feed your pet to restore HP before petting or playing.
+                </div>
+              )}
 
             <div className={styles.petInteractionButtons}>
               <button
@@ -914,7 +936,8 @@ const Profile = () => {
             </div>
 
             <div className={styles.cooldownText}>
-              Pet {getPetCountToday()}/{DAILY_PET_LIMIT} today · Play {getPlayCountToday()}/{DAILY_PLAY_LIMIT} today
+              Pet {getPetCountToday()}/{DAILY_PET_LIMIT} today · Play{" "}
+              {getPlayCountToday()}/{DAILY_PLAY_LIMIT} today
             </div>
 
             <div className={styles.petMoodDisplay}>
@@ -924,12 +947,12 @@ const Profile = () => {
                 {petMood >= 80
                   ? "😊"
                   : petMood >= 60
-                  ? "🙂"
-                  : petMood >= 40
-                  ? "😐"
-                  : petMood >= 20
-                  ? "😔"
-                  : "😢"}
+                    ? "🙂"
+                    : petMood >= 40
+                      ? "😐"
+                      : petMood >= 20
+                        ? "😔"
+                        : "😢"}
               </span>
             </div>
 

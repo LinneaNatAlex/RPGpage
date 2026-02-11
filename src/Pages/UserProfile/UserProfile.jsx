@@ -40,11 +40,11 @@ const UserProfile = () => {
   // Birthday state
   const [editingBirthday, setEditingBirthday] = useState(false);
   const [birthdayMonth, setBirthdayMonth] = useState(
-    userData?.birthdayMonth || 1
+    userData?.birthdayMonth || 1,
   );
   const [birthdayDay, setBirthdayDay] = useState(userData?.birthdayDay || 1);
   const [birthdaySaved, setBirthdaySaved] = useState(
-    !!userData?.birthdayMonth && !!userData?.birthdayDay
+    !!userData?.birthdayMonth && !!userData?.birthdayDay,
   );
 
   // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
@@ -62,7 +62,7 @@ const UserProfile = () => {
     // Pet loses HP gradually over 3 days (72 hours)
     const hpPercentage = Math.max(
       0,
-      100 - (timeSinceFed / maxStarvationTime) * 100
+      100 - (timeSinceFed / maxStarvationTime) * 100,
     );
     return Math.round(hpPercentage);
   };
@@ -80,13 +80,18 @@ const UserProfile = () => {
           const data = docSnap.data();
           const todayStr = new Date().toISOString().slice(0, 10);
           let dataToSet = data;
-          if (data.currentPet && (data.currentPet.lastResetDate || "") !== todayStr) {
+          if (
+            data.currentPet &&
+            (data.currentPet.lastResetDate || "") !== todayStr
+          ) {
             const reset = {
               "currentPet.petCountToday": 0,
               "currentPet.playCountToday": 0,
               "currentPet.lastResetDate": todayStr,
             };
-            await updateDoc(doc(db, "users", docSnap.id), reset).catch(() => {});
+            await updateDoc(doc(db, "users", docSnap.id), reset).catch(
+              () => {},
+            );
             dataToSet = {
               ...data,
               currentPet: {
@@ -100,9 +105,12 @@ const UserProfile = () => {
           startTransition(() => {
             setUserDocId(docSnap.id);
             setUserData(dataToSet);
-            if (dataToSet.currentPet?.mood !== undefined) setPetMood(dataToSet.currentPet.mood);
-            if (dataToSet.currentPet?.lastPet) setLastPet(dataToSet.currentPet.lastPet);
-            if (dataToSet.currentPet?.lastPlay) setLastPlay(dataToSet.currentPet.lastPlay);
+            if (dataToSet.currentPet?.mood !== undefined)
+              setPetMood(dataToSet.currentPet.mood);
+            if (dataToSet.currentPet?.lastPet)
+              setLastPet(dataToSet.currentPet.lastPet);
+            if (dataToSet.currentPet?.lastPlay)
+              setLastPlay(dataToSet.currentPet.lastPlay);
           });
         } else {
           startTransition(() => {
@@ -131,7 +139,9 @@ const UserProfile = () => {
         await updateDoc(userRef, { profileLikedBy: arrayRemove(user.uid) });
         setUserData((prev) => ({
           ...prev,
-          profileLikedBy: (prev.profileLikedBy || []).filter((id) => id !== user.uid),
+          profileLikedBy: (prev.profileLikedBy || []).filter(
+            (id) => id !== user.uid,
+          ),
         }));
       } else {
         await updateDoc(userRef, { profileLikedBy: arrayUnion(user.uid) });
@@ -139,8 +149,7 @@ const UserProfile = () => {
           ...prev,
           profileLikedBy: [...(prev.profileLikedBy || []), user.uid],
         }));
-        const likerName =
-          user.displayName?.trim() || user.email || "Someone";
+        const likerName = user.displayName?.trim() || user.email || "Someone";
         await addDoc(collection(db, "notifications"), {
           to: userData.uid,
           type: "profile_like",
@@ -186,7 +195,9 @@ const UserProfile = () => {
   const getPlayCountToday = () => {
     const today = getTodayString();
     const lastReset = userData?.currentPet?.lastResetDate || "";
-    return lastReset === today ? (userData?.currentPet?.playCountToday ?? 0) : 0;
+    return lastReset === today
+      ? (userData?.currentPet?.playCountToday ?? 0)
+      : 0;
   };
 
   useEffect(() => {
@@ -204,7 +215,9 @@ const UserProfile = () => {
           if (newMood !== petMood) {
             setPetMood(newMood);
             if (userDocId) {
-              updateDoc(doc(db, "users", userDocId), { "currentPet.mood": newMood }).catch(() => {});
+              updateDoc(doc(db, "users", userDocId), {
+                "currentPet.mood": newMood,
+              }).catch(() => {});
             }
           }
         }
@@ -243,11 +256,15 @@ const UserProfile = () => {
         "currentPet.playCountToday":
           type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
       };
-      updateData[`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`] = now;
+      updateData[
+        `currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`
+      ] = now;
       const currentPetCount = userData.currentPet.petCount || 0;
       const currentPlayCount = userData.currentPet.playCount || 0;
-      if (type === "pet") updateData["currentPet.petCount"] = currentPetCount + 1;
-      if (type === "play") updateData["currentPet.playCount"] = currentPlayCount + 1;
+      if (type === "pet")
+        updateData["currentPet.petCount"] = currentPetCount + 1;
+      if (type === "play")
+        updateData["currentPet.playCount"] = currentPlayCount + 1;
 
       await updateDoc(userRef, updateData);
 
@@ -258,10 +275,18 @@ const UserProfile = () => {
           ...prev.currentPet,
           mood: newMood,
           lastResetDate: today,
-          petCountToday: type === "pet" ? currentPetCountToday + 1 : currentPetCountToday,
-          playCountToday: type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
-          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
-          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
+          petCountToday:
+            type === "pet" ? currentPetCountToday + 1 : currentPetCountToday,
+          playCountToday:
+            type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
+          petCount:
+            type === "pet"
+              ? currentPetCount + 1
+              : prev.currentPet?.petCount || 0,
+          playCount:
+            type === "play"
+              ? currentPlayCount + 1
+              : prev.currentPet?.playCount || 0,
         },
       }));
 
@@ -529,7 +554,7 @@ const UserProfile = () => {
                   roleNameClass += ` ${styles.teacherName}`;
                 else if (
                   userData.roles?.some(
-                    (r) => r.toLowerCase() === "shadowpatrol"
+                    (r) => r.toLowerCase() === "shadowpatrol",
                   )
                 )
                   roleNameClass += ` ${styles.shadowPatrolName}`;
@@ -638,7 +663,7 @@ const UserProfile = () => {
                       value={birthdayMonth}
                       onChange={(e) =>
                         startTransition(() =>
-                          setBirthdayMonth(Number(e.target.value))
+                          setBirthdayMonth(Number(e.target.value)),
                         )
                       }
                       style={{ marginLeft: 4 }}
@@ -656,7 +681,7 @@ const UserProfile = () => {
                       value={birthdayDay}
                       onChange={(e) =>
                         startTransition(() =>
-                          setBirthdayDay(Number(e.target.value))
+                          setBirthdayDay(Number(e.target.value)),
                         )
                       }
                       style={{ marginLeft: 4 }}
@@ -715,7 +740,7 @@ const UserProfile = () => {
                     value={birthdayMonth}
                     onChange={(e) =>
                       startTransition(() =>
-                        setBirthdayMonth(Number(e.target.value))
+                        setBirthdayMonth(Number(e.target.value)),
                       )
                     }
                     style={{ marginLeft: 4 }}
@@ -733,7 +758,7 @@ const UserProfile = () => {
                     value={birthdayDay}
                     onChange={(e) =>
                       startTransition(() =>
-                        setBirthdayDay(Number(e.target.value))
+                        setBirthdayDay(Number(e.target.value)),
                       )
                     }
                     style={{ marginLeft: 4 }}
@@ -914,7 +939,6 @@ const UserProfile = () => {
                   font-family: "Cinzel", serif;
                   color: #cd853f; /* Strong golden brown for unformatted text */
                   line-height: 1.6;
-                  background: transparent;
                 }
                 /* Hide scrollbars but allow scrolling */
                 ::-webkit-scrollbar {
@@ -936,7 +960,7 @@ const UserProfile = () => {
               height: "1000vh",
               border: "none",
               borderRadius: 0,
-              background: "transparent",
+
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}
@@ -985,11 +1009,12 @@ const UserProfile = () => {
                 </span>
               </div>
             </div>
-            {userData?.currentPet && calculatePetHP(userData.currentPet) <= 0 && (
-              <div className={styles.cooldownText}>
-                Feed your pet to restore HP before petting or playing.
-              </div>
-            )}
+            {userData?.currentPet &&
+              calculatePetHP(userData.currentPet) <= 0 && (
+                <div className={styles.cooldownText}>
+                  Feed your pet to restore HP before petting or playing.
+                </div>
+              )}
 
             <div className={styles.petInteractionButtons}>
               <button
@@ -1011,7 +1036,8 @@ const UserProfile = () => {
             </div>
 
             <div className={styles.cooldownText}>
-              Pet {getPetCountToday()}/{DAILY_PET_LIMIT} today · Play {getPlayCountToday()}/{DAILY_PLAY_LIMIT} today
+              Pet {getPetCountToday()}/{DAILY_PET_LIMIT} today · Play{" "}
+              {getPlayCountToday()}/{DAILY_PLAY_LIMIT} today
             </div>
 
             <div className={styles.petMoodDisplay}>
@@ -1021,12 +1047,12 @@ const UserProfile = () => {
                 {petMood >= 80
                   ? "😊"
                   : petMood >= 60
-                  ? "🙂"
-                  : petMood >= 40
-                  ? "😐"
-                  : petMood >= 20
-                  ? "😔"
-                  : "😢"}
+                    ? "🙂"
+                    : petMood >= 40
+                      ? "😐"
+                      : petMood >= 20
+                        ? "😔"
+                        : "😢"}
               </span>
             </div>
 
