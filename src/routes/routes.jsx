@@ -10,6 +10,7 @@ import App from "../App.jsx";
 import ErrorBoundary from "../Components/ErrorBoundary/ErrorBoundary.jsx";
 import ForumRules from "../Pages/ForumRules.jsx";
 import GeneralRules from "../Pages/GeneralRules.jsx";
+import SiteRolesRules from "../Pages/SiteRolesRules.jsx";
 import AIUsageRules from "../Pages/AIUsageRules.jsx";
 import ContentMediaRules from "../Pages/ContentMediaRules.jsx";
 import PrivacySafetyRules from "../Pages/PrivacySafetyRules.jsx";
@@ -150,6 +151,7 @@ export const router = createBrowserRouter(
       <Route path="rules" element={<RulesList />} />
       <Route path="forumrules" element={<ForumRules />} />
       <Route path="generalrules" element={<GeneralRules />} />
+      <Route path="siterolesrules" element={<SiteRolesRules />} />
       <Route path="aiusagerules" element={<AIUsageRules />} />
       <Route path="contentmediarules" element={<ContentMediaRules />} />
       <Route path="privacysafetyrules" element={<PrivacySafetyRules />} />

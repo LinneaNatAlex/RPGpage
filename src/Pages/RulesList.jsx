@@ -4,6 +4,7 @@ import styles from "./RulesList.module.css";
 
 const RULES_LINKS = [
   { path: "/generalrules", label: "General Rules" },
+  { path: "/siterolesrules", label: "Roles on the Site (Staff & Colours)" },
   { path: "/aiusagerules", label: "AI Usage Rules" },
   { path: "/contentmediarules", label: "Content & Media Rules" },
   { path: "/privacysafetyrules", label: "Privacy & Safety Rules" },

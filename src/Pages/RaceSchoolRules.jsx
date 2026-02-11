@@ -5,7 +5,7 @@ const RaceSchoolRules = () => {
     "Respect your race and its traditions (Werewolf, Vampire, Witch, Elf).",
     "No race discrimination or favoritism.",
     "Follow school rules and regulations.",
-    "Respect teachers, prefects, and school staff.",
+    "Respect teachers, Shadow Patrol, and school staff.",
     "Curfew is strictly enforced at 22:00 (10 PM). Students caught after curfew will face detention.",
     "Shadow Patrol monitors the school grounds after hours. Being caught results in immediate detention.",
     "Detention lasts for 1 hour and restricts access to all forums except the Detention Classroom.",

@@ -35,6 +35,7 @@ const isProtectedPath = (pathname) => {
 
 const RULES_PATHS = [
   "/generalrules",
+  "/siterolesrules",
   "/forumrules",
   "/aiusagerules",
   "/contentmediarules",
