@@ -103,12 +103,12 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
             {mode === "code" && (
               <>
                 <p className={styles.codeHint}>
-                  Same as News: type <code>{"{{code}}"}</code>, paste your HTML/CSS below, then <code>{"{{/code}}"}</code>.
+                  Same as News: type <code>{"{{code}}"}</code>, then add your HTML, CSS and/or JavaScript below, and close with <code>{"{{/code}}"}</code>. Scripts run inside the profile view.
                 </p>
                 <textarea
                   value={codeContent}
                   onChange={(e) => setCodeContent(e.target.value)}
-                  placeholder={`{{code}}\n<style>\n  p { color: #2c2c2c; }\n</style>\n<p>Your profile text here...</p>\n{{/code}}`}
+                  placeholder={`{{code}}\n<style>\n  p { color: #2c2c2c; }\n</style>\n<p>Your profile text here...</p>\n<script>\n  // optional JavaScript\n</script>\n{{/code}}`}
                   className={styles.codeOnlyEditor}
                   rows={16}
                 />
@@ -124,7 +124,6 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');
-                    const bg = isDark ? "#1a1a1a" : "#f5efe0";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                     const body = mode === "code" ? getRawBody(codeContent) : richContent;
                     const quillColors = `
@@ -133,9 +132,9 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
 .ql-font-serif{font-family:Georgia,Times New Roman,serif !important}.ql-font-monospace{font-family:Monaco,Courier New,monospace !important}.ql-size-small{font-size:0.75em !important}.ql-size-large{font-size:1.5em !important}.ql-size-huge{font-size:2.5em !important}
 .ql-align-center{text-align:center !important}.ql-align-right{text-align:right !important}.ql-align-justify{text-align:justify !important}`;
                     return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html>
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}${quillColors}</style>
+<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}${quillColors}</style>
 </head>
 <body>${body}</body>
 </html>`;
@@ -145,7 +144,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     minHeight: "200px",
                     border: "none",
                     borderRadius: 0,
-                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#f5efe0",
+                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
                   }}
                 />
               </div>
@@ -180,12 +179,11 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                 const isDark =
                   typeof document !== "undefined" &&
                   !!document.querySelector('[data-theme="dark"]');
-                const bg = isDark ? "#1a1a1a" : "#f5efe0";
                 const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                 return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html>
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
 </head>
 <body>${displayBody}</body>
 </html>`;
@@ -195,7 +193,7 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                 minHeight: "200px",
                 border: "none",
                 borderRadius: 0,
-                background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#f5efe0",
+                background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
               }}
               title="Profile Text"
               className={styles.htmlContent}

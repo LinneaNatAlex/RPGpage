@@ -937,9 +937,9 @@ const UserProfile = () => {
                 !!document.querySelector('[data-theme="dark"]');
               const fg = isDark ? "#e0e0e0" : "#2c2c2c";
               return `<!DOCTYPE html>
-<html style="background:transparent">
+<html>
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:transparent!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
 </head>
 <body>${raw}</body>
 </html>`;
@@ -949,7 +949,7 @@ const UserProfile = () => {
               height: "1000vh",
               border: "none",
               borderRadius: 0,
-              background: "transparent",
+              background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}

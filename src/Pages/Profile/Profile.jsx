@@ -690,12 +690,11 @@ const Profile = () => {
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');
-                    const bg = isDark ? "#1a1a1a" : "#f5efe0";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                     return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html>
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
 </head>
 <body>${raw}</body>
 </html>`;
@@ -705,7 +704,7 @@ const Profile = () => {
                     height: "1000vh",
                     border: "none",
                     borderRadius: 0,
-                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#f5efe0",
+                    background: (typeof document !== "undefined" && document.querySelector('[data-theme="dark"]')) ? "#1a1a1a" : "#fff",
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                   }}
