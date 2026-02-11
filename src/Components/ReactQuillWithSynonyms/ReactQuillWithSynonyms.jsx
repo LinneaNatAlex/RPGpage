@@ -27,6 +27,24 @@ const ReactQuillWithSynonyms = ({
   const quillInstanceRef = useRef(null);
   const shouldKeepPopupOpenRef = useRef(false); // Track if popup should stay open
 
+  const POPUP_MAX_WIDTH = 300;
+
+  // Keep popup inside editor bounds so it isn't cut off at the right edge
+  const clampPopupPosition = useCallback((bounds) => {
+    if (!editorRef.current || !bounds) return { top: "10px", left: "10px" };
+    const qlEditor = editorRef.current.querySelector(".ql-editor");
+    const containerWidth = qlEditor ? qlEditor.offsetWidth : editorRef.current.offsetWidth;
+    let leftPx = bounds.left;
+    if (leftPx + POPUP_MAX_WIDTH > containerWidth) {
+      leftPx = Math.max(0, containerWidth - POPUP_MAX_WIDTH);
+    }
+    if (leftPx < 0) leftPx = 0;
+    return {
+      top: `${bounds.top + bounds.height + 5}px`,
+      left: `${leftPx}px`,
+    };
+  }, []);
+
   // Get the current selected word from Quill editor
   const getSelectedWord = useCallback(() => {
     if (!quillInstanceRef.current) return null;
@@ -132,16 +150,12 @@ const ReactQuillWithSynonyms = ({
           if (isNewWord) {
             setSelectedWord(wordInfo);
             
-            // Calculate popup position
+            // Calculate popup position (clamped so it stays inside editor)
             try {
               const selection = quill.getSelection();
               if (selection && editorRef.current) {
                 const bounds = quill.getBounds(selection.index);
-
-                setPopupPosition({
-                  top: bounds.top + bounds.height + 5 + "px",
-                  left: bounds.left + "px",
-                });
+                setPopupPosition(clampPopupPosition(bounds));
               }
             } catch (error) {
               setPopupPosition({ top: "50px", left: "10px" });
@@ -159,10 +173,7 @@ const ReactQuillWithSynonyms = ({
               const selection = quill.getSelection();
               if (selection && editorRef.current) {
                 const bounds = quill.getBounds(selection.index);
-                setPopupPosition({
-                  top: bounds.top + bounds.height + 5 + "px",
-                  left: bounds.left + "px",
-                });
+                setPopupPosition(clampPopupPosition(bounds));
               }
             } catch (error) {
               // Ignore position update errors
@@ -185,10 +196,7 @@ const ReactQuillWithSynonyms = ({
           const selection = quill.getSelection();
           if (selection && editorRef.current) {
             const bounds = quill.getBounds(selection.index);
-            setPopupPosition({
-              top: bounds.top + bounds.height + 5 + "px",
-              left: bounds.left + "px",
-            });
+            setPopupPosition(clampPopupPosition(bounds));
           }
         } catch (error) {
           // Ignore position update errors
@@ -206,7 +214,7 @@ const ReactQuillWithSynonyms = ({
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [enableSynonyms, getSelectedWord, fetchSynonyms, selectedWord]);
+  }, [enableSynonyms, getSelectedWord, fetchSynonyms, selectedWord, clampPopupPosition]);
 
   // Don't reset shouldKeepPopupOpenRef - let it stay true so popup never auto-closes
 

@@ -53,6 +53,7 @@ export default function AdminPanel() {
   const [pointsAmount, setPointsAmount] = useState("");
   const [pointsMessage, setPointsMessage] = useState("");
   const [unfaintStatus, setUnfaintStatus] = useState("");
+  const [potionClearStatus, setPotionClearStatus] = useState("");
   const [chatClearStatus, setChatClearStatus] = useState("");
 
   const filtered = users.filter(
@@ -251,6 +252,47 @@ export default function AdminPanel() {
       setTimeout(() => setUnfaintStatus(""), 5000);
     } catch (err) {
       setUnfaintStatus("Error: " + err.message);
+    }
+  };
+
+  /** Remove all potion effects from the selected user (admin only). */
+  const handleRemovePotionEffects = async () => {
+    if (!selected) return;
+    if (!roles.includes("admin")) {
+      setPotionClearStatus("Only admin can remove potion effects.");
+      return;
+    }
+    setPotionClearStatus("Working...");
+    try {
+      const ref = doc(db, "users", selected.uid);
+      await updateDoc(ref, {
+        inLoveUntil: null,
+        inLoveWith: null,
+        hairColorUntil: null,
+        rainbowUntil: null,
+        glowUntil: null,
+        sparkleUntil: null,
+        translationUntil: null,
+        echoUntil: null,
+        whisperUntil: null,
+        shoutUntil: null,
+        darkModeUntil: null,
+        retroUntil: null,
+        mirrorUntil: null,
+        speedUntil: null,
+        slowMotionUntil: null,
+        surveillanceUntil: null,
+        luckyUntil: null,
+        wisdomUntil: null,
+        charmUntil: null,
+        mysteryUntil: null,
+        invisibleUntil: null,
+      });
+      const name = selected.displayName || selected.email || selected.uid;
+      setPotionClearStatus(`All potion effects removed for ${name}.`);
+      setTimeout(() => setPotionClearStatus(""), 5000);
+    } catch (err) {
+      setPotionClearStatus("Error: " + err.message);
     }
   };
 
@@ -682,6 +724,80 @@ export default function AdminPanel() {
                 }}
               >
                 {unfaintStatus}
+              </div>
+            )}
+          </div>
+
+          {/* Remove all potion effects from selected user */}
+          <div style={{ marginBottom: 20 }}>
+            <h3
+              style={{
+                color: theme.secondaryText,
+                fontSize: "1.15rem",
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                textShadow: isDarkMode
+                  ? "0 1px 2px rgba(0, 0, 0, 0.3)"
+                  : "0 1px 2px rgba(255, 255, 255, 0.3)",
+                marginBottom: 10,
+              }}
+            >
+              Remove potion effects
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                color: theme.text,
+                opacity: 0.9,
+                marginBottom: 10,
+              }}
+            >
+              Remove all active potion effects from the selected user (dark mode, love, sparkle, speed, etc.).
+            </p>
+            <button
+              onClick={handleRemovePotionEffects}
+              style={{
+                background: "linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 0,
+                padding: "8px 16px",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.5px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow =
+                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow =
+                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+              }}
+            >
+              Remove potion effects from selected user
+            </button>
+            {potionClearStatus && (
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: "8px 12px",
+                  background: "rgba(156, 39, 176, 0.15)",
+                  borderRadius: 0,
+                  border: "1px solid rgba(156, 39, 176, 0.3)",
+                  fontSize: "0.9rem",
+                  color: theme.text,
+                }}
+              >
+                {potionClearStatus}
               </div>
             )}
           </div>

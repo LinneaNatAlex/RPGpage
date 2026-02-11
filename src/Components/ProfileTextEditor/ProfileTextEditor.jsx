@@ -127,10 +127,15 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     const bg = isDark ? "#1a1a1a" : "#f5efe0";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                     const body = mode === "code" ? getRawBody(codeContent) : richContent;
+                    const quillColors = `
+.ql-color-white{color:#fff !important}.ql-color-red{color:#e60000 !important}.ql-color-orange{color:#f90 !important}.ql-color-yellow{color:#ff0 !important}.ql-color-green{color:#008a00 !important}.ql-color-blue{color:#06c !important}.ql-color-purple{color:#93f !important}
+.ql-bg-black{background-color:#000 !important}.ql-bg-red{background-color:#e60000 !important}.ql-bg-orange{background-color:#f90 !important}.ql-bg-yellow{background-color:#ff0 !important}.ql-bg-green{background-color:#008a00 !important}.ql-bg-blue{background-color:#06c !important}.ql-bg-purple{background-color:#93f !important}
+.ql-font-serif{font-family:Georgia,Times New Roman,serif !important}.ql-font-monospace{font-family:Monaco,Courier New,monospace !important}.ql-size-small{font-size:0.75em !important}.ql-size-large{font-size:1.5em !important}.ql-size-huge{font-size:2.5em !important}
+.ql-align-center{text-align:center !important}.ql-align-right{text-align:right !important}.ql-align-justify{text-align:justify !important}`;
                     return `<!DOCTYPE html>
 <html style="background:${bg}">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}${quillColors}</style>
 </head>
 <body>${body}</body>
 </html>`;
