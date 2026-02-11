@@ -292,6 +292,14 @@
   .rpgCalendarSidebarContainer {
     display: none;
   }
+  /* Keep Online + News side-by-side on tablet: 2 columns that can shrink */
+  .mainContentHome {
+    grid-template-columns: minmax(160px, 1fr) minmax(280px, 2fr);
+  }
+  .onlineUsersContainer,
+  .newsFeedContainer {
+    min-width: 0;
+  }
 }
 
 /* Features Section */

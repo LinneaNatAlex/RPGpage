@@ -153,6 +153,8 @@ export default function AgeVerificationRequest() {
           The image is only used for age verification and handled according to our privacy policy.
         </p>
         <input
+          id="age-verification-id-photo"
+          name="idPhoto"
           ref={fileInputRef}
           type="file"
           accept={ACCEPT_IMAGE}

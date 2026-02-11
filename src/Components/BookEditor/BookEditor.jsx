@@ -192,6 +192,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
       <div className={styles.formGroup}>
         <label>Book Title:</label>
         <input
+          id="book-editor-title"
+          name="bookTitle"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -203,6 +205,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
       <div className={styles.formGroup}>
         <label>Author:</label>
         <input
+          id="book-editor-author"
+          name="bookAuthor"
           type="text"
           value={selectedAuthor}
           onChange={(e) => setSelectedAuthor(e.target.value)}
@@ -236,6 +240,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
       <div className={styles.formGroup}>
         <label>Price (points):</label>
         <input
+          id="book-editor-price"
+          name="bookPrice"
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
@@ -267,6 +273,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
             <div className={styles.imageUploadArea}>
               <label className={styles.uploadLabel}>
                 <input
+                  id="book-editor-cover-image"
+                  name="coverImage"
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
@@ -339,6 +347,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
                 <div className={styles.audioUploadArea}>
                   <label className={styles.uploadLabel}>
                     <input
+                      id={`book-editor-audio-${index}`}
+                      name={`pageAudio-${index}`}
                       type="file"
                       accept="audio/*"
                       onChange={(e) => handleAudioChange(e, index)}

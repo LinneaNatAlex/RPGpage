@@ -128,6 +128,10 @@ const Navbar = () => {
                   <span>Detention Classroom</span>
                   <span>({topicCounts.detentionclassroom || 0})</span>
                 </NavLink>
+                <NavLink to="/forum/shortbutlong">
+                  <span>Short, but long</span>
+                  <span>({topicCounts.shortbutlong || 0})</span>
+                </NavLink>
                 <NavLink to="/forum/18plus">
                   <span>18+ Forum</span>
                   <span>({topicCounts['18plus'] || 0})</span>

@@ -1133,6 +1133,8 @@ const ClassroomSession = () => {
                 Points for attending:
               </label>
               <input
+                id="classroom-custom-points"
+                name="customClassPoints"
                 type="number"
                 value={wisdomUntil && wisdomUntil > Date.now() ? 6 : 2}
                 onChange={(e) =>
@@ -1165,6 +1167,8 @@ const ClassroomSession = () => {
                 Class requirements:
               </label>
               <input
+                id="classroom-custom-requirements"
+                name="customClassRequirements"
                 type="text"
                 value={customClassInfo.requirements}
                 onChange={(e) =>
@@ -1198,6 +1202,8 @@ const ClassroomSession = () => {
                 Class activities:
               </label>
               <input
+                id="classroom-custom-activities"
+                name="customClassActivities"
                 type="text"
                 value={customClassInfo.activities}
                 onChange={(e) =>

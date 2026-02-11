@@ -684,9 +684,11 @@ const Profile = () => {
                 <h2>Profile Text</h2>
                 <iframe
                   srcDoc={(() => {
-                    const raw = (userData.profileText || "")
+                    let raw = (userData.profileText || "")
                       .replace("{{code}}", "")
                       .replace("{{/code}}", "");
+                    // Upgrade http to https in img/link so mixed content warning is avoided
+                    raw = raw.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');

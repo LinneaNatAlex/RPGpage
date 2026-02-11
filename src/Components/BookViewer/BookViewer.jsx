@@ -197,6 +197,8 @@ const BookViewer = ({ open, book, onClose }) => {
                 <div className={styles.volumeControl}>
                   <div className={styles.volumeIcon}></div>
                   <input
+                    id="book-viewer-volume"
+                    name="volume"
                     type="range"
                     min="0"
                     max="1"

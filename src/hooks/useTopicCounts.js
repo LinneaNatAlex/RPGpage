@@ -20,6 +20,7 @@ const useTopicCounts = () => {
     artstudio: 0,
     kitchen: 0,
     detentionclassroom: 0,
+    shortbutlong: 0,
     '18plus': 0
   });
   const [loading, setLoading] = useState(false);
@@ -48,6 +49,7 @@ const useTopicCounts = () => {
           artstudio: 0,
           kitchen: 0,
           detentionclassroom: 0,
+          shortbutlong: 0,
           '18plus': 0
         };
         
@@ -63,6 +65,7 @@ const useTopicCounts = () => {
           'artstudio',
           'kitchen',
           'detentionclassroom',
+          'shortbutlong',
           '18plus'
         ];
 

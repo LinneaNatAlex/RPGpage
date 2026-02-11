@@ -200,6 +200,8 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
             <div className={styles.inputGroup}>
               <label>Quiz Title:</label>
               <input
+                id="quiz-edit-title"
+                name="quizTitle"
                 type="text"
                 value={quizData.title}
                 onChange={(e) => setQuizData({ ...quizData, title: e.target.value })}
@@ -211,6 +213,8 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
             <div className={styles.inputGroup}>
               <label>Description:</label>
               <textarea
+                id="quiz-edit-description"
+                name="quizDescription"
                 value={quizData.description}
                 onChange={(e) => setQuizData({ ...quizData, description: e.target.value })}
                 placeholder="Enter quiz description"
@@ -221,6 +225,8 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
             <div className={styles.inputGroup}>
               <label>Grade Level:</label>
               <select
+                id="quiz-edit-grade-level"
+                name="quizGradeLevel"
                 value={quizData.gradeLevel}
                 onChange={(e) => setQuizData({ ...quizData, gradeLevel: parseInt(e.target.value) })}
                 className={styles.selectInput}
@@ -270,6 +276,8 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
             <div className={styles.inputGroup}>
               <label>Question:</label>
               <textarea
+                id={`quiz-edit-question-${currentQuestion}`}
+                name={`question-${currentQuestion}`}
                 value={quizData.questions[currentQuestion].question}
                 onChange={(e) => handleQuestionChange(currentQuestion, "question", e.target.value)}
                 placeholder="Enter your question"
@@ -282,6 +290,8 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
               {quizData.questions[currentQuestion].options.map((option, optionIndex) => (
                 <div key={optionIndex} className={styles.optionInput}>
                   <input
+                    id={`quiz-edit-option-${currentQuestion}-${optionIndex}`}
+                    name={`option-${currentQuestion}-${optionIndex}`}
                     type="text"
                     value={option}
                     onChange={(e) => {

@@ -575,6 +575,16 @@ const MobileLayout = ({ children }) => {
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
+                  navigate("/forum/shortbutlong");
+                  setShowForumSelection(false);
+                }}
+              >
+                <span className="mobile-forum-selection-label">Short, but long</span>
+              </button>
+
+              <button
+                className="mobile-forum-selection-item"
+                onClick={() => {
                   navigate("/forum/18plus");
                   setShowForumSelection(false);
                 }}

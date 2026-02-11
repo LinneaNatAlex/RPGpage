@@ -326,6 +326,18 @@ const PrivateChat = () => {
     });
   }, [currentUser, selectedUser, isCollapsed, isPcForSubscription]);
 
+  // Auto-scroll to latest message when messages load or update (PC and mobile)
+  useEffect(() => {
+    if (!chatBoxRef.current) return;
+    const el = chatBoxRef.current;
+    const scrollToBottom = () => {
+      el.scrollTop = el.scrollHeight;
+    };
+    requestAnimationFrame(scrollToBottom);
+    const t = setTimeout(scrollToBottom, 80);
+    return () => clearTimeout(t);
+  }, [selectedMessages]);
+
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;
   if (loading) return <div>Loading...</div>;

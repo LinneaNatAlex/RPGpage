@@ -403,7 +403,15 @@ export default function AdminPanel() {
       </h2>
       {(roles.includes("admin") ||
         roles.includes("teacher") ||
-        roles.includes("archivist")) && <ShopProductAdmin />}
+        roles.includes("archivist")) && (
+        <ShopProductAdmin
+          restrictToBooksOnly={
+            roles.includes("archivist") &&
+            !roles.includes("admin") &&
+            !roles.includes("teacher")
+          }
+        />
+      )}
 
       <button
         onClick={() => setShowBanned((v) => !v)}
@@ -1305,10 +1313,8 @@ export default function AdminPanel() {
       )}
       {status && <div style={{ color: "#ff0", marginTop: 8 }}>{status}</div>}
 
-      {/* Points management section */}
-      {(roles.includes("admin") ||
-        roles.includes("teacher") ||
-        roles.includes("archivist")) && (
+      {/* Points management section – admin and teacher only; archivists manage only books */}
+      {(roles.includes("admin") || roles.includes("teacher")) && (
         <div
           style={{
             marginTop: 24,

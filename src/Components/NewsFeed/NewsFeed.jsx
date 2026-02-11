@@ -328,9 +328,10 @@ const NewsFeed = () => {
                 title="News content"
                 className={styles.popupIframe}
                 srcDoc={(() => {
-                  const raw = selectedPost.content
+                  let raw = selectedPost.content
                     .replace("{{code}}", "")
                     .replace("{{/code}}", "");
+                  raw = raw.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
                   const isDark =
                     typeof document !== "undefined" &&
                     !!document.querySelector('[data-theme="dark"]');

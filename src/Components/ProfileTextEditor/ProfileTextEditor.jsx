@@ -126,7 +126,8 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                       !!document.querySelector('[data-theme="dark"]');
                     const bg = isDark ? "#1a1a1a" : "#EBE1D7";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
-                    const body = mode === "code" ? getRawBody(codeContent) : richContent;
+                    let body = mode === "code" ? getRawBody(codeContent) : richContent;
+                    body = body.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
                     const quillColors = `
 .ql-color-white{color:#fff !important}.ql-color-red{color:#e60000 !important}.ql-color-orange{color:#f90 !important}.ql-color-yellow{color:#ff0 !important}.ql-color-green{color:#008a00 !important}.ql-color-blue{color:#06c !important}.ql-color-purple{color:#93f !important}
 .ql-bg-black{background-color:#000 !important}.ql-bg-red{background-color:#e60000 !important}.ql-bg-orange{background-color:#f90 !important}.ql-bg-yellow{background-color:#ff0 !important}.ql-bg-green{background-color:#008a00 !important}.ql-bg-blue{background-color:#06c !important}.ql-bg-purple{background-color:#93f !important}
@@ -168,7 +169,8 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
     );
   }
 
-  const displayBody = getRawBody(currentText) || currentText || "";
+  let displayBody = getRawBody(currentText) || currentText || "";
+  displayBody = displayBody.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
 
   return (
     <div className={styles.profileContainer}>

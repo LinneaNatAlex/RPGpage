@@ -34,6 +34,7 @@ import {
   doc,
   serverTimestamp,
   where,
+  increment,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Forum.module.css";
@@ -61,6 +62,24 @@ const forumNames = {
   kitchen: "Kitchen",
   detentionclassroom: "Detention Classroom",
   "18plus": "18+ Forum",
+  shortbutlong: "Short, but long",
+};
+
+// Per-forum word limits and reward (default = standard forum: 300 min, global reward)
+const forumWordConfig = {
+  shortbutlong: {
+    minWords: 100,
+    maxWords: 500,
+    rewardNitsPer100: 2,
+    maxNits: 10,
+    graceWords: 480, // 480+ words counts as max reward (10 nits)
+    rewardText: "2 nits per 100 words (100–500 words; 480+ = 10 nits).",
+  },
+  default: {
+    minWords: 300,
+    maxWords: null,
+    rewardText: "Earn 50 nits for every 100 words written (minimum 300 words)!",
+  },
 };
 
 const raceCommonrooms = {
@@ -116,6 +135,23 @@ const Forum = () => {
   }
 
   const is18PlusForum = forumRoom === "18plus";
+  const wordConfig = forumWordConfig[forumRoom] || forumWordConfig.default;
+  const isShortButLong = forumRoom === "shortbutlong";
+
+  const wordCountInRange = (count) => {
+    if (count < wordConfig.minWords) return false;
+    if (wordConfig.maxWords != null && count > wordConfig.maxWords) return false;
+    return true;
+  };
+
+  const getShortButLongNits = (wordCount) => {
+    if (!isShortButLong || wordConfig.maxNits == null) return 0;
+    if (wordCount >= (wordConfig.graceWords ?? 480)) return wordConfig.maxNits;
+    return Math.min(
+      wordConfig.maxNits,
+      Math.floor(wordCount / 100) * (wordConfig.rewardNitsPer100 ?? 2)
+    );
+  };
 
   // Fetch all 18+ verified users from Firestore for private topic picker (reliable list)
   useEffect(() => {
@@ -463,6 +499,7 @@ const Forum = () => {
     if (!newTopicTitle.trim() || isContentEmpty(newTopicContent)) return;
 
     const wordCount = countWords(newTopicContent);
+    if (!wordCountInRange(wordCount)) return;
 
     const topicData = {
       title: newTopicTitle,
@@ -488,19 +525,22 @@ const Forum = () => {
       }
     );
 
-    // Update user's total word count and check for nits reward
-    const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
-    const reward = await checkWordCountReward(
-      user.uid,
-      newTotalWordCount,
-      newTotalWordCount - wordCount
-    );
-
-    // Reward system still works, but no popup message
-    // if (reward.awarded) {
-    //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
-    //   setTimeout(() => setNitsReward(null), 10000);
-    // }
+    // Nits reward: Short but long = 2 nits per 100 words (max 10; 480+ = 10); others = global milestone
+    if (isShortButLong) {
+      const nits = getShortButLongNits(wordCount);
+      if (nits > 0) {
+        await updateDoc(doc(db, "users", user.uid), {
+          currency: increment(nits),
+        });
+      }
+    } else {
+      const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
+      await checkWordCountReward(
+        user.uid,
+        newTotalWordCount,
+        newTotalWordCount - wordCount
+      );
+    }
 
     // Automatically follow the topic you just created
     try {
@@ -608,6 +648,7 @@ const Forum = () => {
     if (!selectedTopic || isContentEmpty(replyContent)) return;
 
     const wordCount = countWords(replyContent);
+    if (!wordCountInRange(wordCount)) return;
 
     await addDoc(
       collection(db, `forums/${forumRoom}/topics/${selectedTopic}/posts`),
@@ -619,19 +660,22 @@ const Forum = () => {
       }
     );
 
-    // Update user's total word count and check for nits reward
-    const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
-    const reward = await checkWordCountReward(
-      user.uid,
-      newTotalWordCount,
-      newTotalWordCount - wordCount
-    );
-
-    // Reward system still works, but no popup message
-    // if (reward.awarded) {
-    //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
-    //   setTimeout(() => setNitsReward(null), 10000);
-    // }
+    // Nits reward: Short but long = 2 nits per 100 words (max 10; 480+ = 10); others = global milestone
+    if (isShortButLong) {
+      const nits = getShortButLongNits(wordCount);
+      if (nits > 0) {
+        await updateDoc(doc(db, "users", user.uid), {
+          currency: increment(nits),
+        });
+      }
+    } else {
+      const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
+      await checkWordCountReward(
+        user.uid,
+        newTotalWordCount,
+        newTotalWordCount - wordCount
+      );
+    }
 
     // Automatically follow the topic you just replied to
     try {
@@ -748,13 +792,18 @@ const Forum = () => {
             <RepetitionWarningComponent text={newTopicContent} />
             <div
               style={{
-                color: newTopicWordCount < 300 ? "#ff6b6b" : "#ffd86b",
+                color: !wordCountInRange(newTopicWordCount) ? "#ff6b6b" : "#ffd86b",
                 margin: "8px 0 12px 0",
                 fontWeight: 600,
               }}
             >
-              {`Words: ${newTopicWordCount} / 300`}
-              {newTopicWordCount < 300 && " (minimum 300 words to post)"}
+              {wordConfig.maxWords != null
+                ? `Words: ${newTopicWordCount} / ${wordConfig.minWords}–${wordConfig.maxWords}`
+                : `Words: ${newTopicWordCount} / ${wordConfig.minWords}`}
+              {!wordCountInRange(newTopicWordCount) &&
+                (newTopicWordCount < wordConfig.minWords
+                  ? ` (minimum ${wordConfig.minWords} words to post)`
+                  : ` (maximum ${wordConfig.maxWords} words)`)}
               <div
                 style={{
                   fontSize: "0.8rem",
@@ -762,7 +811,7 @@ const Forum = () => {
                   marginTop: "4px",
                 }}
               >
-                Earn 50 nits for every 100 words written (minimum 300 words)!
+                {wordConfig.rewardText}
               </div>
             </div>
             {is18PlusForum && (
@@ -976,7 +1025,7 @@ const Forum = () => {
               disabled={
                 !newTopicTitle.trim() ||
                 isContentEmpty(newTopicContent) ||
-                newTopicWordCount < 300
+                !wordCountInRange(newTopicWordCount)
               }
             >
               Create topic
@@ -1304,13 +1353,18 @@ const Forum = () => {
             <RepetitionWarningComponent text={replyContent} />
             <div
               style={{
-                color: replyWordCount < 300 ? "#ff6b6b" : "#ffd86b",
+                color: !wordCountInRange(replyWordCount) ? "#ff6b6b" : "#ffd86b",
                 margin: "8px 0 12px 0",
                 fontWeight: 600,
               }}
             >
-              {`Words: ${replyWordCount} / 300`}
-              {replyWordCount < 300 && " (minimum 300 words to post)"}
+              {wordConfig.maxWords != null
+                ? `Words: ${replyWordCount} / ${wordConfig.minWords}–${wordConfig.maxWords}`
+                : `Words: ${replyWordCount} / ${wordConfig.minWords}`}
+              {!wordCountInRange(replyWordCount) &&
+                (replyWordCount < wordConfig.minWords
+                  ? ` (minimum ${wordConfig.minWords} words to post)`
+                  : ` (maximum ${wordConfig.maxWords} words)`)}
               <div
                 style={{
                   fontSize: "0.8rem",
@@ -1318,13 +1372,13 @@ const Forum = () => {
                   marginTop: "4px",
                 }}
               >
-                Earn 50 nits for every 100 words written (minimum 300 words)!
+                {wordConfig.rewardText}
               </div>
             </div>
             <Button
               onClick={handleReply}
               className={styles.postButton}
-              disabled={isContentEmpty(replyContent) || replyWordCount < 300}
+              disabled={isContentEmpty(replyContent) || !wordCountInRange(replyWordCount)}
             >
               Reply
             </Button>

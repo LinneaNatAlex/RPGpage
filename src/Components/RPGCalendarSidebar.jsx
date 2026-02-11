@@ -1,5 +1,14 @@
+/**
+ * RPG Calendar Sidebar
+ * Viser skolekalender med RPG-tid, ukevisning (Mon–Sun), og bursdager.
+ * Bruker getRPGCalendar() fra utils/rpgCalendar for å mappe virkelige dager til RPG-dager.
+ */
 import React, { useState, useEffect } from "react";
-import { getRPGCalendar, isBirthdayToday, getRPGMonthLength } from "../utils/rpgCalendar";
+import {
+  getRPGCalendar,
+  isBirthdayToday,
+  getRPGMonthLength,
+} from "../utils/rpgCalendar";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Link } from "react-router-dom";
@@ -7,6 +16,8 @@ import { getRaceColor } from "../utils/raceColors";
 
 export default function RPGCalendarSidebar() {
   const today = new Date();
+
+  // ---------- Ukedager (brukes i kalender-header og grid) ----------
   const weekDays = [
     "Monday",
     "Tuesday",
@@ -17,71 +28,74 @@ export default function RPGCalendarSidebar() {
     "Sunday",
   ];
 
-  // RPG Time state
+  // ---------- State: RPG-tid (oppdateres hvert sekund) ----------
   const [rpgTime, setRpgTime] = useState({
     rpgDay: 1,
     rpgHour: 0,
     rpgMinute: 0,
     rpgYear: 1,
     rpgMonth: 1,
-    dayRange: { start: 1, end: 7 }
+    dayRange: { start: 1, end: 7 },
   });
 
-  // Birthday users state
+  // ---------- State: Bursdager (i dag + neste måned) ----------
   const [birthdayUsers, setBirthdayUsers] = useState([]);
   const [loadingBirthdays, setLoadingBirthdays] = useState(true);
   const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
   const [loadingUpcoming, setLoadingUpcoming] = useState(true);
 
-  // Update RPG Time every second
+  // ---------- Effect: Oppdater RPG-tid hvert sekund (klokke + hvilken RPG-dag) ----------
   useEffect(() => {
     const updateRPGTime = () => {
       const now = new Date();
       const calendar = getRPGCalendar(now);
-      
+
       // Find which day of the IRL week it is (0 = Monday, 6 = Sunday)
       const dayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1;
       const rpgRange = calendar.rpgDaysThisWeek[dayOfWeek];
-      
+
       const realHour = now.getHours();
       const realMinute = now.getMinutes();
       const realSecond = now.getSeconds();
-      
+
       // Calculate how many RPG days this IRL day covers
       const rpgDaysInThisRealDay = rpgRange.end - rpgRange.start + 1;
-      
+
       // Divide 24 hours by number of RPG days to get hours per RPG day
       const hoursPerRPGDay = 24 / rpgDaysInThisRealDay;
-      
+
       // Calculate which RPG day it is based on IRL time
       const rpgDayIndex = Math.floor(realHour / hoursPerRPGDay);
       const rpgDay = Math.min(rpgRange.start + rpgDayIndex, rpgRange.end);
-      
+
       // Calculate RPG hour based on how far we are into this RPG day
-      const timeIntoCurrentRPGDay = (realHour % hoursPerRPGDay) + (realMinute / 60) + (realSecond / 3600);
-      const rpgHour = Math.floor(timeIntoCurrentRPGDay * 24 / hoursPerRPGDay);
-      const rpgMinute = Math.floor(((timeIntoCurrentRPGDay * 24 / hoursPerRPGDay) % 1) * 60);
-      
+      const timeIntoCurrentRPGDay =
+        (realHour % hoursPerRPGDay) + realMinute / 60 + realSecond / 3600;
+      const rpgHour = Math.floor((timeIntoCurrentRPGDay * 24) / hoursPerRPGDay);
+      const rpgMinute = Math.floor(
+        (((timeIntoCurrentRPGDay * 24) / hoursPerRPGDay) % 1) * 60,
+      );
+
       setRpgTime({
         rpgDay,
         rpgHour: Math.min(rpgHour, 23),
         rpgMinute,
         rpgYear: calendar.rpgYear,
         rpgMonth: calendar.rpgMonth,
-        dayRange: rpgRange
+        dayRange: rpgRange,
       });
     };
 
     // Update immediately
     updateRPGTime();
-    
+
     // Update every second
     const interval = setInterval(updateRPGTime, 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch users with birthdays today
+  // ---------- Effect: Hent brukere som har bursdag i dag (Firestore) ----------
   useEffect(() => {
     const fetchBirthdayUsers = async () => {
       try {
@@ -89,7 +103,7 @@ export default function RPGCalendarSidebar() {
         const now = new Date();
         const snapshot = await getDocs(collection(db, "users"));
         const usersWithBirthday = [];
-        
+
         snapshot.forEach((doc) => {
           const userData = doc.data();
           if (
@@ -116,13 +130,13 @@ export default function RPGCalendarSidebar() {
     };
 
     fetchBirthdayUsers();
-    
+
     // Refresh every hour to catch new birthdays
     const interval = setInterval(fetchBirthdayUsers, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch upcoming birthdays for next month
+  // ---------- Effect: Hent bursdager neste RPG-måned ----------
   useEffect(() => {
     const fetchUpcomingBirthdays = async () => {
       try {
@@ -130,14 +144,14 @@ export default function RPGCalendarSidebar() {
         const now = new Date();
         const calendar = getRPGCalendar(now);
         const { rpgMonth, rpgYear } = calendar;
-        
+
         // Calculate next month (wraps around to month 1 if month 12)
         const nextMonth = rpgMonth === 12 ? 1 : rpgMonth + 1;
         const nextYear = rpgMonth === 12 ? rpgYear + 1 : rpgYear;
-        
+
         const snapshot = await getDocs(collection(db, "users"));
         const upcoming = [];
-        
+
         snapshot.forEach((doc) => {
           const userData = doc.data();
           if (
@@ -167,25 +181,34 @@ export default function RPGCalendarSidebar() {
     };
 
     fetchUpcomingBirthdays();
-    
+
     // Refresh every hour
     const interval = setInterval(fetchUpcomingBirthdays, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
+  // ---------- Hjelpefunksjoner: tid og dag ----------
   const formatTime = (hour, minute) => {
     const displayHour = hour > 12 ? hour - 12 : hour;
-    const ampm = hour < 12 ? 'AM' : 'PM';
-    return `${displayHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${ampm}`;
+    const ampm = hour < 12 ? "AM" : "PM";
+    return `${displayHour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")} ${ampm}`;
   };
 
   const getDayName = (day) => {
-    const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dayNames = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     const dayOfWeek = new Date().getDay();
     return dayNames[dayOfWeek];
   };
 
-  // Month names in English
+  // ---------- Månedsnavn (engelsk) ----------
   const monthNames = [
     "January",
     "February",
@@ -201,7 +224,7 @@ export default function RPGCalendarSidebar() {
     "December",
   ];
 
-  // Bruk fellesmodul for RPG-kalender
+  // ---------- Hent ukedatoer og RPG-dagsintervall fra utils/rpgCalendar ----------
   const {
     rpgYear,
     rpgMonth,
@@ -213,7 +236,7 @@ export default function RPGCalendarSidebar() {
     rpgDaysThisWeek,
   } = getRPGCalendar(today);
 
-  // Returner JSX for kalenderen
+  // ========== RENDERING: Sidebar-container ==========
   return (
     <aside
       style={{
@@ -233,6 +256,7 @@ export default function RPGCalendarSidebar() {
         alignItems: "center",
       }}
     >
+      {/* ----- Tittel ----- */}
       <h3
         style={{
           color: "#D4C4A8",
@@ -244,8 +268,8 @@ export default function RPGCalendarSidebar() {
       >
         School Calendar
       </h3>
-      
-      {/* RPG Time Display */}
+
+      {/* ----- RPG-tid: klokke + dag/måned/år + "Real: Mon X–Y" ----- */}
       <div
         style={{
           background: "rgba(212, 196, 168, 0.2)",
@@ -254,7 +278,7 @@ export default function RPGCalendarSidebar() {
           marginBottom: "16px",
           border: "1px solid #D4C4A8",
           textAlign: "center",
-          width: "100%"
+          width: "100%",
         }}
       >
         <div
@@ -262,7 +286,7 @@ export default function RPGCalendarSidebar() {
             color: "#D4C4A8",
             fontSize: 14,
             fontWeight: 600,
-            marginBottom: 4
+            marginBottom: 4,
           }}
         >
           RPG Time
@@ -273,7 +297,7 @@ export default function RPGCalendarSidebar() {
             fontSize: 20,
             fontWeight: 700,
             marginBottom: 4,
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
           }}
         >
           {formatTime(rpgTime.rpgHour, rpgTime.rpgMinute)}
@@ -282,7 +306,7 @@ export default function RPGCalendarSidebar() {
           style={{
             color: "#D4C4A8",
             fontSize: 12,
-            marginBottom: 4
+            marginBottom: 4,
           }}
         >
           Day {rpgTime.rpgDay} of {rpgTime.rpgMonth}/{rpgTime.rpgYear}
@@ -292,13 +316,22 @@ export default function RPGCalendarSidebar() {
             color: "#B8A082",
             fontSize: 10,
             borderTop: "1px solid rgba(212, 196, 168, 0.3)",
-            paddingTop: 4
+            paddingTop: 4,
           }}
         >
           Real: {getDayName()} {rpgTime.dayRange.start}-{rpgTime.dayRange.end}
         </div>
       </div>
-      <div style={{ fontSize: 14, marginBottom: 4, fontWeight: 600, color: "#D4C4A8" }}>
+
+      {/* ----- Måned/år + nedtelling til ukeslutt ----- */}
+      <div
+        style={{
+          fontSize: 14,
+          marginBottom: 4,
+          fontWeight: 600,
+          color: "#D4C4A8",
+        }}
+      >
         {monthNames[(rpgMonth || 1) - 1]}, Year {rpgYear}
       </div>
       <div style={{ fontSize: 12, marginBottom: 12, color: "#B8A082" }}>
@@ -319,6 +352,8 @@ export default function RPGCalendarSidebar() {
           return `${d}d ${h}h ${m}m ${s}s`;
         })()}
       </div>
+
+      {/* ----- Ukevisning: Mon–Sun + 7 dag-celler (dato + "Days X–Y") ----- */}
       <div
         style={{
           display: "grid",
@@ -328,6 +363,7 @@ export default function RPGCalendarSidebar() {
           marginBottom: 8,
         }}
       >
+        {/* Ukedags-header (Mon, Tue, …) */}
         {weekDays.map((wd, i) => (
           <div
             key={wd}
@@ -342,6 +378,7 @@ export default function RPGCalendarSidebar() {
             {wd.slice(0, 3)}
           </div>
         ))}
+        {/* Dag-celler: virkelig dato + RPG-dagsintervall; dagens dato highlightes */}
         {weekDates.map((date, i) => {
           const isToday = date.toDateString() === today.toDateString();
           const rpgRange = rpgDaysThisWeek[i];
@@ -356,7 +393,7 @@ export default function RPGCalendarSidebar() {
                 color: isToday ? "#F5EFE0" : "#D4C4A8",
                 fontWeight: isToday ? 700 : 400,
                 border: isToday ? "2px solid #D4C4A8" : "1px solid #E0D5C7",
-                fontSize: 11,
+                fontSize: 10,
                 minWidth: 0,
                 boxShadow: isToday ? "0 0 8px rgba(0, 0, 0, 0.2)" : undefined,
               }}
@@ -364,7 +401,7 @@ export default function RPGCalendarSidebar() {
               {date.getDate()}
               <br />
               <span
-                style={{ fontSize: 10, color: isToday ? "#F5EFE0" : "#B8A082" }}
+                style={{ fontSize: 8, color: isToday ? "#F5EFE0" : "#B8A082" }}
               >
                 Days {rpgRange.start}
                 {rpgRange.start !== rpgRange.end ? `–${rpgRange.end}` : ""}
@@ -376,10 +413,14 @@ export default function RPGCalendarSidebar() {
           );
         })}
       </div>
+
+      {/* ----- Uke-datointervall (f.eks. 2/9/2026 - 2/15/2026) ----- */}
       <div style={{ fontSize: 10, color: "#B8A082", marginBottom: 8 }}>
         {weekDates[0].toLocaleDateString("en-US")} -{" "}
         {weekDates[6].toLocaleDateString("en-US")}
       </div>
+
+      {/* ----- Forklaringstekst under kalenderen ----- */}
       <div
         style={{
           marginTop: 8,
@@ -398,7 +439,7 @@ export default function RPGCalendarSidebar() {
         RPG days are covered by that real day.
       </div>
 
-      {/* Birthday Users List */}
+      {/* ----- Bursdager i dag (liste med lenker til brukerprofiler) ----- */}
       {birthdayUsers.length > 0 && (
         <div
           style={{
@@ -433,13 +474,19 @@ export default function RPGCalendarSidebar() {
               let nameColor = "#F5EFE0"; // Default color
               if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
                 nameColor = "#fff";
-              } else if (user.roles?.some((r) => r.toLowerCase() === "teacher")) {
+              } else if (
+                user.roles?.some((r) => r.toLowerCase() === "teacher")
+              ) {
                 nameColor = "gold";
-              } else if (user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
+              } else if (
+                user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+              ) {
                 nameColor = "#1ecb8c";
               } else if (user.roles?.some((r) => r.toLowerCase() === "admin")) {
                 nameColor = "#ff5e5e";
-              } else if (user.roles?.some((r) => r.toLowerCase() === "archivist")) {
+              } else if (
+                user.roles?.some((r) => r.toLowerCase() === "archivist")
+              ) {
                 nameColor = "#a084e8";
               } else {
                 // Use race color for students without roles
@@ -462,10 +509,12 @@ export default function RPGCalendarSidebar() {
                     transition: "background 0.2s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.2)";
+                    e.currentTarget.style.background =
+                      "rgba(212, 196, 168, 0.2)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.1)";
+                    e.currentTarget.style.background =
+                      "rgba(212, 196, 168, 0.1)";
                   }}
                 >
                   <img
@@ -499,7 +548,7 @@ export default function RPGCalendarSidebar() {
         </div>
       )}
 
-      {/* Upcoming Birthdays List */}
+      {/* ----- Bursdager neste måned (liste med Day X) ----- */}
       {upcomingBirthdays.length > 0 && (
         <div
           style={{
@@ -534,13 +583,19 @@ export default function RPGCalendarSidebar() {
               let nameColor = "#F5EFE0"; // Default color
               if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
                 nameColor = "#fff";
-              } else if (user.roles?.some((r) => r.toLowerCase() === "teacher")) {
+              } else if (
+                user.roles?.some((r) => r.toLowerCase() === "teacher")
+              ) {
                 nameColor = "gold";
-              } else if (user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
+              } else if (
+                user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+              ) {
                 nameColor = "#1ecb8c";
               } else if (user.roles?.some((r) => r.toLowerCase() === "admin")) {
                 nameColor = "#ff5e5e";
-              } else if (user.roles?.some((r) => r.toLowerCase() === "archivist")) {
+              } else if (
+                user.roles?.some((r) => r.toLowerCase() === "archivist")
+              ) {
                 nameColor = "#a084e8";
               } else {
                 // Use race color for students without roles
@@ -563,10 +618,12 @@ export default function RPGCalendarSidebar() {
                     transition: "background 0.2s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.2)";
+                    e.currentTarget.style.background =
+                      "rgba(212, 196, 168, 0.2)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "rgba(212, 196, 168, 0.1)";
+                    e.currentTarget.style.background =
+                      "rgba(212, 196, 168, 0.1)";
                   }}
                 >
                   <img
@@ -615,7 +672,6 @@ export default function RPGCalendarSidebar() {
           </div>
         </div>
       )}
-      
     </aside>
   );
 }

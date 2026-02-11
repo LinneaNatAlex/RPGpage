@@ -21,11 +21,11 @@ const categories = [
   "Pet Items",
 ];
 
-export default function ShopProductAdmin() {
+export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
   const { uploadImage } = useImageUpload();
   const [form, setForm] = useState({
     name: "",
-    category: "Food",
+    category: restrictToBooksOnly ? "Books" : "Food",
     price: "",
     description: "",
     effect: "",
@@ -39,7 +39,9 @@ export default function ShopProductAdmin() {
   const [existingProducts, setExistingProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState(
+    restrictToBooksOnly ? "Books" : "All"
+  );
 
   // Fetch existing products
   const fetchProducts = async () => {
@@ -104,10 +106,11 @@ export default function ShopProductAdmin() {
   };
 
   const startEdit = (product) => {
+    if (restrictToBooksOnly && product.category !== "Books") return;
     setEditingProduct(product);
     setForm({
       name: product.name || "",
-      category: product.category || "Food",
+      category: product.category || (restrictToBooksOnly ? "Books" : "Food"),
       price: product.price || "",
       description: product.description || "",
       effect: product.effect || "",
@@ -138,6 +141,7 @@ export default function ShopProductAdmin() {
   const updateProduct = async (e) => {
     e.preventDefault();
     if (!editingProduct) return;
+    if (restrictToBooksOnly && editingProduct.category !== "Books") return;
 
     setStatus("");
     if (!form.name || !form.category || !form.price) {
@@ -197,7 +201,8 @@ export default function ShopProductAdmin() {
     }
   };
 
-  const deleteProduct = async (productId) => {
+  const deleteProduct = async (productId, product) => {
+    if (restrictToBooksOnly && product?.category !== "Books") return;
     if (!window.confirm("Are you sure you want to delete this product?")) {
       return;
     }
@@ -214,6 +219,7 @@ export default function ShopProductAdmin() {
   };
 
   const convertStaticToFirestore = async (staticProduct) => {
+    if (restrictToBooksOnly && staticProduct.category !== "Books") return;
     // Sjekk om produktet allerede er konvertert
     const alreadyConverted = existingProducts.find(
       (p) =>
@@ -337,7 +343,8 @@ export default function ShopProductAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("");
-    if (!form.name || !form.category || !form.price) {
+    const category = restrictToBooksOnly ? "Books" : form.category;
+    if (!form.name || !category || !form.price) {
       setStatus("Name, category and price are required.");
       return;
     }
@@ -348,15 +355,16 @@ export default function ShopProductAdmin() {
     }
 
     try {
-      // Sett type automatisk basert på category
+      // Sett type automatisk basert på category (archivists can only add Books)
       const docData = {
         ...form,
+        category,
         price: Number(form.price),
         createdAt: Date.now(),
       };
-      if (form.category === "Food") {
+      if (category === "Food") {
         docData.type = "food";
-      } else if (form.category === "Pet Items") {
+      } else if (category === "Pet Items") {
         docData.type = "petFood";
       }
       if (form.health) {
@@ -366,7 +374,7 @@ export default function ShopProductAdmin() {
       }
 
       // Pet Food specific fields
-      if (form.category === "Pet Items") {
+      if (category === "Pet Items") {
         if (form.petHpRestore) {
           docData.petHpRestore = Number(form.petHpRestore);
         }
@@ -382,7 +390,7 @@ export default function ShopProductAdmin() {
 
       setForm({
         name: "",
-        category: "Food",
+        category: restrictToBooksOnly ? "Books" : "Food",
         price: "",
         description: "",
         effect: "",
@@ -409,7 +417,11 @@ export default function ShopProductAdmin() {
       }}
     >
       <h3 style={{ marginBottom: "20px", color: "#5D4E37" }}>
-        {editingProduct ? "Edit product" : "Add new product to Shop"}
+        {restrictToBooksOnly
+          ? "Books only (Archivist – edit book text/details)"
+          : editingProduct
+            ? "Edit product"
+            : "Add new product to Shop"}
       </h3>
       <form
         onSubmit={handleSubmit}
@@ -424,14 +436,23 @@ export default function ShopProductAdmin() {
           placeholder="Name"
           autoComplete="off"
         />
-        <label htmlFor="shop-product-category">Category</label>
-        <select id="shop-product-category" name="category" value={form.category} onChange={handleChange}>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        {restrictToBooksOnly ? (
+          <div>
+            <label>Category</label>
+            <div style={{ padding: "8px 0", color: "#5D4E37" }}>Books</div>
+          </div>
+        ) : (
+          <>
+            <label htmlFor="shop-product-category">Category</label>
+            <select id="shop-product-category" name="category" value={form.category} onChange={handleChange}>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
         <label htmlFor="shop-product-price">Price (Nits)</label>
         <input
           id="shop-product-price"
@@ -702,7 +723,7 @@ export default function ShopProductAdmin() {
           not converted)
         </h4>
 
-        {/* Category filter */}
+        {/* Category filter – archivists only see Books */}
         <div
           style={{
             margin: "20px 0",
@@ -723,28 +744,32 @@ export default function ShopProductAdmin() {
           >
             Filter by category:
           </label>
-          <select
-            id="shop-category-filter"
-            name="categoryFilter"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: 0,
-              border: "2px solid #D4C4A8",
-              background: "#FFFFFF",
-              color: "#2C2C2C",
-              fontSize: "14px",
-              width: "200px",
-            }}
-          >
-            <option value="All">All Categories</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+          {restrictToBooksOnly ? (
+            <div style={{ padding: "8px 0", color: "#5D4E37" }}>Books only</div>
+          ) : (
+            <select
+              id="shop-category-filter"
+              name="categoryFilter"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: 0,
+                border: "2px solid #D4C4A8",
+                background: "#FFFFFF",
+                color: "#2C2C2C",
+                fontSize: "14px",
+                width: "200px",
+              }}
+            >
+              <option value="All">All Categories</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* Firestore products (editable) */}
@@ -752,11 +777,14 @@ export default function ShopProductAdmin() {
           Firestore Products (Editable)
         </h5>
         {existingProducts.filter(
-          (product) =>
-            categoryFilter === "All" || product.category === categoryFilter
+            (product) =>
+              (restrictToBooksOnly ? product.category === "Books" : true) &&
+              (categoryFilter === "All" || product.category === categoryFilter)
         ).length === 0 && (
           <div style={{ color: "#8B7A6B", fontStyle: "italic" }}>
-            No Firestore products found for this category.
+            {restrictToBooksOnly
+              ? "No books in the shop yet."
+              : "No Firestore products found for this category."}
           </div>
         )}
         <div
@@ -775,7 +803,8 @@ export default function ShopProductAdmin() {
           {existingProducts
             .filter(
               (product) =>
-                categoryFilter === "All" || product.category === categoryFilter
+                (restrictToBooksOnly ? product.category === "Books" : true) &&
+                (categoryFilter === "All" || product.category === categoryFilter)
             )
             .map((product) => (
               <div
@@ -854,7 +883,7 @@ export default function ShopProductAdmin() {
                   </button>
                   <button
                     onClick={() => {
-                      deleteProduct(product.id);
+                      deleteProduct(product.id, product);
                     }}
                     style={{
                       background:
@@ -889,7 +918,7 @@ export default function ShopProductAdmin() {
             ))}
         </div>
 
-        {/* Static products (read-only) */}
+        {/* Static products (read-only) – archivists only see Books */}
         <div
           style={{
             display: "flex",
@@ -902,8 +931,11 @@ export default function ShopProductAdmin() {
           }}
         >
           <h5 style={{ color: "#5D4E37", margin: 0, fontSize: "18px" }}>
-            Static products (read-only)
+            {restrictToBooksOnly
+              ? "Static books (read-only)"
+              : "Static products (read-only)"}
           </h5>
+          {!restrictToBooksOnly && (
           <button
             onClick={convertAllStaticProducts}
             style={{
@@ -931,6 +963,7 @@ export default function ShopProductAdmin() {
           >
             Convert all static products
           </button>
+          )}
         </div>
         <div
           style={{
@@ -947,7 +980,7 @@ export default function ShopProductAdmin() {
         >
           {staticShopItems
             .filter((product) => {
-              // Filter out products that are already converted
+              if (restrictToBooksOnly && product.category !== "Books") return false;
               const isConverted = existingProducts.some(
                 (p) =>
                   p.originalId === product.id ||
