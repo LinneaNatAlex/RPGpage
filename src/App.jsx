@@ -376,7 +376,16 @@ function App() {
 
       <RotateDevicePopup />
       <MobileLayout>
-        <div className={styles.rootContainer}>
+        <div
+          className={styles.rootContainer}
+          data-theme={
+            darkModeUntil &&
+            typeof darkModeUntil === "number" &&
+            darkModeUntil > Date.now()
+              ? "dark"
+              : undefined
+          }
+        >
           {/* Navbar and TopBar always visible */}
           <header className={styles.header}>
             <Navbar />

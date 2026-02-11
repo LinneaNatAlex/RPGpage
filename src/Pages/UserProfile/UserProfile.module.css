@@ -56,6 +56,11 @@
   align-items: center;
 }
 
+/* Dark mode: no white/light background on profile – inherit dark theme */
+:global([data-theme="dark"]) .profileWrapper {
+  background: #1a1a1a;
+}
+
 .profileContainer {
   display: flex;
   flex-direction: row;
@@ -235,6 +240,10 @@
     0 4px 16px rgba(0, 0, 0, 0.05);
   margin: 0 auto;
 }
+
+:global([data-theme="dark"]) .profileIframe {
+  background: transparent;
+}
 .profileTextContainer {
   display: flex;
   flex-direction: column;
@@ -250,6 +259,10 @@
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
+}
+
+:global([data-theme="dark"]) .profileTextContainer {
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .profileTextContainer h2 {
@@ -355,6 +368,11 @@
   word-break: break-word;
   overflow-wrap: break-word;
   /* Removed text-align: left to allow BBCode alignment to work */
+}
+
+:global([data-theme="dark"]) .profileText {
+  background: #1a1a1a;
+  border-color: #444;
 }
 
 /* Default text color for content without BBCode styling */

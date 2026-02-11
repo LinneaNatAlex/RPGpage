@@ -35,6 +35,10 @@ body,
   align-items: center;
 }
 
+:global([data-theme="dark"]) .profileWrapper {
+  background: #1a1a1a;
+}
+
 .profileContainer {
   display: flex;
   flex-direction: row;
@@ -56,6 +60,11 @@ body,
   gap: 2rem;
 }
 
+:global([data-theme="dark"]) .profileContainer {
+  background: #2a2a2a;
+  border: 1px solid #444;
+}
+
 .profileTextContainer {
   display: flex;
   flex-direction: column;
@@ -68,6 +77,10 @@ body,
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+:global([data-theme="dark"]) .profileTextContainer {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .profileTextContainer h2 {
