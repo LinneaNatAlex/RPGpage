@@ -22,7 +22,7 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { playPing } from "./ping_alt";
+import { playPing, preparePingSound } from "./ping_alt";
 
 const Chat = () => {
   const { messages } = useChatMessages();
@@ -296,17 +296,22 @@ const Chat = () => {
     };
   }, [messages, isCollapsed]);
 
-  // Ping notification for mentions
+  // Ping notification for mentions (only when a *new* message mentions you, not on load)
+  const lastSeenMessageIdRef = useRef(null);
   useEffect(() => {
     if (!auth.currentUser || messages.length === 0) return;
 
     const latestMessage = messages[messages.length - 1];
+    const latestId = latestMessage.id;
     const messageText = latestMessage.text || "";
     const userName = auth.currentUser.displayName || "";
     const messageSender = latestMessage.sender || "";
 
-    // Only ping if user is mentioned and it's not their own message
+    const isNewMessage = lastSeenMessageIdRef.current !== latestId;
+    lastSeenMessageIdRef.current = latestId;
+
     if (
+      isNewMessage &&
       messageSender !== userName &&
       (messageText.toLowerCase().includes(`@${userName.toLowerCase()}`) ||
         messageText.toLowerCase().includes("@all"))
@@ -812,6 +817,7 @@ const Chat = () => {
                   value={newMess}
                   onChange={handleInputChange}
                   onKeyDown={handleMentionKeyDown}
+                  onFocus={preparePingSound}
                   type="text"
                   placeholder="YOUR MESSAGES..."
                   maxLength={200}

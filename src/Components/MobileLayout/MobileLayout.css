@@ -1406,6 +1406,8 @@
   display: flex;
   flex-direction: column;
   padding: 12px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .mobile-topbar-container::-webkit-scrollbar {
@@ -1433,6 +1435,24 @@
   border-radius: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
+}
+
+/* Keep private chat input always visible at bottom; avoid truncation */
+.mobile-private-chat-container .private-chat-form-mobile {
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+.mobile-private-chat-container .private-chat-form-mobile > div {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+.mobile-private-chat-container .private-chat-form-mobile input[type="text"] {
+  min-width: 0 !important;
+  flex: 1 !important;
 }
 
 .mobile-online-container {
@@ -1479,6 +1499,7 @@
   padding: 15px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 0;
+  flex-shrink: 0;
 }
 
 .mobile-chat-overlay .mobile-chat-header h2 {
@@ -1508,22 +1529,26 @@
 }
 
 .mobile-global-chat-container .chat,
-.mobile-private-chat-container .privateChat {
+.mobile-private-chat-container .privateChat,
+.mobile-private-chat-container .private-chat-mobile {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
+  min-height: 0 !important;
 }
 
 .mobile-global-chat-container .chat *,
-.mobile-private-chat-container .privateChat * {
+.mobile-private-chat-container .privateChat *,
+.mobile-private-chat-container .private-chat-mobile * {
   color: #ffffff !important;
 }
 
 .mobile-global-chat-container .chat input,
-.mobile-private-chat-container .privateChat input {
+.mobile-private-chat-container .privateChat input,
+.mobile-private-chat-container .private-chat-mobile input {
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
@@ -1531,12 +1556,14 @@
 }
 
 .mobile-global-chat-container .chat input::placeholder,
-.mobile-private-chat-container .privateChat input::placeholder {
+.mobile-private-chat-container .privateChat input::placeholder,
+.mobile-private-chat-container .private-chat-mobile input::placeholder {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .mobile-global-chat-container .chat button,
-.mobile-private-chat-container .privateChat button {
+.mobile-private-chat-container .privateChat button,
+.mobile-private-chat-container .private-chat-mobile button {
   background: linear-gradient(45deg, #ff6b6b, #ff8e8e) !important;
   border: none !important;
   color: #ffffff !important;

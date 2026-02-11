@@ -95,8 +95,11 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  where,
+  limit,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
+import { playPrivateChatPling, preparePrivateChatSound } from "./ping_alt";
 
 const PrivateChat = () => {
   // Mute state for varsler
@@ -274,6 +277,7 @@ const PrivateChat = () => {
   const [message, setMessage] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const chatBoxRef = useRef(null);
+  const lastMessageRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
 
@@ -296,6 +300,40 @@ const PrivateChat = () => {
     };
     fetchChats();
   }, [currentUser, users]);
+
+  // When chat is collapsed: listen for new private_chat notifications → same soft pling as main chat
+  const lastSeenPrivateNotifIdRef = useRef(null);
+  useEffect(() => {
+    if (!currentUser || !isCollapsed) return;
+    const q = query(
+      collection(db, "notifications"),
+      where("to", "==", currentUser.uid),
+      where("type", "==", "private_chat"),
+      orderBy("created", "desc"),
+      limit(1),
+    );
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        const doc = snap.docs[0];
+        if (!doc) return;
+        const data = doc.data();
+        const fromUid = data.fromUid || data.from;
+        const isFromOther = fromUid && fromUid !== currentUser.uid;
+        if (
+          lastSeenPrivateNotifIdRef.current !== null &&
+          lastSeenPrivateNotifIdRef.current !== doc.id &&
+          isFromOther &&
+          !mutedRef.current
+        ) {
+          playPrivateChatPling();
+        }
+        lastSeenPrivateNotifIdRef.current = doc.id;
+      },
+      () => {},
+    );
+    return () => unsub();
+  }, [currentUser, isCollapsed]);
 
   // Optimized: Only listen for messages from the currently selected chat
   // Remove the multiple listeners for all active chats to reduce Firebase quota usage
@@ -327,16 +365,14 @@ const PrivateChat = () => {
     });
   }, [currentUser, selectedUser, isCollapsed, isPcForSubscription]);
 
-  // Auto-scroll to latest message when messages load or update (PC and mobile)
+  // Auto-scroll so the latest message is always visible (one scroll after layout to avoid jump)
   useEffect(() => {
-    if (!chatBoxRef.current) return;
-    const el = chatBoxRef.current;
-    const scrollToBottom = () => {
-      el.scrollTop = el.scrollHeight;
+    if (selectedMessages.length === 0) return;
+    const run = () => {
+      lastMessageRef.current?.scrollIntoView({ block: "end", behavior: "auto" });
     };
-    requestAnimationFrame(scrollToBottom);
-    const t = setTimeout(scrollToBottom, 80);
-    return () => clearTimeout(t);
+    const id = setTimeout(() => requestAnimationFrame(run), 0);
+    return () => clearTimeout(id);
   }, [selectedMessages]);
 
   // NOW conditional returns after ALL hooks
@@ -514,10 +550,16 @@ const PrivateChat = () => {
   // Any chat has unread? (etter at meldinger er lest forsvinner badge umiddelbart)
   const hasUnread = activeChats.some((c) => getUnreadCount(c) > 0);
 
-  const isPc = window.innerWidth > 768;
+  const isPc = typeof window !== "undefined" && window.innerWidth > 768;
   return (
     <div
-      className={isPc && !isCollapsed ? styles.chatPanelSticky : undefined}
+      className={
+        isPc && !isCollapsed
+          ? styles.chatPanelSticky
+          : !isPc
+            ? "private-chat-mobile"
+            : undefined
+      }
       style={{
         position: isPc ? "fixed" : "relative",
         top: isPc && !isCollapsed ? 0 : "auto",
@@ -525,17 +567,17 @@ const PrivateChat = () => {
         right: isPc ? 370 : "auto",
         width: isPc ? 350 : "100%",
         maxWidth: isPc ? undefined : "100%",
-        height: isPc && !isCollapsed ? "100vh" : "auto",
+        height: isPc && !isCollapsed ? "100vh" : isPc ? "auto" : "100%",
         flex: isPc ? undefined : 1,
         minWidth: isPc ? undefined : 0,
         minHeight: isPc ? undefined : 0,
         zIndex: isPc ? 10005 : 1,
-        display: isPc ? "flex" : "block",
+        display: "flex",
         flexDirection: isPc
           ? isCollapsed
             ? "column-reverse"
             : "column"
-          : undefined,
+          : "column",
       }}
     >
       {isPc && (
@@ -554,15 +596,18 @@ const PrivateChat = () => {
             border: "1px solid #7B6857",
             borderBottom: isCollapsed ? "1px solid #7B6857" : "none",
           }}
-          onClick={() => setIsCollapsed((prev) => !prev)}
+onClick={() => {
+            preparePrivateChatSound();
+            setIsCollapsed((prev) => !prev);
+          }}
         >
           <span
-            style={{
-              flex: 1,
-              color: "#F5EFE0",
-              fontWeight: 600,
-              position: "relative",
-            }}
+          style={{
+            flex: 1,
+            color: "#F5EFE0",
+            fontWeight: 600,
+            position: "relative",
+          }}
           >
             Private Chat
             {hasUnread && (
@@ -660,6 +705,7 @@ const PrivateChat = () => {
             }}
             onClick={(e) => {
               e.stopPropagation();
+              preparePrivateChatSound();
               setIsCollapsed((prev) => !prev);
             }}
           >
@@ -694,7 +740,13 @@ const PrivateChat = () => {
             borderTopLeftRadius: !isPc ? 12 : 0,
             borderTopRightRadius: !isPc ? 12 : 0,
             borderTop: !isPc ? "1px solid #7B6857" : "none",
-            ...(!isPc && { height: "85vh", minHeight: 280 }),
+            ...(!isPc && {
+              flex: 1,
+              minHeight: 0,
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }),
           }}
         >
           {!isPc && (
@@ -732,6 +784,7 @@ const PrivateChat = () => {
               boxSizing: "border-box",
               textAlign: "left",
               borderBottom: "1px solid rgba(123, 104, 87, 0.3)",
+              ...(!isPc && { flexShrink: 0 }),
             }}
           >
             <input
@@ -836,14 +889,9 @@ const PrivateChat = () => {
                             fontWeight: unread > 0 ? 700 : 400,
                           }}
                           onClick={async () => {
+                            preparePrivateChatSound();
                             setSelectedUser(c.user);
-                            setTimeout(() => {
-                              if (chatBoxRef.current) {
-                                chatBoxRef.current.scrollTop =
-                                  chatBoxRef.current.scrollHeight;
-                              }
-                            }, 100);
-                            // Force a re-render to show message history
+                            // Scroll to bottom when selectedMessages updates (see effect)
                             setActiveChats((prev) => [...prev]);
                             // Marker alle meldinger som lest i Firestore NÅR chatten åpnes
                             const chatId = [currentUser.uid, c.user.uid]
@@ -951,9 +999,11 @@ const PrivateChat = () => {
                 style={{ flex: 1, minHeight: 0 }}
               >
                 {selectedMessages.map((m, i) => {
+                  const isLast = i === selectedMessages.length - 1;
                   return (
                     <div
                       key={i}
+                      ref={isLast ? lastMessageRef : undefined}
                       className={
                         styles.privateMessageRow +
                         (m.from === currentUser?.uid ? " " + styles.me : "")
@@ -1074,9 +1124,20 @@ const PrivateChat = () => {
                 })}
               </div>
               <form
-                className={`${styles.chatForm} ${styles.privateChatForm}`}
+                className={`${styles.chatForm} ${styles.privateChatForm}${
+                  !isPc ? " private-chat-form-mobile" : ""
+                }`}
                 onSubmit={sendMessage}
-                style={{ width: "100%", justifyContent: "flex-start" }}
+                style={{
+                  width: "100%",
+                  justifyContent: "flex-start",
+                  boxSizing: "border-box",
+                  ...(!isPc && {
+                    flexShrink: 0,
+                    paddingLeft: "env(safe-area-inset-left, 0.75rem)",
+                    paddingRight: "env(safe-area-inset-right, 0.75rem)",
+                  }),
+                }}
               >
                 <div
                   style={{
@@ -1085,6 +1146,7 @@ const PrivateChat = () => {
                     gap: 4,
                     flex: 1,
                     minWidth: 0,
+                    width: "100%",
                   }}
                 >
                   <input
@@ -1104,7 +1166,7 @@ const PrivateChat = () => {
                     }
                     maxLength={200}
                     className={styles.chatInput}
-                    style={{ flex: 1, minWidth: 0 }}
+                    style={{ flex: 1, minWidth: 0, width: 0 }}
                   />
                   <button
                     type="button"
