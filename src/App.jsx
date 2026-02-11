@@ -303,6 +303,26 @@ function App() {
           .ql-toolbar .ql-picker-item:hover {
             background: #444 !important;
           }
+          /* Innlogging/sign-up: input og textarea inni theme-container – overstyr moduler og autofill */
+          [data-theme="dark"] input,
+          [data-theme="dark"] textarea,
+          [data-theme="dark"] select {
+            background-color: #2a2a2a !important;
+            color: #e0e0e0 !important;
+            border-color: #555 !important;
+          }
+          [data-theme="dark"] input::placeholder,
+          [data-theme="dark"] textarea::placeholder {
+            color: #999 !important;
+          }
+          [data-theme="dark"] input:-webkit-autofill,
+          [data-theme="dark"] input:-webkit-autofill:hover,
+          [data-theme="dark"] input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #e0e0e0 !important;
+            -webkit-box-shadow: 0 0 0 30px #2a2a2a inset !important;
+            box-shadow: 0 0 0 30px #2a2a2a inset !important;
+            background-color: #2a2a2a !important;
+          }
         `
             : ""
         }

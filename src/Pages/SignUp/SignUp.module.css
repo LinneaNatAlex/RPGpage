@@ -294,3 +294,17 @@ input::placeholder {
     font-size: 1.2rem;
   }
 }
+
+/* Dark mode – input felt når sidetema er dark */
+:global([data-theme="dark"]) .signUpContainer input {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border-color: #555 !important;
+}
+:global([data-theme="dark"]) .signUpContainer input::placeholder {
+  color: #999 !important;
+}
+:global([data-theme="dark"]) .signUpContainer input:focus {
+  border-color: #7B6857 !important;
+  box-shadow: 0 0 16px rgba(123, 104, 87, 0.5) !important;
+}
