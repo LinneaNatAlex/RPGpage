@@ -164,7 +164,8 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         price: parseInt(price) || 0,
         pages: pages.filter((page) => page.content.trim()),
         author: selectedAuthor || user.displayName || user.email,
-        createdBy: user.uid, // Store who actually created the book for admin purposes
+        createdBy: user.uid,
+        authorUid: user.uid,
         type: "book",
         coverImage: coverImage,
       };

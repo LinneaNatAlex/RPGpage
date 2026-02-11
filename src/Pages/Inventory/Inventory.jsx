@@ -837,10 +837,12 @@ const Inventory = () => {
           // Add notification
           await addDoc(collection(db, "notifications"), {
             to: toUser.uid,
+            type: "gift",
             from:
               user.displayName && user.displayName.trim()
                 ? user.displayName
-                : user.email || "Unknown",
+                : user.email || user.uid,
+            fromUid: user.uid,
             item: disguise?.name || giftModal.item.name,
             disguised:
               giftModal.item.name !== (disguise?.name || giftModal.item.name),

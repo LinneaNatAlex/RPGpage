@@ -1,6 +1,6 @@
 // src/Components/TopBar/TopBar.jsx
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
@@ -8,6 +8,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
   collection,
   addDoc,
@@ -18,7 +19,6 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { useRef } from "react";
 import GiftModal from "./GiftModal";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
@@ -64,6 +64,9 @@ const TopBar = () => {
   const [invisibleCountdown, setInvisibleCountdown] = useState(0);
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
   const [notifications, setNotifications] = useState([]);
+  const [recentNews, setRecentNews] = useState([]);
+  const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
+  const notificationsPanelRef = useRef(null);
   const [inLoveWith, setInLoveWith] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
   const [inLoveCountdown, setInLoveCountdown] = useState(0);
@@ -153,9 +156,8 @@ const TopBar = () => {
 
                 // Only notify if post is very recent (within last 30 seconds)
                 if (timeDiff < 30000 && post.uid !== user.uid) {
-                  // Create notification
                   addDoc(collection(db, "notifications"), {
-                    userId: user.uid,
+                    to: user.uid,
                     type: "topic_reply",
                     topicId: topic.id,
                     topicTitle: topic.title,
@@ -163,6 +165,7 @@ const TopBar = () => {
                     author: post.author,
                     content: post.content,
                     createdAt: serverTimestamp(),
+                    created: Date.now(),
                     read: false,
                   });
                 }
@@ -457,46 +460,76 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [invisibleUntil]);
 
-  // Hent notifications for innlogget bruker
-  // QUOTA OPTIMIZATION: Use caching + polling for notifications
+  // Fetch notifications (to + userId for legacy) and recent news for list
   useEffect(() => {
     if (!user) return;
 
-    const fetchNotifications = async () => {
+    const fetchAll = async () => {
       try {
-        // Check cache first
-        const cachedNotifications = cacheHelpers.getNotifications(user.uid);
-        if (cachedNotifications) {
-          setNotifications(cachedNotifications);
-          return;
-        }
-
-        // Fetch from Firebase if no cache
-        const q = query(
-          collection(db, "notifications"),
-          where("to", "==", user.uid),
-          where("read", "==", false)
-        );
-        const snap = await getDocs(q);
-        const notifications = snap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
+        const notifRef = collection(db, "notifications");
+        const [toSnap, userIdSnap] = await Promise.all([
+          getDocs(
+            query(notifRef, where("to", "==", user.uid), limit(80))
+          ).catch(() => ({ docs: [] })),
+          getDocs(
+            query(notifRef, where("userId", "==", user.uid), limit(80))
+          ).catch(() => ({ docs: [] })),
+        ]);
+        const byTo = (toSnap.docs || []).map((d) => ({
+          id: d.id,
+          ...d.data(),
+          _sort: d.data().created ?? d.data().createdAt?.toMillis?.() ?? 0,
         }));
-
-        // Cache the notifications
-        cacheHelpers.setNotifications(user.uid, notifications);
-        setNotifications(notifications);
-      } catch (error) {}
+        const byUserId = (userIdSnap.docs || []).map((d) => ({
+          id: d.id,
+          ...d.data(),
+          _sort: d.data().created ?? d.data().createdAt?.toMillis?.() ?? 0,
+        }));
+        const merged = [...byTo, ...byUserId.filter((n) => !byTo.find((t) => t.id === n.id))];
+        merged.sort((a, b) => (b._sort || 0) - (a._sort || 0));
+        const list = merged.slice(0, 50).map(({ _sort, ...n }) => n);
+        setNotifications(list);
+        cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
+      } catch (e) {}
     };
 
-    // Fetch initially
-    fetchNotifications();
-
-    // Poll every 30 seconds for notifications
-    const interval = setInterval(fetchNotifications, 30000);
-
+    fetchAll();
+    const interval = setInterval(fetchAll, 30000);
     return () => clearInterval(interval);
   }, [user]);
+
+  // Recent news for notification list (newer than lastSeenNewsAt)
+  useEffect(() => {
+    if (!user || !userData) return;
+    const lastSeen = userData.lastSeenNewsAt ?? 0;
+    const q = query(
+      collection(db, "news"),
+      orderBy("createdAt", "desc"),
+      limit(10)
+    );
+    getDocs(q)
+      .then((snap) => {
+        const list = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .filter((item) => item.type === "nyhet")
+          .filter((item) => {
+            const t = item.createdAt?.toMillis?.() ?? item.createdAt ?? 0;
+            return t > lastSeen;
+          });
+        setRecentNews(list);
+      })
+      .catch(() => setRecentNews([]));
+  }, [user, userData?.lastSeenNewsAt]);
+
+  // Close notifications panel on Escape
+  useEffect(() => {
+    if (!showNotificationsPanel) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setShowNotificationsPanel(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showNotificationsPanel]);
 
   return (
     <>
@@ -708,38 +741,205 @@ const TopBar = () => {
           onClick={() => navigate("/inventory")}
           title="Inventory"
           disabled={infirmary}
-          style={{ position: "relative" }}
         >
           <img
             src="/icons/magic-school.svg"
             alt="Inventory"
             className={styles.chestIcon}
           />
-          {notifications.length > 0 && (
-            <span
-              style={{
-                position: "absolute",
-                top: "-5px",
-                right: "-5px",
-                background: "#ff5e5e",
-                color: "white",
-                borderRadius: "50%",
-                width: "20px",
-                height: "20px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "12px",
-                fontWeight: "bold",
-                border: "2px solid #fff",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                zIndex: 10,
-              }}
-            >
-              !
-            </span>
-          )}
         </button>
+        {/* Notifications button + panel */}
+        {user && (
+          <div className={styles.notificationBellWrap} ref={notificationsPanelRef}>
+            <button
+              type="button"
+              className={styles.inventoryIconBtn}
+              onClick={() => setShowNotificationsPanel((v) => !v)}
+              title="Notifications"
+              aria-label="Notifications"
+              style={{ position: "relative" }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+              </svg>
+              {(() => {
+                const unread = notifications.filter((n) => !n.read).length + recentNews.length;
+                if (unread === 0) return null;
+                return (
+                  <span className={styles.notificationBadge}>{unread > 99 ? "99+" : unread}</span>
+                );
+              })()}
+            </button>
+            {showNotificationsPanel && (
+              <div className={styles.notificationPanel}>
+                <div className={styles.notificationPanelHeader}>
+                  <h3>Notifications</h3>
+                  <button
+                    type="button"
+                    className={styles.closeButton}
+                    onClick={() => setShowNotificationsPanel(false)}
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className={styles.notificationList}>
+                  {recentNews.length > 0 &&
+                    recentNews.map((news) => (
+                      <div
+                        key={`news-${news.id}`}
+                        className={styles.notificationItem}
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          if (e.target.closest(`.${styles.notificationRemoveBtn}`)) return;
+                          navigate("/news");
+                          setShowNotificationsPanel(false);
+                          const seenAt =
+                            news.createdAt?.toMillis?.() ?? news.createdAt ?? Date.now();
+                          updateDoc(doc(db, "users", user.uid), {
+                            lastSeenNewsAt: typeof seenAt === "number" ? seenAt : Date.now(),
+                          });
+                          cacheHelpers.clearUserCache(user.uid);
+                          setRecentNews((prev) => prev.filter((n) => n.id !== news.id));
+                        }}
+                        onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
+                      >
+                        <span className={styles.notificationIconNews}>📰</span>
+                        <span className={styles.notificationText}>
+                          New news: {news.title || "Untitled"}
+                        </span>
+                        <button
+                          type="button"
+                          className={styles.notificationRemoveBtn}
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const seenAt =
+                              news.createdAt?.toMillis?.() ?? news.createdAt ?? Date.now();
+                            try {
+                              await updateDoc(doc(db, "users", user.uid), {
+                                lastSeenNewsAt: typeof seenAt === "number" ? seenAt : Date.now(),
+                              });
+                              cacheHelpers.clearUserCache(user.uid);
+                              setRecentNews((prev) => prev.filter((n) => n.id !== news.id));
+                            } catch (err) {}
+                          }}
+                          title="Dismiss"
+                          aria-label="Dismiss"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  {notifications
+                    .filter((n) => !n.read)
+                    .map((n) => {
+                    const isReply = n.type === "topic_reply" || n.type === "new_topic";
+                    const isGift = n.type === "gift";
+                    const isChat = n.type === "private_chat";
+                    const isLike = n.type === "content_like";
+                    const isProfileLike = n.type === "profile_like";
+                    const uid = n.fromUid || n.from;
+                    const looksLikeUid =
+                      typeof n.from === "string" &&
+                      n.from.length >= 20 &&
+                      /^[a-zA-Z0-9]+$/.test(n.from);
+                    const senderName =
+                      looksLikeUid || n.fromUid
+                        ? users?.find((u) => u.uid === uid)?.displayName ||
+                          users?.find((u) => u.uid === uid)?.email ||
+                          n.fromName ||
+                          n.from ||
+                          "Someone"
+                        : n.fromName || n.from || "Someone";
+                    const itemName =
+                      n.item && String(n.item).trim() ? n.item : "a gift";
+                    const likeLabel =
+                      n.targetType === "book"
+                        ? `${senderName} liked your book${n.targetTitle ? ` "${n.targetTitle}"` : ""}`
+                        : `${senderName} liked your news${n.targetTitle ? ` "${n.targetTitle}"` : ""}`;
+                    const label = isGift
+                      ? `You received ${itemName} from ${senderName}`
+                      : isChat
+                        ? `Message from ${senderName}`
+                        : isProfileLike
+                          ? `${senderName} liked your profile`
+                          : isLike
+                            ? likeLabel
+                            : isReply
+                            ? n.message || n.title || `New activity in ${n.topicTitle || n.forumRoom || "forum"}`
+                            : `You received ${itemName} from ${senderName}`;
+                    const forumPath = (n.forum || n.forumRoom || "")
+                      .toLowerCase()
+                      .replace(/\s+/g, "");
+                    return (
+                      <div
+                        key={n.id}
+                        className={styles.notificationItem}
+                        role="button"
+                        tabIndex={0}
+                        onClick={async (e) => {
+                          if (e.target.closest(`.${styles.notificationRemoveBtn}`)) return;
+                          try {
+                            await updateDoc(doc(db, "notifications", n.id), {
+                              read: true,
+                            });
+                            setNotifications((prev) =>
+                              prev.map((x) =>
+                                x.id === n.id ? { ...x, read: true } : x
+                              )
+                            );
+                          } catch (err) {}
+                          setShowNotificationsPanel(false);
+                          if (isReply && (n.topicId || forumPath))
+                            navigate(
+                              `/forum/${forumPath || "general"}?topic=${n.topicId || ""}`
+                            );
+                          if (isChat) navigate("/chat");
+                          if (isLike && (n.targetType === "news" || n.targetType === "book"))
+                            navigate(n.targetType === "book" ? "/shop" : "/news");
+                          if (isProfileLike) navigate(`/user/${n.fromUid || n.from}`);
+                        }}
+                        onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
+                      >
+                        {isGift && <span className={styles.notificationIconGift}>🎁</span>}
+                        {isChat && <span className={styles.notificationIconChat}>💬</span>}
+                        {isReply && <span className={styles.notificationIconReply}>📌</span>}
+                        {isLike && <span className={styles.notificationIconLike}>❤️</span>}
+                        {isProfileLike && <span className={styles.notificationIconLike}>❤️</span>}
+                        {!isGift && !isChat && !isReply && !isLike && !isProfileLike && (
+                          <span className={styles.notificationIconGift}>🎁</span>
+                        )}
+                        <span className={styles.notificationText}>{label}</span>
+                        <button
+                          type="button"
+                          className={styles.notificationRemoveBtn}
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            try {
+                              await deleteDoc(doc(db, "notifications", n.id));
+                              setNotifications((prev) => prev.filter((x) => x.id !== n.id));
+                            } catch (err) {}
+                          }}
+                          title="Remove notification"
+                          aria-label="Remove notification"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                  {recentNews.length === 0 &&
+                    notifications.filter((n) => !n.read).length === 0 && (
+                      <p className={styles.notificationEmpty}>No notifications</p>
+                    )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <button
           className={styles.inventoryIconBtn}
           onClick={() => {
@@ -893,10 +1093,12 @@ const TopBar = () => {
             // Legg til notification til mottaker
             await addDoc(collection(db, "notifications"), {
               to: toUser.uid,
+              type: "gift",
               from:
                 user.displayName && user.displayName.trim()
                   ? user.displayName
-                  : user.email || "Unknown",
+                  : user.email || user.uid,
+              fromUid: user.uid,
               item: disguise?.name || giftModal.item.name,
               disguised:
                 giftModal.item.name !== (disguise?.name || giftModal.item.name),
@@ -907,32 +1109,17 @@ const TopBar = () => {
             setGiftModal({ open: false, item: null });
           }}
         />
-        {/* Fainted overlay moved to global overlay above */}
-        {/* Notification bell/alert */}
-        {notifications.length > 0 && (
+        {/* Close notifications panel on outside click */}
+        {showNotificationsPanel && (
           <div
+            role="presentation"
             style={{
-              position: "absolute",
-              top: 8,
-              right: 16,
-              color: "#ff0",
-              fontWeight: 700,
-              cursor: "pointer",
+              position: "fixed",
+              inset: 0,
+              zIndex: 998,
             }}
-            title="You have a new gift! Click to mark as read."
-            onClick={async () => {
-              // Sett alle notifications som lest
-              for (const n of notifications) {
-                await updateDoc(doc(db, "notifications", n.id), { read: true });
-              }
-              setNotifications([]);
-            }}
-          >
-            !{" "}
-            {notifications[0].type === "topic_reply"
-              ? `New reply in "${notifications[0].topicTitle}" by ${notifications[0].author}`
-              : `You received a gift from ${notifications[0].from}: ${notifications[0].item}`}
-          </div>
+            onClick={() => setShowNotificationsPanel(false)}
+          />
         )}
 
         {/* Followed Topics Modal */}

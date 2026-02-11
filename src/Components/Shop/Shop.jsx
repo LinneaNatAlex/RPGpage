@@ -9,6 +9,9 @@ import {
   deleteDoc,
   getDocs,
   limit,
+  arrayUnion,
+  arrayRemove,
+  addDoc,
 } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
@@ -64,6 +67,48 @@ const Shop = ({ open = true }) => {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  const handleBookLike = async (bookItem) => {
+    if (!user || bookItem.type !== "book") return;
+    const authorUid = bookItem.createdBy || bookItem.authorUid;
+    const likedBy = Array.isArray(bookItem.likedBy) ? bookItem.likedBy : [];
+    const hasLiked = likedBy.includes(user.uid);
+    const bookRef = doc(db, "books", bookItem.id);
+    try {
+      if (hasLiked) {
+        await updateDoc(bookRef, { likedBy: arrayRemove(user.uid) });
+        setBooks((prev) =>
+          prev.map((b) =>
+            b.id === bookItem.id
+              ? { ...b, likedBy: (b.likedBy || []).filter((uid) => uid !== user.uid) }
+              : b
+          )
+        );
+      } else {
+        await updateDoc(bookRef, { likedBy: arrayUnion(user.uid) });
+        setBooks((prev) =>
+          prev.map((b) =>
+            b.id === bookItem.id ? { ...b, likedBy: [...(b.likedBy || []), user.uid] } : b
+          )
+        );
+        if (authorUid && authorUid !== user.uid) {
+          const likerName = user.displayName?.trim() || user.email || "Someone";
+          await addDoc(collection(db, "notifications"), {
+            to: authorUid,
+            type: "content_like",
+            from: user.uid,
+            fromUid: user.uid,
+            fromName: likerName,
+            targetType: "book",
+            targetId: bookItem.id,
+            targetTitle: bookItem.title || "your book",
+            read: false,
+            created: Date.now(),
+          });
+        }
+      }
+    } catch (err) {}
+  };
 
   // Get brewed potions for unlock system
   const [craftedPotions, setCraftedPotions] = useState(new Set());
@@ -433,6 +478,25 @@ const Shop = ({ open = true }) => {
                     )}
                 </div>
                 <div className={styles.itemActions}>
+                  {itemWithImage.type === "book" && (
+                    <div className={styles.bookLikeRow}>
+                      <button
+                        type="button"
+                        className={styles.bookLikeButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookLike(itemWithImage);
+                        }}
+                        title={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                        aria-label={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                      >
+                        {(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "❤️" : "🤍"}
+                      </button>
+                      {Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.length > 0 && (
+                        <span className={styles.bookLikeCount}>{itemWithImage.likedBy.length}</span>
+                      )}
+                    </div>
+                  )}
                   <span className={styles.itemPrice}>
                     {itemWithImage.price} Nits
                   </span>

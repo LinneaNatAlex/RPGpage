@@ -413,6 +413,27 @@ body,
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+.profileLikesOverview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 196, 168, 0.35);
+  border-radius: 0;
+}
+
+.profileLikesOverviewIcon {
+  font-size: 1.1rem;
+}
+
+.profileLikesOverviewText {
+  font-size: 0.9rem;
+  color: #d4c4a8;
+}
+
 /* Pet Display Styles */
 .petDisplay {
   display: flex;
@@ -454,6 +475,25 @@ body,
   align-items: center;
   gap: 8px;
   margin-top: 4px;
+}
+
+.petPawOnlyButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(212, 196, 168, 0.5);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.petPawOnlyButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.08);
 }
 
 .petPawButton {
@@ -529,6 +569,58 @@ body,
 
 .closeButton:hover {
   color: #8b7a6b;
+}
+
+.petModalPetDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(93, 78, 55, 0.3);
+}
+
+.petModalImage {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border: 2px solid #5d4e37;
+}
+
+.petModalName {
+  font-weight: 700;
+  color: #5d4e37;
+  font-size: 1rem;
+}
+
+.petModalHpRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.petModalHpBar {
+  flex: 1;
+  height: 10px;
+  background: rgba(93, 78, 55, 0.2);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.petModalHpFill {
+  height: 100%;
+  background: #7b6857;
+  border-radius: 0;
+  transition: width 0.2s ease;
+}
+
+.petModalHpText {
+  font-size: 0.85rem;
+  color: #5d4e37;
+  flex-shrink: 0;
 }
 
 .petInteractionButtons {

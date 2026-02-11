@@ -440,6 +440,24 @@ const PrivateChat = () => {
           Object.keys(potionEffects).length > 0 ? potionEffects : null,
       });
 
+      // Notify recipient
+      const fromDisplayName =
+        currentUser.displayName?.trim() ||
+        currentUser.email ||
+        "Someone";
+      try {
+        await addDoc(collection(db, "notifications"), {
+          to: selectedUser.uid,
+          type: "private_chat",
+          from: currentUser.uid,
+          fromUid: currentUser.uid,
+          fromName: fromDisplayName,
+          read: false,
+          created: Date.now(),
+          textPreview: message.slice(0, 80),
+        });
+      } catch (_) {}
+
       // Add each other in userChats for both sender and receiver
       const senderChatsRef = doc(db, "userChats", currentUser.uid);
       const receiverChatsRef = doc(db, "userChats", selectedUser.uid);

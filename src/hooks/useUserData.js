@@ -152,6 +152,7 @@ const useUserData = () => {
               lastHealthUpdate: processedData.lastHealthUpdate || null,
               currentPet: processedData.currentPet || null,
               craftedPotions: processedData.craftedPotions || [],
+              lastSeenNewsAt: processedData.lastSeenNewsAt ?? null,
             });
           }
         } catch (error) {

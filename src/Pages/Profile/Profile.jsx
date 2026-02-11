@@ -81,140 +81,121 @@ const Profile = () => {
     }
   };
 
-  // Check if pet can be petted (cooldown check)
+  const getTodayString = () => new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const DAILY_PET_LIMIT = 3;
+  const DAILY_PLAY_LIMIT = 3;
+
+  // Pet/play: max 3 per day each, and not allowed at 0% HP
   const canPet = () => {
-    if (!lastPet) return true;
-    const now = new Date();
-    const lastTime = lastPet.toDate ? lastPet.toDate() : new Date(lastPet);
-    const timeDiff = now - lastTime;
-    return timeDiff > 3 * 60 * 1000; // 3 minutes cooldown for petting
+    if (!userData?.currentPet) return false;
+    if (calculatePetHP(userData.currentPet) <= 0) return false;
+    const today = getTodayString();
+    const lastReset = userData.currentPet.lastResetDate || "";
+    const petCountToday =
+      lastReset === today ? (userData.currentPet.petCountToday ?? 0) : 0;
+    return petCountToday < DAILY_PET_LIMIT;
   };
 
-  // Check if pet can be played with (cooldown check)
   const canPlay = () => {
-    if (!lastPlay) return true;
-    const now = new Date();
-    const lastTime = lastPlay.toDate ? lastPlay.toDate() : new Date(lastPlay);
-    const timeDiff = now - lastTime;
-    return timeDiff > 5 * 60 * 1000; // 5 minutes cooldown for playing
+    if (!userData?.currentPet) return false;
+    if (calculatePetHP(userData.currentPet) <= 0) return false;
+    const today = getTodayString();
+    const lastReset = userData.currentPet.lastResetDate || "";
+    const playCountToday =
+      lastReset === today ? (userData.currentPet.playCountToday ?? 0) : 0;
+    return playCountToday < DAILY_PLAY_LIMIT;
   };
 
-  // Update countdown timers every second
+  const getPetCountToday = () => {
+    const today = getTodayString();
+    const lastReset = userData?.currentPet?.lastResetDate || "";
+    return lastReset === today ? (userData?.currentPet?.petCountToday ?? 0) : 0;
+  };
+  const getPlayCountToday = () => {
+    const today = getTodayString();
+    const lastReset = userData?.currentPet?.lastResetDate || "";
+    return lastReset === today ? (userData?.currentPet?.playCountToday ?? 0) : 0;
+  };
+
+  // Mood decay over time (reduce by 1 every 5 minutes when not interacted with)
   useEffect(() => {
-    const updateCountdowns = () => {
+    const runDecay = () => {
       const now = new Date();
-
-      // Pet cooldown
-      if (lastPet) {
-        const lastTime = lastPet.toDate ? lastPet.toDate() : new Date(lastPet);
-        const timeDiff = now - lastTime;
-        const cooldownTime = 3 * 60 * 1000; // 3 minutes
-        const remaining = Math.max(0, cooldownTime - timeDiff);
-        setPetTimeLeft(Math.ceil(remaining / 1000));
-      }
-
-      // Play cooldown
-      if (lastPlay) {
-        const lastTime = lastPlay.toDate
-          ? lastPlay.toDate()
-          : new Date(lastPlay);
-        const timeDiff = now - lastTime;
-        const cooldownTime = 5 * 60 * 1000; // 5 minutes
-        const remaining = Math.max(0, cooldownTime - timeDiff);
-        setPlayTimeLeft(Math.ceil(remaining / 1000));
-      }
-
-      // Mood decay over time (reduce by 1 every 10 minutes)
       if (userData?.currentPet?.lastInteraction) {
         const lastInteraction = userData.currentPet.lastInteraction.toDate
           ? userData.currentPet.lastInteraction.toDate()
           : new Date(userData.currentPet.lastInteraction);
         const timeSinceInteraction = now - lastInteraction;
-        const decayInterval = 10 * 60 * 1000; // 10 minutes
+        const decayInterval = 5 * 60 * 1000; // 5 minutes – gradual visible decay
         const decayAmount = Math.floor(timeSinceInteraction / decayInterval);
-
         if (decayAmount > 0) {
           const newMood = Math.max(0, petMood - decayAmount);
           if (newMood !== petMood) {
             setPetMood(newMood);
-            // Update in Firestore
-            const userRef = doc(db, "users", userData.uid || user.uid);
-            updateDoc(userRef, {
-              "currentPet.mood": newMood,
-            }).catch(console.error);
+            const userRef = doc(db, "users", userData.uid || user?.uid);
+            updateDoc(userRef, { "currentPet.mood": newMood }).catch(() => {});
           }
         }
       }
     };
-
-    updateCountdowns(); // Initial update
-    const interval = setInterval(updateCountdowns, 1000); // Update every second
-
+    runDecay();
+    const interval = setInterval(runDecay, 60 * 1000); // Check every minute
     return () => clearInterval(interval);
-  }, [lastPet, lastPlay, userData, petMood, user]);
+  }, [userData, petMood, user]);
 
-  // Pet interaction function
+  // Pet interaction function (max 3 pet + 3 play per day; blocked at 0% HP)
   const handlePetInteraction = async (type, moodChange) => {
     if (!user || !userData?.currentPet || isInteracting) return;
-
-    // Check specific cooldown based on type
     if (type === "pet" && !canPet()) return;
     if (type === "play" && !canPlay()) return;
 
     setIsInteracting(true);
+    const today = getTodayString();
+    const lastReset = userData.currentPet.lastResetDate || "";
+    const currentPetCountToday =
+      lastReset === today ? (userData.currentPet.petCountToday ?? 0) : 0;
+    const currentPlayCountToday =
+      lastReset === today ? (userData.currentPet.playCountToday ?? 0) : 0;
 
     try {
       const newMood = Math.min(100, petMood + moodChange);
       const now = serverTimestamp();
-
-      // Get current counts and increment
-      const currentPetCount = userData.currentPet.petCount || 0;
-      const currentPlayCount = userData.currentPet.playCount || 0;
-
-      // Update pet mood and counts in user's document
       const userRef = doc(db, "users", userData.uid || user.uid);
       const updateData = {
         "currentPet.mood": newMood,
-        [`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`]: now,
         "currentPet.lastInteraction": now,
         "currentPet.lastInteractionBy": user.uid,
         "currentPet.lastInteractionType": type,
+        "currentPet.lastResetDate": today,
+        "currentPet.petCountToday":
+          type === "pet" ? currentPetCountToday + 1 : currentPetCountToday,
+        "currentPet.playCountToday":
+          type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
       };
-
-      // Increment count based on type
-      if (type === "pet") {
-        updateData["currentPet.petCount"] = currentPetCount + 1;
-      } else if (type === "play") {
-        updateData["currentPet.playCount"] = currentPlayCount + 1;
-      }
+      updateData[`currentPet.last${type.charAt(0).toUpperCase() + type.slice(1)}`] = now;
+      const currentPetCount = userData.currentPet.petCount || 0;
+      const currentPlayCount = userData.currentPet.playCount || 0;
+      if (type === "pet") updateData["currentPet.petCount"] = currentPetCount + 1;
+      if (type === "play") updateData["currentPet.playCount"] = currentPlayCount + 1;
 
       await updateDoc(userRef, updateData);
 
-      // Update local state
       setPetMood(newMood);
       setUserData((prev) => ({
         ...prev,
         currentPet: {
           ...prev.currentPet,
           mood: newMood,
-          petCount:
-            type === "pet"
-              ? currentPetCount + 1
-              : prev.currentPet?.petCount || 0,
-          playCount:
-            type === "play"
-              ? currentPlayCount + 1
-              : prev.currentPet?.playCount || 0,
+          lastResetDate: today,
+          petCountToday:
+            type === "pet" ? currentPetCountToday + 1 : currentPetCountToday,
+          playCountToday:
+            type === "play" ? currentPlayCountToday + 1 : currentPlayCountToday,
+          petCount: type === "pet" ? currentPetCount + 1 : prev.currentPet?.petCount || 0,
+          playCount: type === "play" ? currentPlayCount + 1 : prev.currentPet?.playCount || 0,
         },
       }));
 
-      if (type === "pet") {
-        setLastPet(now);
-      } else if (type === "play") {
-        setLastPlay(now);
-      }
-
-      // Close modal after interaction
       setTimeout(() => {
         setShowPetInteraction(false);
         setIsInteracting(false);
@@ -236,22 +217,34 @@ const Profile = () => {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const data = userDoc.data();
-          setUserData(data);
-          // Sett bursdag state hvis finnes
-          if (data.birthdayMonth) setBirthdayMonth(data.birthdayMonth);
-          if (data.birthdayDay) setBirthdayDay(data.birthdayDay);
-          if (data.birthdayMonth && data.birthdayDay) setBirthdaySaved(true);
-          // Oppdater pet mood fra global data
-          if (data.currentPet?.mood !== undefined) {
-            setPetMood(data.currentPet.mood);
+          const todayStr = new Date().toISOString().slice(0, 10);
+          let dataToSet = data;
+          if (data.currentPet && (data.currentPet.lastResetDate || "") !== todayStr) {
+            const reset = {
+              "currentPet.petCountToday": 0,
+              "currentPet.playCountToday": 0,
+              "currentPet.lastResetDate": todayStr,
+            };
+            updateDoc(userDocRef, reset).catch(() => {});
+            dataToSet = {
+              ...data,
+              currentPet: {
+                ...data.currentPet,
+                petCountToday: 0,
+                playCountToday: 0,
+                lastResetDate: todayStr,
+              },
+            };
           }
-          // Sett lastPet og lastPlay fra global data
-          if (data.currentPet?.lastPet) {
-            setLastPet(data.currentPet.lastPet);
+          setUserData(dataToSet);
+          if (dataToSet.birthdayMonth) setBirthdayMonth(dataToSet.birthdayMonth);
+          if (dataToSet.birthdayDay) setBirthdayDay(dataToSet.birthdayDay);
+          if (dataToSet.birthdayMonth && dataToSet.birthdayDay) setBirthdaySaved(true);
+          if (dataToSet.currentPet?.mood !== undefined) {
+            setPetMood(dataToSet.currentPet.mood);
           }
-          if (data.currentPet?.lastPlay) {
-            setLastPlay(data.currentPet.lastPlay);
-          }
+          if (dataToSet.currentPet?.lastPet) setLastPet(dataToSet.currentPet.lastPet);
+          if (dataToSet.currentPet?.lastPlay) setLastPlay(dataToSet.currentPet.lastPlay);
         } else {
         }
       } catch (error) {
@@ -407,6 +400,15 @@ const Profile = () => {
                         {uploading ? "Uploading..." : "Choose file"}
                       </span>
                     </label>
+                    {/* Profile likes overview – how many have liked your profile */}
+                    <div className={styles.profileLikesOverview}>
+                      <span className={styles.profileLikesOverviewIcon}>❤️</span>
+                      <span className={styles.profileLikesOverviewText}>
+                        {Array.isArray(userData.profileLikedBy)
+                          ? userData.profileLikedBy.length
+                          : 0}
+                      </span>
+                    </div>
                   </>
                 );
               })()}
@@ -633,111 +635,21 @@ const Profile = () => {
                   {userData.roles?.join(", ")}
                 </div>
 
-                {/* Pet Display */}
+                {/* Pet: paw button only – opens popup with full pet details */}
                 {userData.currentPet && (
                   <div className={styles.caracterDetails}>
                     <p>
                       <strong>Pet:</strong>
                     </p>
-                    <div className={styles.petDisplay}>
-                      <div className={styles.petImageContainer}>
-                        <img
-                          src={addImageToItem(userData.currentPet).image}
-                          alt={
-                            userData.currentPet.customName ||
-                            userData.currentPet.name
-                          }
-                          className={styles.petImage}
-                        />
-                        <div className={styles.petInfo}>
-                          <span className={styles.petName}>
-                            {userData.currentPet.customName ||
-                              userData.currentPet.name}
-                          </span>
-                          {/* Pet HP Bar */}
-                          <div className={styles.petHpContainer}>
-                            <div className={styles.petHpBar}>
-                              <div
-                                className={styles.petHpFill}
-                                style={{
-                                  width: `${calculatePetHP(
-                                    userData.currentPet
-                                  )}%`,
-                                }}
-                              ></div>
-                            </div>
-                            <div className={styles.petHpTextContainer}>
-                              <span className={styles.petHpText}>
-                                {Math.round(
-                                  calculatePetHP(userData.currentPet)
-                                )}
-                                % HP
-                              </span>
-                              <button
-                                className={styles.petPawButton}
-                                onClick={() => {
-                                  setShowPetInteraction(true);
-                                }}
-                                title="Interact with pet"
-                              >
-                                🐾
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      {/* Pet Name Editor */}
-                      <div className={styles.petNameEditor}>
-                        {!editingPetName ? (
-                          <button
-                            onClick={() => {
-                              setEditingPetName(true);
-                              setNewPetName(
-                                userData.currentPet.customName ||
-                                  userData.currentPet.name ||
-                                  ""
-                              );
-                            }}
-                            className={styles.editPetNameBtn}
-                          >
-                            {userData.currentPet.customName
-                              ? "Rename Pet"
-                              : "Give Pet Name"}
-                          </button>
-                        ) : (
-                          <div className={styles.petNameInputContainer}>
-                            <input
-                              id="profile-pet-name"
-                              name="petName"
-                              type="text"
-                              value={newPetName}
-                              onChange={(e) => setNewPetName(e.target.value)}
-                              placeholder="Enter pet name..."
-                              className={styles.petNameInput}
-                              maxLength="20"
-                            />
-                            <div className={styles.petNameButtons}>
-                              <button
-                                onClick={() => updatePetName(newPetName)}
-                                className={styles.savePetNameBtn}
-                                disabled={!newPetName.trim()}
-                              >
-                                Save
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setEditingPetName(false);
-                                  setNewPetName("");
-                                }}
-                                className={styles.cancelPetNameBtn}
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <button
+                      type="button"
+                      className={styles.petPawOnlyButton}
+                      onClick={() => setShowPetInteraction(true)}
+                      title="View pet"
+                      aria-label="View pet"
+                    >
+                      🐾
+                    </button>
                   </div>
                 )}
               </div>
@@ -893,20 +805,101 @@ const Profile = () => {
         <div className={styles.petInteractionModal}>
           <div className={styles.petInteractionModalContent}>
             <div className={styles.petInteractionHeader}>
-              <h3>Pet Interaction</h3>
+              <h3>Pet</h3>
               <button
                 className={styles.closeButton}
                 onClick={() => setShowPetInteraction(false)}
+                aria-label="Close"
               >
                 ×
               </button>
             </div>
+            <div className={styles.petModalPetDisplay}>
+              <img
+                src={addImageToItem(userData.currentPet).image}
+                alt={userData.currentPet.customName || userData.currentPet.name}
+                className={styles.petModalImage}
+              />
+              <span className={styles.petModalName}>
+                {userData.currentPet.customName || userData.currentPet.name}
+              </span>
+              <div className={styles.petModalHpRow}>
+                <div className={styles.petModalHpBar}>
+                  <div
+                    className={styles.petModalHpFill}
+                    style={{
+                      width: `${calculatePetHP(userData.currentPet)}%`,
+                    }}
+                  />
+                </div>
+                <span className={styles.petModalHpText}>
+                  {Math.round(calculatePetHP(userData.currentPet))}% HP
+                </span>
+              </div>
+              {/* Rename Pet in modal (own profile) */}
+              <div className={styles.petNameEditor}>
+                {!editingPetName ? (
+                  <button
+                    onClick={() => {
+                      setEditingPetName(true);
+                      setNewPetName(
+                        userData.currentPet.customName ||
+                          userData.currentPet.name ||
+                          ""
+                      );
+                    }}
+                    className={styles.editPetNameBtn}
+                  >
+                    {userData.currentPet.customName
+                      ? "Rename Pet"
+                      : "Give Pet Name"}
+                  </button>
+                ) : (
+                  <div className={styles.petNameInputContainer}>
+                    <input
+                      id="profile-pet-name-modal"
+                      name="petName"
+                      type="text"
+                      value={newPetName}
+                      onChange={(e) => setNewPetName(e.target.value)}
+                      placeholder="Enter pet name..."
+                      className={styles.petNameInput}
+                      maxLength="20"
+                    />
+                    <div className={styles.petNameButtons}>
+                      <button
+                        onClick={() => updatePetName(newPetName)}
+                        className={styles.savePetNameBtn}
+                        disabled={!newPetName.trim()}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingPetName(false);
+                          setNewPetName("");
+                        }}
+                        className={styles.cancelPetNameBtn}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            {userData?.currentPet && calculatePetHP(userData.currentPet) <= 0 && (
+              <div className={styles.cooldownText}>
+                Feed your pet to restore HP before petting or playing.
+              </div>
+            )}
+
             <div className={styles.petInteractionButtons}>
               <button
                 className={styles.petInteractionBtn}
                 onClick={() => handlePetInteraction("pet", 5)}
                 disabled={isInteracting || !canPet()}
-                title="Pet the animal (+5 mood)"
+                title="Pet the animal (+5 mood). Max 3 per day."
               >
                 {isInteracting ? "Petting..." : "Pet"}
               </button>
@@ -914,25 +907,15 @@ const Profile = () => {
                 className={styles.petInteractionBtn}
                 onClick={() => handlePetInteraction("play", 10)}
                 disabled={isInteracting || !canPlay()}
-                title="Play with the animal (+10 mood)"
+                title="Play with the animal (+10 mood). Max 3 per day."
               >
                 {isInteracting ? "Playing..." : "Play"}
               </button>
             </div>
 
-            {!canPet() && lastPet && petTimeLeft > 0 && (
-              <div className={styles.cooldownText}>
-                Pet cooldown: {Math.floor(petTimeLeft / 60)}:
-                {(petTimeLeft % 60).toString().padStart(2, "0")}
-              </div>
-            )}
-
-            {!canPlay() && lastPlay && playTimeLeft > 0 && (
-              <div className={styles.cooldownText}>
-                Play cooldown: {Math.floor(playTimeLeft / 60)}:
-                {(playTimeLeft % 60).toString().padStart(2, "0")}
-              </div>
-            )}
+            <div className={styles.cooldownText}>
+              Pet {getPetCountToday()}/{DAILY_PET_LIMIT} today · Play {getPlayCountToday()}/{DAILY_PLAY_LIMIT} today
+            </div>
 
             <div className={styles.petMoodDisplay}>
               <span className={styles.moodLabel}>Pet Mood:</span>

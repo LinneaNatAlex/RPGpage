@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 import { db } from "../../firebaseConfig";
-import { doc, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  deleteDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import {
   collection,
   query,
@@ -46,6 +52,51 @@ const NewsFeed = () => {
     const docRef = doc(db, "news", id);
     await deleteDoc(docRef);
   };
+
+  const handleLike = async (item) => {
+    if (!user) return;
+    const newsRef = doc(db, "news", item.id);
+    const likedBy = Array.isArray(item.likedBy) ? item.likedBy : [];
+    const hasLiked = likedBy.includes(user.uid);
+    try {
+      if (hasLiked) {
+        await updateDoc(newsRef, { likedBy: arrayRemove(user.uid) });
+        setNewsList((prev) =>
+          prev.map((p) =>
+            p.id === item.id
+              ? { ...p, likedBy: (p.likedBy || []).filter((uid) => uid !== user.uid) }
+              : p
+          )
+        );
+      } else {
+        await updateDoc(newsRef, { likedBy: arrayUnion(user.uid) });
+        setNewsList((prev) =>
+          prev.map((p) =>
+            p.id === item.id
+              ? { ...p, likedBy: [...(p.likedBy || []), user.uid] }
+              : p
+          )
+        );
+        if (item.authorUid && item.authorUid !== user.uid) {
+          const likerName =
+            user.displayName?.trim() || user.email || "Someone";
+          await addDoc(collection(db, "notifications"), {
+            to: item.authorUid,
+            type: "content_like",
+            from: user.uid,
+            fromUid: user.uid,
+            fromName: likerName,
+            targetType: "news",
+            targetId: item.id,
+            targetTitle: item.title || "your news",
+            read: false,
+            created: Date.now(),
+          });
+        }
+      }
+    } catch (err) {}
+  };
+
   const { users } = useUsers();
   const { user, loading } = useAuth();
   const { roles: userRoles, rolesLoading: loadingRoles } = useUserRoles();
@@ -61,47 +112,47 @@ const NewsFeed = () => {
       userRoles.includes("teacher") ||
       userRoles.includes("archivist"));
 
-  // USEEFFECT gathering / fetching the news from the database, now filtered and limited
+  const fetchNews = async () => {
+    try {
+      const q = query(
+        collection(db, "news"),
+        orderBy("createdAt", "desc"),
+        limit(25)
+      );
+      const snapshot = await getDocs(q);
+      const newData = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((item) => item.type === "nyhet");
+      setNewsList(newData.slice(0, 10));
+    } catch (error) {
+      setNewsList([]);
+    }
+  };
+
   useEffect(() => {
     if (loading || loadingRoles || !user) return;
-
-    const fetchNews = async () => {
-      try {
-        // QUOTA OPTIMIZATION: Add limit to reduce Firebase reads
-        const q = query(
-          collection(db, "news"),
-          orderBy("createdAt", "desc"),
-          limit(25) // Limit to 25 results to reduce quota usage, then filter to 10
-        );
-
-        const snapshot = await getDocs(q);
-        const newData = snapshot.docs
-          .map((doc) => ({ id: doc.id, ...doc.data() }))
-          // Filter by type if not using Firestore 'where' above
-          .filter((item) => item.type === "nyhet");
-        setNewsList(newData.slice(0, 10));
-      } catch (error) {
-        setNewsList([]);
-      }
-    };
-
     fetchNews();
   }, [user, loading, loadingRoles]);
 
-  // HANDLE POST SUBMIT is the function that handles the submission of the news post.
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (!newPost.trim()) return;
 
-    await addDoc(collection(db, "news"), {
-      title: titles,
-      content: newPost,
-      createdAt: serverTimestamp(),
-      author: user.displayName,
-      type: "nyhet",
-    });
-    setTitles("");
-    setNewPost("");
+    try {
+      await addDoc(collection(db, "news"), {
+        title: titles,
+        content: newPost,
+        createdAt: serverTimestamp(),
+        author: user.displayName,
+        authorUid: user.uid,
+        type: "nyhet",
+      });
+      setTitles("");
+      setNewPost("");
+      await fetchNews();
+    } catch (err) {
+      console.error("Failed to post news:", err);
+    }
   };
 
   return (
@@ -181,6 +232,25 @@ const NewsFeed = () => {
                           )}
                         </span>
                       )}
+                      <div className={styles.likeRow}>
+                        <button
+                          type="button"
+                          className={styles.likeButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLike(item);
+                          }}
+                          title={(Array.isArray(item.likedBy) && item.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                          aria-label={(Array.isArray(item.likedBy) && item.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                        >
+                          {(Array.isArray(item.likedBy) && item.likedBy.includes(user?.uid))
+                            ? "❤️"
+                            : "🤍"}
+                        </button>
+                        {(Array.isArray(item.likedBy) && item.likedBy.length > 0) && (
+                          <span className={styles.likeCount}>{item.likedBy.length}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   {item.content.startsWith("{{code}}") ? (

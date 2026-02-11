@@ -281,17 +281,18 @@ const Forum = () => {
   };
 
   // Sanitize topic objects so Firestore never receives undefined (invalid)
-  const sanitizeFollowedTopics = (arr) =>
-    (arr || []).map((t) => {
-      const clean = {
-        id: t.id ?? "",
-        title: t.title ?? "",
-        forum: t.forum ?? "",
-        forumRoom: t.forumRoom ?? "",
-        followedAt: t.followedAt ?? new Date().toISOString(),
-      };
-      return clean;
-    });
+  const sanitizeFollowedTopics = (arr) => {
+    const list = Array.isArray(arr) ? arr : [];
+    return list
+      .filter((t) => t != null && (t.id != null && t.id !== ""))
+      .map((t) => ({
+        id: String(t.id ?? ""),
+        title: String(t.title ?? ""),
+        forum: String(t.forum ?? ""),
+        forumRoom: String(t.forumRoom ?? ""),
+        followedAt: String(t.followedAt ?? new Date().toISOString()),
+      }));
+  };
 
   // Follow/Unfollow topic
   const handleFollowTopic = async (topicId, topicTitle) => {
@@ -299,22 +300,22 @@ const Forum = () => {
     
     try {
       const userRef = doc(db, 'users', user.uid);
-      const isFollowing = followedTopics.some(t => t.id === topicId);
+      const isFollowing = followedTopics.some(t => t && t.id === topicId);
       
       let updatedFollowedTopics;
       if (isFollowing) {
         // Unfollow
-        updatedFollowedTopics = followedTopics.filter(t => t.id !== topicId);
+        updatedFollowedTopics = followedTopics.filter(t => t && t.id !== topicId);
       } else {
-        // Follow
+        // Follow – ensure no undefined is sent to Firestore
         const newTopic = {
-          id: topicId,
-          title: topicTitle ?? "",
-          forum: forumTitle ?? "",
-          forumRoom: forumRoom ?? "",
-          followedAt: new Date().toISOString()
+          id: String(topicId ?? ""),
+          title: String(topicTitle ?? ""),
+          forum: String(forumTitle ?? ""),
+          forumRoom: String(forumRoom ?? ""),
+          followedAt: new Date().toISOString(),
         };
-        updatedFollowedTopics = [...followedTopics, newTopic];
+        updatedFollowedTopics = [...(Array.isArray(followedTopics) ? followedTopics : []), newTopic];
       }
       
       const sanitized = sanitizeFollowedTopics(updatedFollowedTopics);
@@ -781,6 +782,7 @@ const Forum = () => {
                   <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} htmlFor="forum-private-topic-checkbox">
                     <input
                       id="forum-private-topic-checkbox"
+                      name="isPrivateTopic"
                       type="checkbox"
                       checked={isPrivateTopic}
                       onChange={(e) => {
@@ -830,6 +832,8 @@ const Forum = () => {
                     Select one or more users who can see and reply (you can select multiple). List shows only 18+ verified users (you are always included):
                   </span>
                   <input
+                    id="forum-private-topic-search"
+                    name="privateTopicSearch"
                     type="text"
                     placeholder="Search by name or email..."
                     value={privateTopicSearch}
@@ -888,6 +892,8 @@ const Forum = () => {
                             }}
                           >
                             <input
+                              id={`forum-private-user-${u.uid}`}
+                              name="privateTopicUser"
                               type="checkbox"
                               checked={isSelected}
                               onChange={(e) => {
