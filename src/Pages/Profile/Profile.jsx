@@ -690,14 +690,13 @@ const Profile = () => {
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');
-                    const bg = isDark ? "#1a1a1a" : "transparent";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                     return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html>
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:${bg};}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
 </head>
-<body style="background:${bg}">${raw}</body>
+<body>${raw}</body>
 </html>`;
                   })()}
                   style={{
