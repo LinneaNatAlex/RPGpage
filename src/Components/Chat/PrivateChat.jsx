@@ -49,7 +49,7 @@ function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
                     "privateMessages",
                     chatId,
                     "messages",
-                    message.id
+                    message.id,
                   );
                   await deleteDoc(messageRef);
                 } else {
@@ -187,52 +187,52 @@ const PrivateChat = () => {
           setHairColorUntil(
             data.hairColorUntil && data.hairColorUntil > Date.now()
               ? data.hairColorUntil
-              : null
+              : null,
           );
           setRainbowUntil(
             data.rainbowUntil && data.rainbowUntil > Date.now()
               ? data.rainbowUntil
-              : null
+              : null,
           );
           setGlowUntil(
             data.glowUntil && data.glowUntil > Date.now()
               ? data.glowUntil
-              : null
+              : null,
           );
           setTranslationUntil(
             data.translationUntil && data.translationUntil > Date.now()
               ? data.translationUntil
-              : null
+              : null,
           );
           setEchoUntil(
             data.echoUntil && data.echoUntil > Date.now()
               ? data.echoUntil
-              : null
+              : null,
           );
           setWhisperUntil(
             data.whisperUntil && data.whisperUntil > Date.now()
               ? data.whisperUntil
-              : null
+              : null,
           );
           setShoutUntil(
             data.shoutUntil && data.shoutUntil > Date.now()
               ? data.shoutUntil
-              : null
+              : null,
           );
           setMysteryUntil(
             data.mysteryUntil && data.mysteryUntil > Date.now()
               ? data.mysteryUntil
-              : null
+              : null,
           );
           setCharmUntil(
             data.charmUntil && data.charmUntil > Date.now()
               ? data.charmUntil
-              : null
+              : null,
           );
           setInLoveUntil(
             data.inLoveUntil && data.inLoveUntil > Date.now()
               ? data.inLoveUntil
-              : null
+              : null,
           );
         }
       } catch (error) {
@@ -302,7 +302,8 @@ const PrivateChat = () => {
 
   // Only listen for messages for the selected user when chat is open
   // On mobile the panel is always visible, so subscribe whenever selectedUser is set (ignore isCollapsed)
-  const isPcForSubscription = typeof window !== "undefined" && window.innerWidth > 768;
+  const isPcForSubscription =
+    typeof window !== "undefined" && window.innerWidth > 768;
   useEffect(() => {
     if (!currentUser || !selectedUser) {
       setSelectedMessages([]);
@@ -315,7 +316,7 @@ const PrivateChat = () => {
     const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
     const q = query(
       collection(db, "privateMessages", chatId, "messages"),
-      orderBy("timestamp")
+      orderBy("timestamp"),
     );
     return onSnapshot(q, (snapshot) => {
       const messages = snapshot.docs.map((doc) => ({
@@ -358,8 +359,8 @@ const PrivateChat = () => {
               .includes(search.toLowerCase()) &&
             // Ikke vis brukere som allerede er synlige i activeChats (men vis skjulte)
             !activeChats.some(
-              (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid)
-            )
+              (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid),
+            ),
         )
       : [];
 
@@ -379,7 +380,7 @@ const PrivateChat = () => {
     setActiveChats((prev) =>
       prev.some((c) => c.user.uid === user.uid)
         ? prev
-        : [...prev, { user, messages: [] }]
+        : [...prev, { user, messages: [] }],
     );
     setSelectedUser(user);
     setSearch("");
@@ -401,7 +402,7 @@ const PrivateChat = () => {
           "privateMessages",
           chatId,
           "messages",
-          editingMessage.id
+          editingMessage.id,
         );
         await updateDoc(messageRef, { text: message });
       } else {
@@ -454,9 +455,7 @@ const PrivateChat = () => {
 
       // Notify recipient
       const fromDisplayName =
-        currentUser.displayName?.trim() ||
-        currentUser.email ||
-        "Someone";
+        currentUser.displayName?.trim() || currentUser.email || "Someone";
       try {
         await addDoc(collection(db, "notifications"), {
           to: selectedUser.uid,
@@ -487,14 +486,14 @@ const PrivateChat = () => {
         await setDoc(
           senderChatsRef,
           { chats: [...senderChats, selectedUser.uid] },
-          { merge: true }
+          { merge: true },
         );
       }
       if (!receiverChats.includes(currentUser.uid)) {
         await setDoc(
           receiverChatsRef,
           { chats: [...receiverChats, currentUser.uid] },
-          { merge: true }
+          { merge: true },
         );
       }
     } catch (err) {
@@ -508,7 +507,7 @@ const PrivateChat = () => {
     if (!chat.messages) return 0;
     // Kun meldinger som er sendt TIL innlogget bruker og ikke lest
     return chat.messages.filter(
-      (m) => m.to === currentUser.uid && m.from !== currentUser.uid && !m.read
+      (m) => m.to === currentUser.uid && m.from !== currentUser.uid && !m.read,
     ).length;
   };
 
@@ -777,7 +776,7 @@ const PrivateChat = () => {
                           const updated = prev.filter((id) => id !== u.uid);
                           localStorage.setItem(
                             "hiddenPrivateChats",
-                            JSON.stringify(updated)
+                            JSON.stringify(updated),
                           );
                           return updated;
                         }
@@ -785,7 +784,7 @@ const PrivateChat = () => {
                       });
                       // Alltid set selected user og åpne chat
                       const existing = activeChats.find(
-                        (c) => c.user.uid === u.uid
+                        (c) => c.user.uid === u.uid,
                       );
                       if (existing) {
                         setSelectedUser(existing.user);
@@ -822,13 +821,13 @@ const PrivateChat = () => {
                             background: isSelected
                               ? "#7B6857"
                               : unread > 0
-                              ? "#6B5B47"
-                              : "#5D4E37",
+                                ? "#6B5B47"
+                                : "#5D4E37",
                             color: isSelected
                               ? "#F5EFE0"
                               : unread > 0
-                              ? "#ff4d4f"
-                              : "#F5EFE0",
+                                ? "#ff4d4f"
+                                : "#F5EFE0",
                             border: "1px solid #7B6857",
                             borderRadius: 0,
                             padding: "4px 10px",
@@ -854,12 +853,11 @@ const PrivateChat = () => {
                               db,
                               "privateMessages",
                               chatId,
-                              "messages"
+                              "messages",
                             );
                             if (unread > 0) {
-                              const { getDocs, writeBatch } = await import(
-                                "firebase/firestore"
-                              );
+                              const { getDocs, writeBatch } =
+                                await import("firebase/firestore");
                               const docsSnap = await getDocs(msgsRef);
                               const batch = writeBatch(db);
                               docsSnap.forEach((docSnap) => {
@@ -919,7 +917,7 @@ const PrivateChat = () => {
                               const updated = [...prev, c.user.uid];
                               localStorage.setItem(
                                 "hiddenPrivateChats",
-                                JSON.stringify(updated)
+                                JSON.stringify(updated),
                               );
                               // Hvis du skjuler en aktiv chat, fjern valgt bruker
                               if (selectedUser?.uid === c.user.uid)
@@ -1059,7 +1057,7 @@ const PrivateChat = () => {
                           <div className={styles.privateMessageTimestamp}>
                             {m.timestamp && m.timestamp.seconds
                               ? new Date(
-                                  m.timestamp.seconds * 1000
+                                  m.timestamp.seconds * 1000,
                                 ).toLocaleString("no-NO", {
                                   hour: "2-digit",
                                   minute: "2-digit",
@@ -1136,7 +1134,7 @@ const PrivateChat = () => {
                         onEmojiSelect={(emoji) => {
                           setMessage(
                             (prev) =>
-                              prev + (emoji.native || emoji.colons || "")
+                              prev + (emoji.native || emoji.colons || ""),
                           );
                           setShowEmoji(false);
                         }}

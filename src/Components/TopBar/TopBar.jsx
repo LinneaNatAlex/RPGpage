@@ -120,7 +120,7 @@ const TopBar = () => {
         if (err?.code === "permission-denied") return;
         if (process.env.NODE_ENV === "development")
           console.warn("TopBar followedTopics snapshot error:", err);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -138,7 +138,7 @@ const TopBar = () => {
         db,
         `forums/${topic.forum.toLowerCase().replace(" ", "")}/topics/${
           topic.id
-        }/posts`
+        }/posts`,
       );
       const q = query(postsRef, orderBy("createdAt", "desc"), limit(1));
 
@@ -177,7 +177,7 @@ const TopBar = () => {
           if (err?.code === "permission-denied") return;
           if (process.env.NODE_ENV === "development")
             console.warn("TopBar followed topics posts snapshot error:", err);
-        }
+        },
       );
 
       unsubscribeFunctions.push(unsubscribe);
@@ -218,92 +218,92 @@ const TopBar = () => {
     setHairColorUntil(
       userData.hairColorUntil && userData.hairColorUntil > Date.now()
         ? userData.hairColorUntil
-        : null
+        : null,
     );
     setRainbowUntil(
       userData.rainbowUntil && userData.rainbowUntil > Date.now()
         ? userData.rainbowUntil
-        : null
+        : null,
     );
     setGlowUntil(
       userData.glowUntil && userData.glowUntil > Date.now()
         ? userData.glowUntil
-        : null
+        : null,
     );
     setSparkleUntil(
       userData.sparkleUntil && userData.sparkleUntil > Date.now()
         ? userData.sparkleUntil
-        : null
+        : null,
     );
     setTranslationUntil(
       userData.translationUntil && userData.translationUntil > Date.now()
         ? userData.translationUntil
-        : null
+        : null,
     );
     setEchoUntil(
       userData.echoUntil && userData.echoUntil > Date.now()
         ? userData.echoUntil
-        : null
+        : null,
     );
     setWhisperUntil(
       userData.whisperUntil && userData.whisperUntil > Date.now()
         ? userData.whisperUntil
-        : null
+        : null,
     );
     setShoutUntil(
       userData.shoutUntil && userData.shoutUntil > Date.now()
         ? userData.shoutUntil
-        : null
+        : null,
     );
     setDarkModeUntil(
       userData.darkModeUntil && userData.darkModeUntil > Date.now()
         ? userData.darkModeUntil
-        : null
+        : null,
     );
     setRetroUntil(
       userData.retroUntil && userData.retroUntil > Date.now()
         ? userData.retroUntil
-        : null
+        : null,
     );
     setMirrorUntil(
       userData.mirrorUntil && userData.mirrorUntil > Date.now()
         ? userData.mirrorUntil
-        : null
+        : null,
     );
     setSpeedUntil(
       userData.speedUntil && userData.speedUntil > Date.now()
         ? userData.speedUntil
-        : null
+        : null,
     );
     setSlowMotionUntil(
       userData.slowMotionUntil && userData.slowMotionUntil > Date.now()
         ? userData.slowMotionUntil
-        : null
+        : null,
     );
     setSurveillanceUntil(
       userData.surveillanceUntil && userData.surveillanceUntil > Date.now()
         ? userData.surveillanceUntil
-        : null
+        : null,
     );
     setLuckyUntil(
       userData.luckyUntil && userData.luckyUntil > Date.now()
         ? userData.luckyUntil
-        : null
+        : null,
     );
     setWisdomUntil(
       userData.wisdomUntil && userData.wisdomUntil > Date.now()
         ? userData.wisdomUntil
-        : null
+        : null,
     );
     setCharmUntil(
       userData.charmUntil && userData.charmUntil > Date.now()
         ? userData.charmUntil
-        : null
+        : null,
     );
     setMysteryUntil(
       userData.mysteryUntil && userData.mysteryUntil > Date.now()
         ? userData.mysteryUntil
-        : null
+        : null,
     );
 
     // Love Potion effect
@@ -420,7 +420,7 @@ const TopBar = () => {
       try {
         const secs = Math.max(
           0,
-          Math.floor((infirmaryEnd - Date.now()) / 1000)
+          Math.floor((infirmaryEnd - Date.now()) / 1000),
         );
         setCountdown(secs);
         if (secs <= 0) {
@@ -450,7 +450,7 @@ const TopBar = () => {
     const updateCountdown = () => {
       const secs = Math.max(
         0,
-        Math.floor((invisibleUntil - Date.now()) / 1000)
+        Math.floor((invisibleUntil - Date.now()) / 1000),
       );
       setInvisibleCountdown(secs);
       if (secs <= 0) setInvisibleUntil(null);
@@ -470,10 +470,10 @@ const TopBar = () => {
         const notifRef = collection(db, "notifications");
         const [toSnap, userIdSnap] = await Promise.all([
           getDocs(
-            query(notifRef, where("to", "==", user.uid), limit(80))
+            query(notifRef, where("to", "==", user.uid), limit(80)),
           ).catch(() => ({ docs: [] })),
           getDocs(
-            query(notifRef, where("userId", "==", user.uid), limit(80))
+            query(notifRef, where("userId", "==", user.uid), limit(80)),
           ).catch(() => ({ docs: [] })),
         ]);
         const byTo = (toSnap.docs || []).map((d) => ({
@@ -486,11 +486,17 @@ const TopBar = () => {
           ...d.data(),
           _sort: d.data().created ?? d.data().createdAt?.toMillis?.() ?? 0,
         }));
-        const merged = [...byTo, ...byUserId.filter((n) => !byTo.find((t) => t.id === n.id))];
+        const merged = [
+          ...byTo,
+          ...byUserId.filter((n) => !byTo.find((t) => t.id === n.id)),
+        ];
         merged.sort((a, b) => (b._sort || 0) - (a._sort || 0));
         const list = merged.slice(0, 50).map(({ _sort, ...n }) => n);
         setNotifications(list);
-        cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
+        cacheHelpers.setNotifications(
+          user.uid,
+          list.filter((n) => !n.read),
+        );
       } catch (e) {}
     };
 
@@ -505,7 +511,7 @@ const TopBar = () => {
     const q = query(
       collection(db, "news"),
       orderBy("createdAt", "desc"),
-      limit(10)
+      limit(10),
     );
     getDocs(q)
       .then((snap) => {
@@ -666,7 +672,7 @@ const TopBar = () => {
             // Compute role-based class
             let roleClass = styles.profilePic;
             const lower = (userData?.roles || []).map((r) =>
-              String(r).toLowerCase()
+              String(r).toLowerCase(),
             );
             if (lower.includes("headmaster"))
               roleClass += ` ${styles.headmasterPic}`;
@@ -720,18 +726,20 @@ const TopBar = () => {
             <span style={{ marginLeft: 16, color: "#ff6b6b", fontWeight: 700 }}>
               ⏰ Detention:{" "}
               {String(
-                Math.floor((detentionUntil - Date.now()) / (1000 * 60 * 60))
+                Math.floor((detentionUntil - Date.now()) / (1000 * 60 * 60)),
               ).padStart(2, "0")}
               :
               {String(
                 Math.floor(
                   ((detentionUntil - Date.now()) % (1000 * 60 * 60)) /
-                    (1000 * 60)
-                )
+                    (1000 * 60),
+                ),
               ).padStart(2, "0")}
               :
               {String(
-                Math.floor(((detentionUntil - Date.now()) % (1000 * 60)) / 1000)
+                Math.floor(
+                  ((detentionUntil - Date.now()) % (1000 * 60)) / 1000,
+                ),
               ).padStart(2, "0")}
             </span>
           )}
@@ -750,7 +758,10 @@ const TopBar = () => {
         </button>
         {/* Notifications button + panel */}
         {user && (
-          <div className={styles.notificationBellWrap} ref={notificationsPanelRef}>
+          <div
+            className={styles.notificationBellWrap}
+            ref={notificationsPanelRef}
+          >
             <button
               type="button"
               className={styles.inventoryIconBtn}
@@ -764,14 +775,24 @@ const TopBar = () => {
               aria-label="Notifications"
               style={{ position: "relative" }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden
+              >
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
               </svg>
               {(() => {
-                const unread = notifications.filter((n) => !n.read).length + recentNews.length;
+                const unread =
+                  notifications.filter((n) => !n.read).length +
+                  recentNews.length;
                 if (unread === 0) return null;
                 return (
-                  <span className={styles.notificationBadge}>{unread > 99 ? "99+" : unread}</span>
+                  <span className={styles.notificationBadge}>
+                    {unread > 99 ? "99+" : unread}
+                  </span>
                 );
               })()}
             </button>
@@ -797,18 +818,28 @@ const TopBar = () => {
                         role="button"
                         tabIndex={0}
                         onClick={(e) => {
-                          if (e.target.closest(`.${styles.notificationRemoveBtn}`)) return;
+                          if (
+                            e.target.closest(`.${styles.notificationRemoveBtn}`)
+                          )
+                            return;
                           navigate("/news");
                           setShowNotificationsPanel(false);
                           const seenAt =
-                            news.createdAt?.toMillis?.() ?? news.createdAt ?? Date.now();
+                            news.createdAt?.toMillis?.() ??
+                            news.createdAt ??
+                            Date.now();
                           updateDoc(doc(db, "users", user.uid), {
-                            lastSeenNewsAt: typeof seenAt === "number" ? seenAt : Date.now(),
+                            lastSeenNewsAt:
+                              typeof seenAt === "number" ? seenAt : Date.now(),
                           });
                           cacheHelpers.clearUserCache(user.uid);
-                          setRecentNews((prev) => prev.filter((n) => n.id !== news.id));
+                          setRecentNews((prev) =>
+                            prev.filter((n) => n.id !== news.id),
+                          );
                         }}
-                        onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && e.currentTarget.click()
+                        }
                       >
                         <span className={styles.notificationIconNews}>📰</span>
                         <span className={styles.notificationText}>
@@ -821,13 +852,20 @@ const TopBar = () => {
                             e.preventDefault();
                             e.stopPropagation();
                             const seenAt =
-                              news.createdAt?.toMillis?.() ?? news.createdAt ?? Date.now();
+                              news.createdAt?.toMillis?.() ??
+                              news.createdAt ??
+                              Date.now();
                             try {
                               await updateDoc(doc(db, "users", user.uid), {
-                                lastSeenNewsAt: typeof seenAt === "number" ? seenAt : Date.now(),
+                                lastSeenNewsAt:
+                                  typeof seenAt === "number"
+                                    ? seenAt
+                                    : Date.now(),
                               });
                               cacheHelpers.clearUserCache(user.uid);
-                              setRecentNews((prev) => prev.filter((n) => n.id !== news.id));
+                              setRecentNews((prev) =>
+                                prev.filter((n) => n.id !== news.id),
+                              );
                             } catch (err) {}
                           }}
                           title="Dismiss"
@@ -837,108 +875,206 @@ const TopBar = () => {
                         </button>
                       </div>
                     ))}
-                  {notifications
-                    .filter((n) => !n.read)
-                    .map((n) => {
-                    const isReply = n.type === "topic_reply" || n.type === "new_topic";
-                    const isGift = n.type === "gift";
-                    const isChat = n.type === "private_chat";
-                    const isLike = n.type === "content_like";
-                    const isProfileLike = n.type === "profile_like";
-                    const uid = n.fromUid || n.from;
-                    const looksLikeUid =
-                      typeof n.from === "string" &&
-                      n.from.length >= 20 &&
-                      /^[a-zA-Z0-9]+$/.test(n.from);
-                    const senderName =
-                      looksLikeUid || n.fromUid
-                        ? users?.find((u) => u.uid === uid)?.displayName ||
-                          users?.find((u) => u.uid === uid)?.email ||
-                          n.fromName ||
-                          n.from ||
-                          "Someone"
-                        : n.fromName || n.from || "Someone";
-                    const itemName =
-                      n.item && String(n.item).trim() ? n.item : "a gift";
-                    const likeLabel =
-                      n.targetType === "book"
-                        ? `${senderName} liked your book${n.targetTitle ? ` "${n.targetTitle}"` : ""}`
-                        : `${senderName} liked your news${n.targetTitle ? ` "${n.targetTitle}"` : ""}`;
-                    const label = isGift
-                      ? `You received ${itemName} from ${senderName}`
-                      : isChat
-                        ? `Message from ${senderName}`
-                        : isProfileLike
-                          ? `${senderName} liked your profile`
-                          : isLike
-                            ? likeLabel
-                            : isReply
-                            ? n.message || n.title || `New activity in ${n.topicTitle || n.forumRoom || "forum"}`
-                            : `You received ${itemName} from ${senderName}`;
-                    const forumPath = (n.forum || n.forumRoom || "")
-                      .toLowerCase()
-                      .replace(/\s+/g, "");
-                    return (
-                      <div
-                        key={n.id}
-                        className={styles.notificationItem}
-                        role="button"
-                        tabIndex={0}
-                        onClick={async (e) => {
-                          if (e.target.closest(`.${styles.notificationRemoveBtn}`)) return;
-                          try {
-                            await updateDoc(doc(db, "notifications", n.id), {
-                              read: true,
-                            });
-                            setNotifications((prev) =>
-                              prev.map((x) =>
-                                x.id === n.id ? { ...x, read: true } : x
-                              )
-                            );
-                          } catch (err) {}
-                          setShowNotificationsPanel(false);
-                          if (isReply && (n.topicId || forumPath))
-                            navigate(
-                              `/forum/${forumPath || "general"}?topic=${n.topicId || ""}`
-                            );
-                          if (isChat) navigate("/chat");
-                          if (isLike && (n.targetType === "news" || n.targetType === "book"))
-                            navigate(n.targetType === "book" ? "/shop" : "/news");
-                          if (isProfileLike) navigate(`/user/${n.fromUid || n.from}`);
-                        }}
-                        onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
-                      >
-                        {isGift && <span className={styles.notificationIconGift}>🎁</span>}
-                        {isChat && <span className={styles.notificationIconChat}>💬</span>}
-                        {isReply && <span className={styles.notificationIconReply}>📌</span>}
-                        {isLike && <span className={styles.notificationIconLike}>❤️</span>}
-                        {isProfileLike && <span className={styles.notificationIconLike}>❤️</span>}
-                        {!isGift && !isChat && !isReply && !isLike && !isProfileLike && (
-                          <span className={styles.notificationIconGift}>🎁</span>
-                        )}
-                        <span className={styles.notificationText}>{label}</span>
-                        <button
-                          type="button"
-                          className={styles.notificationRemoveBtn}
+                  {(() => {
+                    const unread = notifications.filter((n) => !n.read);
+                    // Group by type + sender/conversation (same type + same from = one row with count)
+                    const groupKey = (n) => {
+                      const isChat = n.type === "private_chat";
+                      const isReply =
+                        n.type === "topic_reply" || n.type === "new_topic";
+                      if (isChat)
+                        return `private_chat:${n.fromUid || n.from || ""}`;
+                      if (isReply)
+                        return `reply:${n.topicId || ""}:${n.forum || n.forumRoom || ""}`;
+                      if (n.type === "profile_like")
+                        return `profile_like:${n.fromUid || n.from || ""}`;
+                      if (n.type === "content_like")
+                        return `content_like:${n.targetType || ""}:${n.targetId || ""}`;
+                      if (n.type === "gift")
+                        return `gift:${n.fromUid || n.from || ""}:${n.item || ""}`;
+                      return `other:${n.id}`;
+                    };
+                    const groups = [];
+                    unread.forEach((n) => {
+                      const key = groupKey(n);
+                      const existing = groups.find((g) => g.key === key);
+                      if (existing) {
+                        existing.items.push(n);
+                      } else {
+                        groups.push({ key, items: [n] });
+                      }
+                    });
+                    return groups.map((group) => {
+                      const n = group.items[0];
+                      const count = group.items.length;
+                      const isReply =
+                        n.type === "topic_reply" || n.type === "new_topic";
+                      const isGift = n.type === "gift";
+                      const isChat = n.type === "private_chat";
+                      const isLike = n.type === "content_like";
+                      const isProfileLike = n.type === "profile_like";
+                      const uid = n.fromUid || n.from;
+                      const looksLikeUid =
+                        typeof n.from === "string" &&
+                        n.from.length >= 20 &&
+                        /^[a-zA-Z0-9]+$/.test(n.from);
+                      const senderName =
+                        looksLikeUid || n.fromUid
+                          ? users?.find((u) => u.uid === uid)?.displayName ||
+                            users?.find((u) => u.uid === uid)?.email ||
+                            n.fromName ||
+                            n.from ||
+                            "Someone"
+                          : n.fromName || n.from || "Someone";
+                      const itemName =
+                        n.item && String(n.item).trim() ? n.item : "a gift";
+                      const likeLabel =
+                        n.targetType === "book"
+                          ? `${senderName} liked your book${n.targetTitle ? ` "${n.targetTitle}"` : ""}`
+                          : `${senderName} liked your news${n.targetTitle ? ` "${n.targetTitle}"` : ""}`;
+                      const baseLabel = isGift
+                        ? `You received ${itemName} from ${senderName}`
+                        : isChat
+                          ? `Message from ${senderName}`
+                          : isProfileLike
+                            ? `${senderName} liked your profile`
+                            : isLike
+                              ? likeLabel
+                              : isReply
+                                ? n.message ||
+                                  n.title ||
+                                  `New activity in ${n.topicTitle || n.forumRoom || "forum"}`
+                                : `You received ${itemName} from ${senderName}`;
+                      const label =
+                        count > 1 && (isChat || isReply)
+                          ? `${baseLabel} (${count} ${isChat ? "messages" : "updates"})`
+                          : baseLabel;
+                      const forumPath = (n.forum || n.forumRoom || "")
+                        .toLowerCase()
+                        .replace(/\s+/g, "");
+                      return (
+                        <div
+                          key={group.key}
+                          className={styles.notificationItem}
+                          role="button"
+                          tabIndex={0}
                           onClick={async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
+                            if (
+                              e.target.closest(
+                                `.${styles.notificationRemoveBtn}`,
+                              )
+                            )
+                              return;
                             try {
-                              await deleteDoc(doc(db, "notifications", n.id));
-                              setNotifications((prev) => prev.filter((x) => x.id !== n.id));
+                              await Promise.all(
+                                group.items.map((item) =>
+                                  updateDoc(doc(db, "notifications", item.id), {
+                                    read: true,
+                                  }),
+                                ),
+                              );
+                              setNotifications((prev) =>
+                                prev.map((x) =>
+                                  group.items.some((i) => i.id === x.id)
+                                    ? { ...x, read: true }
+                                    : x,
+                                ),
+                              );
                             } catch (err) {}
+                            setShowNotificationsPanel(false);
+                            if (isReply && (n.topicId || forumPath))
+                              navigate(
+                                `/forum/${forumPath || "general"}?topic=${n.topicId || ""}`,
+                              );
+                            if (isChat) navigate("/chat");
+                            if (
+                              isLike &&
+                              (n.targetType === "news" ||
+                                n.targetType === "book")
+                            )
+                              navigate(
+                                n.targetType === "book" ? "/shop" : "/news",
+                              );
+                            if (isProfileLike)
+                              navigate(`/user/${n.fromUid || n.from}`);
                           }}
-                          title="Remove notification"
-                          aria-label="Remove notification"
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && e.currentTarget.click()
+                          }
                         >
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })}
+                          {isGift && (
+                            <span className={styles.notificationIconGift}>
+                              🎁
+                            </span>
+                          )}
+                          {isChat && (
+                            <span className={styles.notificationIconChat}>
+                              💬
+                            </span>
+                          )}
+                          {isReply && (
+                            <span className={styles.notificationIconReply}>
+                              📌
+                            </span>
+                          )}
+                          {isLike && (
+                            <span className={styles.notificationIconLike}>
+                              ❤️
+                            </span>
+                          )}
+                          {isProfileLike && (
+                            <span className={styles.notificationIconLike}>
+                              ❤️
+                            </span>
+                          )}
+                          {!isGift &&
+                            !isChat &&
+                            !isReply &&
+                            !isLike &&
+                            !isProfileLike && (
+                              <span className={styles.notificationIconGift}>
+                                🎁
+                              </span>
+                            )}
+                          <span className={styles.notificationText}>
+                            {label}
+                          </span>
+                          <button
+                            type="button"
+                            className={styles.notificationRemoveBtn}
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              try {
+                                await Promise.all(
+                                  group.items.map((item) =>
+                                    deleteDoc(
+                                      doc(db, "notifications", item.id),
+                                    ),
+                                  ),
+                                );
+                                setNotifications((prev) =>
+                                  prev.filter(
+                                    (x) =>
+                                      !group.items.some((i) => i.id === x.id),
+                                  ),
+                                );
+                              } catch (err) {}
+                            }}
+                            title="Remove notification"
+                            aria-label="Remove notification"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    });
+                  })()}
                   {recentNews.length === 0 &&
                     notifications.filter((n) => !n.read).length === 0 && (
-                      <p className={styles.notificationEmpty}>No notifications</p>
+                      <p className={styles.notificationEmpty}>
+                        No notifications
+                      </p>
                     )}
                 </div>
               </div>
@@ -1037,7 +1173,7 @@ const TopBar = () => {
             let toInv = (toDoc.exists() ? toDoc.data().inventory : []) || [];
             // Sjekk om disguised name finnes fra før
             const toIdx = toInv.findIndex(
-              (i) => i.name === (disguise?.name || giftModal.item.name)
+              (i) => i.name === (disguise?.name || giftModal.item.name),
             );
             const giftedBy =
               user.displayName && user.displayName.trim()
@@ -1064,7 +1200,7 @@ const TopBar = () => {
                     : undefined,
               };
               const cleanItem = Object.fromEntries(
-                Object.entries(rawItem).filter(([, v]) => v !== undefined)
+                Object.entries(rawItem).filter(([, v]) => v !== undefined),
               );
               toInv.push(cleanItem);
             } else {
@@ -1165,7 +1301,7 @@ const TopBar = () => {
                           e.stopPropagation();
                           // Remove from followed topics
                           const updatedTopics = followedTopics.filter(
-                            (t) => t.id !== topic.id
+                            (t) => t.id !== topic.id,
                           );
                           setFollowedTopics(updatedTopics);
                           // Update database
