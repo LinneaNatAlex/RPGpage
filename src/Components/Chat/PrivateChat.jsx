@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 // Note: Ping functionality moved to global App.jsx
 // MessageMenu component for edit/delete menu
 // ...existing code...
@@ -365,15 +365,28 @@ const PrivateChat = () => {
     });
   }, [currentUser, selectedUser, isCollapsed, isPcForSubscription]);
 
-  // Auto-scroll so the latest message is always visible (one scroll after layout to avoid jump)
+  // Alltid scroll til siste melding (bruk scrollTop så det alltid er på bunnen)
+  const scrollToLatest = useCallback(() => {
+    const el = chatBoxRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, []);
+
   useEffect(() => {
     if (selectedMessages.length === 0) return;
-    const run = () => {
-      lastMessageRef.current?.scrollIntoView({ block: "end", behavior: "auto" });
-    };
-    const id = setTimeout(() => requestAnimationFrame(run), 0);
+    const id = setTimeout(scrollToLatest, 50);
     return () => clearTimeout(id);
-  }, [selectedMessages]);
+  }, [selectedMessages, scrollToLatest]);
+
+  // Når brukeren kommer tilbake til fanen: scroll til siste melding
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "visible" && selectedMessages.length > 0) {
+        setTimeout(scrollToLatest, 100);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [selectedMessages.length, scrollToLatest]);
 
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;

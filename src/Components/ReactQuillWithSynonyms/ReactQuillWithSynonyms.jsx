@@ -15,6 +15,7 @@ const ReactQuillWithSynonyms = ({
   onChange,
   id,
   name,
+  quillRef: externalQuillRef,
   ...quillProps
 }) => {
   const quillRef = useRef(null);
@@ -85,16 +86,14 @@ const ReactQuillWithSynonyms = ({
     }
   }, []);
 
-  // Store Quill instance when it's ready
+  // Store Quill instance when it's ready and expose to parent if quillRef passed
   useEffect(() => {
-    if (quillRef.current && !quillInstanceRef.current) {
-      // ReactQuill exposes the editor via the ref
-      const editor = quillRef.current?.editor || quillRef.current?.getEditor?.();
-      if (editor) {
-        quillInstanceRef.current = editor;
-      }
+    const editor = quillRef.current?.editor ?? quillRef.current?.getEditor?.();
+    if (editor) {
+      quillInstanceRef.current = editor;
+      if (externalQuillRef) externalQuillRef.current = editor;
     }
-  }, [value]); // Re-check when value changes
+  }, [value, externalQuillRef]);
 
   // Set id/name and aria-label on the actual contenteditable (.ql-editor) so browser form-field checks pass
   useEffect(() => {

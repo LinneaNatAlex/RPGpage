@@ -103,6 +103,7 @@ const Forum = () => {
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
   const [newTopicWordCount, setNewTopicWordCount] = useState(0);
+  const [newTopicIgDate, setNewTopicIgDate] = useState("");
   const [isPrivateTopic, setIsPrivateTopic] = useState(false);
   const [allowedUserIds, setAllowedUserIds] = useState([]);
   const [privateTopicSearch, setPrivateTopicSearch] = useState("");
@@ -507,6 +508,7 @@ const Forum = () => {
       createdAt: serverTimestamp(),
       uid: user.uid,
     };
+    if (newTopicIgDate.trim()) topicData.igDate = newTopicIgDate.trim();
     if (is18PlusForum && isPrivateTopic) {
       topicData.isPrivate = true;
       topicData.allowedUserIds = [user.uid, ...(allowedUserIds || [])];
@@ -564,6 +566,7 @@ const Forum = () => {
     setNewTopicTitle("");
     setNewTopicContent("");
     setNewTopicWordCount(0);
+    setNewTopicIgDate("");
     setIsPrivateTopic(false);
     setAllowedUserIds([]);
     setSelectedTopic(topicRef.id);
@@ -814,6 +817,19 @@ const Forum = () => {
                 {wordConfig.rewardText}
               </div>
             </div>
+            <label htmlFor="forum-new-topic-igdate" style={{ display: "block", marginBottom: 6, fontWeight: 600 }}>
+              In-game date (optional)
+            </label>
+            <input
+              id="forum-new-topic-igdate"
+              name="newTopicIgDate"
+              autoComplete="off"
+              value={newTopicIgDate}
+              onChange={(e) => setNewTopicIgDate(e.target.value)}
+              placeholder="e.g. 15th of Harvest, 302"
+              className={styles.newTopicInput}
+              style={{ marginBottom: 16 }}
+            />
             {is18PlusForum && (
               <div
                 style={{
@@ -1035,17 +1051,18 @@ const Forum = () => {
             <h3>Topics</h3>
             {topics.length === 0 && <div>No topics yet.</div>}
             {topics.map((topic) => {
-              let createdAtStr = "";
+              let outOfGameStr = "";
               if (topic.createdAt && topic.createdAt.toDate) {
                 const d = topic.createdAt.toDate();
-                createdAtStr =
-                  d.toLocaleDateString() +
+                outOfGameStr =
+                  d.toLocaleDateString("no-NO") +
                   " " +
-                  d.toLocaleTimeString([], {
+                  d.toLocaleTimeString("no-NO", {
                     hour: "2-digit",
                     minute: "2-digit",
                   });
               }
+              const igDateStr = topic.igDate ? String(topic.igDate).trim() : "";
               const isFollowing = followedTopics.some(t => t.id === topic.id);
               
               return (
@@ -1073,9 +1090,18 @@ const Forum = () => {
                       <span className={styles.topicAuthor}>
                         by {topic.author}
                       </span>
-                      {createdAtStr && (
-                        <span className={styles.topicTime}>{createdAtStr}</span>
-                      )}
+                      <span className={styles.topicDates}>
+                        {outOfGameStr && (
+                          <span className={styles.topicTimeOutOfGame} title="Out of game">
+                            Out of game: {outOfGameStr}
+                          </span>
+                        )}
+                        {igDateStr && (
+                          <span className={styles.topicTimeInGame} title="In game">
+                            In game: {igDateStr}
+                          </span>
+                        )}
+                      </span>
                     </button>
                   </div>
                   <div className={styles.topicActions}>
@@ -1192,6 +1218,23 @@ const Forum = () => {
               })()}
             </div>
           )}
+          {(() => {
+            const outOfGame = currentTopic.createdAt?.toDate
+              ? currentTopic.createdAt.toDate().toLocaleString("no-NO", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })
+              : "";
+            const ig = currentTopic.igDate ? String(currentTopic.igDate).trim() : "";
+            if (!outOfGame && !ig) return null;
+            return (
+              <div className={styles.topicViewDates} style={{ marginBottom: "1rem" }}>
+                {outOfGame && (
+                  <span className={styles.topicTimeOutOfGame}>Out of game: {outOfGame}</span>
+                )}
+                {ig && (
+                  <span className={styles.topicTimeInGame}>In game: {ig}</span>
+                )}
+              </div>
+            );
+          })()}
           {editingTopic && (
             <div
               style={{
@@ -1239,15 +1282,37 @@ const Forum = () => {
             </div>
           )}
           <div className={styles.postsList}>
-            {[...posts]
-              .reverse()
+            {posts
               .slice((postPage - 1) * POSTS_PER_PAGE, postPage * POSTS_PER_PAGE)
-              .map((post) => (
+              .map((post, indexInPage) => {
+                const postCreatedAt = post.createdAt;
+                const postDate =
+                  postCreatedAt?.toDate
+                    ? postCreatedAt.toDate()
+                    : postCreatedAt?.seconds
+                      ? new Date(postCreatedAt.seconds * 1000)
+                      : null;
+                const postDateStr = postDate
+                  ? postDate.toLocaleString("no-NO", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "";
+                const replyNumber = (postPage - 1) * POSTS_PER_PAGE + indexInPage + 1;
+                return (
                 <div key={post.id} className={styles.postBox}>
                   <div className={styles.postHeader}>
                     <span className={getNameClass(post.author)}>
                       {post.author}
                     </span>
+                    {postDateStr && (
+                      <span className={styles.postTime} title={postDateStr}>
+                        #{replyNumber} · {postDateStr}
+                      </span>
+                    )}
                     {(post.uid === user.uid ||
                       roles?.includes("teacher") ||
                       roles?.includes("admin")) && (
@@ -1301,7 +1366,8 @@ const Forum = () => {
                     />
                   )}
                 </div>
-              ))}
+              );
+              })}
           </div>
           {/* Pagination controls */}
           {posts.length > POSTS_PER_PAGE && (

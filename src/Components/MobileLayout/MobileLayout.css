@@ -1445,14 +1445,29 @@
   max-width: 100% !important;
   box-sizing: border-box !important;
   min-width: 0 !important;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
 }
 .mobile-private-chat-container .private-chat-form-mobile > div {
   min-width: 0 !important;
   width: 100% !important;
+  gap: 6px !important;
 }
 .mobile-private-chat-container .private-chat-form-mobile input[type="text"] {
   min-width: 0 !important;
   flex: 1 !important;
+}
+.mobile-private-chat-container .private-chat-form-mobile button[type="submit"] {
+  min-width: 52px !important;
+  flex-shrink: 0 !important;
+}
+/* Brukertagger mer kompakt på mobil */
+.mobile-private-chat-container .activeChatsRow {
+  gap: 6px !important;
+  margin-top: 6px !important;
+}
+.mobile-private-chat-container .activeChatsRow button {
+  padding: 4px 8px !important;
+  font-size: 0.9rem !important;
 }
 
 .mobile-online-container {
@@ -1522,8 +1537,8 @@
 }
 
 .mobile-chat-overlay .mobile-chat-close {
-  background: rgba(255, 107, 107, 0.3);
-  border: 1px solid rgba(255, 107, 107, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 8px 12px;
   font-size: 1.2rem;
 }
@@ -1564,10 +1579,16 @@
 .mobile-global-chat-container .chat button,
 .mobile-private-chat-container .privateChat button,
 .mobile-private-chat-container .private-chat-mobile button {
-  background: linear-gradient(45deg, #ff6b6b, #ff8e8e) !important;
-  border: none !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
   color: #ffffff !important;
   border-radius: 0 !important;
+}
+
+/* Private chat: unread-badge nøytral i dark mode (ikke rød) */
+.mobile-private-chat-container .activeChatsRow button > span {
+  background: rgba(255, 255, 255, 0.35) !important;
+  color: #1a1a1a !important;
 }
 
 .mobile-online-container .onlineUsersContainer {

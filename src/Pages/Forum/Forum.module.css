@@ -175,6 +175,37 @@
   margin-left: auto;
   padding-left: 1.5rem;
 }
+.topicDates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  padding-left: 1.5rem;
+  gap: 2px;
+}
+.topicTimeOutOfGame {
+  font-size: 1rem;
+  color: #d4c4a8;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.topicTimeInGame {
+  font-size: 0.85rem;
+  color: #b0aac2;
+  font-style: normal;
+}
+.topicViewDates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.topicViewDates .topicTimeOutOfGame {
+  font-size: 1.05rem;
+}
+.topicViewDates .topicTimeInGame {
+  font-size: 0.9rem;
+}
 
 .topicsList {
   margin-top: 2rem;
@@ -204,6 +235,12 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.postTime {
+  font-size: 0.9rem;
+  color: #b0aac2;
+  margin-left: auto;
 }
 .postTitle {
   font-size: 1.3rem;
