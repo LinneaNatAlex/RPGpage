@@ -266,6 +266,17 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* Ingen bakgrunn på iframe – unngå hvit i dark mode */
+.profileTextContainer iframe {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+:global([data-theme="dark"]) .profileTextContainer iframe {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .profileTextContainer h2 {
   color: #7b6857;
   font-size: 2rem;

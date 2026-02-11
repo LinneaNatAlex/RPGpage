@@ -937,11 +937,11 @@ const UserProfile = () => {
                 !!document.querySelector('[data-theme="dark"]');
               const fg = isDark ? "#e0e0e0" : "#2c2c2c";
               return `<!DOCTYPE html>
-<html>
+<html style="background:transparent">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:transparent;}*{box-sizing:inherit;}</style>
 </head>
-<body>${raw}</body>
+<body style="background:transparent">${raw}</body>
 </html>`;
             })()}
             style={{

@@ -90,8 +90,8 @@ body,
 }
 
 :global([data-theme="dark"]) .profileTextContainer iframe {
-  background: #1a1a1a !important;
-  background-color: #1a1a1a !important;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .profileTextContainer h2 {
