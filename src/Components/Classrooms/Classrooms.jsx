@@ -208,7 +208,16 @@ export default function Classrooms() {
           {errorMessage}
         </div>
       )}
-      {classesList.map((cls) => {
+      {classesList
+        .filter((cls) => {
+          // Filter out classes that require a minimum year if user hasn't reached it
+          if (cls.minYear && userYear !== "graduate") {
+            const yearNum = typeof userYear === "number" ? userYear : parseInt(userYear) || 1;
+            return yearNum >= cls.minYear;
+          }
+          return true;
+        })
+        .map((cls) => {
         const isAttending = attending && attending.classId === cls.id;
         const now = Date.now();
         const oneDay = 24 * 60 * 60 * 1000;

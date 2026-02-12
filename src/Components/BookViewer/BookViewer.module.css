@@ -18,7 +18,7 @@
   border-radius: 0;
   border: 3px solid #7b6857;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
-  max-width: 900px;
+  max-width: min(1100px, 95vw);
   max-height: 95vh;
   width: 100%;
   height: 90vh;
@@ -30,19 +30,50 @@
 .bookHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
   border-bottom: 2px solid rgba(123, 104, 87, 0.3);
   background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
+  flex-shrink: 0;
 }
 
-.bookHeader h2 {
+.bookHeaderMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.bookHeaderText {
+  min-width: 0;
+}
+
+.bookHeaderText h2 {
   font-family: "Cinzel", serif;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #2c2c2c;
-  margin: 0;
+  margin: 0 0 0.15rem 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
+}
+
+.bookAuthor {
+  margin: 0 !important;
+  font-size: 0.8rem !important;
+  color: #4a4035 !important;
+}
+
+.bookDescription {
+  margin: 0.25rem 0 0 0 !important;
+  font-size: 0.75rem !important;
+  color: #5a5045 !important;
+  line-height: 1.3 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .closeBtn {
@@ -68,28 +99,16 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.bookInfo {
-  padding: 0.5rem 1rem;
-  background: rgba(245, 239, 224, 0.1);
-  border-bottom: 1px solid rgba(123, 104, 87, 0.3);
-}
-
-.bookCoverContainer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 0.3rem;
-}
-
 .bookCover {
-  max-width: 80px;
-  max-height: 100px;
-  width: auto;
-  height: auto;
+  flex-shrink: 0;
+  width: 48px;
+  height: 72px;
+  object-fit: cover;
   border-radius: 0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(123, 104, 87, 0.5);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bookCover:hover {
@@ -97,22 +116,17 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.bookInfo p {
-  margin: 0.2rem 0;
-  color: #d4c4a8;
-  font-size: 0.75rem;
-  line-height: 1.3;
-}
-
 .pageContent {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .pageHeader {
-  padding: 0.3rem 1rem;
+  flex-shrink: 0;
+  padding: 0.25rem 1rem;
   background: rgba(245, 239, 224, 0.05);
   border-bottom: 1px solid rgba(123, 104, 87, 0.3);
   text-align: center;
@@ -124,30 +138,35 @@
   font-size: 0.8rem;
 }
 
+/* Document-style reading area: most space for text, A4-ish feel */
 .pageText {
   flex: 1;
-  padding: 1.5rem;
+  min-height: 420px;
+  padding: 2rem 2.5rem;
   overflow-y: auto;
-  line-height: 1.6;
-  font-size: 1rem;
-  background: rgba(245, 239, 224, 0.1);
+  overflow-x: hidden;
+  line-height: 1.75;
+  font-size: 1.05rem;
+  background: rgba(248, 245, 238, 0.95);
+  color: #2c2c2c;
   border-radius: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  color: #f5efe0;
+  box-shadow: inset 0 0 0 1px rgba(123, 104, 87, 0.15);
 }
 
 .pageText p {
   margin: 0 0 1rem 0;
   color: inherit;
   text-align: justify;
+  max-width: 100%;
 }
 
 .pageText div {
-  color: #db970d;
+  color: #3d3528;
 }
 
 .pageText * {
   color: inherit;
+  max-width: 100%;
 }
 
 .pageText p:last-child {
@@ -155,10 +174,11 @@
 }
 
 .pageNavigation {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.7rem 1rem;
+  padding: 0.5rem 1rem;
   background: rgba(245, 239, 224, 0.1);
   border-top: 2px solid rgba(123, 104, 87, 0.3);
 }
@@ -210,13 +230,14 @@
     max-height: 99.5vh;
   }
 
-  .bookHeader h2 {
-    font-size: 1.2rem;
+  .bookHeaderText h2 {
+    font-size: 1rem;
   }
 
   .pageText {
-    padding: 1rem;
-    font-size: 0.9rem;
+    padding: 1.25rem 1.25rem;
+    font-size: 1rem;
+    min-height: 280px;
   }
 
   .navBtn {

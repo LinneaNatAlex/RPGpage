@@ -126,32 +126,26 @@ const BookViewer = ({ open, book, onClose }) => {
     <div className={styles.bookViewer} onClick={onClose}>
       <div className={styles.bookContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.bookHeader}>
-          <h2>{book.title}</h2>
-          <button onClick={onClose} className={styles.closeBtn}>
-            ×
-          </button>
-        </div>
-
-        <div className={styles.bookInfo}>
-          {/* Book Cover Image */}
-          {book.coverImage && (
-            <div className={styles.bookCoverContainer}>
+          <div className={styles.bookHeaderMeta}>
+            {book.coverImage && (
               <img
                 src={book.coverImage}
-                alt={`${book.title} cover`}
+                alt=""
                 className={styles.bookCover}
                 onClick={openImageModal}
               />
+            )}
+            <div className={styles.bookHeaderText}>
+              <h2>{book.title}</h2>
+              <p className={styles.bookAuthor}>Author: {book.author}</p>
+              {book.description && (
+                <p className={styles.bookDescription}>{book.description}</p>
+              )}
             </div>
-          )}
-          <p>
-            <strong>Author:</strong> {book.author}
-          </p>
-          {book.description && (
-            <p>
-              <strong>Description:</strong> {book.description}
-            </p>
-          )}
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} aria-label="Close">
+            ×
+          </button>
         </div>
 
         <div className={styles.pageContent}>

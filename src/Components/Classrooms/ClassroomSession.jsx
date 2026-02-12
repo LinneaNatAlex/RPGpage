@@ -151,6 +151,20 @@ const ClassroomSession = () => {
   );
   const classInfo = classesList.find((c) => c.id === classId);
 
+  // Check if user meets minimum year requirement for this class
+  useEffect(() => {
+    if (!classInfo || !user) return;
+    if (classInfo.minYear && userCurrentYear !== "graduate") {
+      const yearNum = typeof userCurrentYear === "number" ? userCurrentYear : parseInt(userCurrentYear) || 1;
+      if (yearNum < classInfo.minYear) {
+        setErrorMessage(`This class is only available from year ${classInfo.minYear} onwards.`);
+        setTimeout(() => {
+          navigate("/classrooms");
+        }, 2000);
+      }
+    }
+  }, [classInfo, userCurrentYear, user, navigate]);
+
   // Load custom class description and info if it exists
   useEffect(() => {
     const loadClassData = async () => {

@@ -36,6 +36,14 @@ export const classesList = [
     points: 2,
   },
   {
+    id: "creatures-biology",
+    name: "Creatures Biology",
+    description:
+      "Study the anatomy, physiology, and biological systems of magical and mythical creatures.",
+    points: 2,
+    minYear: 3, // Only available from year 3 onwards
+  },
+  {
     id: "elemental-studies",
     name: "Elemental Studies",
     description:
