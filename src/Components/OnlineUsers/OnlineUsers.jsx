@@ -171,8 +171,9 @@ const OnlineUsers = () => {
                 }}
               >
                 <img
+                  key={`avatar-${u.id}`}
                   src={u.profileImageUrl || "/icons/avatar.svg"}
-                  alt="User Avatar"
+                  alt={`${u.displayName || "User"} avatar`}
                   className={roleClass}
                   style={{
                     boxShadow: inLove ? "0 0 12px 2px #ffb6e6" : undefined,

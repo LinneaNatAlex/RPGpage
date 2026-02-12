@@ -33,20 +33,25 @@ const VerifyEmail = () => {
       setEmailVerified(auth.currentUser.emailVerified);
 
       if (auth.currentUser.emailVerified) {
-        // Save user data to Firestore when email is verified
+        const currentUid = auth.currentUser.uid;
         const tempUserData = localStorage.getItem("tempUserData");
         if (tempUserData && !userDataSaved) {
           try {
             const userData = JSON.parse(tempUserData);
-            await setDoc(doc(db, "users", userData.uid), {
-              ...userData,
-              createdAt: serverTimestamp(),
-              lastLogin: serverTimestamp(),
-              online: true,
-            });
-            // Clear temporary data
-            localStorage.removeItem("tempUserData");
-            setUserDataSaved(true);
+            // Only use tempUserData if it belongs to the user who just verified (same browser, same user)
+            if (userData.uid !== currentUid) {
+              localStorage.removeItem("tempUserData");
+              // Don't write another user's data to this account; they'll get minimal doc from authContext if needed
+            } else {
+              await setDoc(doc(db, "users", currentUid), {
+                ...userData,
+                createdAt: serverTimestamp(),
+                lastLogin: serverTimestamp(),
+                online: true,
+              });
+              localStorage.removeItem("tempUserData");
+              setUserDataSaved(true);
+            }
           } catch (error) {
             console.error("Error saving user data:", error);
             setError(
@@ -55,7 +60,6 @@ const VerifyEmail = () => {
             return;
           }
         }
-        // Navigate to main page after successful registration
         navigate("/");
       }
     };

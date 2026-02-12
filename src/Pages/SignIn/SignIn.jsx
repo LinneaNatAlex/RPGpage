@@ -70,19 +70,20 @@ const SignIn = () => {
         return;
       }
 
-      // Check if this is a newly registered user who needs Firestore document creation
+      // Only use tempUserData if it belongs to the user who is signing in (avoids overwriting one user's doc with another's data from same browser)
       const tempUserData = localStorage.getItem("tempUserData");
       if (tempUserData && user.emailVerified) {
         try {
           const userData = JSON.parse(tempUserData);
-          // Create the user document in Firestore
-          await setDoc(doc(db, "users", user.uid), {
-            ...userData,
-            uid: user.uid,
-            createdAt: serverTimestamp(),
-            lastLogin: serverTimestamp(),
-            online: true,
-          });
+          if (userData.uid === user.uid) {
+            await setDoc(doc(db, "users", user.uid), {
+              ...userData,
+              uid: user.uid,
+              createdAt: serverTimestamp(),
+              lastLogin: serverTimestamp(),
+              online: true,
+            });
+          }
           localStorage.removeItem("tempUserData");
         } catch (firestoreError) {
           // Continue anyway - authContext will handle missing document

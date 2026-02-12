@@ -13,11 +13,11 @@ const useOnlineUsers = () => {
     const unsubscribe = onSnapshot(querry, (snapshot) => {
       const now = Date.now();
       const onlineUsers = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter((user) => !user.invisibleUntil || user.invisibleUntil < now);
+        .map((docSnap) => {
+          const data = docSnap.data();
+          return { ...data, id: docSnap.id };
+        })
+        .filter((u) => !u.invisibleUntil || u.invisibleUntil < now);
       setOnlineUsers(onlineUsers);
     });
     // returns list of the online users
