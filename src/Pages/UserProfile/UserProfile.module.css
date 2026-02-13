@@ -60,6 +60,10 @@
   background: #1a1a1a;
 }
 
+:global([data-theme="pink"]) .profileWrapper {
+  background: #fff0f5;
+}
+
 .profileContainer {
   display: flex;
   flex-direction: row;
@@ -245,6 +249,11 @@
 :global([data-theme="dark"]) .profileIframe {
   background: transparent;
 }
+
+:global([data-theme="pink"]) .profileIframe {
+  background: transparent;
+}
+
 .profileTextContainer {
   display: flex;
   flex-direction: column;
@@ -266,6 +275,10 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+:global([data-theme="pink"]) .profileTextContainer {
+  border-color: #e8a0b0;
+}
+
 /* Ingen bakgrunn på iframe – unngå hvit i dark mode */
 .profileTextContainer iframe {
   background: transparent !important;
@@ -273,6 +286,11 @@
 }
 
 :global([data-theme="dark"]) .profileTextContainer iframe {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+:global([data-theme="pink"]) .profileTextContainer iframe {
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -385,6 +403,11 @@
 :global([data-theme="dark"]) .profileText {
   background: #1a1a1a;
   border-color: #444;
+}
+
+:global([data-theme="pink"]) .profileText {
+  background: #fff5f8;
+  border-color: #e8a0b0;
 }
 
 /* Default text color for content without BBCode styling */

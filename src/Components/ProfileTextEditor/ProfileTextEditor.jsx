@@ -225,8 +225,11 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     const isDark =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="dark"]');
-                    const bg = isDark ? "#1a1a1a" : "#EBE1D7";
-                    const fg = isDark ? "#e0e0e0" : "#2c2c2c";
+                    const isPink =
+                      typeof document !== "undefined" &&
+                      !!document.querySelector('[data-theme="pink"]');
+                    const bg = isDark ? "#1a1a1a" : isPink ? "#fff0f5" : "#EBE1D7";
+                    const fg = isDark ? "#e0e0e0" : isPink ? "#5a2c3a" : "#2c2c2c";
                     let body =
                       mode === "code"
                         ? getRawBody(codeContent)

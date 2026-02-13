@@ -29,6 +29,7 @@ body,
   margin: 0;
   padding: 2rem;
   overflow-x: hidden;
+  overflow-y: visible;
   font-family: "Cinzel", serif;
   display: flex;
   flex-direction: column;
@@ -37,6 +38,10 @@ body,
 
 :global([data-theme="dark"]) .profileWrapper {
   background: #1a1a1a;
+}
+
+:global([data-theme="pink"]) .profileWrapper {
+  background: #fff0f5;
 }
 
 .profileContainer {
@@ -63,6 +68,11 @@ body,
 :global([data-theme="dark"]) .profileContainer {
   background: #2a2a2a;
   border: 1px solid #444;
+}
+
+:global([data-theme="pink"]) .profileContainer {
+  background: linear-gradient(135deg, #e8a0b0 0%, #f0b8c4 100%);
+  border: 2px solid #d48494;
 }
 
 /* Wrapper: samme bredde som den brune raden (imageContainer + gap + characterDetailsContainer) */
@@ -94,10 +104,11 @@ body,
 .profileTextContainer[data-profiletextview="read"] {
   flex: 1 0 auto;
   min-height: 0;
-  min-width: 100%; /* Unngå at containeren krympes etter at editor unmountes */
+  min-width: 100%;
+  overflow: visible; /* La hele profilteksten vises – ikke klipp */
 }
 
-/* Profilkortet i lesevisning: full bredde, ingen ekstra wrapper-styling */
+/* Profilkortet i lesevisning: full bredde, ikke klipp innholdet */
 .profileTextContainer[data-profiletextview="read"] .profileText {
   max-width: none;
   width: 100%;
@@ -108,13 +119,22 @@ body,
   background: transparent;
   box-shadow: none;
   padding: 0;
+  overflow: visible;
 }
 
 :global([data-theme="dark"]) .profileTextContainer {
   border: none;
 }
 
+:global([data-theme="pink"]) .profileTextContainer {
+  border: none;
+}
+
 :global([data-theme="dark"]) .profileTextContainer[data-profiletextview="read"] .profileText {
+  background: transparent;
+}
+
+:global([data-theme="pink"]) .profileTextContainer[data-profiletextview="read"] .profileText {
   background: transparent;
 }
 
@@ -125,6 +145,11 @@ body,
 }
 
 :global([data-theme="dark"]) .profileTextContainer iframe {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+:global([data-theme="pink"]) .profileTextContainer iframe {
   background: transparent !important;
   background-color: transparent !important;
 }

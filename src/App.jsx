@@ -63,6 +63,8 @@ function App() {
   const [darkModeUntil, setDarkModeUntil] = useState(null);
   // Global site dark mode (admin-toggle, gjelder alle brukere)
   const [globalDarkMode, setGlobalDarkMode] = useState(false);
+  // Global site pink mode (Valentine's – admin-toggle)
+  const [globalPinkMode, setGlobalPinkMode] = useState(false);
   const [retroUntil, setRetroUntil] = useState(null);
   const [mirrorUntil, setMirrorUntil] = useState(null);
   const [speedUntil, setSpeedUntil] = useState(null);
@@ -113,17 +115,20 @@ function App() {
     // Consider using Firebase Cloud Messaging instead of realtime listeners
   }, [user, lastPrivateMessageId, lastPingTime]);
 
-  // Load global site config (dark mode on/off for hele siden) – leses for alle så tema lastes med en gang
+  // Load global site config (dark mode, pink mode – leses for alle så tema lastes med en gang)
   useEffect(() => {
     const configRef = doc(db, "config", "site");
     const unsub = onSnapshot(
       configRef,
       (snap) => {
-        setGlobalDarkMode(snap.exists() && snap.data().globalDarkMode === true);
+        const data = snap.exists() ? snap.data() : {};
+        setGlobalDarkMode(data.globalDarkMode === true);
+        setGlobalPinkMode(data.globalPinkMode === true);
       },
       (err) => {
-        console.warn("Config/site (global dark mode) kunne ikke lastes:", err?.message);
+        console.warn("Config/site kunne ikke lastes:", err?.message);
         setGlobalDarkMode(false);
+        setGlobalPinkMode(false);
       }
     );
     return () => unsub();
@@ -326,6 +331,74 @@ function App() {
         `
             : ""
         }
+
+        /* Pink mode (Valentine's) – global site theme */
+        ${
+          globalPinkMode
+            ? `
+          [data-theme="pink"] {
+            background: #fff0f5 !important;
+          }
+          [data-theme="pink"] html, [data-theme="pink"] body,
+          [data-theme="pink"] div, [data-theme="pink"] span, [data-theme="pink"] p,
+          [data-theme="pink"] h1, [data-theme="pink"] h2, [data-theme="pink"] h3,
+          [data-theme="pink"] h4, [data-theme="pink"] h5, [data-theme="pink"] h6,
+          [data-theme="pink"] a, [data-theme="pink"] button, [data-theme="pink"] input,
+          [data-theme="pink"] textarea, [data-theme="pink"] select, [data-theme="pink"] label,
+          [data-theme="pink"] li, [data-theme="pink"] ul, [data-theme="pink"] ol,
+          [data-theme="pink"] td, [data-theme="pink"] th, [data-theme="pink"] table,
+          [data-theme="pink"] tr, [data-theme="pink"] thead, [data-theme="pink"] tbody,
+          [data-theme="pink"] main, [data-theme="pink"] section, [data-theme="pink"] article,
+          [data-theme="pink"] nav, [data-theme="pink"] header, [data-theme="pink"] footer,
+          [data-theme="pink"] strong, [data-theme="pink"] em {
+            background: #fff0f5 !important;
+            color: #5a2c3a !important;
+          }
+          [data-theme="pink"] a {
+            color: #b84d6d !important;
+          }
+          [data-theme="pink"] a:hover {
+            color: #c75d7a !important;
+          }
+          [data-theme="pink"] .navbar, [data-theme="pink"] .topbar,
+          [data-theme="pink"] .inventory, [data-theme="pink"] .chat,
+          [data-theme="pink"] .sidebar, [data-theme="pink"] .main-content,
+          [data-theme="pink"] .container, [data-theme="pink"] .wrapper,
+          [data-theme="pink"] header, [data-theme="pink"] [class*="rootContainer"],
+          [data-theme="pink"] [class*="header"], [data-theme="pink"] [class*="main"] {
+            background: #ffe4ec !important;
+            border-color: #e8a0b0 !important;
+          }
+          [data-theme="pink"] input, [data-theme="pink"] textarea, [data-theme="pink"] select {
+            background-color: #fff5f8 !important;
+            color: #5a2c3a !important;
+            border-color: #e8a0b0 !important;
+          }
+          [data-theme="pink"] input::placeholder, [data-theme="pink"] textarea::placeholder {
+            color: #b08090 !important;
+          }
+          [data-theme="pink"] input:-webkit-autofill,
+          [data-theme="pink"] input:-webkit-autofill:hover,
+          [data-theme="pink"] input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #5a2c3a !important;
+            -webkit-box-shadow: 0 0 0 30px #fff5f8 inset !important;
+            box-shadow: 0 0 0 30px #fff5f8 inset !important;
+            background-color: #fff5f8 !important;
+          }
+          [data-theme="pink"] .ql-editor, [data-theme="pink"] .ql-container, [data-theme="pink"] .ql-toolbar {
+            background: #fff5f8 !important;
+            color: #5a2c3a !important;
+            border-color: #e8a0b0 !important;
+          }
+          [data-theme="pink"] .ql-toolbar .ql-stroke { stroke: #c75d7a !important; }
+          [data-theme="pink"] .ql-toolbar .ql-fill { fill: #c75d7a !important; }
+          [data-theme="pink"] .ql-toolbar button { color: #5a2c3a !important; }
+          [data-theme="pink"] .ql-toolbar button:hover { background: #ffe4ec !important; }
+          [data-theme="pink"] ::-webkit-scrollbar-thumb { background: #e8a0b0 !important; }
+          [data-theme="pink"] * { scrollbar-color: #e8a0b0 #fff0f5 !important; }
+        `
+            : ""
+        }
         
         /* Retro Potion */
         ${
@@ -421,10 +494,12 @@ function App() {
         <div
           className={styles.rootContainer}
           data-theme={
-            globalDarkMode ||
-            (darkModeUntil &&
-              typeof darkModeUntil === "number" &&
-              darkModeUntil > Date.now())
+            globalPinkMode
+              ? "pink"
+              : globalDarkMode ||
+                (darkModeUntil &&
+                  typeof darkModeUntil === "number" &&
+                  darkModeUntil > Date.now())
               ? "dark"
               : undefined
           }

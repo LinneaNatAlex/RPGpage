@@ -72,12 +72,20 @@ export default function AdminPanel() {
   // Global site dark mode (gjelder alle brukere – samme tema som dark mode-potion)
   const [globalDarkMode, setGlobalDarkMode] = useState(false);
   const [globalDarkModeStatus, setGlobalDarkModeStatus] = useState("");
+  // Global site pink mode (Valentine's – admin-toggle)
+  const [globalPinkMode, setGlobalPinkMode] = useState(false);
+  const [globalPinkModeStatus, setGlobalPinkModeStatus] = useState("");
   useEffect(() => {
     if (!roles.includes("admin")) return;
     const configRef = doc(db, "config", "site");
     const unsub = onSnapshot(configRef, (snap) => {
-      setGlobalDarkMode(snap.exists() && snap.data().globalDarkMode === true);
-    }, () => setGlobalDarkMode(false));
+      const data = snap.exists() ? snap.data() : {};
+      setGlobalDarkMode(data.globalDarkMode === true);
+      setGlobalPinkMode(data.globalPinkMode === true);
+    }, () => {
+      setGlobalDarkMode(false);
+      setGlobalPinkMode(false);
+    });
     return () => unsub();
   }, [roles]);
 
@@ -90,6 +98,18 @@ export default function AdminPanel() {
       setTimeout(() => setGlobalDarkModeStatus(""), 3000);
     } catch (err) {
       setGlobalDarkModeStatus(`Error: ${err.message}`);
+    }
+  }
+
+  async function handleToggleGlobalPinkMode(on) {
+    if (!roles.includes("admin")) return;
+    setGlobalPinkModeStatus("Saving...");
+    try {
+      await setDoc(doc(db, "config", "site"), { globalPinkMode: on }, { merge: true });
+      setGlobalPinkModeStatus(on ? "Pink mode (Valentine's) is on for the entire site." : "Pink mode is off.");
+      setTimeout(() => setGlobalPinkModeStatus(""), 3000);
+    } catch (err) {
+      setGlobalPinkModeStatus(`Error: ${err.message}`);
     }
   }
 
@@ -487,7 +507,7 @@ export default function AdminPanel() {
         Admin Panel
       </h2>
 
-      {/* Global dark mode for hele siden – kun admin */}
+      {/* Global site themes (dark mode + pink/Valentine's) – kun admin */}
       {roles.includes("admin") && (
         <div
           style={{
@@ -499,35 +519,61 @@ export default function AdminPanel() {
           }}
         >
           <h3 style={{ color: theme.secondaryText, fontSize: "1.1rem", marginBottom: 8, fontFamily: '"Cinzel", serif' }}>
-            Site theme (dark mode)
+            Site theme
           </h3>
           <p style={{ fontSize: "0.9rem", color: theme.text, marginBottom: 12 }}>
-            Turn dark mode off or on for the <strong>entire site</strong> – all users see the same theme (same look as the dark mode potion).
+            Turn themes off or on for the <strong>entire site</strong>. Pink mode is for Valentine's.
           </p>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <button
-              type="button"
-              onClick={() => handleToggleGlobalDarkMode(!globalDarkMode)}
-              style={{
-                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                color: "#F5EFE0",
-                border: "2px solid #D4C4A8",
-                borderRadius: 4,
-                padding: "10px 20px",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontFamily: '"Cinzel", serif',
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              }}
-            >
-              {globalDarkMode ? "✓ Dark mode On" : "Dark mode Off"}
-            </button>
-            <span style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>
-              {globalDarkMode ? "Light mode" : "Dark mode"} available
-            </span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-start" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => handleToggleGlobalDarkMode(!globalDarkMode)}
+                style={{
+                  background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                  color: "#F5EFE0",
+                  border: "2px solid #D4C4A8",
+                  borderRadius: 4,
+                  padding: "10px 20px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: '"Cinzel", serif',
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                }}
+              >
+                {globalDarkMode ? "✓ Dark On" : "Dark Off"}
+              </button>
+              <span style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>
+                {globalDarkMode ? "Light" : "Dark"} available
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => handleToggleGlobalPinkMode(!globalPinkMode)}
+                style={{
+                  background: globalPinkMode ? "linear-gradient(135deg, #c75d7a 0%, #d48494 100%)" : "linear-gradient(135deg, #e8a0b0 0%, #f0b0c0 100%)",
+                  color: "#fff",
+                  border: "2px solid #d48494",
+                  borderRadius: 4,
+                  padding: "10px 20px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: '"Cinzel", serif',
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                }}
+              >
+                {globalPinkMode ? "✓ Pink On" : "Pink Off"}
+              </button>
+              <span style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>
+                Valentine's theme
+              </span>
+            </div>
           </div>
-          {globalDarkModeStatus && (
-            <div style={{ marginTop: 10, fontSize: "0.9rem", color: theme.secondaryText }}>{globalDarkModeStatus}</div>
+          {(globalDarkModeStatus || globalPinkModeStatus) && (
+            <div style={{ marginTop: 10, fontSize: "0.9rem", color: theme.secondaryText }}>
+              {globalDarkModeStatus || globalPinkModeStatus}
+            </div>
           )}
         </div>
       )}
