@@ -25,7 +25,9 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
     const raw = currentText || "";
     if (raw.startsWith("{{code}}")) {
       setCodeContent(raw);
-      setRichContent(raw.replace("{{code}}", "").replace("{{/code}}", "").trim() || "");
+      setRichContent(
+        raw.replace("{{code}}", "").replace("{{/code}}", "").trim() || "",
+      );
       setBbcodeContent(htmlToBbcode(getRawBody(raw)));
       setMode("code");
     } else {
@@ -36,7 +38,8 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
     }
   }, [currentText]);
 
-  const getRawBody = (str) => (str || "").replace("{{code}}", "").replace("{{/code}}", "");
+  const getRawBody = (str) =>
+    (str || "").replace("{{code}}", "").replace("{{/code}}", "");
 
   const handleSave = async () => {
     let toStore;
@@ -44,8 +47,11 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
     else if (mode === "bbcode") toStore = bbcodeToHtml(bbcodeContent);
     else toStore = richContent;
     await storeText("html", toStore);
+    if (onSave) {
+      onSave(toStore);
+      return;
+    }
     setEditing(false);
-    if (onSave) onSave();
   };
 
   const customImageHandler = useCallback(() => {
@@ -55,12 +61,28 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
     if (!range) return;
     const url = prompt("Image URL:");
     if (!url || !url.trim()) return;
-    const widthInput = prompt("Width (e.g. 200px, 50%, or leave blank for full width):", "");
-    const alignInput = (prompt("Align: left, center, or right?", "center") || "center").trim().toLowerCase();
-    const align = ["left", "center", "right"].includes(alignInput) ? alignInput : "center";
+    const widthInput = prompt(
+      "Width (e.g. 200px, 50%, or leave blank for full width):",
+      "",
+    );
+    const alignInput = (
+      prompt("Align: left, center, or right?", "center") || "center"
+    )
+      .trim()
+      .toLowerCase();
+    const align = ["left", "center", "right"].includes(alignInput)
+      ? alignInput
+      : "center";
     const width = widthInput.trim();
-    const wrapStyle = align === "center" ? "text-align:center;margin-left:auto;margin-right:auto" : align === "right" ? "text-align:right" : "text-align:left";
-    const imgStyle = width ? `max-width:100%;height:auto;width:${width}` : "max-width:100%;height:auto";
+    const wrapStyle =
+      align === "center"
+        ? "text-align:center;margin-left:auto;margin-right:auto"
+        : align === "right"
+          ? "text-align:right"
+          : "text-align:left";
+    const imgStyle = width
+      ? `max-width:100%;height:auto;width:${width}`
+      : "max-width:100%;height:auto";
     const html = `<p style="${wrapStyle}"><img src="${url.replace(/"/g, "&quot;")}" style="${imgStyle}" /></p>`;
     q.clipboard.dangerouslyPasteHTML(range.index, html);
     setTimeout(() => setRichContent(q.root.innerHTML), 0);
@@ -83,42 +105,58 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
 
   if (editing) {
     return (
-      <div className={styles.profileContainer}>
-        <div className={styles.profilePreview}>
-          <div className={styles.profileText}>
+      <div className={styles.profileText}>
             <h2>Edit Profile Text</h2>
 
             <div className={styles.modeSelector}>
               <button
                 type="button"
                 onClick={() => {
-                  if (mode === "code" && codeContent.trim()) setRichContent(getRawBody(codeContent).trim() || richContent);
-                  if (mode === "bbcode" && bbcodeContent.trim()) setRichContent(bbcodeToHtml(bbcodeContent));
+                  if (mode === "code" && codeContent.trim())
+                    setRichContent(
+                      getRawBody(codeContent).trim() || richContent,
+                    );
+                  if (mode === "bbcode" && bbcodeContent.trim())
+                    setRichContent(bbcodeToHtml(bbcodeContent));
                   setMode("rich");
                 }}
-                className={mode === "rich" ? styles.activeModeButton : styles.modeButton}
+                className={
+                  mode === "rich" ? styles.activeModeButton : styles.modeButton
+                }
               >
                 Rich text (bold, italic, colours, images)
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  if (mode === "rich" && richContent.trim()) setBbcodeContent(htmlToBbcode(richContent));
-                  if (mode === "code" && codeContent.trim()) setBbcodeContent(htmlToBbcode(getRawBody(codeContent)));
+                  if (mode === "rich" && richContent.trim())
+                    setBbcodeContent(htmlToBbcode(richContent));
+                  if (mode === "code" && codeContent.trim())
+                    setBbcodeContent(htmlToBbcode(getRawBody(codeContent)));
                   setMode("bbcode");
                 }}
-                className={mode === "bbcode" ? styles.activeModeButton : styles.modeButton}
+                className={
+                  mode === "bbcode"
+                    ? styles.activeModeButton
+                    : styles.modeButton
+                }
               >
                 BBCode
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  if (mode === "rich" && richContent.trim()) setCodeContent(`{{code}}${richContent}{{/code}}`);
-                  if (mode === "bbcode" && bbcodeContent.trim()) setCodeContent(`{{code}}${bbcodeToHtml(bbcodeContent)}{{/code}}`);
+                  if (mode === "rich" && richContent.trim())
+                    setCodeContent(`{{code}}${richContent}{{/code}}`);
+                  if (mode === "bbcode" && bbcodeContent.trim())
+                    setCodeContent(
+                      `{{code}}${bbcodeToHtml(bbcodeContent)}{{/code}}`,
+                    );
                   setMode("code");
                 }}
-                className={mode === "code" ? styles.activeModeButton : styles.modeButton}
+                className={
+                  mode === "code" ? styles.activeModeButton : styles.modeButton
+                }
               >
                 Code ({"{{code}}"} for HTML)
               </button>
@@ -150,7 +188,8 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                   style={{ minHeight: 280 }}
                 />
                 <p className={styles.codeHint}>
-                  BBCode: [b], [i], [u], [s], [url=...], [img], [color=...], [size=...], [center], [left], [right], [code], [quote]
+                  BBCode: [b], [i], [u], [s], [url=...], [img], [color=...],
+                  [size=...], [center], [left], [right], [code], [quote]
                 </p>
               </div>
             )}
@@ -158,7 +197,10 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
             {mode === "code" && (
               <>
                 <p className={styles.codeHint}>
-                  Same as News: type <code>{"{{code}}"}</code>, then add your HTML, CSS and/or JavaScript below, and close with <code>{"{{/code}}"}</code>. Scripts run inside the profile view.
+                  Same as News: type <code>{"{{code}}"}</code>, then add your
+                  HTML, CSS and/or JavaScript below, and close with{" "}
+                  <code>{"{{/code}}"}</code>. Scripts run inside the profile
+                  view.
                 </p>
                 <textarea
                   value={codeContent}
@@ -170,7 +212,11 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
               </>
             )}
 
-            {(mode === "rich" ? richContent.trim() : mode === "bbcode" ? bbcodeContent.trim() : codeContent.trim()) && (
+            {(mode === "rich"
+              ? richContent.trim()
+              : mode === "bbcode"
+                ? bbcodeContent.trim()
+                : codeContent.trim()) && (
               <div className={styles.codePreview}>
                 <label className={styles.editorLabel}>Preview:</label>
                 <iframe
@@ -182,10 +228,15 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     const bg = isDark ? "#1a1a1a" : "#EBE1D7";
                     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                     let body =
-                      mode === "code" ? getRawBody(codeContent)
-                      : mode === "bbcode" ? bbcodeToHtml(bbcodeContent)
-                      : richContent;
-                    body = body.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
+                      mode === "code"
+                        ? getRawBody(codeContent)
+                        : mode === "bbcode"
+                          ? bbcodeToHtml(bbcodeContent)
+                          : richContent;
+                    body = body.replace(
+                      /(\s(?:src|href)\s*=\s*["'])http:\/\//gi,
+                      "$1https://",
+                    );
                     const quillColors = `
 .ql-color-white{color:#fff !important}.ql-color-red{color:#e60000 !important}.ql-color-orange{color:#f90 !important}.ql-color-yellow{color:#ff0 !important}.ql-color-green{color:#008a00 !important}.ql-color-blue{color:#06c !important}.ql-color-purple{color:#93f !important}
 .ql-bg-black{background-color:#000 !important}.ql-bg-red{background-color:#e60000 !important}.ql-bg-orange{background-color:#f90 !important}.ql-bg-yellow{background-color:#ff0 !important}.ql-bg-green{background-color:#008a00 !important}.ql-bg-blue{background-color:#06c !important}.ql-bg-purple{background-color:#93f !important}
@@ -223,19 +274,18 @@ img{max-width:100% !important;height:auto !important;}`;
                 Cancel
               </Button>
             </div>
-          </div>
-        </div>
       </div>
     );
   }
 
   let displayBody = getRawBody(currentText) || currentText || "";
-  displayBody = displayBody.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
+  displayBody = displayBody.replace(
+    /(\s(?:src|href)\s*=\s*["'])http:\/\//gi,
+    "$1https://",
+  );
 
   return (
-    <div className={styles.profileContainer}>
-      <div className={styles.profilePreview}>
-        <div className={styles.profileText}>
+    <div className={styles.profileText}>
           {currentText ? (
             <iframe
               srcDoc={(() => {
@@ -244,7 +294,8 @@ img{max-width:100% !important;height:auto !important;}`;
                   !!document.querySelector('[data-theme="dark"]');
                 const bg = isDark ? "#1a1a1a" : "#EBE1D7";
                 const fg = isDark ? "#e0e0e0" : "#2c2c2c";
-                const imgCss = ".ql-align-center img,.ql-align-right img{display:inline-block;vertical-align:middle;} img{max-width:100%;height:auto;} p img{vertical-align:middle;}";
+                const imgCss =
+                  ".ql-align-center img,.ql-align-right img{display:inline-block;vertical-align:middle;} img{max-width:100%;height:auto;} p img{vertical-align:middle;}";
                 return `<!DOCTYPE html>
 <html style="background:${bg}">
 <head><meta charset="utf-8"/>
@@ -255,10 +306,13 @@ img{max-width:100% !important;height:auto !important;}`;
               })()}
               style={{
                 width: "100%",
-                minHeight: "200px",
+                minHeight: "80vh",
+                height: "1000vh",
                 border: "none",
                 borderRadius: 0,
                 background: "transparent",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
               }}
               title="Profile Text"
               className={styles.htmlContent}
@@ -267,7 +321,8 @@ img{max-width:100% !important;height:auto !important;}`;
             <div
               style={{ color: "#888", fontStyle: "italic", margin: "1rem 0" }}
             >
-              No profile text yet. Click Edit – use rich text or {`{{code}}`} for HTML.
+              No profile text yet. Click Edit – use rich text or {`{{code}}`}{" "}
+              for HTML.
             </div>
           )}
           <Button
@@ -289,8 +344,6 @@ img{max-width:100% !important;height:auto !important;}`;
           >
             Edit Profile Text
           </Button>
-        </div>
-      </div>
     </div>
   );
 };

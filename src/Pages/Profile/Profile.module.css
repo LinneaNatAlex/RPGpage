@@ -65,22 +65,57 @@ body,
   border: 1px solid #444;
 }
 
+/* Wrapper: samme bredde som den brune raden (imageContainer + gap + characterDetailsContainer) */
+.profileContentWidth {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1332px; /* 300 (image) + 2rem gap + 1000 (details) */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
 .profileTextContainer {
   display: flex;
   flex-direction: column;
+  max-width: none;
   width: 100%;
-  gap: 20px;
   margin-top: 2rem;
-  background: transparent; /* Transparent background for all themes */
+  margin-left: 0;
+  margin-right: 0;
+  gap: 20px;
+  background: transparent;
   border-radius: 0;
-  padding: 2rem;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 0;
+  box-shadow: none;
+}
+
+.profileTextContainer[data-profiletextview="read"] {
+  flex: 1 0 auto;
+  min-height: 0;
+  min-width: 100%; /* Unngå at containeren krympes etter at editor unmountes */
+}
+
+/* Profilkortet i lesevisning: full bredde, ingen ekstra wrapper-styling */
+.profileTextContainer[data-profiletextview="read"] .profileText {
+  max-width: none;
+  width: 100%;
+  min-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }
 
 :global([data-theme="dark"]) .profileTextContainer {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
+}
+
+:global([data-theme="dark"]) .profileTextContainer[data-profiletextview="read"] .profileText {
+  background: transparent;
 }
 
 /* Overstyr Safari/default lys iframe-bakgrunn (f.eks. rgba(255,255,255,0.7)) */
@@ -114,20 +149,15 @@ body,
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* Removed fixed color to allow BBCode colors to work */
   width: 100%;
   max-width: none;
   margin: 0 auto;
-  background: transparent; /* Transparent background for all themes */
+  background: transparent;
   border-radius: 0;
   padding: 2rem;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
   position: relative;
   word-break: break-word;
   overflow-wrap: break-word;
-  /* Removed text-align: left to allow BBCode alignment to work */
 }
 
 .profileTextContent {
@@ -903,6 +933,10 @@ body,
 
 /* Responsive design for mobile */
 @media screen and (max-width: 1200px) {
+  .profileContentWidth {
+    width: 100%;
+  }
+
   .profileContainer {
     flex-direction: column;
     max-width: 100%;
