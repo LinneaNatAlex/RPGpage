@@ -369,7 +369,6 @@ const Forum = () => {
         fetchFollowerCounts();
       }, 1000);
       
-      console.log("Updated followed topics:", updatedFollowedTopics);
       
     } catch (error) {
       console.error("Error updating followed topics:", error);
@@ -452,25 +451,25 @@ const Forum = () => {
     }
   };
 
-  // Send notifications to all followers of a topic
+  // When someone replies, notify everyone who follows this topic (except the author).
   const sendNotificationToTopicFollowers = async (topicId, topicTitle) => {
+    if (!topicId || !user?.uid) return;
     try {
-      // Get all users who follow this topic
       const usersRef = collection(db, "users");
       const usersSnapshot = await getDocs(usersRef);
-      
+      const topicIdStr = String(topicId);
       const followers = [];
-      usersSnapshot.forEach((doc) => {
-        const userData = doc.data();
-        if (userData.followedTopics && Array.isArray(userData.followedTopics)) {
-          const isFollowing = userData.followedTopics.some(topic => topic.id === topicId);
-          if (isFollowing && doc.id !== user.uid) { // Don't notify the person who posted
-            followers.push(doc.id);
-          }
-        }
+      usersSnapshot.forEach((docSnap) => {
+        if (docSnap.id === user.uid) return; // don't notify yourself
+        const userData = docSnap.data();
+        const list = userData.followedTopics;
+        if (!list || !Array.isArray(list)) return;
+        const followsThis = list.some((t) => t && String(t.id) === topicIdStr);
+        if (followsThis) followers.push(docSnap.id);
       });
 
       // Send notification to each follower
+      const now = Date.now();
       for (const followerId of followers) {
         try {
           await addDoc(collection(db, "notifications"), {
@@ -480,10 +479,13 @@ const Forum = () => {
             type: "topic_reply",
             title: "New Reply in Followed Topic",
             message: `${user.displayName} replied to "${topicTitle}"`,
-            topicId: topicId,
+            topicId: String(topicId),
             forumRoom: forumRoom,
+            forum: forumTitle,
+            topicTitle: topicTitle,
             read: false,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            created: now
           });
         } catch (error) {
           // Skip this notification if it fails
@@ -679,9 +681,12 @@ const Forum = () => {
       );
     }
 
+    // Get current topic info before sending notifications
+    const currentTopic = topics.find(t => t.id === selectedTopic);
+    const topicTitle = currentTopic?.title || 'Unknown Topic';
+
     // Automatically follow the topic you just replied to
     try {
-      const currentTopic = topics.find(t => t.id === selectedTopic);
       if (currentTopic) {
         const isAlreadyFollowing = followedTopics.some(t => t.id === selectedTopic);
         if (!isAlreadyFollowing) {
@@ -694,7 +699,7 @@ const Forum = () => {
 
     // Send notifications to all followers of this topic
     try {
-      await sendNotificationToTopicFollowers(selectedTopic, currentTopic?.title || 'Unknown Topic');
+      await sendNotificationToTopicFollowers(selectedTopic, topicTitle);
     } catch (error) {
       // Error sending notifications
     }
@@ -1109,7 +1114,6 @@ const Forum = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log("Star button clicked for topic:", topic.id);
                         handleFollowTopic(topic.id, topic.title);
                       }}
                       title={isFollowing ? "Unfollow topic" : "Follow topic"}

@@ -469,48 +469,52 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [invisibleUntil]);
 
-  // Fetch notifications once on load (no snapshot/polling – user can reload or open panel to refresh)
+  // Notifications: real-time listener so badge and list update when new notifications arrive
   const fetchNotifications = useRef(null);
   useEffect(() => {
     if (!user) return;
 
-    const fetchAll = async () => {
-      try {
-        const notifRef = collection(db, "notifications");
-        const [toSnap, userIdSnap] = await Promise.all([
-          getDocs(
-            query(notifRef, where("to", "==", user.uid), limit(80)),
-          ).catch(() => ({ docs: [] })),
-          getDocs(
-            query(notifRef, where("userId", "==", user.uid), limit(80)),
-          ).catch(() => ({ docs: [] })),
-        ]);
-        const byTo = (toSnap.docs || []).map((d) => ({
+    const notifRef = collection(db, "notifications");
+    const q = query(
+      notifRef,
+      where("to", "==", user.uid),
+      limit(80)
+    );
+
+    const applySnapshot = (snap) => {
+      const byTo = (snap.docs || []).map((d) => {
+        const data = d.data();
+        return {
           id: d.id,
-          ...d.data(),
-          _sort: d.data().created ?? d.data().createdAt?.toMillis?.() ?? 0,
-        }));
-        const byUserId = (userIdSnap.docs || []).map((d) => ({
-          id: d.id,
-          ...d.data(),
-          _sort: d.data().created ?? d.data().createdAt?.toMillis?.() ?? 0,
-        }));
-        const merged = [
-          ...byTo,
-          ...byUserId.filter((n) => !byTo.find((t) => t.id === n.id)),
-        ];
-        merged.sort((a, b) => (b._sort || 0) - (a._sort || 0));
-        const list = merged.slice(0, 50).map(({ _sort, ...n }) => n);
-        setNotifications(list);
-        cacheHelpers.setNotifications(
-          user.uid,
-          list.filter((n) => !n.read),
-        );
-      } catch (e) {}
+          ...data,
+          _sort: data.created ?? data.createdAt?.toMillis?.() ?? 0,
+        };
+      });
+      byTo.sort((a, b) => (b._sort || 0) - (a._sort || 0));
+      const list = byTo.slice(0, 50).map(({ _sort, ...n }) => n);
+      setNotifications(list);
+      cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
     };
 
-    fetchNotifications.current = fetchAll;
-    fetchAll();
+    const unsub = onSnapshot(
+      q,
+      (snap) => applySnapshot(snap),
+      (err) => {
+        console.error("Notifications listener error:", err);
+        setNotifications([]);
+      }
+    );
+
+    fetchNotifications.current = async () => {
+      try {
+        const snap = await getDocs(q);
+        applySnapshot(snap);
+      } catch (e) {
+        console.error("Fetch notifications error:", e);
+      }
+    };
+
+    return () => unsub();
   }, [user]);
 
   // Recent news for notification list (newer than lastSeenNewsAt)

@@ -39,15 +39,16 @@ export const storage = getStorage(app);
 
 // Suppress emulator warnings in development
 if (import.meta.env.DEV) {
+  // Store original console.warn BEFORE overriding
+  const originalWarn = console.warn.bind(console);
   // This suppresses the emulator connection warnings
   console.warn = function (message) {
     if (typeof message === "string" && (message.includes("emulator") || message.includes("findDOMNode"))) {
       return; // Suppress emulator warnings and findDOMNode warnings
     }
     // Call original console.warn for other messages
-    console._warn.apply(console, arguments);
+    originalWarn.apply(console, arguments);
   };
-  console._warn = console.warn;
 }
 
 
