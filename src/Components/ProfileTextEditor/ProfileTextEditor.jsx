@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import ReactQuillWithSynonyms from "../ReactQuillWithSynonyms/ReactQuillWithSynonyms";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Button from "../Button/Button";
 import useProfileText from "../../hooks/useProfileText";
@@ -164,15 +164,14 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
 
             {mode === "rich" && (
               <div className={styles.editorWrapper}>
-                <ReactQuillWithSynonyms
-                  quillRef={quillEditorRef}
+                <ReactQuill
+                  ref={quillEditorRef}
                   value={richContent}
                   onChange={setRichContent}
                   theme="snow"
                   modules={quillModules}
                   placeholder="Write your profile text here – use the toolbar for bold, italic, colours, images..."
                   className={styles.quillEditor}
-                  enableSynonyms={true}
                 />
               </div>
             )}

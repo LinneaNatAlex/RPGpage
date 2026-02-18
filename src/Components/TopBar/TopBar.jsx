@@ -540,6 +540,26 @@ const TopBar = () => {
       .catch(() => setRecentNews([]));
   }, [user, userData?.lastSeenNewsAt]);
 
+  // Mark all notifications as read
+  const markAllNotificationsAsRead = async () => {
+    if (!user) return;
+    const unread = notifications.filter((n) => !n.read);
+    if (unread.length === 0) return;
+    try {
+      await Promise.all(
+        unread.map((n) =>
+          updateDoc(doc(db, "notifications", n.id), { read: true })
+        )
+      );
+      setNotifications((prev) =>
+        prev.map((n) => ({ ...n, read: true }))
+      );
+      cacheHelpers.setNotifications(user.uid, []);
+    } catch (err) {
+      console.error("Error marking all as read:", err);
+    }
+  };
+
   // Close notifications panel on Escape
   useEffect(() => {
     if (!showNotificationsPanel) return;
@@ -814,14 +834,35 @@ const TopBar = () => {
               <div className={styles.notificationPanel}>
                 <div className={styles.notificationPanelHeader}>
                   <h3>Notifications</h3>
-                  <button
-                    type="button"
-                    className={styles.closeButton}
-                    onClick={() => setShowNotificationsPanel(false)}
-                    aria-label="Close"
-                  >
-                    ×
-                  </button>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    {notifications.filter((n) => !n.read).length > 0 && (
+                      <button
+                        type="button"
+                        onClick={markAllNotificationsAsRead}
+                        style={{
+                          fontSize: "0.85rem",
+                          padding: "4px 10px",
+                          background: "rgba(123, 104, 87, 0.3)",
+                          color: "#D4C4A8",
+                          border: "1px solid rgba(212, 196, 168, 0.3)",
+                          borderRadius: 0,
+                          cursor: "pointer",
+                        }}
+                        aria-label="Mark all as read"
+                        title="Mark all as read"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className={styles.closeButton}
+                      onClick={() => setShowNotificationsPanel(false)}
+                      aria-label="Close"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.notificationList}>
                   {recentNews.length > 0 &&
