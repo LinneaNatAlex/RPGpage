@@ -13,6 +13,7 @@ import {
   getDocs,
   writeBatch,
   onSnapshot,
+  deleteField,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import * as usersListStore from "../../utils/usersListStore";
@@ -256,17 +257,22 @@ export default function AdminPanel() {
       return;
     }
     setDetentionStatus("Working...");
-    const ref = doc(db, "users", selected.uid);
-    const detentionUntil = Date.now() + 60 * 60 * 1000; // 1 hour from now
-    await updateDoc(ref, {
-      detentionUntil: detentionUntil,
-      detentionReason: "Curfew violation or rule breaking",
-    });
-    setDetentionStatus(
-      `User sent to detention until ${new Date(
-        detentionUntil
-      ).toLocaleString()}`
-    );
+    try {
+      const ref = doc(db, "users", selected.uid);
+      const detentionUntil = Date.now() + 60 * 60 * 1000; // 1 hour from now
+      await updateDoc(ref, {
+        detentionUntil: detentionUntil,
+        detentionReason: "Curfew violation or rule breaking",
+      });
+      setDetentionStatus(
+        `User sent to detention until ${new Date(
+          detentionUntil
+        ).toLocaleString()}`
+      );
+    } catch (err) {
+      console.error("Detention assign error:", err);
+      setDetentionStatus(err?.message || "Failed to assign detention.");
+    }
   }
 
   async function handleClearDetention() {
@@ -283,12 +289,17 @@ export default function AdminPanel() {
       return;
     }
     setDetentionStatus("Working...");
-    const ref = doc(db, "users", selected.uid);
-    await updateDoc(ref, {
-      detentionUntil: null,
-      detentionReason: null,
-    });
-    setDetentionStatus("Detention cleared.");
+    try {
+      const ref = doc(db, "users", selected.uid);
+      await updateDoc(ref, {
+        detentionUntil: deleteField(),
+        detentionReason: deleteField(),
+      });
+      setDetentionStatus("Detention cleared.");
+    } catch (err) {
+      console.error("Clear detention error:", err);
+      setDetentionStatus(err?.message || "Failed to clear detention.");
+    }
   }
 
   // Ban IP
@@ -1613,7 +1624,8 @@ export default function AdminPanel() {
               <div style={{ color: "#ffd86b" }}>User's IP is banned</div>
             )}
 
-            {/* Detention Controls */}
+            {/* Detention Controls - only admin, teacher, shadow patrol, headmaster (not archivist) */}
+            {(roles.includes("admin") || roles.includes("teacher") || roles.includes("shadowpatrol") || roles.includes("headmaster")) && (
             <div
               style={{
                 marginTop: 20,
@@ -1701,6 +1713,7 @@ export default function AdminPanel() {
                   </div>
                 )}
             </div>
+            )}
           </div>
         </div>
       )}

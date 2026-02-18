@@ -3,7 +3,7 @@ import useOnlineUsers from "../../hooks/useOnlineUsers";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, deleteField } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import GearIcon from "../Icons/Gear.svg";
 
@@ -49,6 +49,10 @@ const OnlineUsers = () => {
   const isPrivileged = user?.roles?.some((r) =>
     ["admin", "teacher", "shadowpatrol", "headmaster", "archivist"].includes(r.toLowerCase())
   );
+  // Only admin, teacher, shadow patrol, headmaster can assign/clear detention (not archivist)
+  const canAssignDetention = user?.roles?.some((r) =>
+    ["admin", "teacher", "shadowpatrol", "headmaster"].includes((r || "").toLowerCase())
+  );
 
   const handleTimeoutClick = (targetUser) => {
     setSelectedUser(targetUser);
@@ -79,38 +83,56 @@ const OnlineUsers = () => {
     setSuspendReason("");
   };
 
-  // Detention functions
+  // Detention functions (only admin, teacher, shadow patrol, headmaster)
   const handleDetentionUser = async () => {
     if (!selectedUser) return;
+    if (!canAssignDetention) {
+      setDetentionStatus("Only admin, teacher, Shadow Patrol, or Headmaster can assign detention.");
+      return;
+    }
     setDetentionStatus("Working...");
-    const userRef = doc(db, "users", selectedUser.id);
-    const detentionUntil = Date.now() + (60 * 60 * 1000); // 1 hour from now
-    await updateDoc(userRef, { 
-      detentionUntil: detentionUntil,
-      detentionReason: "Curfew violation or rule breaking"
-    });
-    setDetentionStatus(`User sent to detention until ${new Date(detentionUntil).toLocaleString()}`);
-    setTimeout(() => {
-      setShowTimeoutModal(false);
-      setSelectedUser(null);
-      setDetentionStatus("");
-    }, 2000);
+    try {
+      const userRef = doc(db, "users", selectedUser.id || selectedUser.uid);
+      const detentionUntil = Date.now() + (60 * 60 * 1000); // 1 hour from now
+      await updateDoc(userRef, {
+        detentionUntil: detentionUntil,
+        detentionReason: "Curfew violation or rule breaking"
+      });
+      setDetentionStatus(`User sent to detention until ${new Date(detentionUntil).toLocaleString()}`);
+      setTimeout(() => {
+        setShowTimeoutModal(false);
+        setSelectedUser(null);
+        setDetentionStatus("");
+      }, 2000);
+    } catch (err) {
+      console.error("Detention assign error:", err);
+      setDetentionStatus(err?.message || "Failed to assign detention. Check console.");
+    }
   };
 
   const handleClearDetention = async () => {
     if (!selectedUser) return;
+    if (!canAssignDetention) {
+      setDetentionStatus("Only admin, teacher, Shadow Patrol, or Headmaster can clear detention.");
+      return;
+    }
     setDetentionStatus("Working...");
-    const userRef = doc(db, "users", selectedUser.id);
-    await updateDoc(userRef, { 
-      detentionUntil: null,
-      detentionReason: null
-    });
-    setDetentionStatus("Detention cleared.");
-    setTimeout(() => {
-      setShowTimeoutModal(false);
-      setSelectedUser(null);
-      setDetentionStatus("");
-    }, 2000);
+    try {
+      const userRef = doc(db, "users", selectedUser.id || selectedUser.uid);
+      await updateDoc(userRef, {
+        detentionUntil: deleteField(),
+        detentionReason: deleteField()
+      });
+      setDetentionStatus("Detention cleared.");
+      setTimeout(() => {
+        setShowTimeoutModal(false);
+        setSelectedUser(null);
+        setDetentionStatus("");
+      }, 2000);
+    } catch (err) {
+      console.error("Clear detention error:", err);
+      setDetentionStatus(err?.message || "Failed to clear detention. Check console.");
+    }
   };
 
   if (!users.length) return null;
@@ -304,7 +326,8 @@ const OnlineUsers = () => {
                 </button>
               </div>
               
-              {/* Detention Controls */}
+              {/* Detention Controls - only for admin, teacher, shadow patrol, headmaster (not archivist) */}
+              {canAssignDetention && (
               <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.2)" }}>
                 <h4 style={{ color: "#ff6b6b", marginBottom: 12 }}>Detention Controls</h4>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -364,6 +387,7 @@ const OnlineUsers = () => {
                   </div>
                 )}
               </div>
+              )}
             </form>
           </div>
         </div>

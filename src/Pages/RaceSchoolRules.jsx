@@ -8,10 +8,10 @@ const RaceSchoolRules = () => {
     "Respect teachers, Shadow Patrol, and school staff.",
     "Curfew is strictly enforced at 22:00 (10 PM). Students caught after curfew will face detention.",
     "Shadow Patrol monitors the school grounds after hours. Being caught results in immediate detention.",
-    "Detention lasts for 1 hour and restricts access to all forums except the Detention Classroom.",
+    "How detention works: Detention lasts 1 hour from when it is assigned. While in detention, you can only access the Detention Classroom forum; all other forums are blocked until the period ends. You can read and post in the Detention Classroom as normal. A countdown of your remaining time is shown in the top bar.",
+    "Admin, teachers, Shadow Patrol, and the Headmaster can assign or clear detention for rule violations (e.g. curfew).",
     "Keep dormitories and common rooms clean and respectful.",
     "No unauthorized use of school facilities or equipment.",
-    "Teachers and Shadow Patrol have authority to assign detention for rule violations.",
   ];
 
   return (
