@@ -136,7 +136,11 @@ export default function AdminPanel() {
           : (selected.class || "1st year")
       );
       setEditRace(selected.race || "");
-      setEditRoles(Array.isArray(selected.roles) ? Array.from(new Set([...selected.roles, "user"])) : ["user"]);
+      setEditRoles(
+        Array.isArray(selected.roles)
+          ? Array.from(new Set([...selected.roles.map((r) => String(r).toLowerCase()), "user"]))
+          : ["user"]
+      );
       setEditLeadForRole(selected.leadForRole || "");
     }
   }, [selected]);
@@ -442,7 +446,9 @@ export default function AdminPanel() {
       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
     );
   }
-  function removeSelectedRole() {
+  function removeSelectedRole(e) {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     if (!roleToRemove) return;
     setEditRoles((prev) => prev.filter((r) => r !== roleToRemove));
     setRoleToRemove("");
@@ -974,7 +980,7 @@ export default function AdminPanel() {
                   </select>
                   <button
                     type="button"
-                    onClick={removeSelectedRole}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeSelectedRole(e); }}
                     disabled={!roleToRemove}
                     style={{
                       padding: "6px 12px",

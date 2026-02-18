@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
 import useSegmentSchedule from "../../hooks/useSegmentSchedule";
 import styles from "./SegmentSchedulePopup.module.css";
@@ -8,14 +8,21 @@ const ROLE_LABELS = { archivist: "Archivist", shadowpatrol: "Shadow Patrol" };
 export default function SegmentSchedulePopup() {
   const { userData } = useUserData();
   const [open, setOpen] = useState(false);
+  const roleWhenOpenedRef = useRef(null);
 
   const segmentRole = Array.isArray(userData?.roles)
     ? userData.roles.map((r) => String(r).toLowerCase()).find((r) => r === "archivist" || r === "shadowpatrol")
     : null;
 
-  const { tasks, loading } = useSegmentSchedule(segmentRole || undefined);
+  if (segmentRole) roleWhenOpenedRef.current = segmentRole;
+  const effectiveRole = open ? (segmentRole || roleWhenOpenedRef.current) : segmentRole;
+  const { tasks, loading } = useSegmentSchedule(effectiveRole || undefined);
 
-  if (!segmentRole) return null;
+  useEffect(() => {
+    if (!open) roleWhenOpenedRef.current = segmentRole || null;
+  }, [open, segmentRole]);
+
+  if (!effectiveRole && !open) return null;
 
   return (
     <>
@@ -23,16 +30,16 @@ export default function SegmentSchedulePopup() {
         type="button"
         onClick={() => setOpen(true)}
         className={styles.trigger}
-        title={`${ROLE_LABELS[segmentRole]} – tasks and info`}
-        aria-label={`Open ${ROLE_LABELS[segmentRole]} tasks`}
+        title={`${ROLE_LABELS[effectiveRole]} – tasks and info`}
+        aria-label={`Open ${ROLE_LABELS[effectiveRole]} tasks`}
       >
-        📋 {ROLE_LABELS[segmentRole]}
+        📋 {ROLE_LABELS[effectiveRole]}
       </button>
       {open && (
         <div className={styles.overlay} onClick={() => setOpen(false)} aria-hidden="true">
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.header}>
-              <h2 className={styles.title}>{ROLE_LABELS[segmentRole]} – tasks and info</h2>
+              <h2 className={styles.title}>{ROLE_LABELS[effectiveRole]} – tasks and info</h2>
               <button type="button" onClick={() => setOpen(false)} className={styles.close} aria-label="Close">
                 ×
               </button>

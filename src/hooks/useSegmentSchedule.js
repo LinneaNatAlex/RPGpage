@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 
 const SEGMENT_IDS = ["archivist", "shadowpatrol"];
 
@@ -30,13 +30,14 @@ export function useSegmentSchedule(segmentId) {
         const data = snap.exists() ? snap.data() : {};
         setTasks(Array.isArray(data.tasks) ? data.tasks : []);
         setError(null);
+        setLoading(false);
       },
       (err) => {
         setError(err.message);
         setTasks([]);
+        setLoading(false);
       }
     );
-    setLoading(false);
     return () => unsub();
   }, [segmentId]);
 
@@ -53,13 +54,16 @@ export function useSegmentSchedule(segmentId) {
       createdBy: createdBy || "",
       createdAt: now,
     };
-    const nextTasks = [...tasks, newTask];
+    const snap = await getDoc(ref);
+    const currentTasks = (snap.exists() && Array.isArray(snap.data().tasks)) ? snap.data().tasks : [];
+    const nextTasks = [...currentTasks, newTask];
     setTasks(nextTasks);
     try {
       await setDoc(ref, { tasks: nextTasks }, { merge: true });
     } catch (err) {
-      setTasks(tasks);
       setError(err.message);
+      setTasks(currentTasks);
+      throw err;
     }
   };
 

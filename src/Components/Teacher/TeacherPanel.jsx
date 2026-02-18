@@ -667,12 +667,17 @@ export default function TeacherPanel() {
               type="button"
               onClick={async () => {
                 setTaskStatus("Adding…");
-                await addTask(newTaskTitle, newTaskDesc, newTaskDeadline ? new Date(newTaskDeadline).getTime() : null, user?.displayName || user?.email || "");
-                setNewTaskTitle("");
-                setNewTaskDesc("");
-                setNewTaskDeadline("");
-                setTaskStatus("Added.");
-                setTimeout(() => setTaskStatus(""), 2000);
+                try {
+                  await addTask(newTaskTitle, newTaskDesc, newTaskDeadline ? new Date(newTaskDeadline).getTime() : null, user?.displayName || user?.email || "");
+                  setNewTaskTitle("");
+                  setNewTaskDesc("");
+                  setNewTaskDeadline("");
+                  setTaskStatus("Added.");
+                  setTimeout(() => setTaskStatus(""), 2000);
+                } catch (err) {
+                  setTaskStatus(err?.message || "Failed to add task.");
+                  setTimeout(() => setTaskStatus(""), 4000);
+                }
               }}
               style={{
                 padding: "10px 20px",
