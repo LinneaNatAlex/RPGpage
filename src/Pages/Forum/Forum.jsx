@@ -36,7 +36,7 @@ import {
   where,
   increment,
 } from "firebase/firestore";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import styles from "./Forum.module.css";
 import Button from "../../Components/Button/Button";
 import {
@@ -120,11 +120,13 @@ const Forum = () => {
   const [selectedTopicFollowers, setSelectedTopicFollowers] = useState([]);
   const [followerCounts, setFollowerCounts] = useState({});
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Hent forumId fra URL
+  // Hent forumId fra URL (normaliser "short,butlong" til "shortbutlong" for Firestore)
   const { forumId } = useParams();
-  let forumRoom = forumId;
-  let forumTitle = forumNames[forumId] || "Forum";
+  const normalizedForumId = (forumId === "short,butlong" ? "shortbutlong" : forumId) || "";
+  let forumRoom = normalizedForumId;
+  let forumTitle = forumNames[normalizedForumId] || forumNames[forumId] || "Forum";
 
   // Hvis commonroom: bruk rasebasert commonroom hvis mulig
   if (forumId === "commonroom" && user && user.race) {
@@ -227,16 +229,13 @@ const Forum = () => {
     }
   }, [topics]);
 
-  // Handle URL parameter to open specific topic
+  // Handle URL parameter to open specific topic (e.g. from notification or followed list)
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const topicId = urlParams.get('topic');
-    if (topicId) {
+    const topicId = searchParams.get("topic");
+    if (topicId && forumRoom) {
       setSelectedTopic(topicId);
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [forumRoom, searchParams]);
 
   // Fetch user's followed topics
   const fetchFollowedTopics = async () => {
@@ -1152,7 +1151,13 @@ const Forum = () => {
               <p style={{ color: "#ffd86b", marginBottom: 16 }}>
                 Topic not found or you don&apos;t have access to this private topic.
               </p>
-              <Button onClick={() => setSelectedTopic(null)} className={styles.backButton}>
+              <Button
+                onClick={() => {
+                  setSelectedTopic(null);
+                  setSearchParams({});
+                }}
+                className={styles.backButton}
+              >
                 Back to topics
               </Button>
             </div>
@@ -1169,7 +1174,10 @@ const Forum = () => {
             }}
           >
             <Button
-              onClick={() => setSelectedTopic(null)}
+              onClick={() => {
+                setSelectedTopic(null);
+                setSearchParams({});
+              }}
               className={styles.backButton}
             >
               Back to topics

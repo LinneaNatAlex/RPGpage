@@ -34,6 +34,13 @@ const updateUserDocWithCacheClear = async (userRef, updates, userId) => {
   cacheHelpers.clearUserCache(userId);
 };
 
+// Forum path for URLs: "short,butlong" -> "shortbutlong" (must match Forum.jsx)
+const normalizeForumPath = (path) => {
+  if (!path || typeof path !== "string") return path || "general";
+  const p = path.toLowerCase().replace(/\s+/g, "");
+  return p === "short,butlong" ? "shortbutlong" : p;
+};
+
 function HealthBar({ health = 100, maxHealth = 100 }) {
   const percent = Math.max(0, Math.min(100, (health / maxHealth) * 100));
   return (
@@ -952,9 +959,7 @@ const TopBar = () => {
                         count > 1 && (isChat || isReply)
                           ? `${baseLabel} (${count} ${isChat ? "messages" : "updates"})`
                           : baseLabel;
-                      const forumPath = (n.forum || n.forumRoom || "")
-                        .toLowerCase()
-                        .replace(/\s+/g, "");
+                      const forumPath = normalizeForumPath(n.forum || n.forumRoom || "");
                       return (
                         <div
                           key={group.key}
@@ -1288,10 +1293,8 @@ const TopBar = () => {
                       <div
                         className={styles.topicClickableArea}
                         onClick={() => {
-                          // Navigate directly to the specific topic
-                          const forumPath = topic.forum
-                            .toLowerCase()
-                            .replace(/\s+/g, "");
+                          // Navigate directly to the specific topic (use forumRoom if stored, else forum title; normalize for URL)
+                          const forumPath = normalizeForumPath(topic.forumRoom || topic.forum || "");
                           navigate(`/forum/${forumPath}?topic=${topic.id}`);
                           setShowFollowedTopics(false);
                         }}
