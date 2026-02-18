@@ -26,6 +26,7 @@ import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerifica
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
 import "./utils/dailyPetDiscoveryScheduler"; // Daily pet discovery system
 import PetDiscoveryPopupOnly from "./Components/PetDiscovery/PetDiscoveryPopupOnly";
+import DetentionPopup from "./Components/DetentionPopup/DetentionPopup";
 import useLocationTracker from "./hooks/useLocationTracker";
 import RotateDevicePopup from "./Components/RotateDevicePopup";
 import "./App.mobile.css";
@@ -520,6 +521,7 @@ function App() {
           {user && <PrivateChat />}
           {/* Pet Discovery Popup Only for logged-in users */}
           {user && <PetDiscoveryPopupOnly />}
+          {user && <DetentionPopup />}
         </div>
       </MobileLayout>
     </>
