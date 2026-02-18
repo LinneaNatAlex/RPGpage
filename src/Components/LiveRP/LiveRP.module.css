@@ -12,18 +12,20 @@
   min-width: 32px;
   height: 32px;
   border-radius: 0;
-  border: 1px solid #7B6857;
+  border: 1px solid #7b6857;
   background: #23232b;
-  color: #7B6857;
+  color: #7b6857;
   cursor: pointer;
   font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 .formatBtn:hover {
-  background: #7B6857;
+  background: #7b6857;
   color: #23232b;
 }
 /* -------------------------CHAT CONTAINER------------------------- */
@@ -32,7 +34,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   background: #23232b;
   width: 100%;
   max-width: 600px;
@@ -118,7 +120,7 @@
   overflow-y: auto;
   resize: none;
   box-sizing: border-box;
-  border: 2px solid #7B6857;
+  border: 2px solid #7b6857;
   border-radius: 0;
   background: #23232b;
   color: #fff;
@@ -126,7 +128,7 @@
 }
 /* Send button styles */
 .RpchatBtn {
-  background: #7B6857;
+  background: #7b6857;
   color: #23232b;
   border: none;
   border-radius: 0;
@@ -135,7 +137,10 @@
   padding: 0.5rem 1.5rem;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(160, 132, 232, 0.15);
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
 }
 .RpchatBtn:hover {
   background: #c7b3f7;
@@ -177,19 +182,19 @@
 }
 
 :root {
-  --primary-color: #5D4E37;
-  --secondary-color: #8B7A6B;
-  --light-background-color: #6B5B47;
-  --text-color: #B8860B;
-  --border-color: #7B6857;
-  --contrast-text-color: #2C2C2C;
-  --contrast-background-color: #E8DDD4;
-  --background-color: #5D4E37;
-  --navbar-background: #3A2F26;
-  --navbar-text-color: #F5EFE0;
-  --navbar-rolldown-background: #6B5B47;
-  --button-background: #7B6857;
-  --button-text-color: #F5EFE0;
+  --primary-color: #5d4e37;
+  --secondary-color: #8b7a6b;
+  --light-background-color: #6b5b47;
+  --text-color: #b8860b;
+  --border-color: #7b6857;
+  --contrast-text-color: #2c2c2c;
+  --contrast-background-color: #e8ddd4;
+  --background-color: #5d4e37;
+  --navbar-background: #3a2f26;
+  --navbar-text-color: #f5efe0;
+  --navbar-rolldown-background: #6b5b47;
+  --button-background: #7b6857;
+  --button-text-color: #f5efe0;
   --border-size: 1px;
   --main-padding: 6px;
   --main-margin: 1rem;

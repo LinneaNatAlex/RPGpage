@@ -16,7 +16,11 @@ import {
 } from "firebase/firestore";
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { countWords, checkWordCountReward, updateUserWordCount } from "../../utils/wordCountReward";
+import {
+  countWords,
+  checkWordCountReward,
+  updateUserWordCount,
+} from "../../utils/wordCountReward";
 
 const hallRules = [
   "Be respectful to all participants.",
@@ -50,9 +54,12 @@ const LiveRP = () => {
       const snap = await getDocs(q);
       if (!snap.empty) {
         const data = snap.docs[0].data();
+        const roles = data.roles || [];
         setIsPrivilegedUser(
-          data.roles &&
-            (data.roles.includes("admin") || data.roles.includes("teacher") || data.roles.includes("archivist"))
+          roles.includes("admin") ||
+          roles.includes("teacher") ||
+          roles.includes("headmaster") ||
+          roles.includes("shadowpatrol")
         );
       } else {
         setIsPrivilegedUser(false);
@@ -93,31 +100,41 @@ const LiveRP = () => {
   // ----------------------SEND MESSAGE FUNCTION-----------------------
   const sendtMessage = async (e) => {
     if (e) e.preventDefault();
-    if (!newMess || newMess.replace(/<(.|\n)*?>/g, "").trim() === "") return;
-    
-    const wordCount = countWords(newMess);
-    
-    await addDoc(collection(db, "rpgGrateHall"), {
-      text: newMess,
-      timestamp: serverTimestamp(), // adds the timestam for the message
-      sender: auth.currentUser.displayName,
-      // gets the user name from firebase auth
-    });
-    
-    // Update user's total word count and check for nits reward
-    if (auth.currentUser) {
-      const newTotalWordCount = await updateUserWordCount(auth.currentUser.uid, wordCount);
-      const reward = await checkWordCountReward(auth.currentUser.uid, newTotalWordCount, newTotalWordCount - wordCount);
-      
-      // Reward system still works, but no popup message
-      // if (reward.awarded) {
-      //   setNitsReward(`You earned ${reward.nits} nits for writing ${wordCount} words!`);
-      //   setTimeout(() => setNitsReward(null), 10000);
-      // }
+    setError(null);
+    const user = auth.currentUser;
+    if (!user) {
+      setError("You must be logged in to send messages.");
+      return;
     }
-    
-    setNewMess("");
-    if (inputRef.current) inputRef.current.innerHTML = "";
+    // Read from contentEditable so we send what's actually in the box
+    const raw = inputRef.current ? inputRef.current.innerHTML : newMess;
+    const text = (typeof raw === "string" ? raw : newMess || "").trim();
+    const textOnly = text.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+    if (!textOnly) return;
+
+    try {
+      await addDoc(collection(db, "rpgGrateHall"), {
+        text: text,
+        timestamp: serverTimestamp(),
+        sender: user.displayName || "Anonymous",
+      });
+
+      const wordCount = countWords(text);
+      if (wordCount > 0) {
+        const newTotalWordCount = await updateUserWordCount(user.uid, wordCount);
+        await checkWordCountReward(user.uid, newTotalWordCount, newTotalWordCount - wordCount);
+      }
+
+      setNewMess("");
+      if (inputRef.current) inputRef.current.innerHTML = "";
+    } catch (err) {
+      const msg = err?.message || "";
+      if (msg.includes("permission") || msg.includes("Permission")) {
+        setError("Cannot send: check that Firestore rules are deployed (rpgGrateHall: allow create for logged-in users).");
+      } else {
+        setError(msg || "Failed to send message.");
+      }
+    }
   };
 
   function formatTime(ts) {
@@ -172,7 +189,8 @@ const LiveRP = () => {
           maxWidth: "95vw",
           width: "340px",
           padding: "2rem 1.2rem 1.2rem 1.2rem",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+          boxShadow:
+            "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
@@ -189,7 +207,8 @@ const LiveRP = () => {
             left: 0,
             right: 0,
             height: "4px",
-            background: "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
+            background:
+              "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
           }}
         />
         <h2
@@ -242,7 +261,8 @@ const LiveRP = () => {
               fontWeight: "bold",
               fontSize: "1rem",
               cursor: "pointer",
-              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              boxShadow:
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
               transition: "all 0.3s ease",
               textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
             }}
@@ -260,7 +280,8 @@ const LiveRP = () => {
               fontWeight: "bold",
               fontSize: "1rem",
               cursor: "pointer",
-              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+              boxShadow:
+                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
               transition: "all 0.3s ease",
               textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
             }}
@@ -303,7 +324,8 @@ const LiveRP = () => {
               padding: "1.5rem",
               minWidth: "220px",
               maxWidth: "300px",
-              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
+              boxShadow:
+                "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
               position: "relative",
               overflow: "hidden",
             }}
@@ -315,7 +337,8 @@ const LiveRP = () => {
                 left: 0,
                 right: 0,
                 height: "4px",
-                background: "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
+                background:
+                  "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
               }}
             />
             <h2
@@ -340,7 +363,9 @@ const LiveRP = () => {
               }}
             >
               {hallRules.map((rule, idx) => (
-                <li key={idx} style={{ marginBottom: "0.5rem" }}>{rule}</li>
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                  {rule}
+                </li>
               ))}
             </ul>
           </div>
@@ -358,7 +383,7 @@ const LiveRP = () => {
                   (u) =>
                     u.displayName &&
                     u.displayName.toLowerCase() ===
-                      message.sender?.toLowerCase()
+                      message.sender?.toLowerCase(),
                 );
                 let nameClass = styles.messageSender;
                 if (
@@ -371,7 +396,7 @@ const LiveRP = () => {
                   nameClass += ` ${styles.teacherName}`;
                 else if (
                   userObj?.roles?.some(
-                    (r) => r.toLowerCase() === "shadowpatrol"
+                    (r) => r.toLowerCase() === "shadowpatrol",
                   )
                 )
                   nameClass += ` ${styles.shadowPatrolName}`;
@@ -416,7 +441,8 @@ const LiveRP = () => {
                           style={{
                             marginLeft: "1rem",
                             color: "#F5EFE0",
-                            background: "linear-gradient(135deg, #8B4A4A 0%, #9B5A5A 100%)",
+                            background:
+                              "linear-gradient(135deg, #8B4A4A 0%, #9B5A5A 100%)",
                             border: "1px solid rgba(255, 255, 255, 0.2)",
                             borderRadius: 0,
                             padding: "0.2rem 0.5rem",
@@ -490,12 +516,14 @@ const LiveRP = () => {
                 suppressContentEditableWarning={true}
                 data-name="liveRpMessage"
               />
-              <div style={{ 
-                fontSize: "0.8rem", 
-                color: "#8B7A6B", 
-                marginTop: "4px",
-                textAlign: "center"
-              }}>
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#8B7A6B",
+                  marginTop: "4px",
+                  textAlign: "center",
+                }}
+              >
                 Earn 50 nits for every 100 words written (minimum 300 words)!
               </div>
               <Button
@@ -513,7 +541,8 @@ const LiveRP = () => {
                   type="button"
                   onClick={() => setShowRulesPopup(true)}
                   style={{
-                    background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    background:
+                      "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                     borderRadius: 0,
@@ -521,7 +550,8 @@ const LiveRP = () => {
                     cursor: "pointer",
                     fontSize: "0.95rem",
                     fontWeight: "600",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                    boxShadow:
+                      "0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
                     transition: "all 0.3s ease",
                     textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
                   }}
