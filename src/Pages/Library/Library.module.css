@@ -1,0 +1,111 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  min-height: 60vh;
+}
+
+.card {
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  color: #f5efe0;
+  padding: 32px;
+  border-radius: 0;
+  border: 3px solid #7b6857;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #f5efe0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.intro {
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 1.05rem;
+  color: #d4c4a8;
+  line-height: 1.5;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  color: #d4c4a8;
+  font-style: italic;
+  padding: 2rem;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.section {
+  background: rgba(245, 239, 224, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
+  padding: 20px 24px;
+}
+
+.sectionTitle {
+  font-family: "Cinzel", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #f5efe0;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(212, 196, 168, 0.3);
+}
+
+.sectionContent {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #f5efe0;
+}
+
+.sectionContent p {
+  margin: 0 0 0.75em 0;
+}
+
+.sectionContent p:last-child {
+  margin-bottom: 0;
+}
+
+.sectionContent ul,
+.sectionContent ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.sectionContent a {
+  color: #d4c4a8;
+  text-decoration: underline;
+}
+
+.sectionContent a:hover {
+  color: #f5efe0;
+}
+
+.back {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(212, 196, 168, 0.3);
+  text-align: center;
+}
+
+.back a {
+  color: #d4c4a8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back a:hover {
+  color: #f5efe0;
+  text-decoration: underline;
+}

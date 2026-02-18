@@ -150,6 +150,7 @@ const Navbar = () => {
               </span>
               <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
                 <NavLink to="/rules">Rules overview & About</NavLink>
+                <NavLink to="/library">Library (tips you should know)</NavLink>
                 <NavLink to="/generalrules">General Rules</NavLink>
                 <NavLink to="/siterolesrules">Roles on the Site (Staff & Colours)</NavLink>
                 <NavLink to="/aiusagerules">AI Usage Rules</NavLink>
@@ -189,7 +190,7 @@ const Navbar = () => {
               {/* Removed Alchemy & Potions from dropdown */}
             </div>
             {roles.includes("admin") && <NavLink to="/admin">Admin</NavLink>}{" "}
-            {(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist")) && (
+            {(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist") || roles.includes("headmaster")) && (
               <NavLink to="/teacher">TeacherPanel</NavLink>
             )}{" "}
             {/* Shows the Admin link only for admin, TeacherPanel for teacher/admin */}

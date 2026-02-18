@@ -7,7 +7,9 @@ import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import BookEditor from "../BookEditor/BookEditor";
+import LibraryEditor from "../LibraryEditor/LibraryEditor";
 import DeleteConfirmModal from "../DeleteConfirmModal/DeleteConfirmModal";
+import useLibrary from "../../hooks/useLibrary";
 
 const LEAD_LABELS = { archivist: "Archivist", shadowpatrol: "Shadow Patrol" };
 
@@ -22,11 +24,15 @@ export default function TeacherPanel() {
   const [newTaskDeadline, setNewTaskDeadline] = useState("");
   const [taskStatus, setTaskStatus] = useState("");
   const { books, deleteBook, refetchBooks } = useBooks();
+  const { items: libraryItems, deleteItem: deleteLibraryItem, refetchItems: refetchLibrary } = useLibrary();
   const [selected, setSelected] = useState(null);
   const [amount, setAmount] = useState(1);
   const [status, setStatus] = useState("");
   const [showBookEditor, setShowBookEditor] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
+  const [showLibraryEditor, setShowLibraryEditor] = useState(false);
+  const [editingLibraryItem, setEditingLibraryItem] = useState(null);
+  const [libraryToDelete, setLibraryToDelete] = useState(null);
   const [activeTab, setActiveTab] = useState("points");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
@@ -102,6 +108,18 @@ export default function TeacherPanel() {
     setShowDeleteModal(false);
     setBookToDelete(null);
   };
+
+  const confirmDeleteLibrary = async () => {
+    if (!libraryToDelete) return;
+    try {
+      await deleteLibraryItem(libraryToDelete.id);
+      setStatus("Library entry deleted.");
+      setLibraryToDelete(null);
+    } catch {
+      setStatus("Error deleting library entry.");
+    }
+  };
+  const cancelDeleteLibrary = () => setLibraryToDelete(null);
 
   const handleBookSave = () => {
     setShowBookEditor(false);
@@ -208,6 +226,25 @@ export default function TeacherPanel() {
           }}
         >
           Book Management
+        </button>
+        <button
+          onClick={() => setActiveTab("library")}
+          style={{
+            flex: 1,
+            padding: "12px 24px",
+            background:
+              activeTab === "library"
+                ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)"
+                : "transparent",
+            color: activeTab === "library" ? "#F5EFE0" : "#D4C4A8",
+            border: "none",
+            borderRadius: 0,
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+          }}
+        >
+          Library (tips)
         </button>
         {leadForRole && (
           <button
@@ -567,6 +604,141 @@ export default function TeacherPanel() {
         </>
       )}
 
+      {/* Library (tips) Tab */}
+      {activeTab === "library" && (
+        <>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1.5rem",
+              background: "rgba(245, 239, 224, 0.1)",
+              padding: "1rem",
+              borderRadius: 0,
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3
+              style={{
+                color: "#D4C4A8",
+                fontSize: "1.3rem",
+                fontWeight: 600,
+                fontFamily: '"Cinzel", serif',
+                margin: 0,
+              }}
+            >
+              Library – tips you should know
+            </h3>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => refetchLibrary()}
+                style={{
+                  background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+                  color: "#F5EFE0",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: 0,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Refresh
+              </button>
+              <button
+                onClick={() => {
+                  setEditingLibraryItem(null);
+                  setShowLibraryEditor(true);
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                  color: "#F5EFE0",
+                  border: "none",
+                  padding: "10px 20px",
+                  borderRadius: 0,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                New library entry
+              </button>
+            </div>
+          </div>
+          <div
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+              background: "rgba(245, 239, 224, 0.05)",
+              borderRadius: 0,
+              border: "1px solid rgba(123, 104, 87, 0.3)",
+            }}
+          >
+            {libraryItems.length === 0 ? (
+              <div
+                style={{
+                  padding: "2rem",
+                  textAlign: "center",
+                  color: "#D4C4A8",
+                  fontStyle: "italic",
+                }}
+              >
+                No library entries yet. Add tips and information for users (free to read, not sold in shop).
+              </div>
+            ) : (
+              libraryItems.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    padding: "1rem",
+                    borderBottom: "1px solid rgba(123, 104, 87, 0.2)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h4 style={{ color: "#F5EFE0", margin: 0, fontSize: "1.1rem" }}>
+                    {item.title}
+                  </h4>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button
+                      onClick={() => {
+                        setEditingLibraryItem(item);
+                        setShowLibraryEditor(true);
+                      }}
+                      style={{
+                        background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                        color: "#F5EFE0",
+                        border: "none",
+                        padding: "6px 12px",
+                        borderRadius: 0,
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => setLibraryToDelete(item)}
+                      style={{
+                        background: "linear-gradient(135deg, #8B4513 0%, #A0522D 100%)",
+                        color: "#F5EFE0",
+                        border: "none",
+                        padding: "6px 12px",
+                        borderRadius: 0,
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+
       {/* Segment Lead Tab (Archivist / Shadow Patrol) */}
       {leadForRole && activeTab === "lead" && (
         <>
@@ -885,11 +1057,58 @@ export default function TeacherPanel() {
         </div>
       )}
 
+      {showLibraryEditor && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "2rem",
+          }}
+        >
+          <div
+            style={{
+              background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+              borderRadius: 0,
+              border: "3px solid #7B6857",
+              maxWidth: "800px",
+              width: "100%",
+              maxHeight: "90vh",
+              overflow: "auto",
+            }}
+          >
+            <LibraryEditor
+              entry={editingLibraryItem}
+              onSave={() => {
+                setShowLibraryEditor(false);
+                setEditingLibraryItem(null);
+                setStatus("Library entry saved.");
+                refetchLibrary();
+              }}
+              onCancel={() => {
+                setShowLibraryEditor(false);
+                setEditingLibraryItem(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       <DeleteConfirmModal
-        isOpen={showDeleteModal}
-        onConfirm={confirmDeleteBook}
-        onCancel={cancelDeleteBook}
-        itemName={bookToDelete?.title || "this book"}
+        isOpen={showDeleteModal || !!libraryToDelete}
+        onConfirm={libraryToDelete ? confirmDeleteLibrary : confirmDeleteBook}
+        onCancel={() => {
+          cancelDeleteBook();
+          cancelDeleteLibrary();
+        }}
+        itemName={libraryToDelete?.title || bookToDelete?.title || "this item"}
       />
     </div>
   );

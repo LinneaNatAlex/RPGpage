@@ -1,0 +1,44 @@
+/* Wrapper so the Quill editor area is clearly visible and focusable */
+.quillWrapper {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Target the actual editable area inside ReactQuill */
+.quillWrapper .ql-container {
+  min-height: 220px;
+  font-size: 1rem;
+}
+
+.quillWrapper .ql-editor {
+  min-height: 220px;
+  background: rgba(245, 239, 224, 0.12);
+  color: #f5efe0;
+}
+
+.quillWrapper .ql-editor.ql-blank::before {
+  color: rgba(245, 239, 224, 0.5);
+  font-style: italic;
+}
+
+/* Ensure toolbar and editor are usable */
+.quillWrapper .ql-toolbar {
+  background: rgba(123, 104, 87, 0.25);
+  border-color: rgba(123, 104, 87, 0.5);
+}
+
+.quillWrapper .ql-toolbar .ql-stroke {
+  stroke: rgba(212, 196, 168, 0.5);
+}
+
+.quillWrapper .ql-toolbar .ql-fill {
+  fill: rgba(212, 196, 168, 0.6);
+}
+
+.quillWrapper .ql-toolbar button {
+  color: #d4c4a8;
+}
+
+.quillWrapper .ql-container {
+  border-color: rgba(123, 104, 87, 0.5);
+}

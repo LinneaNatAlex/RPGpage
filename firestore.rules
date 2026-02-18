@@ -90,9 +90,10 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // MESSAGES - innloggede brukere kan chatte
+    // MESSAGES (main chat) - any logged-in user can read and post
     match /messages/{messageId} {
-      allow read, write: if request.auth != null;
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null;
     }
 
     // PRIVATE MESSAGES - kun de to brukerne i chatten kan lese/skriv
@@ -222,6 +223,14 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get("roles", []).hasAny(["admin", "teacher", "headmaster"]);
+    }
+
+    // Library (tips): archivist, teacher, headmaster, admin (any casing)
+    match /library/{docId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get("roles", []).hasAny(["admin", "headmaster", "teacher", "archivist", "Admin", "Headmaster", "Teacher", "Archivist"]);
     }
   }
 }

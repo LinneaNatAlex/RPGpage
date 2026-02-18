@@ -27,6 +27,7 @@ import RaceSchoolRules from "../Pages/RaceSchoolRules.jsx";
 import DatingRelationshipRules from "../Pages/DatingRelationshipRules.jsx";
 import Forum18Rules from "../Pages/18ForumRules.jsx";
 import RulesList from "../Pages/RulesList.jsx";
+import LibraryPage from "../Pages/LibraryPage.jsx";
 import Profile from "../Pages/Profile/Profile.jsx";
 import SignIn from "../Pages/SignIn/SignIn.jsx";
 import SignUp from "../Pages/SignUp/SignUp.jsx";
@@ -66,7 +67,8 @@ const TeacherRouteGuard = ({ children }) => {
     !(
       roles.includes("teacher") ||
       roles.includes("admin") ||
-      roles.includes("archivist")
+      roles.includes("archivist") ||
+      roles.includes("headmaster")
     )
   )
     return <Navigate to="/" />;
@@ -149,6 +151,14 @@ export const router = createBrowserRouter(
         }
       />
       <Route path="rules" element={<RulesList />} />
+      <Route
+        path="library"
+        element={
+          <RouteGuard>
+            <LibraryPage />
+          </RouteGuard>
+        }
+      />
       <Route path="forumrules" element={<ForumRules />} />
       <Route path="generalrules" element={<GeneralRules />} />
       <Route path="siterolesrules" element={<SiteRolesRules />} />

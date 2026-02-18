@@ -7,7 +7,7 @@ export default function TeacherPage() {
   const { roles = [], rolesLoading } = useUserRoles();
   if (!user) return <div>You must be logged in to view this page.</div>;
   if (rolesLoading) return <div>Loading roles...</div>;
-  if (!(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist")))
+  if (!(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist") || roles.includes("headmaster")))
     return <div>You do not have access to this page.</div>;
   return <TeacherPanel />;
 }
