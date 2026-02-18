@@ -438,6 +438,10 @@ const LiveRP = () => {
                   userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
                 )
                   nameClass += ` ${styles.archivistName}`;
+                const staffRedText =
+                  userObj?.roles?.some((r) => r.toLowerCase() === "headmaster") ||
+                  userObj?.roles?.some((r) => r.toLowerCase() === "teacher") ||
+                  userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol");
                 return (
                   <div key={message.id} className={styles.message}>
                     <div
@@ -493,6 +497,12 @@ const LiveRP = () => {
                         textAlign: "left",
                         width: "100%",
                         fontSize: "1.15rem",
+                        ...(staffRedText
+                          ? {
+                              color: "#c62828",
+                              fontWeight: 500,
+                            }
+                          : {}),
                       }}
                       dangerouslySetInnerHTML={{ __html: message.text }}
                     />

@@ -74,7 +74,9 @@ const LiveChatRPGRules = () => {
         }}
       >
         <ul style={{ 
-          marginLeft: 20, 
+          marginLeft: 0, 
+          paddingLeft: 0,
+          listStyle: "none",
           lineHeight: 1.6,
           fontSize: "1.1rem"
         }}>

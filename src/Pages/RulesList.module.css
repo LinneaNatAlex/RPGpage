@@ -57,3 +57,52 @@
 .link:active {
   background: rgba(205, 192, 180, 0.95);
 }
+
+/* About / Creator section */
+.aboutSection {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 2px solid rgba(123, 104, 87, 0.35);
+}
+
+.aboutTitle {
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+  font-weight: 600;
+  color: #2c2c2c;
+  margin-bottom: 16px;
+}
+
+.aboutBlock {
+  margin-bottom: 16px;
+}
+
+.aboutBlock p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #2c2c2c;
+  margin: 0;
+}
+
+.disclaimerBlock {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(123, 104, 87, 0.08);
+  border: 1px solid rgba(123, 104, 87, 0.25);
+  border-radius: 0;
+}
+
+.disclaimerTitle {
+  font-family: "Cinzel", serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  margin: 0 0 8px 0;
+}
+
+.disclaimerBlock p {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #2c2c2c;
+  margin: 0;
+}

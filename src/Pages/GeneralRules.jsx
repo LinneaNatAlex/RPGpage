@@ -86,7 +86,9 @@ const GeneralRules = () => {
       >
         <ul
           style={{
-            marginLeft: window.innerWidth <= 768 ? 10 : 20,
+            marginLeft: 0,
+            paddingLeft: 0,
+            listStyle: "none",
             lineHeight: 1.6,
             fontSize: window.innerWidth <= 768 ? "1rem" : "1.1rem",
           }}

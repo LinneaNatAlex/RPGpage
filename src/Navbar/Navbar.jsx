@@ -149,6 +149,7 @@ const Navbar = () => {
                 Page Rules
               </span>
               <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
+                <NavLink to="/rules">Rules overview & About</NavLink>
                 <NavLink to="/generalrules">General Rules</NavLink>
                 <NavLink to="/siterolesrules">Roles on the Site (Staff & Colours)</NavLink>
                 <NavLink to="/aiusagerules">AI Usage Rules</NavLink>
