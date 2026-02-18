@@ -64,8 +64,15 @@ export default function AdminPanel() {
   const [editClass, setEditClass] = useState("1st year");
   const [editRace, setEditRace] = useState("");
   const [editRoles, setEditRoles] = useState([]);
+  const [editLeadForRole, setEditLeadForRole] = useState("");
   const [editUserStatus, setEditUserStatus] = useState("");
-  const AVAILABLE_ROLES = ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
+  const [roleToRemove, setRoleToRemove] = useState("");
+  const AVAILABLE_ROLES = ["user", "admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
+  const REMOVABLE_ROLES = ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
+  const LEADABLE_ROLES = [
+    { value: "archivist", label: "Archivist" },
+    { value: "shadowpatrol", label: "Shadow Patrol" },
+  ];
   const CLASS_OPTIONS = ["1st year", "2nd year", "3rd year", "4th year", "5th year", "6th year", "7th year", "graduated"];
   const RACE_OPTIONS = ["Witch", "Wizard", "Vampire", "Werewolf", "Elf"];
 
@@ -129,7 +136,8 @@ export default function AdminPanel() {
           : (selected.class || "1st year")
       );
       setEditRace(selected.race || "");
-      setEditRoles(Array.isArray(selected.roles) ? [...selected.roles] : []);
+      setEditRoles(Array.isArray(selected.roles) ? Array.from(new Set([...selected.roles, "user"])) : ["user"]);
+      setEditLeadForRole(selected.leadForRole || "");
     }
   }, [selected]);
 
@@ -382,7 +390,7 @@ export default function AdminPanel() {
           (u.email && u.email.toLowerCase() === pointsUser.toLowerCase())
       );
       if (!user) {
-        setPointsMessage("Fant ikke bruker");
+        setPointsMessage("User not found");
         return;
       }
       const userRef = doc(db, "users", user.uid);
@@ -407,13 +415,15 @@ export default function AdminPanel() {
       const isGraduated = classVal === "graduated";
       const yearNum = isGraduated ? 7 : parseInt(editClass, 10) || 1;
       const newName = (editDisplayName || "").trim() || selected.displayName;
+      const isTeacher = editRoles.includes("teacher");
       const update = {
         displayName: newName,
         class: isGraduated ? "Graduated" : editClass,
         graduate: isGraduated,
         year: yearNum,
         race: editRace || selected.race,
-        roles: editRoles,
+        roles: Array.from(new Set([...editRoles, "user"])),
+        leadForRole: isTeacher && editLeadForRole ? editLeadForRole : null,
       };
       await updateDoc(ref, update);
       setSelected({ ...selected, ...update });
@@ -427,9 +437,15 @@ export default function AdminPanel() {
   }
 
   function toggleEditRole(role) {
+    if (role === "user") return;
     setEditRoles((prev) =>
       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
     );
+  }
+  function removeSelectedRole() {
+    if (!roleToRemove) return;
+    setEditRoles((prev) => prev.filter((r) => r !== roleToRemove));
+    setRoleToRemove("");
   }
 
   async function clearAllGeneralChatMessages() {
@@ -914,40 +930,100 @@ export default function AdminPanel() {
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {AVAILABLE_ROLES.map((role) => (
-                    <label key={role} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+                    <label
+                      key={role}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        cursor: role === "user" ? "default" : "pointer",
+                        opacity: role === "user" ? 0.85 : 1,
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={editRoles.includes(role)}
                         onChange={() => toggleEditRole(role)}
+                        disabled={role === "user"}
                       />
-                      <span style={{ color: theme.text }}>{role}</span>
+                      <span style={{ color: theme.text }}>
+                        {role === "user" ? "user (always kept)" : role}
+                      </span>
                     </label>
                   ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setEditRoles([]);
-                  }}
-                  style={{
-                    marginTop: 8,
-                    background: "rgba(123, 104, 87, 0.4)",
-                    color: theme.text,
-                    border: "1px solid " + theme.border,
-                    borderRadius: 4,
-                    padding: "6px 12px",
-                    fontSize: "0.9rem",
-                    cursor: "pointer",
-                    position: "relative",
-                    zIndex: 1,
-                  }}
-                >
-                  No roles (clear all)
-                </button>
-                <p style={{ fontSize: "0.8rem", color: theme.secondaryText, marginTop: 4 }}>Character can have no roles.</p>
+                <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: "0.9rem", color: theme.secondaryText }}>Remove one role:</span>
+                  <select
+                    value={roleToRemove}
+                    onChange={(e) => setRoleToRemove(e.target.value)}
+                    style={{
+                      padding: "6px 10px",
+                      borderRadius: 0,
+                      background: theme.background,
+                      color: theme.text,
+                      border: "2px solid " + theme.border,
+                      fontSize: "0.9rem",
+                      minWidth: 140,
+                    }}
+                  >
+                    <option value="">— Select role —</option>
+                    {REMOVABLE_ROLES.filter((r) => editRoles.includes(r)).map((r) => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={removeSelectedRole}
+                    disabled={!roleToRemove}
+                    style={{
+                      padding: "6px 12px",
+                      fontSize: "0.9rem",
+                      background: roleToRemove ? "rgba(139, 0, 0, 0.25)" : theme.background,
+                      color: theme.text,
+                      border: "1px solid " + theme.border,
+                      borderRadius: 4,
+                      cursor: roleToRemove ? "pointer" : "not-allowed",
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+                <p style={{ fontSize: "0.8rem", color: theme.secondaryText, marginTop: 6 }}>
+                  The &quot;user&quot; role is always kept. Use the dropdown to remove a single role.
+                </p>
               </div>
+              {editRoles.includes("teacher") && (
+                <div>
+                  <div style={{ marginBottom: 6 }}>
+                    <span style={{ fontWeight: 600, color: theme.text }}>Lead for segment</span>
+                  </div>
+                  <select
+                    value={editLeadForRole}
+                    onChange={(e) => setEditLeadForRole(e.target.value)}
+                    style={{
+                      padding: "8px 12px",
+                      borderRadius: 0,
+                      background: theme.background,
+                      color: theme.text,
+                      border: "2px solid " + theme.border,
+                      fontSize: "1rem",
+                      minWidth: 200,
+                    }}
+                  >
+                    <option value="">None</option>
+                    {LEADABLE_ROLES.filter(({ value }) => {
+                      const alreadyLead = users.find((u) => u.uid !== selected?.uid && u.leadForRole === value);
+                      return !alreadyLead || selected?.leadForRole === value;
+                    }).map(({ value, label }) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                  <p style={{ fontSize: "0.8rem", color: theme.secondaryText, marginTop: 4 }}>
+                    Only one teacher can be lead per segment. Gives access to segment overview and tasks in Teacher Panel.
+                  </p>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={handleSaveUserEdit}
@@ -996,8 +1072,8 @@ export default function AdminPanel() {
                 marginBottom: 10,
               }}
             >
-              Velg bruker over og klikk for å hente dem ut av infirmary (health
-              100, ingen ventetid).
+              Select a user above and click to release them from the infirmary (health
+              100, no wait time).
             </p>
             <button
               onClick={handleUnfaintUser}

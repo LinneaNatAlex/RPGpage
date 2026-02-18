@@ -76,18 +76,18 @@ export default function AdminGlobalAgeVerificationModal() {
           textAlign: "center",
         }}
       >
-        <h2>Aldersverifisering</h2>
+        <h2>Age verification</h2>
         <p>
           <b>{pending.displayName}</b>
           {pending.method === "self_declaration"
-            ? " har bedt om tilgang via aldersbekreftelse (selvdeklarasjon)."
+            ? " has requested access via age confirmation (self-declaration)."
             : pending.method === "id_photo"
-              ? " har lastet opp bilde av ID for godkjenning."
-              : " har sendt inn ID for godkjenning."}
+              ? " has uploaded an ID image for approval."
+              : " has submitted ID for approval."}
         </p>
         {pending.method === "self_declaration" && pending.birthDate && (
           <p style={{ marginTop: 8, color: "#ffd86b" }}>
-            Fødselsdato: <b>{pending.birthDate}</b>
+            Date of birth: <b>{pending.birthDate}</b>
           </p>
         )}
         {pending.imageUrl && (

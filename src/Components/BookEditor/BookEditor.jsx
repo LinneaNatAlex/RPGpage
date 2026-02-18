@@ -74,13 +74,13 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      alert("Bildet er for stort. Maksimal størrelse er 2MB.");
+      alert("Image is too large. Maximum size is 2MB.");
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      alert("Vennligst velg et gyldig bildeformat.");
+      alert("Please choose a valid image format.");
       return;
     }
 
@@ -91,7 +91,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         setCoverImage(imageUrl);
       }
     } catch (error) {
-      alert("Kunne ikke laste opp bilde. Prøv igjen.");
+      alert("Could not upload image. Try again.");
     } finally {
       setUploadingImage(false);
     }
@@ -114,13 +114,13 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
       "audio/m4a",
     ];
     if (!validAudioTypes.includes(file.type)) {
-      alert("Vennligst velg et gyldig lydformat (MP3, WAV, OGG, M4A).");
+      alert("Please choose a valid audio format (MP3, WAV, OGG, M4A).");
       return;
     }
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert("Lydfilen er for stor. Maksimal størrelse er 10MB.");
+      alert("Audio file is too large. Maximum size is 10MB.");
       return;
     }
 
@@ -133,7 +133,7 @@ const BookEditor = ({ book = null, onSave, onCancel }) => {
         setPages(newPages);
       }
     } catch (error) {
-      alert("Kunne ikke laste opp lydfil. Prøv igjen.");
+      alert("Could not upload audio file. Try again.");
     } finally {
       setUploadingAudio((prev) => ({ ...prev, [pageIndex]: false }));
     }

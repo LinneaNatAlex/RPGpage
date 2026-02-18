@@ -283,15 +283,15 @@ const Profile = () => {
     startTransition(() => setUploading(true));
     try {
       const url = await uploadImage(file);
-      if (!url) throw new Error("Ingen URL fra bildeopplasting");
+      if (!url) throw new Error("No URL from image upload");
       await updateDoc(doc(db, "users", user.uid), { profileImageUrl: url });
       startTransition(() => {
         setUserData((prev) => ({ ...prev, profileImageUrl: url }));
       });
     } catch (err) {
-      console.error("Bildeopplasting feilet:", err);
+      console.error("Image upload failed:", err);
       alert(
-        "Kunne ikke laste opp bilde. Prøv igjen.\n" + (err?.message || err),
+        "Could not upload image. Try again.\n" + (err?.message || err),
       );
     } finally {
       startTransition(() => setUploading(false));

@@ -20,6 +20,7 @@ import {
   limit,
 } from "firebase/firestore";
 import GiftModal from "./GiftModal";
+import SegmentSchedulePopup from "../SegmentSchedulePopup/SegmentSchedulePopup";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import useUserRoles from "../../hooks/useUserRoles";
@@ -666,6 +667,7 @@ const TopBar = () => {
           `}</style>
         )}
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
+          <SegmentSchedulePopup />
           {(() => {
             if (!user) return null;
             const src =

@@ -54,11 +54,11 @@ function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
                   await deleteDoc(messageRef);
                 } else {
                   console.error("Message ID not found, cannot delete");
-                  alert("Kunne ikke slette meldingen - mangler ID.");
+                  alert("Could not delete message - missing ID.");
                 }
               } catch (error) {
                 console.error("Error deleting message:", error);
-                alert("Kunne ikke slette meldingen. Prøv igjen.");
+                alert("Could not delete message. Try again.");
               }
             }}
           >
@@ -460,7 +460,7 @@ const PrivateChat = () => {
         await updateDoc(messageRef, { text: message });
       } else {
         console.error("Editing message ID not found");
-        alert("Kunne ikke redigere meldingen - mangler ID.");
+        alert("Could not edit message - missing ID.");
       }
       setEditingMessage(null);
       setMessage("");
@@ -667,7 +667,7 @@ const PrivateChat = () => {
               padding: 0,
               outline: "none",
             }}
-            title={muted ? "Slå på varsler" : "Slå av varsler"}
+            title={muted ? "Turn on notifications" : "Turn off notifications"}
           >
             {muted ? (
               <svg
@@ -1175,7 +1175,7 @@ const PrivateChat = () => {
                     type="text"
                     placeholder={
                       editingMessage
-                        ? "Rediger melding..."
+                        ? "Edit message..."
                         : `Message ${
                             selectedUser.displayName ||
                             selectedUser.name ||

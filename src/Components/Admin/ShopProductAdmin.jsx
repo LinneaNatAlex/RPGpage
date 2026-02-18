@@ -566,7 +566,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                   cursor: "pointer",
                 }}
               >
-                Fjern bilde
+                Remove image
               </button>
             </div>
           ) : (

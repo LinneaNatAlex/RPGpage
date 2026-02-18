@@ -1,13 +1,26 @@
 import { useState, useEffect } from "react";
 import useUsers from "../../hooks/useUser";
 import useBooks from "../../hooks/useBooks";
+import useUserData from "../../hooks/useUserData";
+import useSegmentSchedule from "../../hooks/useSegmentSchedule";
+import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import BookEditor from "../BookEditor/BookEditor";
 import DeleteConfirmModal from "../DeleteConfirmModal/DeleteConfirmModal";
 
+const LEAD_LABELS = { archivist: "Archivist", shadowpatrol: "Shadow Patrol" };
+
 export default function TeacherPanel() {
+  const { user } = useAuth();
+  const { userData } = useUserData();
   const { users } = useUsers();
+  const leadForRole = userData?.leadForRole || null;
+  const { tasks, loading: tasksLoading, addTask, removeTask } = useSegmentSchedule(leadForRole || undefined);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDesc, setNewTaskDesc] = useState("");
+  const [newTaskDeadline, setNewTaskDeadline] = useState("");
+  const [taskStatus, setTaskStatus] = useState("");
   const { books, deleteBook, refetchBooks } = useBooks();
   const [selected, setSelected] = useState(null);
   const [amount, setAmount] = useState(1);
@@ -45,7 +58,7 @@ export default function TeacherPanel() {
 
   async function handleGivePoints() {
     if (!selected) return;
-    setStatus("Arbeider...");
+    setStatus("Working...");
     const ref = doc(db, "users", selected.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) return setStatus("Bruker ikke funnet");
@@ -196,6 +209,27 @@ export default function TeacherPanel() {
         >
           Book Management
         </button>
+        {leadForRole && (
+          <button
+            onClick={() => setActiveTab("lead")}
+            style={{
+              flex: 1,
+              padding: "12px 24px",
+              background:
+                activeTab === "lead"
+                  ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)"
+                  : "transparent",
+              color: activeTab === "lead" ? "#F5EFE0" : "#D4C4A8",
+              border: "none",
+              borderRadius: 0,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+            }}
+          >
+            {LEAD_LABELS[leadForRole] || leadForRole} lead
+          </button>
+        )}
       </div>
 
       {/* Points Management Tab */}
@@ -228,7 +262,7 @@ export default function TeacherPanel() {
               name="teacherUserSearch"
               type="text"
               autoComplete="off"
-              placeholder="Søk bruker (navn eller e-post)..."
+              placeholder="Search user (name or email)..."
               value={userSearch}
               onChange={(e) => {
                 setUserSearch(e.target.value);
@@ -265,8 +299,8 @@ export default function TeacherPanel() {
                   }}
                 >
                   {userSearch.trim()
-                    ? "Ingen brukere matcher søket"
-                    : "Ingen brukere"}
+                    ? "No users match search"
+                    : "No users"}
                 </div>
               ) : (
                 paginatedUsers.map((u) => (
@@ -323,7 +357,7 @@ export default function TeacherPanel() {
                     fontSize: "0.9rem",
                   }}
                 >
-                  ← Forrige
+                  ← Previous
                 </button>
                 <span
                   style={{
@@ -331,8 +365,8 @@ export default function TeacherPanel() {
                     fontSize: "0.9rem",
                   }}
                 >
-                  Side {userPage} av {totalUserPages} ({filteredUsers.length}{" "}
-                  treff)
+                  Page {userPage} of {totalUserPages} ({filteredUsers.length}{" "}
+                  results)
                 </span>
                 <button
                   type="button"
@@ -352,7 +386,7 @@ export default function TeacherPanel() {
                     fontSize: "0.9rem",
                   }}
                 >
-                  Neste →
+                  Next →
                 </button>
               </div>
             )}
@@ -528,6 +562,187 @@ export default function TeacherPanel() {
                   </div>
                 </div>
               ))
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Segment Lead Tab (Archivist / Shadow Patrol) */}
+      {leadForRole && activeTab === "lead" && (
+        <>
+          <div
+            style={{
+              marginBottom: 20,
+              background: "rgba(245, 239, 224, 0.1)",
+              padding: 20,
+              borderRadius: 0,
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3 style={{ color: "#D4C4A8", fontSize: "1.2rem", marginBottom: 12, fontFamily: '"Cinzel", serif' }}>
+              {LEAD_LABELS[leadForRole]} – overview
+            </h3>
+            <p style={{ color: "#D4C4A8", fontSize: "0.95rem", marginBottom: 16 }}>
+              Users with the role <strong>{LEAD_LABELS[leadForRole]}</strong>:
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {users
+                .filter((u) => Array.isArray(u.roles) && u.roles.map((r) => String(r).toLowerCase()).includes(leadForRole))
+                .map((u) => (
+                  <li
+                    key={u.uid}
+                    style={{
+                      padding: "8px 12px",
+                      marginBottom: 4,
+                      background: "rgba(255,255,255,0.06)",
+                      borderLeft: "4px solid #7B6857",
+                      color: "#F5EFE0",
+                    }}
+                  >
+                    {u.displayName || u.email || u.uid}
+                  </li>
+                ))}
+            </ul>
+            {users.filter((u) => Array.isArray(u.roles) && u.roles.map((r) => String(r).toLowerCase()).includes(leadForRole)).length === 0 && (
+              <p style={{ color: "#D4C4A8", fontStyle: "italic" }}>No users with this role.</p>
+            )}
+          </div>
+          <div
+            style={{
+              marginBottom: 20,
+              background: "rgba(245, 239, 224, 0.1)",
+              padding: 20,
+              borderRadius: 0,
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3 style={{ color: "#D4C4A8", fontSize: "1.2rem", marginBottom: 12, fontFamily: '"Cinzel", serif' }}>
+              Add task / deadline
+            </h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
+              <input
+                placeholder="Title"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 0,
+                  border: "2px solid #D4C4A8",
+                  background: "#F5EFE0",
+                  color: "#2C2C2C",
+                  fontSize: "1rem",
+                }}
+              />
+              <textarea
+                placeholder="Description"
+                value={newTaskDesc}
+                onChange={(e) => setNewTaskDesc(e.target.value)}
+                rows={3}
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 0,
+                  border: "2px solid #D4C4A8",
+                  background: "#F5EFE0",
+                  color: "#2C2C2C",
+                  fontSize: "1rem",
+                  resize: "vertical",
+                }}
+              />
+              <input
+                type="datetime-local"
+                placeholder="Deadline"
+                value={newTaskDeadline}
+                onChange={(e) => setNewTaskDeadline(e.target.value)}
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 0,
+                  border: "2px solid #D4C4A8",
+                  background: "#F5EFE0",
+                  color: "#2C2C2C",
+                  fontSize: "1rem",
+                }}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={async () => {
+                setTaskStatus("Adding…");
+                await addTask(newTaskTitle, newTaskDesc, newTaskDeadline ? new Date(newTaskDeadline).getTime() : null, user?.displayName || user?.email || "");
+                setNewTaskTitle("");
+                setNewTaskDesc("");
+                setNewTaskDeadline("");
+                setTaskStatus("Added.");
+                setTimeout(() => setTaskStatus(""), 2000);
+              }}
+              style={{
+                padding: "10px 20px",
+                borderRadius: 0,
+                border: "none",
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                fontWeight: 600,
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}
+            >
+              Add task
+            </button>
+            {taskStatus && <p style={{ marginTop: 8, color: "#D4C4A8", fontSize: "0.9rem" }}>{taskStatus}</p>}
+          </div>
+          <div
+            style={{
+              background: "rgba(245, 239, 224, 0.1)",
+              padding: 20,
+              borderRadius: 0,
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3 style={{ color: "#D4C4A8", fontSize: "1.2rem", marginBottom: 12, fontFamily: '"Cinzel", serif' }}>
+              Tasks and deadlines
+            </h3>
+            {tasksLoading ? (
+              <p style={{ color: "#D4C4A8" }}>Loading…</p>
+            ) : tasks.length === 0 ? (
+              <p style={{ color: "#D4C4A8", fontStyle: "italic" }}>No tasks yet.</p>
+            ) : (
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {tasks.map((t) => (
+                  <li
+                    key={t.id}
+                    style={{
+                      padding: 12,
+                      marginBottom: 8,
+                      background: "rgba(0,0,0,0.2)",
+                      border: "1px solid rgba(212, 196, 168, 0.3)",
+                      color: "#F5EFE0",
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, marginBottom: 4 }}>{t.title}</div>
+                    {t.description && <div style={{ fontSize: "0.95rem", marginBottom: 4 }}>{t.description}</div>}
+                    {t.deadline && (
+                      <div style={{ fontSize: "0.85rem", color: "#D4C4A8" }}>
+                        Deadline: {new Date(t.deadline).toLocaleString()}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeTask(t.id)}
+                      style={{
+                        marginTop: 8,
+                        padding: "4px 10px",
+                        fontSize: "0.8rem",
+                        background: "rgba(139, 0, 0, 0.4)",
+                        color: "#F5EFE0",
+                        border: "none",
+                        borderRadius: 0,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </>

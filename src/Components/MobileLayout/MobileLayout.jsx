@@ -8,6 +8,7 @@ import React, { Suspense } from "react";
 const Chat = React.lazy(() => import("../Chat/Chat"));
 const PrivateChat = React.lazy(() => import("../Chat/PrivateChat"));
 const RPGClock = React.lazy(() => import("../RPGClock/RPGClock"));
+import SegmentSchedulePopup from "../SegmentSchedulePopup/SegmentSchedulePopup";
 
 const PROTECTED_PATHS = [
   "/Profile",
@@ -196,6 +197,7 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-logo-section">
             <h1 className="mobile-logo-text">Vayloria</h1>
           </div>
+          <SegmentSchedulePopup />
         </div>
       </header>
 

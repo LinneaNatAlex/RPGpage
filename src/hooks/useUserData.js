@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { cacheHelpers } from "../utils/firebaseCache";
 
@@ -10,6 +10,7 @@ const defaultUserData = {
   health: 100,
   points: 0,
   roles: [],
+  leadForRole: null,
   profileImageUrl: null,
   inLoveUntil: null,
   inLoveWith: null,
@@ -39,7 +40,7 @@ const defaultUserData = {
   craftedPotions: [],
 };
 
-// User data via getDoc + cache – points/currency/health update on reload, not live
+// User data via onSnapshot – live updates (health/inventory/currency update without reload)
 const useUserData = () => {
   const { user } = useAuth();
   const [userData, setUserData] = useState(defaultUserData);
@@ -59,6 +60,7 @@ const useUserData = () => {
         health: data.health ?? 100,
         points: data.points ?? 0,
         roles: data.roles ?? [],
+        leadForRole: data.leadForRole || null,
         profileImageUrl: data.profileImageUrl || null,
         inLoveUntil: data.inLoveUntil || null,
         inLoveWith: data.inLoveWith || null,
@@ -90,16 +92,17 @@ const useUserData = () => {
       });
     };
 
+    // Optional: show cached data immediately for faster first paint
     const cached = cacheHelpers.getUserData(user.uid);
     if (cached) {
       applyData(cached);
       setLoading(false);
-      return; // no live updates – reload to see new points/currency
     }
 
     const userRef = doc(db, "users", user.uid);
-    getDoc(userRef)
-      .then((userDoc) => {
+    const unsubscribe = onSnapshot(
+      userRef,
+      (userDoc) => {
         if (!userDoc.exists()) return;
         const data = userDoc.data();
         cacheHelpers.setUserData(user.uid, data);
@@ -113,9 +116,9 @@ const useUserData = () => {
             infirmaryEnd: null,
             lastHealthUpdate: now,
           };
-          import("../firebaseConfig").then(({ db }) => {
-            import("firebase/firestore").then(({ doc, updateDoc }) => {
-              const ref = doc(db, "users", user.uid);
+          import("../firebaseConfig").then(({ db: dbRef }) => {
+            import("firebase/firestore").then(({ doc: docFn, updateDoc }) => {
+              const ref = docFn(dbRef, "users", user.uid);
               updateDoc(ref, {
                 health: 100,
                 infirmaryEnd: null,
@@ -125,9 +128,12 @@ const useUserData = () => {
           });
         }
         applyData(processedData);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+        setLoading(false);
+      },
+      () => setLoading(false)
+    );
+
+    return () => unsubscribe();
   }, [user]);
 
   return { userData, loading };
