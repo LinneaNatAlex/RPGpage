@@ -104,6 +104,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { classesList } from "../../data/classesList";
 import onlineUserStyles from "../OnlineUsers/OnlineUsers.module.css";
 import useUsers from "../../hooks/useUser";
+import useAllUsers from "../../hooks/useAllUsers";
 import useUserData from "../../hooks/useUserData";
 
 const ClassroomSession = () => {
@@ -112,7 +113,14 @@ const ClassroomSession = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
   const { users: allUsers = [] } = useUsers();
+  const { users: allUsersList = [] } = useAllUsers();
   const { wisdomUntil } = useUserData();
+  // Users who can be assigned as teacher for this class (teacher, admin, headmaster)
+  const teachersList = (allUsersList || []).filter((u) =>
+    (u.roles || []).some((r) =>
+      ["teacher", "admin", "headmaster"].includes((r || "").toLowerCase())
+    )
+  );
   const [students, setStudents] = useState([]);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -124,12 +132,19 @@ const ClassroomSession = () => {
     points: 10,
     requirements: "Class for all races and backgrounds",
     activities: "Roleplay, ask questions, or just hang out!",
+    teacherIds: [],
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showQuizCreation, setShowQuizCreation] = useState(false);
   const [showQuizTaking, setShowQuizTaking] = useState(false);
   const [showQuizEditing, setShowQuizEditing] = useState(false);
+  const [showAllExamsView, setShowAllExamsView] = useState(false);
+  const [allExamsList, setAllExamsList] = useState([]);
+  const [loadingAllExams, setLoadingAllExams] = useState(false);
+  const [selectedExamDetails, setSelectedExamDetails] = useState(null);
+  const [selectedExamId, setSelectedExamId] = useState(null);
+  const [loadingExamDetails, setLoadingExamDetails] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [availableQuizzes, setAvailableQuizzes] = useState([]);
   const [takenQuizzes, setTakenQuizzes] = useState([]);
@@ -178,12 +193,18 @@ const ClassroomSession = () => {
             setCustomDescription(classInfo?.description || "");
           }
           if (data.classInfo) {
-            setCustomClassInfo(data.classInfo);
+            setCustomClassInfo({
+              points: data.classInfo.points ?? 2,
+              requirements: data.classInfo.requirements ?? "Class for all races and backgrounds",
+              activities: data.classInfo.activities ?? "Roleplay, ask questions, or just hang out!",
+              teacherIds: Array.isArray(data.classInfo.teacherIds) ? data.classInfo.teacherIds : [],
+            });
           } else {
             setCustomClassInfo({
-              points: 2, // Base points for all classes
+              points: 2,
               requirements: "Class for all races and backgrounds",
               activities: "Roleplay, ask questions, or just hang out!",
+              teacherIds: [],
             });
           }
           // Load available quizzes
@@ -211,9 +232,10 @@ const ClassroomSession = () => {
         } else {
           setCustomDescription(classInfo?.description || "");
           setCustomClassInfo({
-            points: 2, // Base points for all classes
+            points: 2,
             requirements: "Class for all races and backgrounds",
             activities: "Roleplay, ask questions, or just hang out!",
+            teacherIds: [],
           });
         }
       } catch (error) {
@@ -222,6 +244,7 @@ const ClassroomSession = () => {
           points: classInfo?.points || 10,
           requirements: "Class for all races and backgrounds",
           activities: "Roleplay, ask questions, or just hang out!",
+          teacherIds: [],
         });
       }
     };
@@ -405,6 +428,64 @@ const ClassroomSession = () => {
 
       alert("Congratulations! You have graduated from Vayloria Arcane School!");
     }
+  };
+
+  // Fetch all exams (for teachers/admins overview)
+  const fetchAllExams = async () => {
+    setLoadingAllExams(true);
+    try {
+      const snap = await getDocs(collection(db, "quizzes"));
+      const list = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          classId: data.classId || "",
+          title: data.title || "Untitled",
+          gradeLevel: data.gradeLevel ?? 0,
+          createdAt: data.createdAt || null,
+          createdByName: data.createdByName || "",
+          isActive: data.isActive !== false,
+        };
+      });
+      list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") || 0);
+      setAllExamsList(list);
+    } catch (err) {
+      setAllExamsList([]);
+    } finally {
+      setLoadingAllExams(false);
+    }
+  };
+
+  // Fetch full exam details (questions, answers, etc.)
+  const fetchExamDetails = async (examId) => {
+    setSelectedExamId(examId);
+    setLoadingExamDetails(true);
+    setSelectedExamDetails(null);
+    try {
+      const quizRef = doc(db, "quizzes", examId);
+      const quizSnap = await getDoc(quizRef);
+      if (quizSnap.exists()) {
+        setSelectedExamDetails(quizSnap.data());
+      }
+    } catch (err) {
+      console.error("Error loading exam details:", err);
+    } finally {
+      setLoadingExamDetails(false);
+    }
+  };
+
+  const openEditExamFromDetails = () => {
+    if (!selectedExamDetails || !selectedExamId) return;
+    setSelectedQuiz({
+      quizId: selectedExamId,
+      classId: selectedExamDetails.classId || classId,
+      gradeLevel: selectedExamDetails.gradeLevel ?? 1,
+      title: selectedExamDetails.title || "",
+    });
+    setSelectedExamDetails(null);
+    setSelectedExamId(null);
+    setShowAllExamsView(false);
+    setShowQuizEditing(true);
   };
 
   const handleQuizCreationComplete = async () => {
@@ -1237,6 +1318,48 @@ const ClassroomSession = () => {
               />
             </div>
 
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  color: "#D4C4A8",
+                  marginBottom: "8px",
+                  fontWeight: "600",
+                }}
+              >
+                Teacher(s):
+              </label>
+              <select
+                id="classroom-teachers"
+                multiple
+                size={Math.min(6, Math.max(3, teachersList.length + 1))}
+                value={(customClassInfo.teacherIds || []).slice()}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, (o) => o.value);
+                  setCustomClassInfo({ ...customClassInfo, teacherIds: selected });
+                }}
+                style={{
+                  width: "100%",
+                  maxWidth: "400px",
+                  padding: "8px 12px",
+                  borderRadius: 0,
+                  border: "2px solid #D4C4A8",
+                  background: "#F5EFE0",
+                  color: "#2C2C2C",
+                  fontSize: "1rem",
+                }}
+              >
+                {teachersList.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.displayName || t.email || t.id}
+                  </option>
+                ))}
+              </select>
+              <p style={{ color: "#D4C4A8", fontSize: "0.85rem", marginTop: "4px" }}>
+                Hold Ctrl (Windows) or Cmd (Mac) to select multiple teachers.
+              </p>
+            </div>
+
             <div style={{ display: "flex", gap: "12px" }}>
               <button
                 onClick={saveClassInfo}
@@ -1326,6 +1449,30 @@ const ClassroomSession = () => {
               >
                 {customClassInfo.activities}
               </li>
+              <li
+                style={{
+                  marginBottom: 8,
+                  padding: "8px 12px",
+                  background: "rgba(245, 239, 224, 0.1)",
+                  borderRadius: 0,
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#F5EFE0",
+                  fontSize: "1rem",
+                }}
+              >
+                Teacher(s):{" "}
+                {(customClassInfo.teacherIds || []).length > 0
+                  ? (customClassInfo.teacherIds || [])
+                      .map(
+                        (id) =>
+                          allUsersList.find((u) => u.id === id)?.displayName ||
+                          allUsersList.find((u) => u.uid === id)?.displayName ||
+                          id
+                      )
+                      .filter(Boolean)
+                      .join(", ")
+                  : "—"}
+              </li>
             </ul>
 
             {isTeacher && (
@@ -1383,41 +1530,368 @@ const ClassroomSession = () => {
               Exams & Quizzes
             </h3>
             {isTeacher && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowQuizCreation(true);
-                }}
-                style={{
-                  background:
-                    "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
-                  color: "#fff",
-                  border: "2px solid rgba(255, 255, 255, 0.2)",
-                  borderRadius: 0,
-                  padding: "8px 16px",
-                  fontSize: "0.9rem",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                  transition: "all 0.3s ease",
-                  fontFamily: '"Cinzel", serif',
-                  letterSpacing: "0.5px",
-                  zIndex: 10,
-                  position: "relative",
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = "translateY(-2px)";
-                  e.target.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "none";
-                }}
-              >
-                Create Quiz
-              </button>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowAllExamsView(true);
+                    fetchAllExams();
+                  }}
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+                    color: "#F5EFE0",
+                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: 0,
+                    padding: "8px 16px",
+                    fontSize: "0.9rem",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    transition: "all 0.3s ease",
+                    fontFamily: '"Cinzel", serif',
+                    letterSpacing: "0.5px",
+                    zIndex: 10,
+                    position: "relative",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  View all exams
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowQuizCreation(true);
+                  }}
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
+                    color: "#fff",
+                    border: "2px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: 0,
+                    padding: "8px 16px",
+                    fontSize: "0.9rem",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    transition: "all 0.3s ease",
+                    fontFamily: '"Cinzel", serif',
+                    letterSpacing: "0.5px",
+                    zIndex: 10,
+                    position: "relative",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-2px)";
+                    e.target.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)";
+                    e.target.style.boxShadow = "none";
+                  }}
+                >
+                  Create Quiz
+                </button>
+              </div>
             )}
           </div>
+
+          {/* Modal: All exams (teachers/admins) */}
+          {isTeacher && showAllExamsView && (
+            <div
+              onClick={() => setShowAllExamsView(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.6)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 9999,
+                padding: 16,
+              }}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
+                  border: "2px solid #D4C4A8",
+                  borderRadius: 0,
+                  maxWidth: "90vw",
+                  width: 700,
+                  maxHeight: "85vh",
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                }}
+              >
+                <div
+                  style={{
+                    padding: "16px 20px",
+                    borderBottom: "2px solid #D4C4A8",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: "#F5EFE0",
+                      fontSize: "1.25rem",
+                      fontFamily: '"Cinzel", serif',
+                      margin: 0,
+                    }}
+                  >
+                    All exams
+                  </h3>
+                  <button
+                    onClick={() => setShowAllExamsView(false)}
+                    style={{
+                      background: "transparent",
+                      color: "#F5EFE0",
+                      border: "2px solid #D4C4A8",
+                      borderRadius: 0,
+                      padding: "6px 14px",
+                      fontSize: "1rem",
+                      cursor: "pointer",
+                      fontWeight: 600,
+                    }}
+                  >
+                    × Close
+                  </button>
+                </div>
+                <div style={{ padding: 16, overflowY: "auto", flex: 1 }}>
+                  {loadingAllExams ? (
+                    <p style={{ color: "#F5EFE0", textAlign: "center" }}>Loading…</p>
+                  ) : allExamsList.length === 0 ? (
+                    <p style={{ color: "#F5EFE0", textAlign: "center", fontStyle: "italic" }}>
+                      No exams created yet.
+                    </p>
+                  ) : (
+                    <table
+                      style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        fontSize: "0.95rem",
+                      }}
+                    >
+                      <thead>
+                        <tr style={{ borderBottom: "2px solid #E8DCC8" }}>
+                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Class</th>
+                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Title</th>
+                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Grade</th>
+                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Created</th>
+                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Created by</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allExamsList.map((exam) => (
+                          <tr
+                            key={exam.id}
+                            onClick={() => fetchExamDetails(exam.id)}
+                            style={{
+                              borderBottom: "1px solid rgba(232, 220, 200, 0.4)",
+                              cursor: "pointer",
+                              transition: "background 0.2s",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = "rgba(212, 196, 168, 0.15)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "transparent";
+                            }}
+                          >
+                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.classId || "—"}</td>
+                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.title}</td>
+                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.gradeLevel}</td>
+                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>
+                              {exam.createdAt
+                                ? new Date(exam.createdAt).toLocaleDateString(undefined, {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  })
+                                : "—"}
+                            </td>
+                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.createdByName || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal: Exam details (questions, answers) */}
+          {isTeacher && selectedExamDetails && (
+            <div
+              onClick={() => setSelectedExamDetails(null)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.7)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 10000,
+                padding: 16,
+              }}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
+                  border: "2px solid #D4C4A8",
+                  borderRadius: 0,
+                  maxWidth: "90vw",
+                  width: 800,
+                  maxHeight: "90vh",
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                }}
+              >
+                <div
+                  style={{
+                    padding: "16px 20px",
+                    borderBottom: "2px solid #D4C4A8",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 12,
+                  }}
+                >
+                  <div>
+                    <h3
+                      style={{
+                        color: "#F5EFE0",
+                        fontSize: "1.25rem",
+                        fontFamily: '"Cinzel", serif',
+                        margin: "0 0 4px 0",
+                      }}
+                    >
+                      {selectedExamDetails.title || "Exam Details"}
+                    </h3>
+                    <p style={{ color: "#E8DCC8", fontSize: "0.9rem", margin: 0 }}>
+                      {selectedExamDetails.classId} • Grade {selectedExamDetails.gradeLevel}
+                      {selectedExamDetails.description && ` • ${selectedExamDetails.description}`}
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openEditExamFromDetails(); }}
+                      style={{
+                        background: "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
+                        color: "#fff",
+                        border: "2px solid rgba(255,255,255,0.3)",
+                        borderRadius: 0,
+                        padding: "8px 16px",
+                        fontSize: "0.95rem",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Edit exam
+                    </button>
+                    <button
+                      onClick={() => setSelectedExamDetails(null)}
+                      style={{
+                        background: "transparent",
+                        color: "#F5EFE0",
+                        border: "2px solid #D4C4A8",
+                        borderRadius: 0,
+                        padding: "6px 14px",
+                        fontSize: "1rem",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                      }}
+                    >
+                      × Close
+                    </button>
+                  </div>
+                </div>
+                <div style={{ padding: 20, overflowY: "auto", flex: 1 }}>
+                  {loadingExamDetails ? (
+                    <p style={{ color: "#F5EFE0", textAlign: "center" }}>Loading exam details…</p>
+                  ) : selectedExamDetails.questions && selectedExamDetails.questions.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                      {selectedExamDetails.questions.map((q, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            background: "rgba(245, 239, 224, 0.08)",
+                            border: "1px solid rgba(232, 220, 200, 0.5)",
+                            borderRadius: 0,
+                            padding: 16,
+                          }}
+                        >
+                          <h4
+                            style={{
+                              color: "#F5EFE0",
+                              fontSize: "1.1rem",
+                              fontFamily: '"Cinzel", serif',
+                              margin: "0 0 12px 0",
+                            }}
+                          >
+                            Question {idx + 1}: {q.question}
+                          </h4>
+                          <div style={{ marginLeft: 16 }}>
+                            {q.options && q.options.length > 0 ? (
+                              <ul style={{ listStyle: "none", padding: 0, margin: "8px 0" }}>
+                                {q.options.map((opt, optIdx) => (
+                                  <li
+                                    key={optIdx}
+                                    style={{
+                                      padding: "6px 0",
+                                      color:
+                                        optIdx === q.correctAnswer ? "#6bcf7a" : "#F5EFE0",
+                                      fontWeight: optIdx === q.correctAnswer ? 600 : 400,
+                                    }}
+                                  >
+                                    {optIdx === q.correctAnswer && "✓ "}
+                                    {String.fromCharCode(65 + optIdx)}. {opt}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p style={{ color: "#E8DCC8", fontStyle: "italic" }}>
+                                No options available
+                              </p>
+                            )}
+                            <p
+                              style={{
+                                color: "#E8DCC8",
+                                fontSize: "0.85rem",
+                                marginTop: 8,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              Correct answer: {String.fromCharCode(65 + (q.correctAnswer ?? 0))}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: "#F5EFE0", textAlign: "center", fontStyle: "italic" }}>
+                      No questions found in this exam.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Check if it's exam period */}
           {!isExamPeriod() ? (
@@ -1774,7 +2248,7 @@ const ClassroomSession = () => {
         {/* Quiz Editing Modal */}
         {showQuizEditing && selectedQuiz && (
           <QuizEditing
-            classId={classId}
+            classId={selectedQuiz.classId || classId}
             quiz={selectedQuiz}
             onClose={() => setShowQuizEditing(false)}
             onComplete={handleQuizEditingComplete}
