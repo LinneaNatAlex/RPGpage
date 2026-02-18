@@ -1,27 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./RulesList.module.css";
+import { RULES_PAGES } from "../data/rulesPages";
 
-const RULES_LINKS = [
-  { path: "/generalrules", label: "General Rules" },
-  { path: "/siterolesrules", label: "Roles on the Site (Staff & Colours)" },
-  { path: "/aiusagerules", label: "AI Usage Rules" },
-  { path: "/contentmediarules", label: "Content & Media Rules" },
-  { path: "/privacysafetyrules", label: "Privacy & Safety Rules" },
-  { path: "/accountidentityrules", label: "Account & Identity Rules" },
-  { path: "/communitybehaviorrules", label: "Community & Behavior Rules" },
-  { path: "/technicalsiterules", label: "Technical & Site Rules" },
-  { path: "/forumrules", label: "Forum Rules" },
-  { path: "/chatrules", label: "Chat Rules" },
-  { path: "/profilecontentrules", label: "Profile Content Rules" },
-  { path: "/roleplaycharacterrules", label: "Roleplay & Character Rules" },
-  { path: "/rpgrules", label: "RPG Rules" },
-  { path: "/livechatrpgrules", label: "Live Chat RPG Rules" },
-  { path: "/magicspellrules", label: "Magic & Spell Rules" },
-  { path: "/raceschoolrules", label: "Race & School Rules" },
-  { path: "/datingrelationshiprules", label: "Dating & Relationship Rules" },
-  { path: "/18forumrules", label: "18+ Forum Rules" },
-];
+const RULES_LINKS = RULES_PAGES.map((p) => ({ path: `/${p.slug}`, label: p.label }));
 
 export default function RulesList() {
   return (

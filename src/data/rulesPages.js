@@ -1,0 +1,21 @@
+// Slug = path without leading slash. Used by admin and by useRulesFromFirestore.
+export const RULES_PAGES = [
+  { slug: "generalrules", label: "General Rules" },
+  { slug: "siterolesrules", label: "Roles on the Site (Staff & Colours)" },
+  { slug: "aiusagerules", label: "AI Usage Rules" },
+  { slug: "contentmediarules", label: "Content & Media Rules" },
+  { slug: "privacysafetyrules", label: "Privacy & Safety Rules" },
+  { slug: "accountidentityrules", label: "Account & Identity Rules" },
+  { slug: "communitybehaviorrules", label: "Community & Behavior Rules" },
+  { slug: "technicalsiterules", label: "Technical & Site Rules" },
+  { slug: "forumrules", label: "Forum Rules" },
+  { slug: "chatrules", label: "Chat Rules" },
+  { slug: "profilecontentrules", label: "Profile Content Rules" },
+  { slug: "roleplaycharacterrules", label: "Roleplay & Character Rules" },
+  { slug: "rpgrules", label: "RPG Rules" },
+  { slug: "livechatrpgrules", label: "Live Chat RPG Rules" },
+  { slug: "magicspellrules", label: "Magic & Spell Rules" },
+  { slug: "raceschoolrules", label: "Race & School Rules" },
+  { slug: "datingrelationshiprules", label: "Dating & Relationship Rules" },
+  { slug: "18forumrules", label: "18+ Forum Rules" },
+];

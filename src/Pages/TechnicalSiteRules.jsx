@@ -1,14 +1,28 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Technical & Site Rules";
+const DEFAULT_RULES = [
+  "Do not attempt to hack, exploit, or break the website.",
+  "Do not use bots, scripts, or automated tools.",
+  "Report bugs and technical issues to staff.",
+  "Do not share links to external sites without permission.",
+  "Keep file uploads reasonable in size and appropriate in content.",
+  "Respect the website's resources and don't overload the system.",
+];
 
 const TechnicalSiteRules = () => {
-  const rules = [
-    "Do not attempt to hack, exploit, or break the website.",
-    "Do not use bots, scripts, or automated tools.",
-    "Report bugs and technical issues to staff.",
-    "Do not share links to external sites without permission.",
-    "Keep file uploads reasonable in size and appropriate in content.",
-    "Respect the website's resources and don't overload the system.",
-  ];
+  const { title: firestoreTitle, items: firestoreItems, loading, hasData } = useRulesFromFirestore("technicalsiterules");
+  const title = hasData && firestoreTitle ? firestoreTitle : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0 ? firestoreItems : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -45,7 +59,7 @@ const TechnicalSiteRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Technical & Site Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

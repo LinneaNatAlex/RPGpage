@@ -1,15 +1,29 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Magic & Spell Rules";
+const DEFAULT_RULES = [
+  "Magic must be used responsibly and within character limits.",
+  "No instant-kill spells or overpowered magic without consent.",
+  "Magic duels must be agreed upon by both parties.",
+  "Respect magical boundaries and limitations of other characters.",
+  "No godmodding with magic - all spells have limits and consequences.",
+  "Use appropriate magical terminology and stay true to the magical world.",
+  "Magic should enhance roleplay, not dominate it.",
+];
 
 const MagicSpellRules = () => {
-  const rules = [
-    "Magic must be used responsibly and within character limits.",
-    "No instant-kill spells or overpowered magic without consent.",
-    "Magic duels must be agreed upon by both parties.",
-    "Respect magical boundaries and limitations of other characters.",
-    "No godmodding with magic - all spells have limits and consequences.",
-    "Use appropriate magical terminology and stay true to the magical world.",
-    "Magic should enhance roleplay, not dominate it.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("magicspellrules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -46,7 +60,7 @@ const MagicSpellRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Magic & Spell Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

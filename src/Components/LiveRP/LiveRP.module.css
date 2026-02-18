@@ -101,6 +101,27 @@
   overflow-y: auto;
   scrollbar-width: thin;
 }
+
+/* Vanlige radioknapper med synlig bullet (prikk) når valgt */
+.autoScrollRadio {
+  appearance: radio;
+  -webkit-appearance: radio;
+  margin: 0 4px 0 0;
+  cursor: pointer;
+  accent-color: #5D4E37;
+}
+
+.autoScrollLabel {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.autoScrollRow .autoScrollLabel + .autoScrollLabel {
+  margin-left: 8px;
+}
+
 /* -------------CHAT FORM STYLES------------- */
 .chatForm {
   display: flex;

@@ -1,16 +1,30 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Chat Rules";
+const DEFAULT_RULES = [
+  "No offensive language, trolling, or personal attacks.",
+  "Keep conversations civil, friendly, and inclusive.",
+  "No excessive use of caps lock or flooding the chat.",
+  "Respect others' opinions, even if you disagree.",
+  "No doxxing or sharing of private conversations without consent.",
+  "No chain messages, pyramid schemes, or scams.",
+  "Do not mini-mod (act as a moderator if you are not one).",
+  "Keep OOC (out-of-character) chat to a minimum in IC (in-character) areas.",
+];
 
 const ChatRules = () => {
-  const rules = [
-    "No offensive language, trolling, or personal attacks.",
-    "Keep conversations civil, friendly, and inclusive.",
-    "No excessive use of caps lock or flooding the chat.",
-    "Respect others' opinions, even if you disagree.",
-    "No doxxing or sharing of private conversations without consent.",
-    "No chain messages, pyramid schemes, or scams.",
-    "Do not mini-mod (act as a moderator if you are not one).",
-    "Keep OOC (out-of-character) chat to a minimum in IC (in-character) areas.",
-  ];
+  const { title: firestoreTitle, items: firestoreItems, loading, hasData } = useRulesFromFirestore("chatrules");
+  const title = hasData && firestoreTitle ? firestoreTitle : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0 ? firestoreItems : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -47,7 +61,7 @@ const ChatRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Chat Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

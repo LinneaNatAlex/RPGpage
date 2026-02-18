@@ -1,7 +1,8 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
 
-const DatingRelationshipRules = () => {
-  const rules = [
+const DEFAULT_TITLE = "Dating & Relationship Rules";
+const DEFAULT_RULES = [
     "In-character dating is allowed, but must be realistic to the characters' ages and personalities.",
     "Younger characters (under 13) should focus on friendship, crushes, and innocent experimentation—avoid mature or intense romance.",
     "Romantic relationships for teens should reflect real-life development: more feelings and drama may develop with age, but always keep it age-appropriate.",
@@ -22,7 +23,20 @@ const DatingRelationshipRules = () => {
     "No explicit or suggestive content in dating plots outside the 18+ forum.",
     "All dating and relationship plots must comply with the forum's age, consent, and content rules.",
     "If you are unsure if a plot is appropriate, ask a moderator or admin before proceeding.",
-  ];
+];
+
+const DatingRelationshipRules = () => {
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("datingrelationshiprules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -59,7 +73,7 @@ const DatingRelationshipRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Dating & Relationship Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

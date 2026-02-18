@@ -1,7 +1,8 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
 
-const RaceSchoolRules = () => {
-  const rules = [
+const DEFAULT_TITLE = "Race & School Rules";
+const DEFAULT_RULES = [
     "Respect your race and its traditions (Werewolf, Vampire, Witch, Elf).",
     "No race discrimination or favoritism.",
     "Follow school rules and regulations.",
@@ -12,7 +13,20 @@ const RaceSchoolRules = () => {
     "Admin, teachers, Shadow Patrol, and the Headmaster can assign or clear detention for rule violations (e.g. curfew).",
     "Keep dormitories and common rooms clean and respectful.",
     "No unauthorized use of school facilities or equipment.",
-  ];
+];
+
+const RaceSchoolRules = () => {
+  const { title: firestoreTitle, items: firestoreItems, loading, hasData } = useRulesFromFirestore("raceschoolrules");
+  const title = hasData && firestoreTitle ? firestoreTitle : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0 ? firestoreItems : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -49,7 +63,7 @@ const RaceSchoolRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Race & School Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

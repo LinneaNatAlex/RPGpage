@@ -1,14 +1,28 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Content & Media Rules";
+const DEFAULT_RULES = [
+  "Images and videos are allowed but must be appropriate for all ages.",
+  "No sexual, violent, or disturbing content in images or videos.",
+  "Respect copyright - do not use copyrighted material without permission.",
+  "Always provide content warnings for potentially sensitive material.",
+  "Inactive accounts will be removed after 1 year of inactivity.",
+  "No sharing of personal photos or videos of real people without consent.",
+];
 
 const ContentMediaRules = () => {
-  const rules = [
-    "Images and videos are allowed but must be appropriate for all ages.",
-    "No sexual, violent, or disturbing content in images or videos.",
-    "Respect copyright - do not use copyrighted material without permission.",
-    "Always provide content warnings for potentially sensitive material.",
-    "Inactive accounts will be removed after 1 year of inactivity.",
-    "No sharing of personal photos or videos of real people without consent.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("contentmediarules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -45,7 +59,7 @@ const ContentMediaRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Content & Media Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

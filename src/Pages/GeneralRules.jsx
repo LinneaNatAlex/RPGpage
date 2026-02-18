@@ -1,7 +1,8 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
 
-const GeneralRules = () => {
-  const rules = [
+const DEFAULT_TITLE = "General Rules";
+const DEFAULT_RULES = [
     "You must be 13 years or older to use this website.",
     "Show respect to all users.",
     "Treat everyone equally regardless of nationality, gender, sexuality, religion, or background.",
@@ -14,7 +15,20 @@ const GeneralRules = () => {
     "Do not post graphic violence or gore.",
     "Respect all staff and their decisions.",
     "Follow global laws and applicable guidelines.",
-  ];
+];
+
+const GeneralRules = () => {
+  const { title: firestoreTitle, items: firestoreItems, loading, hasData } = useRulesFromFirestore("generalrules");
+  const title = hasData && firestoreTitle ? firestoreTitle : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0 ? firestoreItems : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -57,7 +71,7 @@ const GeneralRules = () => {
           marginBottom: "2rem",
         }}
       >
-        General Rules
+        {title}
       </h1>
 
       <div

@@ -1,8 +1,9 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
 
-const Forum18Rules = () => {
-  const rules = [
-    "Only users who are 18+ and have been confirmed via Discord may write or read sexual content.",
+const DEFAULT_TITLE = "18+ Forum Rules";
+const DEFAULT_RULES = [
+  "Only users who are 18+ and have been confirmed via Discord may write or read sexual content.",
     "Sexual content is only allowed in the 18+ forum and must not be posted anywhere else on the site.",
     "All sexual content must be consensual, legal, and respectful.",
     "Avoid excessive or unnecessarily detailed descriptions that may make others uncomfortable.",
@@ -18,7 +19,20 @@ const Forum18Rules = () => {
     "Do not pressure anyone into participating in sexual or mature roleplay.",
     "Report any suspicious or predatory behavior to staff immediately.",
     "No sharing of personal contact information in the 18+ forum.",
-  ];
+];
+
+const Forum18Rules = () => {
+  const { title: firestoreTitle, items: firestoreItems, loading, hasData } = useRulesFromFirestore("18forumrules");
+  const title = hasData && firestoreTitle ? firestoreTitle : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0 ? firestoreItems : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -55,7 +69,7 @@ const Forum18Rules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>18+ Forum Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

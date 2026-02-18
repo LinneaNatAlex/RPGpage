@@ -1,15 +1,29 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Community & Behavior Rules";
+const DEFAULT_RULES = [
+  "Be kind, respectful, and inclusive to all community members.",
+  "No trolling, flaming, or starting drama.",
+  "Resolve conflicts peacefully - contact staff if needed.",
+  "Do not spam or flood chat with repeated messages.",
+  "Keep conversations on-topic and relevant.",
+  "Help new users learn the rules and get comfortable.",
+  "Do not mini-mod (act as a moderator if you are not one).",
+];
 
 const CommunityBehaviorRules = () => {
-  const rules = [
-    "Be kind, respectful, and inclusive to all community members.",
-    "No trolling, flaming, or starting drama.",
-    "Resolve conflicts peacefully - contact staff if needed.",
-    "Do not spam or flood chat with repeated messages.",
-    "Keep conversations on-topic and relevant.",
-    "Help new users learn the rules and get comfortable.",
-    "Do not mini-mod (act as a moderator if you are not one).",
-  ];
+  const { title: firestoreTitle, items: firestoreItems, loading, hasData } = useRulesFromFirestore("communitybehaviorrules");
+  const title = hasData && firestoreTitle ? firestoreTitle : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0 ? firestoreItems : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -46,7 +60,7 @@ const CommunityBehaviorRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Community & Behavior Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

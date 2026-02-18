@@ -1,14 +1,28 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Account & Identity Rules";
+const DEFAULT_RULES = [
+  "One account per person - multiple accounts are not allowed without permission.",
+  "Do not share your account with others.",
+  "Use appropriate usernames and display names.",
+  "Do not impersonate other users or celebrities.",
+  "Keep your profile information appropriate and truthful.",
+  "Contact staff if you need to change your username or account details.",
+];
 
 const AccountIdentityRules = () => {
-  const rules = [
-    "One account per person - multiple accounts are not allowed without permission.",
-    "Do not share your account with others.",
-    "Use appropriate usernames and display names.",
-    "Do not impersonate other users or celebrities.",
-    "Keep your profile information appropriate and truthful.",
-    "Contact staff if you need to change your username or account details.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("accountidentityrules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -45,7 +59,7 @@ const AccountIdentityRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Account & Identity Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

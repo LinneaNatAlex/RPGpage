@@ -1,18 +1,32 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Roleplay & Character Rules";
+const DEFAULT_RULES = [
+  "No illegal, offensive, or inappropriate characters.",
+  "Characters must fit the forum's theme, lore, and rules.",
+  "No overpowered or unrealistic characters.",
+  "Respect character limits and creation guidelines.",
+  "No duplicate or copycat characters.",
+  "Do not use copyrighted names, images, or content for your character.",
+  "Characters must have a completed profile before roleplaying.",
+  "No powergaming (forcing actions on others) or godmodding (making your character invincible).",
+  "Always get consent before including another character in major plot events.",
+  "Do not metagame (using OOC knowledge in character).",
+];
 
 const RoleplayCharacterRules = () => {
-  const rules = [
-    "No illegal, offensive, or inappropriate characters.",
-    "Characters must fit the forum's theme, lore, and rules.",
-    "No overpowered or unrealistic characters.",
-    "Respect character limits and creation guidelines.",
-    "No duplicate or copycat characters.",
-    "Do not use copyrighted names, images, or content for your character.",
-    "Characters must have a completed profile before roleplaying.",
-    "No powergaming (forcing actions on others) or godmodding (making your character invincible).",
-    "Always get consent before including another character in major plot events.",
-    "Do not metagame (using OOC knowledge in character).",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("roleplaycharacterrules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -49,7 +63,7 @@ const RoleplayCharacterRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Roleplay & Character Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

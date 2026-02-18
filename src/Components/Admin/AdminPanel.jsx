@@ -20,6 +20,7 @@ import * as usersListStore from "../../utils/usersListStore";
 import firebase from "firebase/compat/app";
 import AgeVerificationAdmin from "../Forum/AgeVerificationAdmin";
 import ShopProductAdmin from "./ShopProductAdmin";
+import RulesAdmin from "./RulesAdmin";
 
 export default function AdminPanel() {
   const { users } = useUsers();
@@ -610,6 +611,8 @@ export default function AdminPanel() {
           )}
         </div>
       )}
+
+      {roles.includes("admin") && <RulesAdmin />}
 
       {(roles.includes("admin") ||
         roles.includes("teacher") ||

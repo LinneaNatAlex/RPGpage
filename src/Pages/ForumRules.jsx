@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
 
-const rules = [
+const DEFAULT_RULES = [
   {
     category: "Forum Rules",
     items: [
@@ -33,20 +34,59 @@ const rules = [
 export default function ForumRules() {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const { title: ft, items: firestoreItems, loading, hasData } = useRulesFromFirestore("forumrules");
+  const rules = DEFAULT_RULES;
 
   // Handle URL parameters to navigate to specific rule categories
   useEffect(() => {
-    const category = searchParams.get('category');
-    if (category) {
-      const categoryIndex = rules.findIndex(rule => 
-        rule.category.toLowerCase().replace(/[^a-z0-9]/g, '') === 
+    if (!hasData && searchParams.get('category')) {
+      const category = searchParams.get('category');
+      const categoryIndex = rules.findIndex(rule =>
+        rule.category.toLowerCase().replace(/[^a-z0-9]/g, '') ===
         category.toLowerCase().replace(/[^a-z0-9]/g, '')
       );
-      if (categoryIndex !== -1) {
-        setSelectedIdx(categoryIndex);
-      }
+      if (categoryIndex !== -1) setSelectedIdx(categoryIndex);
     }
-  }, [searchParams]);
+  }, [searchParams, hasData]);
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
+
+  // When admin has saved custom rules, show simple title + list
+  if (hasData && Array.isArray(firestoreItems) && firestoreItems.length > 0) {
+    const title = ft || "Forum Rules";
+    return (
+      <div
+        style={{
+          maxWidth: 900,
+          margin: "40px auto",
+          background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+          color: "#F5EFE0",
+          borderRadius: 0,
+          padding: 40,
+          boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
+          border: "3px solid #7B6857",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)", borderRadius: 0 }} />
+        <h1 style={{ textAlign: "center", color: "#F5EFE0", fontFamily: '"Cinzel", serif', fontSize: "2.5rem", fontWeight: 700, letterSpacing: "2px", textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)", marginBottom: "2rem" }}>{title}</h1>
+        <div style={{ background: "rgba(245, 239, 224, 0.1)", borderRadius: 0, padding: 24, border: "2px solid rgba(255, 255, 255, 0.2)", boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)" }}>
+          <ul style={{ marginLeft: 20, lineHeight: 1.6, fontSize: "1.1rem" }}>
+            {firestoreItems.map((item, index) => (
+              <li key={index} style={{ marginBottom: 12, color: "#F5EFE0" }}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

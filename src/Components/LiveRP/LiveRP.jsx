@@ -44,7 +44,12 @@ const LiveRP = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
   // const [nitsReward, setNitsReward] = useState(null); // Removed - no more popup messages
   const messagesEndRef = useRef(null);
+  const chatBoxRef = useRef(null);
   const inputRef = useRef(null);
+  const [autoScrollToBottom, setAutoScrollToBottom] = useState(() => {
+    const stored = localStorage.getItem("starshadeHallAutoScroll");
+    return stored === null ? true : stored === "true";
+  });
 
   useEffect(() => {
     async function checkPrivileged() {
@@ -80,6 +85,27 @@ const LiveRP = () => {
       if (!neverShow) setShowRulesPopup(true);
     }
   }, [isMobile]);
+
+  useEffect(() => {
+    localStorage.setItem("starshadeHallAutoScroll", String(autoScrollToBottom));
+  }, [autoScrollToBottom]);
+
+  const scrollChatToBottom = () => {
+    const el = chatBoxRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  };
+  useEffect(() => {
+    if (!autoScrollToBottom) return;
+    scrollChatToBottom();
+    const t1 = setTimeout(scrollChatToBottom, 50);
+    const t2 = setTimeout(scrollChatToBottom, 150);
+    const t3 = setTimeout(scrollChatToBottom, 400);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [rpgGrateHall, autoScrollToBottom]);
 
   function execCmd(cmd) {
     document.execCommand(cmd, false, null);
@@ -118,6 +144,10 @@ const LiveRP = () => {
         timestamp: serverTimestamp(),
         sender: user.displayName || "Anonymous",
       });
+      if (autoScrollToBottom) {
+        setTimeout(scrollChatToBottom, 100);
+        setTimeout(scrollChatToBottom, 400);
+      }
 
       const wordCount = countWords(text);
       if (wordCount > 0) {
@@ -375,7 +405,7 @@ const LiveRP = () => {
             className={styles.chatContainer}
             style={isMobile ? { width: "100vw", overflowX: "auto" } : {}}
           >
-            <div className={styles.chatMessages}>
+            <div className={styles.chatMessages} ref={chatBoxRef}>
               {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
               {rpgGrateHall.map((message) => {
                 // Finn brukerobjekt for å hente roller
@@ -470,6 +500,43 @@ const LiveRP = () => {
                 );
               })}
               <div ref={messagesEndRef} />
+            </div>
+            <div
+              className={styles.autoScrollRow}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "6px 10px",
+                fontSize: "0.85rem",
+                color: "#8B7A6B",
+                flexShrink: 0,
+                borderTop: "1px solid rgba(123, 104, 87, 0.3)",
+              }}
+              role="group"
+              aria-label="Auto-scroll to last message"
+            >
+              <span style={{ marginRight: 4 }}>Auto-scroll to last message:</span>
+              <label className={styles.autoScrollLabel}>
+                <input
+                  type="radio"
+                  name="starshadeHallAutoScroll"
+                  className={styles.autoScrollRadio}
+                  checked={autoScrollToBottom === true}
+                  onChange={() => setAutoScrollToBottom(true)}
+                />
+                <span>On</span>
+              </label>
+              <label className={styles.autoScrollLabel}>
+                <input
+                  type="radio"
+                  name="starshadeHallAutoScroll"
+                  className={styles.autoScrollRadio}
+                  checked={autoScrollToBottom === false}
+                  onChange={() => setAutoScrollToBottom(false)}
+                />
+                <span>Off</span>
+              </label>
             </div>
             <form className={styles.chatForm} onSubmit={sendtMessage}>
               <input

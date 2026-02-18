@@ -43,6 +43,11 @@ const Chat = () => {
     const stored = localStorage.getItem("mainChatCollapsed");
     return stored === null ? true : stored === "true";
   });
+  // Auto-scroll til siste melding når man åpner/replyer (kan slås av)
+  const [autoScrollToBottom, setAutoScrollToBottom] = useState(() => {
+    const stored = localStorage.getItem("mainChatAutoScroll");
+    return stored === null ? true : stored === "true";
+  });
 
   // Potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
@@ -72,6 +77,10 @@ const Chat = () => {
   useEffect(() => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
   }, [isCollapsed]);
+
+  useEffect(() => {
+    localStorage.setItem("mainChatAutoScroll", String(autoScrollToBottom));
+  }, [autoScrollToBottom]);
 
   // Load user's potion effects
   // QUOTA OPTIMIZATION: Use polling instead of real-time listener
@@ -275,26 +284,26 @@ const Chat = () => {
     }
   };
 
-  // Scroll til bunn – på mobil alltid nyeste melding, på desktop når chat er åpen
-  const scrollToBottom = () => {
+  // Scroll meldingslisten til bunn så siste (nyeste) melding vises
+  const scrollChatToBottom = () => {
     const el = chatBoxRef.current;
-    if (!el) return;
-    el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTop = el.scrollHeight;
   };
   useEffect(() => {
+    if (!autoScrollToBottom) return;
     const isPc = window.innerWidth > 768;
     const chatVisible = isPc ? !isCollapsed : true;
-    if (!chatVisible || !chatBoxRef.current) return;
-    let timeoutId = null;
-    const rafId = requestAnimationFrame(() => {
-      scrollToBottom();
-      if (!isPc) timeoutId = setTimeout(scrollToBottom, 150);
-    });
+    if (!chatVisible) return;
+    scrollChatToBottom();
+    const t1 = setTimeout(scrollChatToBottom, 50);
+    const t2 = setTimeout(scrollChatToBottom, 150);
+    const t3 = setTimeout(scrollChatToBottom, 400);
     return () => {
-      cancelAnimationFrame(rafId);
-      if (timeoutId) clearTimeout(timeoutId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
     };
-  }, [messages, isCollapsed]);
+  }, [messages, isCollapsed, autoScrollToBottom]);
 
   // Ping notification for mentions (only when a *new* message mentions you, not on load)
   const lastSeenMessageIdRef = useRef(null);
@@ -437,6 +446,10 @@ const Chat = () => {
       }
       setNewMess("");
       trimGeneralChatToLimit(30);
+      if (autoScrollToBottom) {
+        setTimeout(scrollChatToBottom, 100);
+        setTimeout(scrollChatToBottom, 400);
+      }
     } catch (err) {
       setError("Could not send message.");
     }
@@ -799,6 +812,43 @@ const Chat = () => {
                 </div>
               );
             })}
+          </div>
+          <div
+            className={styles.autoScrollRow}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "6px 10px",
+              fontSize: "0.85rem",
+              color: "var(--color-secondary-text, #7B6857)",
+              flexShrink: 0,
+              borderTop: "1px solid rgba(123, 104, 87, 0.3)",
+            }}
+            role="group"
+            aria-label="Auto-scroll to last message"
+          >
+            <span style={{ marginRight: 4 }}>Auto-scroll to last message:</span>
+            <label className={styles.autoScrollLabel}>
+              <input
+                type="radio"
+                name="mainChatAutoScroll"
+                className={styles.autoScrollRadio}
+                checked={autoScrollToBottom === true}
+                onChange={() => setAutoScrollToBottom(true)}
+              />
+              <span>On</span>
+            </label>
+            <label className={styles.autoScrollLabel}>
+              <input
+                type="radio"
+                name="mainChatAutoScroll"
+                className={styles.autoScrollRadio}
+                checked={autoScrollToBottom === false}
+                onChange={() => setAutoScrollToBottom(false)}
+              />
+              <span>Off</span>
+            </label>
           </div>
           <form className={styles.chatForm} onSubmit={sendtMessage}>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

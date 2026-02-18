@@ -1,14 +1,28 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "AI Usage Rules";
+const DEFAULT_RULES = [
+  "AI is NOT allowed for writing content, stories, or roleplay posts.",
+  "AI is allowed ONLY for grammar and spelling corrections for accessibility purposes.",
+  "Users who rely on AI for content creation do not belong on this site.",
+  "All creative content must be original and written by the user.",
+  "Using AI to generate characters, plots, or storylines is prohibited.",
+  "If you need help with writing, ask other users or staff for guidance instead of using AI.",
+];
 
 const AIUsageRules = () => {
-  const rules = [
-    "AI is NOT allowed for writing content, stories, or roleplay posts.",
-    "AI is allowed ONLY for grammar and spelling corrections for accessibility purposes.",
-    "Users who rely on AI for content creation do not belong on this site.",
-    "All creative content must be original and written by the user.",
-    "Using AI to generate characters, plots, or storylines is prohibited.",
-    "If you need help with writing, ask other users or staff for guidance instead of using AI.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("aiusagerules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -45,7 +59,7 @@ const AIUsageRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>AI Usage Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

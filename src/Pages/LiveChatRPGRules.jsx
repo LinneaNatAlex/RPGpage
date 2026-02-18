@@ -1,17 +1,31 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Live Chat RPG Rules";
+const DEFAULT_RULES = [
+  "Be respectful to all participants.",
+  "No spamming or flooding the chat.",
+  "Stay in character during roleplay.",
+  "No offensive language or bullying.",
+  "Magic duels must be agreed upon by both parties.",
+  "Keep OOC (out of character) comments to a minimum.",
+  "Admins may moderate and remove inappropriate content.",
+  "No powergaming or godmodding in live chat.",
+  "Respect others' roleplay and don't interrupt their scenes.",
+];
 
 const LiveChatRPGRules = () => {
-  const rules = [
-    "Be respectful to all participants.",
-    "No spamming or flooding the chat.",
-    "Stay in character during roleplay.",
-    "No offensive language or bullying.",
-    "Magic duels must be agreed upon by both parties.",
-    "Keep OOC (out of character) comments to a minimum.",
-    "Admins may moderate and remove inappropriate content.",
-    "No powergaming or godmodding in live chat.",
-    "Respect others' roleplay and don't interrupt their scenes.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("livechatrpgrules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -48,7 +62,7 @@ const LiveChatRPGRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Live Chat RPG Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

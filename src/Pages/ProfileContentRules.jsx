@@ -1,14 +1,28 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "Profile Content Rules";
+const DEFAULT_RULES = [
+  "No offensive, violent, or sexually explicit content.",
+  "Profile pictures and descriptions must be appropriate for all ages and cultures.",
+  "No links to illegal, pirated, or harmful content.",
+  "Do not share personal information in your profile.",
+  "No political, religious, or controversial statements in profiles.",
+  "Do not use animated or flashing images that may trigger epilepsy.",
+];
 
 const ProfileContentRules = () => {
-  const rules = [
-    "No offensive, violent, or sexually explicit content.",
-    "Profile pictures and descriptions must be appropriate for all ages and cultures.",
-    "No links to illegal, pirated, or harmful content.",
-    "Do not share personal information in your profile.",
-    "No political, religious, or controversial statements in profiles.",
-    "Do not use animated or flashing images that may trigger epilepsy.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("profilecontentrules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -45,7 +59,7 @@ const ProfileContentRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>Profile Content Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{

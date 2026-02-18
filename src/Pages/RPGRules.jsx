@@ -1,19 +1,33 @@
 import React from "react";
+import { useRulesFromFirestore } from "../hooks/useRulesFromFirestore";
+
+const DEFAULT_TITLE = "RPG Rules";
+const DEFAULT_RULES = [
+  "Always write in third person (he/she/they/name).",
+  "All forum posts must be at least 300 words.",
+  "Stay true to your character's personality and the forum's theme.",
+  "Respect others' boundaries and use content warnings where relevant.",
+  "No powergaming (forcing actions on others) or godmodding (making your character invincible).",
+  "Always get consent before including another character in major plot events.",
+  "Do not metagame (using OOC knowledge in character).",
+  "No auto-hitting or controlling another player's character.",
+  "Keep OOC (out-of-character) chat to a minimum in IC (in-character) areas.",
+  "Use appropriate content warnings for sensitive topics in roleplay.",
+  "Describe actions, feelings, and surroundings to make the roleplay vivid and engaging.",
+];
 
 const RPGRules = () => {
-  const rules = [
-    "Always write in third person (he/she/they/name).",
-    "All forum posts must be at least 300 words.",
-    "Stay true to your character's personality and the forum's theme.",
-    "Respect others' boundaries and use content warnings where relevant.",
-    "No powergaming (forcing actions on others) or godmodding (making your character invincible).",
-    "Always get consent before including another character in major plot events.",
-    "Do not metagame (using OOC knowledge in character).",
-    "No auto-hitting or controlling another player's character.",
-    "Keep OOC (out-of-character) chat to a minimum in IC (in-character) areas.",
-    "Use appropriate content warnings for sensitive topics in roleplay.",
-    "Describe actions, feelings, and surroundings to make the roleplay vivid and engaging.",
-  ];
+  const { title: ft, items: fi, loading, hasData } = useRulesFromFirestore("rpgrules");
+  const title = hasData && ft ? ft : DEFAULT_TITLE;
+  const rules = hasData && Array.isArray(fi) && fi.length > 0 ? fi : DEFAULT_RULES;
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 900, margin: "40px auto", padding: 40, textAlign: "center", color: "#F5EFE0" }}>
+        Loading rules…
+      </div>
+    );
+  }
 
   return (
     <div
@@ -50,7 +64,7 @@ const RPGRules = () => {
         letterSpacing: "2px",
         textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         marginBottom: "2rem"
-      }}>RPG Rules</h1>
+      }}>{title}</h1>
       
       <div
         style={{
