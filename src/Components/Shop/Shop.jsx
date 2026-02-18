@@ -45,17 +45,25 @@ const Shop = ({ open = true }) => {
   const { user } = useAuth();
   const { userData } = useUserData();
   const { roles } = useUserRoles();
-  // Admin/teacher/archivist kan kjøpe alle eliksirer (for testing)
-  const isAdmin =
+  // Potions/Ingredients kun synlig og kjøpbare for admin, headmaster, teacher (ikke archivist)
+  const canAccessPotionsCategory =
     user &&
     (roles?.some((r) => String(r).toLowerCase() === "admin") ||
-      roles?.some((r) => String(r).toLowerCase() === "teacher") ||
-      roles?.some((r) => String(r).toLowerCase() === "archivist"));
+      roles?.some((r) => String(r).toLowerCase() === "headmaster") ||
+      roles?.some((r) => String(r).toLowerCase() === "teacher"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("Books");
+  const shopCategories = canAccessPotionsCategory
+    ? categories
+    : categories.filter((c) => c !== "Potions" && c !== "Ingredients");
+  useEffect(() => {
+    if (!shopCategories.includes(activeCategory)) {
+      setActiveCategory(shopCategories[0] || "Books");
+    }
+  }, [shopCategories, activeCategory]);
   const [firestoreItems, setFirestoreItems] = useState([]);
   const [books, setBooks] = useState([]);
   const [narrowScreen, setNarrowScreen] = useState(
@@ -324,7 +332,7 @@ const Shop = ({ open = true }) => {
       </h2>
       <div className={styles.balance}>Balance: {balance} Nits</div>
       <div className={styles.tabs}>
-        {categories.map((cat) => (
+        {shopCategories.map((cat) => (
           <button
             key={cat}
             className={cat === activeCategory ? styles.activeTab : styles.tab}
@@ -414,9 +422,9 @@ const Shop = ({ open = true }) => {
           .map((item) => {
             const itemWithImage = addImageToItem(item);
 
-            // Check if potion is locked (not crafted) – Admin/teacher/archivist kan alltid kjøpe alle eliksirer (for testing)
+            // Check if potion is locked (not crafted) – kun admin/headmaster/teacher kan kjøpe uten å ha brygget
             const isPotionLocked =
-              !isAdmin &&
+              !canAccessPotionsCategory &&
               item.category === "Potions" &&
               item.type === "potion" &&
               !craftedPotions.has(item.name);
@@ -518,8 +526,8 @@ const Shop = ({ open = true }) => {
                         Buy
                       </button>
                     )}
-                    {/* Delete button for Firestore items, admin/teacher only */}
-                    {itemWithImage.firestore && isAdmin && (
+                    {/* Delete button for Firestore items (admin/headmaster/teacher) */}
+                    {itemWithImage.firestore && canAccessPotionsCategory && (
                       <button
                         className={styles.deleteBtn}
                         onClick={async () => {
