@@ -64,7 +64,7 @@ const TopBar = () => {
   const { userData, loading: userDataLoading } = useUserData();
   const { roles } = useUserRoles();
   const navigate = useNavigate();
-  const { setOpenWithUid } = useOpenPrivateChat();
+  const { setOpenWithUid, setOpenWithGroupId } = useOpenPrivateChat();
   const [infirmary, setInfirmary] = useState(false);
   const isAdmin = roles?.some((r) => String(r).toLowerCase() === "admin");
   const [detentionUntil, setDetentionUntil] = useState(null);
@@ -968,6 +968,7 @@ const TopBar = () => {
                         n.type === "topic_reply" || n.type === "new_topic";
                       const isGift = n.type === "gift";
                       const isChat = n.type === "private_chat";
+                      const isGroupChat = n.type === "group_chat" || n.type === "group_chat_added";
                       const isLike = n.type === "content_like";
                       const isProfileLike = n.type === "profile_like";
                       const uid = n.fromUid || n.from;
@@ -1003,8 +1004,8 @@ const TopBar = () => {
                                   `New activity in ${n.topicTitle || n.forumRoom || "forum"}`
                                 : `You received ${itemName} from ${senderName}`;
                       const label =
-                        count > 1 && (isChat || isReply)
-                          ? `${baseLabel} (${count} ${isChat ? "messages" : "updates"})`
+                        count > 1 && (isChat || isGroupChat || isReply)
+                          ? `${baseLabel} (${count} ${isChat ? "messages" : isGroupChat ? "group" : "updates"})`
                           : baseLabel;
                       const forumPath = normalizeForumPath(n.forum || n.forumRoom || "");
                       return (
@@ -1070,6 +1071,11 @@ const TopBar = () => {
                               💬
                             </span>
                           )}
+                          {isGroupChat && (
+                            <span className={styles.notificationIconChat}>
+                              👥
+                            </span>
+                          )}
                           {isReply && (
                             <span className={styles.notificationIconReply}>
                               📌
@@ -1087,6 +1093,7 @@ const TopBar = () => {
                           )}
                           {!isGift &&
                             !isChat &&
+                            !isGroupChat &&
                             !isReply &&
                             !isLike &&
                             !isProfileLike && (

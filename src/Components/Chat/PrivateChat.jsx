@@ -100,8 +100,10 @@ import {
   limit,
   deleteDoc,
   writeBatch,
+  arrayRemove,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
+import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { playPrivateChatPling, preparePrivateChatSound } from "./ping_alt";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -131,6 +133,12 @@ const PrivateChat = ({ fullPage = false }) => {
   }, [isCollapsed]);
   const [search, setSearch] = useState("");
   const [activeChats, setActiveChats] = useState([]); // [{user, messages: []}]
+  const [selectedGroup, setSelectedGroup] = useState(null); // groupId
+  const [groupChats, setGroupChats] = useState([]); // [{ id, name, members }]
+  const [groupMessages, setGroupMessages] = useState([]);
+  const [showNewGroupModal, setShowNewGroupModal] = useState(false);
+  const [newGroupSelectedUids, setNewGroupSelectedUids] = useState([]);
+  const [newGroupName, setNewGroupName] = useState("");
 
   // Potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
@@ -287,7 +295,9 @@ const PrivateChat = ({ fullPage = false }) => {
   const lastMessageRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
-  const { openWithUid, setOpenWithUid } = useOpenPrivateChat();
+  const onlineUsersList = useOnlineUsers();
+  const onlineUids = new Set(onlineUsersList.map((u) => u.id));
+  const { openWithUid, setOpenWithUid, openWithGroupId, setOpenWithGroupId } = useOpenPrivateChat();
 
   // Load active chats from Firestore on mount
   useEffect(() => {
@@ -382,6 +392,40 @@ const PrivateChat = ({ fullPage = false }) => {
     });
   }, [currentUser, selectedUser, isCollapsed, isPcForSubscription, fullPage]);
 
+  // Load group chats where current user is member
+  useEffect(() => {
+    if (!currentUser) return;
+    const q = query(
+      collection(db, "groupChats"),
+      where("members", "array-contains", currentUser.uid),
+    );
+    return onSnapshot(q, (snapshot) => {
+      setGroupChats(
+        snapshot.docs.map((d) => ({ id: d.id, ...d.data() })),
+      );
+    });
+  }, [currentUser]);
+
+  // Subscribe to selected group messages
+  useEffect(() => {
+    if (!currentUser || !selectedGroup) {
+      setGroupMessages([]);
+      return;
+    }
+    const q = query(
+      collection(db, "groupChats", selectedGroup, "messages"),
+      orderBy("timestamp", "desc"),
+      limit(MAX_PRIVATE_CHAT_MESSAGES),
+    );
+    return onSnapshot(q, (snapshot) => {
+      setGroupMessages(
+        snapshot.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .reverse(),
+      );
+    });
+  }, [currentUser, selectedGroup]);
+
   // Alltid scroll til siste melding (bruk scrollTop så det alltid er på bunnen)
   const scrollToLatest = useCallback(() => {
     const el = chatBoxRef.current;
@@ -389,10 +433,10 @@ const PrivateChat = ({ fullPage = false }) => {
   }, []);
 
   useEffect(() => {
-    if (selectedMessages.length === 0) return;
+    if (selectedMessages.length === 0 && groupMessages.length === 0) return;
     const id = setTimeout(scrollToLatest, 50);
     return () => clearTimeout(id);
-  }, [selectedMessages, scrollToLatest]);
+  }, [selectedMessages, groupMessages, scrollToLatest]);
 
   // Når brukeren kommer tilbake til fanen: scroll til siste melding
   useEffect(() => {
@@ -450,6 +494,14 @@ const PrivateChat = ({ fullPage = false }) => {
     }
   }, [openWithUid, currentUser, users]);
 
+  // When notification click asks to open a group chat
+  useEffect(() => {
+    if (!openWithGroupId) return;
+    setSelectedGroup(openWithGroupId);
+    setSelectedUser(null);
+    setOpenWithGroupId(null);
+  }, [openWithGroupId, setOpenWithGroupId]);
+
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;
   if (loading) return <div>Loading...</div>;
@@ -459,16 +511,16 @@ const PrivateChat = ({ fullPage = false }) => {
     ? users.find((u) => u.uid === currentUser.uid)
     : null;
 
-  // Filter users for search (exclude self and allerede synlige aktive chats, men IKKE skjulte)
+  // Filter users for search: kun aktive (online) brukere, ekskluder self og allerede synlige chats
   const filteredUsers =
     search && users
       ? users.filter(
           (u) =>
             u.uid !== currentUser.uid &&
+            onlineUids.has(u.uid) &&
             (u.displayName || u.name || u.uid)
               .toLowerCase()
               .includes(search.toLowerCase()) &&
-            // Ikke vis brukere som allerede er synlige i activeChats (men vis skjulte)
             !activeChats.some(
               (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid),
             ),
@@ -637,6 +689,72 @@ const PrivateChat = ({ fullPage = false }) => {
     }
   };
 
+  const createGroup = async () => {
+    if (!currentUser || newGroupSelectedUids.length === 0) return;
+    const members = [currentUser.uid, ...newGroupSelectedUids];
+    try {
+      const ref = await addDoc(collection(db, "groupChats"), {
+        name: (newGroupName || "").trim() || "Group",
+        members,
+        createdBy: currentUser.uid,
+        createdAt: serverTimestamp(),
+      });
+      setSelectedGroup(ref.id);
+      setSelectedUser(null);
+      setShowNewGroupModal(false);
+      setNewGroupSelectedUids([]);
+      setNewGroupName("");
+    } catch (err) {
+      console.error("Create group failed:", err);
+      alert(err?.message || "Kunne ikke opprette gruppe. Sjekk at Firestore-regler er deployet (firebase deploy --only firestore:rules).");
+    }
+  };
+
+  const sendGroupMessage = async (e) => {
+    e.preventDefault();
+    if (!message.trim() || !selectedGroup || !currentUser) return;
+    const text = message;
+    setMessage("");
+    try {
+      await addDoc(collection(db, "groupChats", selectedGroup, "messages"), {
+        text,
+        from: currentUser.uid,
+        timestamp: serverTimestamp(),
+      });
+      const group = groupChats.find((g) => g.id === selectedGroup);
+      const otherMembers = (group?.members || []).filter((uid) => uid !== currentUser.uid);
+      const fromName = currentUser.displayName?.trim() || currentUser.email || "Someone";
+      for (const toUid of otherMembers) {
+        try {
+          await addDoc(collection(db, "notifications"), {
+            to: toUid,
+            type: "group_chat",
+            from: currentUser.uid,
+            fromName,
+            groupId: selectedGroup,
+            groupName: group?.name || "Group",
+            textPreview: text.slice(0, 80),
+            read: false,
+            created: Date.now(),
+          });
+        } catch (_) {}
+      }
+    } catch (err) {}
+  };
+
+  const leaveGroup = async () => {
+    if (!currentUser || !selectedGroup) return;
+    if (!window.confirm("Leave this group? You will no longer see it or its messages.")) return;
+    try {
+      const groupRef = doc(db, "groupChats", selectedGroup);
+      await updateDoc(groupRef, { members: arrayRemove(currentUser.uid) });
+      setSelectedGroup(null);
+    } catch (err) {
+      console.error("Leave group failed:", err);
+      alert(err?.message || "Kunne ikke forlate gruppen.");
+    }
+  };
+
   // Calculate per-chat unread messages for the current user
   // Badge skal kun vises for mottaker, ikke for meldinger man selv har sendt
   const getUnreadCount = (chat) => {
@@ -654,6 +772,7 @@ const PrivateChat = ({ fullPage = false }) => {
 
   if (fullPage) {
     const selectUserAndMarkRead = (c) => {
+      setSelectedGroup(null);
       setSelectedUser(c.user);
       setActiveChats((prev) => [...prev]);
       const chatId = [currentUser.uid, c.user.uid].sort().join("_");
@@ -680,7 +799,10 @@ const PrivateChat = ({ fullPage = false }) => {
               className={`${styles.messagesFullPageSidebarItem} ${styles.messagesFullPageSidebarItemWithAvatar} ${selectedUser?.uid === c.user.uid ? styles.selected : ""} ${getUnreadCount(c) > 0 ? styles.unread : ""}`}
               onClick={() => selectUserAndMarkRead(c)}
             >
-              <img src={c.user.profileImageUrl || "/icons/avatar.svg"} alt="" className={styles.messagesFullPageSidebarAvatar} />
+              <span className={styles.messagesFullPageSidebarAvatarWrap}>
+                <img src={c.user.profileImageUrl || "/icons/avatar.svg"} alt="" className={styles.messagesFullPageSidebarAvatar} />
+                {onlineUids.has(c.user.uid) && <span className={styles.messagesFullPageOnlineDot} aria-hidden />}
+              </span>
               <span className={styles.messagesFullPageSidebarItemText}>
                 {c.user.displayName || c.user.name || c.user.uid}
                 {getUnreadCount(c) > 0 ? ` (${getUnreadCount(c)})` : ""}
@@ -715,24 +837,89 @@ const PrivateChat = ({ fullPage = false }) => {
                     setSearch("");
                   }}
                 >
-                  <img src={u.profileImageUrl || "/icons/avatar.svg"} alt="" className={styles.messagesFullPageSidebarAvatar} />
+                  <span className={styles.messagesFullPageSidebarAvatarWrap}>
+                    <img src={u.profileImageUrl || "/icons/avatar.svg"} alt="" className={styles.messagesFullPageSidebarAvatar} />
+                    {onlineUids.has(u.uid) && <span className={styles.messagesFullPageOnlineDot} aria-hidden />}
+                  </span>
                   <span className={styles.messagesFullPageSidebarItemText}>{u.displayName || u.name || u.uid}</span>
                 </button>
               ))}
               {filteredUsers.length === 0 && <span className={styles.messagesFullPageSidebarHint}>No users found</span>}
             </div>
           ) : (
-            <p className={styles.messagesFullPageSidebarHint}>Type to search for a user</p>
+            <p className={styles.messagesFullPageSidebarHint}>Type to search for an online user</p>
           )}
+          <h3 className={styles.messagesFullPageSidebarTitle}>Group chats</h3>
+          <button type="button" className={styles.messagesFullPageSidebarItem} onClick={() => setShowNewGroupModal(true)} style={{ justifyContent: "center", fontWeight: 600 }}>
+            + New group
+          </button>
+          {groupChats.map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              className={`${styles.messagesFullPageSidebarItem} ${selectedGroup === g.id ? styles.selected : ""}`}
+              onClick={() => { setSelectedUser(null); setSelectedGroup(g.id); }}
+            >
+              <span className={styles.messagesFullPageSidebarItemText}>{g.name || "Group"}</span>
+            </button>
+          ))}
         </aside>
         <div className={styles.messagesFullPageMain}>
           <header className={styles.messagesFullPagePageHeader}>
             <Link to="/" className={styles.messagesFullPageBackLink}>← Back</Link>
             <h1 className={styles.messagesFullPagePageTitle}>Private messages</h1>
           </header>
-          {!selectedUser ? (
+          {selectedGroup ? (
+            (() => {
+              const group = groupChats.find((g) => g.id === selectedGroup);
+              return (
+                <>
+                  <div className={styles.messagesFullPageHeader} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                    <span style={{ flex: "1 1 auto", minWidth: 0 }}>
+                      <span>{group?.name || "Group"}</span>
+                      {group?.members?.length > 0 && (
+                        <span className={styles.messagesFullPageGroupMembers}>
+                          {group.members.map((uid) => uid === currentUser.uid ? "You" : (users?.find((x) => x.uid === uid)?.displayName || users?.find((x) => x.uid === uid)?.name || uid)).join(", ")}
+                        </span>
+                      )}
+                    </span>
+                    <button type="button" className={styles.messagesFullPageLeaveGroup} onClick={leaveGroup} title="Leave group">Leave group</button>
+                  </div>
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, width: "100%" }}>
+                    <div className={styles.chatMessages} ref={chatBoxRef} style={{ flex: 1, minHeight: 0 }}>
+                      {groupMessages.map((m, i) => {
+                        const isLast = i === groupMessages.length - 1;
+                        const sender = users?.find((u) => u.uid === m.from);
+                        const isMe = m.from === currentUser?.uid;
+                        return (
+                          <div key={m.id || i} ref={isLast ? lastMessageRef : undefined} className={styles.privateMessageRow + (isMe ? " " + styles.me : "")}>
+                            <div className={styles.privateMessageBubble}>
+                              <img src={isMe ? (currentUserData?.profileImageUrl || "/icons/avatar.svg") : (sender?.profileImageUrl || "/icons/avatar.svg")} alt="" className={styles.privateMessageProfilePic} />
+                              <div className={styles.privateMessageContent}>
+                                <div className={styles.privateMessageSender}>{isMe ? "You" : (sender?.displayName || sender?.name || m.from)}</div>
+                                <span style={{ display: "block", wordBreak: "break-word" }}>{m.text}</span>
+                                <div className={styles.privateMessageTimestamp}>
+                                  {m.timestamp?.seconds ? new Date(m.timestamp.seconds * 1000).toLocaleString("no-NO", { hour: "2-digit", minute: "2-digit" }) : ""}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <form className={`${styles.chatForm} ${styles.privateChatForm}`} onSubmit={sendGroupMessage} style={{ width: "100%", boxSizing: "border-box", flexShrink: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4, flex: 1, minWidth: 0, width: "100%" }}>
+                        <input value={message} onChange={(e) => setMessage(e.target.value)} type="text" placeholder="Message group..." maxLength={1500} className={styles.chatInput} style={{ flex: 1, minWidth: 0 }} />
+                        <button type="submit" className={styles.chatBtn}>Send</button>
+                      </div>
+                    </form>
+                  </div>
+                </>
+              );
+            })()
+          ) : !selectedUser ? (
             <div className={styles.messagesFullPageEmpty}>
-              <p>Select a conversation or search for a user to start a new chat.</p>
+              <p>Select a conversation or group, or search for an online user to start a new chat.</p>
               <Link to="/" className={styles.messagesFullPageEmptyLink}>← Back to home</Link>
             </div>
           ) : (
@@ -784,6 +971,57 @@ const PrivateChat = ({ fullPage = false }) => {
             </>
           )}
         </div>
+        {showNewGroupModal && (
+          <div className={styles.messagesFullPageModalOverlay} onClick={() => setShowNewGroupModal(false)}>
+            <div className={styles.messagesFullPageModal} onClick={(e) => e.stopPropagation()}>
+              <h3 className={styles.messagesFullPageSidebarTitle}>New group</h3>
+              <p className={styles.messagesFullPageSidebarHint}>Add people one by one from the dropdown. At least one required.</p>
+              <input type="text" placeholder="Group name (optional)" value={newGroupName} onChange={(e) => setNewGroupName(e.target.value)} className={styles.messagesFullPageSidebarSearch} />
+              <label className={styles.messagesFullPageGroupDropdownLabel}>
+                Add person
+              </label>
+              <select
+                className={styles.messagesFullPageGroupDropdown}
+                value=""
+                onChange={(e) => {
+                  const uid = e.target.value;
+                  if (uid && !newGroupSelectedUids.includes(uid)) {
+                    setNewGroupSelectedUids((prev) => [...prev, uid]);
+                  }
+                  e.target.value = "";
+                }}
+              >
+                <option value="">— Choose someone —</option>
+                {onlineUsersList
+                  .filter((u) => u.id !== currentUser.uid && !newGroupSelectedUids.includes(u.id))
+                  .map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.displayName || u.name || u.id}
+                    </option>
+                  ))}
+              </select>
+              {onlineUsersList.filter((u) => u.id !== currentUser.uid).length === 0 && (
+                <p className={styles.messagesFullPageSidebarHint}>No other users online right now.</p>
+              )}
+              <div className={styles.messagesFullPageGroupTags}>
+                {newGroupSelectedUids.map((uid) => {
+                  const u = onlineUsersList.find((o) => o.id === uid) || users?.find((o) => o.uid === uid);
+                  const name = u?.displayName || u?.name || uid;
+                  return (
+                    <span key={uid} className={styles.messagesFullPageGroupTag}>
+                      {name}
+                      <button type="button" className={styles.messagesFullPageGroupTagRemove} onClick={() => setNewGroupSelectedUids((prev) => prev.filter((id) => id !== uid))} aria-label="Remove">×</button>
+                    </span>
+                  );
+                })}
+              </div>
+              <div className={styles.messagesFullPageModalActions}>
+                <button type="button" className={styles.chatBtn} onClick={() => { setShowNewGroupModal(false); setNewGroupSelectedUids([]); setNewGroupName(""); }}>Cancel</button>
+                <button type="button" className={styles.chatBtn} onClick={() => { if (newGroupSelectedUids.length > 0) createGroup(); }} disabled={newGroupSelectedUids.length === 0}>Create group</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1128,9 +1366,7 @@ const PrivateChat = ({ fullPage = false }) => {
                           onClick={async () => {
                             preparePrivateChatSound();
                             setSelectedUser(c.user);
-                            // Scroll to bottom when selectedMessages updates (see effect)
                             setActiveChats((prev) => [...prev]);
-                            // Marker alle meldinger som lest i Firestore NÅR chatten åpnes
                             const chatId = [currentUser.uid, c.user.uid]
                               .sort()
                               .join("_");
@@ -1155,6 +1391,7 @@ const PrivateChat = ({ fullPage = false }) => {
                             }
                           }}
                         >
+                          {onlineUids.has(c.user.uid) && <span className={styles.privateChatOnlineDot} aria-hidden />}
                           {
                             (
                               c.user.displayName ||

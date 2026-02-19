@@ -62,6 +62,16 @@
   overflow-x: auto;
   max-width: 100%;
 }
+.privateChatOnlineDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
 .privateMessageRow {
   display: flex;
   align-items: flex-end;
@@ -640,12 +650,27 @@
   align-items: center;
   gap: 10px;
 }
+.messagesFullPageSidebarAvatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
 .messagesFullPageSidebarAvatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  flex-shrink: 0;
+  display: block;
+}
+.messagesFullPageOnlineDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #e8ddd4;
+  box-sizing: border-box;
 }
 .messagesFullPageSidebarItemText {
   flex: 1;
@@ -765,6 +790,101 @@
   margin-top: 4px;
   color: rgba(0, 0, 0, 0.5);
 }
+.messagesFullPageGroupMembers {
+  font-size: 0.85rem;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-left: 8px;
+}
+.messagesFullPageLeaveGroup {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(123, 104, 87, 0.5);
+  border-radius: 6px;
+  color: #5d4e37;
+  cursor: pointer;
+  font-weight: 600;
+}
+.messagesFullPageLeaveGroup:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: #7b6857;
+}
+.messagesFullPageModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10010;
+}
+.messagesFullPageModal {
+  background: #e8ddd4;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 360px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  border: 1px solid rgba(123, 104, 87, 0.4);
+}
+.messagesFullPageGroupDropdownLabel {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #5d4e37;
+  margin: 12px 0 6px 0;
+}
+.messagesFullPageGroupDropdown {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid rgba(123, 104, 87, 0.4);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #2c2c2c;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.messagesFullPageGroupTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 24px;
+}
+.messagesFullPageGroupTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(123, 104, 87, 0.35);
+  border: 1px solid rgba(123, 104, 87, 0.5);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #2c2c2c;
+}
+.messagesFullPageGroupTagRemove {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #5d4e37;
+  font-weight: 700;
+}
+.messagesFullPageGroupTagRemove:hover {
+  color: #7b6857;
+}
+.messagesFullPageModalActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
 /* Dark mode: full-page private chat følger tema */
 :global(html[data-theme="dark"]) .messagesFullPage {
   background: #252525;
@@ -835,4 +955,42 @@
 }
 :global(html[data-theme="dark"]) .messagesFullPageFormHint {
   color: rgba(255, 255, 255, 0.5);
+}
+:global(html[data-theme="dark"]) .messagesFullPageModal {
+  background: #2e2e2e;
+  border-color: #444;
+}
+:global(html[data-theme="dark"]) .messagesFullPageGroupDropdownLabel {
+  color: #d4c4a8;
+}
+:global(html[data-theme="dark"]) .messagesFullPageGroupDropdown {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e8e0d0;
+}
+:global(html[data-theme="dark"]) .messagesFullPageGroupTag {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e8e0d0;
+}
+:global(html[data-theme="dark"]) .messagesFullPageGroupTagRemove {
+  color: #c4b89a;
+}
+:global(html[data-theme="dark"]) .messagesFullPageGroupTagRemove:hover {
+  color: #d4c4a8;
+}
+:global(html[data-theme="dark"]) .messagesFullPageGroupMembers {
+  opacity: 0.85;
+}
+:global(html[data-theme="dark"]) .messagesFullPageLeaveGroup {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #d4c4a8;
+}
+:global(html[data-theme="dark"]) .messagesFullPageLeaveGroup:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+:global(html[data-theme="dark"]) .messagesFullPageOnlineDot {
+  border-color: #2e2e2e;
 }
