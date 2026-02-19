@@ -1,0 +1,48 @@
+/* Edit Class Info-knapp: litt luft på mobil */
+.editClassInfoWrap {
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .editClassInfoWrap {
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+  .editClassInfoWrap button {
+    min-height: 44px;
+    padding: 10px 20px;
+  }
+}
+
+/* Quiz section header: title + buttons – på mobil stakkes de med luft */
+.quizSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.quizSectionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .quizSectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .quizSectionButtons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .quizSectionButtons button {
+    width: 100%;
+    min-height: 44px;
+  }
+}

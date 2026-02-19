@@ -37,6 +37,7 @@ import PotionCrafting from "../PotionCrafting/PotionCrafting";
 import QuizCreation from "./QuizCreation";
 import QuizTaking from "./QuizTaking";
 import QuizEditing from "./QuizEditing";
+import styles from "./ClassroomSession.module.css";
 // Potions data (move to a shared file if needed)
 const potions = [
   {
@@ -1476,7 +1477,7 @@ const ClassroomSession = () => {
             </ul>
 
             {isTeacher && (
-              <div style={{ textAlign: "center" }}>
+              <div className={styles.editClassInfoWrap}>
                 <button
                   onClick={() => setEditingClassInfo(true)}
                   style={{
@@ -1509,14 +1510,7 @@ const ClassroomSession = () => {
 
         {/* Quiz Section */}
         <div style={{ marginBottom: 24 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 16,
-            }}
-          >
+          <div className={styles.quizSectionHeader}>
             <h3
               style={{
                 color: "#D4C4A8",
@@ -1530,7 +1524,7 @@ const ClassroomSession = () => {
               Exams & Quizzes
             </h3>
             {isTeacher && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
+              <div className={styles.quizSectionButtons}>
                 <button
                   onClick={(e) => {
                     e.preventDefault();

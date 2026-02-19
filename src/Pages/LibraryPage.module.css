@@ -214,6 +214,14 @@
   border-color: #444;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
+:global(html[data-theme="dark"]) .titleButton {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+:global(html[data-theme="dark"]) .titleButton:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
 
 .back {
   margin-top: 28px;
@@ -231,6 +239,21 @@
 .back a:hover {
   color: #f5efe0;
   text-decoration: underline;
+}
+
+/* Dark mode: fjern bakgrunner på tekst/kategoriknapper (CREATURES, ELEMENTS osv.) */
+:global(html[data-theme="dark"]) .categoryToggle {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+:global(html[data-theme="dark"]) .categoryToggle:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+:global(html[data-theme="dark"]) .categoryToggleLabel,
+:global(html[data-theme="dark"]) .categoryToggleCount,
+:global(html[data-theme="dark"]) .categoryToggleIcon {
+  background: transparent !important;
 }
 
 /* Mobile: ensure Library card and content are visible and usable */

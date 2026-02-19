@@ -160,28 +160,27 @@ const UserList = ({ userQuery }) => {
               <td data-label="Name">
                 {(() => {
                   let nameClass = styles.userName;
-                  
-                  // Only apply role colors if user has a role
-                  if (user.roles?.some((r) => r.toLowerCase() === "headmaster"))
+                  let dataRole = null;
+                  if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
                     nameClass += ` ${styles.headmasterName}`;
-                  else if (
+                    dataRole = "headmaster";
+                  } else if (
                     user.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
-                  )
+                  ) {
                     nameClass += ` ${styles.professorName}`;
-                  else if (
-                    user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
-                  )
+                    dataRole = "professor";
+                  } else if (user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
                     nameClass += ` ${styles.shadowPatrolName}`;
-                  else if (user.roles?.some((r) => r.toLowerCase() === "admin"))
+                    dataRole = "shadowpatrol";
+                  } else if (user.roles?.some((r) => r.toLowerCase() === "admin")) {
                     nameClass += ` ${styles.adminName}`;
-                  else if (
-                    user.roles?.some((r) => r.toLowerCase() === "archivist")
-                  )
+                    dataRole = "admin";
+                  } else if (user.roles?.some((r) => r.toLowerCase() === "archivist")) {
                     nameClass += ` ${styles.archivistName}`;
-                  // If no role, userName class will use default brown color (#b8860b)
-                  
+                    dataRole = "archivist";
+                  }
                   return (
-                    <span className={nameClass}>
+                    <span className={nameClass} data-role={dataRole}>
                       {user.displayName}
                     </span>
                   );

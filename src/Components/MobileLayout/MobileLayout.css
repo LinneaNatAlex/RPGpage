@@ -2624,6 +2624,24 @@ html[data-theme="dark"] .mobile-section-card .mobile-dashboard-item-label,
 html[data-theme="dark"] .mobile-section-card span {
   color: #f5f5f5 !important;
 }
+/* Unntak: rollefarger på navn i kort (map/online list osv.) – data-role treffer uavhengig av modul-klasser */
+html[data-theme="dark"] .mobile-section-card [data-role="headmaster"] { color: #fff !important; }
+html[data-theme="dark"] .mobile-section-card [data-role="professor"] { color: gold !important; }
+html[data-theme="dark"] .mobile-section-card [data-role="shadowpatrol"] { color: #1ecb8c !important; }
+html[data-theme="dark"] .mobile-section-card [data-role="admin"] { color: #ff5e5e !important; }
+html[data-theme="dark"] .mobile-section-card [data-role="archivist"] { color: #a084e8 !important; }
+html[data-theme="dark"] .mobile-section-card [data-race*="vampire"],
+html[data-theme="dark"] .mobile-section-card [data-race*="vampyr"] { color: #f87171 !important; }
+html[data-theme="dark"] .mobile-section-card [data-race*="werewolf"],
+html[data-theme="dark"] .mobile-section-card [data-race*="varulv"] { color: #60a5fa !important; }
+html[data-theme="dark"] .mobile-section-card [data-race*="elf"],
+html[data-theme="dark"] .mobile-section-card [data-race*="alv"] { color: #22d3ee !important; }
+html[data-theme="dark"] .mobile-section-card [data-race*="wizard"],
+html[data-theme="dark"] .mobile-section-card [data-race*="trollmann"],
+html[data-theme="dark"] .mobile-section-card [data-race*="witch"],
+html[data-theme="dark"] .mobile-section-card [data-race*="heks"] { color: #4ade80 !important; }
+html[data-theme="dark"] .mobile-section-card [data-race*="human"],
+html[data-theme="dark"] .mobile-section-card [data-race*="menneske"] { color: #fbbf24 !important; }
 html[data-theme="dark"] .mobile-welcome-card {
   background: #2e2e2e !important;
   border-color: #444 !important;
@@ -2649,26 +2667,109 @@ html[data-theme="dark"] .mobile-page-content textarea::placeholder {
   color: #cccccc !important;
 }
 
-/* Dark mode: role name colors in mobile (override generic span color) */
+/* Dark mode: role name colors in mobile (override generic span color – bruk span.klass for å vinne over .mobile-page-content span) */
+html[data-theme="dark"] .mobile-page-content span.headmasterName,
 html[data-theme="dark"] .mobile-page-content .headmasterName {
   color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
+html[data-theme="dark"] .mobile-page-content span.professorName,
 html[data-theme="dark"] .mobile-page-content .professorName {
   color: gold !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
+html[data-theme="dark"] .mobile-page-content span.shadowPatrolName,
 html[data-theme="dark"] .mobile-page-content .shadowPatrolName {
   color: #1ecb8c !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
+html[data-theme="dark"] .mobile-page-content span.adminName,
 html[data-theme="dark"] .mobile-page-content .adminName {
   color: #ff5e5e !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
+html[data-theme="dark"] .mobile-page-content span.archivistName,
 html[data-theme="dark"] .mobile-page-content .archivistName {
   color: #a084e8 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Mobil: rolle- og rasefarger via data-role/data-race (uavhengig av CSS-modul-klasser) */
+html[data-theme="dark"] .mobile-page-content [data-role="headmaster"] {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-role="professor"] {
+  color: gold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-role="shadowpatrol"] {
+  color: #1ecb8c !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-role="admin"] {
+  color: #ff5e5e !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-role="archivist"] {
+  color: #a084e8 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+/* Rasefarger på mobil (overskriver generisk span-farge) */
+html[data-theme="dark"] .mobile-page-content [data-race*="vampire"],
+html[data-theme="dark"] .mobile-page-content [data-race*="vampyr"] {
+  color: #f87171 !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-race*="werewolf"],
+html[data-theme="dark"] .mobile-page-content [data-race*="varulv"] {
+  color: #60a5fa !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-race*="elf"],
+html[data-theme="dark"] .mobile-page-content [data-race*="alv"] {
+  color: #22d3ee !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-race*="wizard"],
+html[data-theme="dark"] .mobile-page-content [data-race*="trollmann"],
+html[data-theme="dark"] .mobile-page-content [data-race*="witch"],
+html[data-theme="dark"] .mobile-page-content [data-race*="heks"] {
+  color: #4ade80 !important;
+}
+html[data-theme="dark"] .mobile-page-content [data-race*="human"],
+html[data-theme="dark"] .mobile-page-content [data-race*="menneske"] {
+  color: #fbbf24 !important;
+}
+
+/* Mobil fallback: rolle/rasefarger overalt (f.eks. overlays, sidebars) */
+@media (max-width: 768px) {
+  html[data-theme="dark"] [data-role="headmaster"] {
+    color: #fff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+  html[data-theme="dark"] [data-role="professor"] {
+    color: gold !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+  html[data-theme="dark"] [data-role="shadowpatrol"] {
+    color: #1ecb8c !important;
+  }
+  html[data-theme="dark"] [data-role="admin"] {
+    color: #ff5e5e !important;
+  }
+  html[data-theme="dark"] [data-role="archivist"] {
+    color: #a084e8 !important;
+  }
+  html[data-theme="dark"] [data-race*="vampire"],
+  html[data-theme="dark"] [data-race*="vampyr"] { color: #f87171 !important; }
+  html[data-theme="dark"] [data-race*="werewolf"],
+  html[data-theme="dark"] [data-race*="varulv"] { color: #60a5fa !important; }
+  html[data-theme="dark"] [data-race*="elf"],
+  html[data-theme="dark"] [data-race*="alv"] { color: #22d3ee !important; }
+  html[data-theme="dark"] [data-race*="wizard"],
+  html[data-theme="dark"] [data-race*="trollmann"],
+  html[data-theme="dark"] [data-race*="witch"],
+  html[data-theme="dark"] [data-race*="heks"] { color: #4ade80 !important; }
+  html[data-theme="dark"] [data-race*="human"],
+  html[data-theme="dark"] [data-race*="menneske"] { color: #fbbf24 !important; }
 }
 
 /* Dark mode: fjern unødvendige tekst-/ikonbakgrunner (alt er allerede mørkt) */

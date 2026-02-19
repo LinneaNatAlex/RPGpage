@@ -131,6 +131,22 @@
   margin: 0;
 }
 
+/* Dark mode: fjern bakgrunner på lenker (tekst uten boks) */
+html[data-theme="dark"] .link,
+html[data-theme="dark"] .linkLibrary {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #e8e0d0 !important;
+}
+html[data-theme="dark"] .link:hover,
+html[data-theme="dark"] .link:focus,
+html[data-theme="dark"] .linkLibrary:hover,
+html[data-theme="dark"] .linkLibrary:focus {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: #f5efe0 !important;
+}
+
 /* Mobile: ensure rules list and about section are visible and responsive */
 @media (max-width: 768px) {
   .container {

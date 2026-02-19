@@ -159,21 +159,27 @@ const OnlineUsers = () => {
         {filteredUsers.map((u) => {
           let roleClass = style.userAvatar;
           let nameClass = style.userName;
+          let dataRole = null;
           if (u.roles?.some((r) => r.toLowerCase() === "headmaster")) {
             roleClass += ` ${style.headmasterAvatar}`;
             nameClass += ` ${style.headmasterName}`;
+            dataRole = "headmaster";
           } else if (u.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")) {
             roleClass += ` ${style.professorAvatar}`;
             nameClass += ` ${style.professorName}`;
+            dataRole = "professor";
           } else if (u.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
             roleClass += ` ${style.shadowPatrolAvatar}`;
             nameClass += ` ${style.shadowPatrolName}`;
+            dataRole = "shadowpatrol";
           } else if (u.roles?.some((r) => r.toLowerCase() === "admin")) {
             roleClass += ` ${style.adminAvatar}`;
             nameClass += ` ${style.adminName}`;
+            dataRole = "admin";
           } else if (u.roles?.some((r) => r.toLowerCase() === "archivist")) {
             roleClass += ` ${style.archivistAvatar}`;
             nameClass += ` ${style.archivistName}`;
+            dataRole = "archivist";
           }
           // Love Potion effect: pink glow and text if inLoveUntil in future
           const inLove = u.inLoveUntil && u.inLoveUntil > Date.now();
@@ -210,7 +216,7 @@ const OnlineUsers = () => {
                     border: isNewUser ? "2px solid #4da3ff" : undefined,
                   }}
                 />
-                <span className={nameClass}>
+                <span className={nameClass} data-role={dataRole}>
                   {getFirstAndLastName(u.displayName)}
                   {inDarkMode && (
                     <span
