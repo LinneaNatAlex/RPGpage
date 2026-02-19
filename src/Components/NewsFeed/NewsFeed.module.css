@@ -383,86 +383,14 @@ iframe {
 }
 
 :global([data-theme="dark"]) .popupIframe {
-  background: #1a1a1a;
+  background: #252525;
 }
 
-.popupContent::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
-}
 
-/* La {{code}} blokk overstyre dark mode potion - høyere spesifisitet */
-.popupContent,
-.popupContent div,
-.popupContent span,
-.popupContent p,
-.popupContent h1,
-.popupContent h2,
-.popupContent h3,
-.popupContent h4,
-.popupContent h5,
-.popupContent h6,
-.popupContent a,
-.popupContent button,
-.popupContent input,
-.popupContent textarea,
-.popupContent select,
-.popupContent label,
-.popupContent li,
-.popupContent ul,
-.popupContent ol,
-.popupContent table,
-.popupContent tr,
-.popupContent td,
-.popupContent th,
-.popupContent thead,
-.popupContent tbody,
-.popupContent tfoot,
-.popupContent caption,
-.popupContent strong,
-.popupContent em,
-.popupContent b,
-.popupContent i,
-.popupContent u,
-.popupContent small,
-.popupContent big,
-.popupContent code,
-.popupContent pre,
-.popupContent blockquote,
-.popupContent cite,
-.popupContent time,
-.popupContent mark,
-.popupContent del,
-.popupContent ins,
-.popupContent sub,
-.popupContent sup,
-.popupContent dfn,
-.popupContent abbr,
-.popupContent acronym,
-.popupContent address,
-.popupContent q,
-.popupContent samp,
-.popupContent kbd,
-.popupContent var,
-.popupContent output,
-.popupContent progress,
-.popupContent meter,
-.popupContent details,
-.popupContent summary,
-.popupContent dialog,
-.popupContent menu,
-.popupContent menuitem,
-.popupContent nav,
-.popupContent header,
-.popupContent footer,
-.popupContent main,
-.popupContent section,
-.popupContent article,
-.popupContent aside,
-.popupContent figure,
-.popupContent figcaption {
-  /* Overstyr dark mode potion med høyere spesifisitet */
-  background: revert !important;
-  color: revert !important;
+/* Popup container og content skal aldri legge på bakgrunn – kun iframe-dokumentet styrer */
+.popupContainer,
+.popupContent {
+  background: transparent !important;
 }
 
 .otherNewsSidebar {
@@ -588,6 +516,11 @@ iframe {
   background: transparent !important;
   color: #f5f5f5 !important;
   border-color: transparent !important;
+}
+:global(html[data-theme="dark"]) .newsContent {
+  background: transparent !important;
+  border-color: rgba(212, 196, 168, 0.25) !important;
+  box-shadow: none !important;
 }
 :global(html[data-theme="dark"]) .title {
   color: #f5f5f5 !important;

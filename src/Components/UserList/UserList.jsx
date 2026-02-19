@@ -299,6 +299,7 @@ const UserList = ({ userQuery }) => {
                   {isThird && <span className={styles.medal}>🥉</span>}
                   <span 
                     className={styles.raceName}
+                    data-race={(race || "").toLowerCase()}
                     style={{ 
                       color: getRaceColor(race),
                       fontWeight: "bold",

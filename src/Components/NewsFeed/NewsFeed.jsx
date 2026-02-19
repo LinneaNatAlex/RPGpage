@@ -335,12 +335,13 @@ const NewsFeed = () => {
                   const isDark =
                     typeof document !== "undefined" &&
                     !!document.querySelector('[data-theme="dark"]');
-                  const bg = isDark ? "#1a1a1a" : "#e8ddd4";
+                  const bg = isDark ? "#252525" : "#e8ddd4";
                   const fg = isDark ? "#e0e0e0" : "#2c2c2c";
+                  const scrollbarHide = "scrollbar-width:none;-ms-overflow-style:none;} html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}";
                   return `<!DOCTYPE html>
 <html style="background:${bg}">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;} html,body{${scrollbarHide}}</style>
 </head>
 <body>${raw}</body>
 </html>`;

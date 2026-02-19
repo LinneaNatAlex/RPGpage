@@ -4,11 +4,13 @@
   justify-content: space-between;
   background-color: #3a2f26;
   width: 100%;
+  min-height: 70px;
   height: 70px;
   box-sizing: border-box;
   padding: 0 2rem;
   position: relative;
   z-index: 10001;
+  flex-wrap: nowrap;
 }
 /* -----------------MENU ITEMS--------------------------- */
 .menuItems {
@@ -17,6 +19,8 @@
   align-items: center;
   gap: 2rem;
   flex: 1;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .navbar a {
@@ -25,13 +29,18 @@
   font-size: 1rem;
   font-weight: 600;
   transition: color 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-/* Make the main site title larger and bolder */
+/* Make the main site title larger and bolder – tillat to linjer (Vayloria Arcane / School) */
 .menuItems > a:first-child {
   font-size: 1.5rem;
   font-weight: bold;
   color: #f5efe0;
+  white-space: normal;
+  line-height: 1.2;
+  max-width: 14ch;
 }
 
 .navbar a:hover {
@@ -121,6 +130,58 @@
 .dropdownContent {
   z-index: 10000 !important;
   position: absolute !important;
+}
+
+/* ----------------- Dark mode ----------------- */
+:global(html[data-theme="dark"]) .navbar {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+}
+
+:global(html[data-theme="dark"]) .navbar a {
+  color: #e8e4dc;
+}
+
+:global(html[data-theme="dark"]) .menuItems > a:first-child {
+  color: #f0ebe0;
+}
+
+:global(html[data-theme="dark"]) .navbar a:hover {
+  color: #d4c4a8;
+}
+
+:global(html[data-theme="dark"]) .signOutBtn {
+  background-color: #3d3630;
+  color: #e8e4dc;
+  border: 1px solid #555;
+}
+
+:global(html[data-theme="dark"]) .signOutBtn:hover {
+  background-color: #4a433c;
+  color: #f0ebe0;
+}
+
+:global(html[data-theme="dark"]) .dropdown span {
+  color: #d4c4a8;
+}
+
+:global(html[data-theme="dark"]) .dropdownContent {
+  background-color: #2a2a2a;
+  border-color: #444;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+:global(html[data-theme="dark"]) .dropdownContent a {
+  color: #e8e4dc;
+}
+
+:global(html[data-theme="dark"]) .dropdownContent a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f0ebe0;
+}
+
+:global(html[data-theme="dark"]) .dropdown:hover .dropdownContent {
+  background-color: #2a2a2a;
 }
 
 /*------------------RESPONSIVE---------------------- */

@@ -1,22 +1,3 @@
-// Delete entire topic (and all its posts)
-const handleDeleteTopic = async () => {
-  if (!selectedTopic) return;
-  // Delete all posts in the topic first
-  const postsRef = collection(
-    db,
-    `forums/${forumRoom}/topics/${selectedTopic}/posts`
-  );
-  const postsSnap = (await postsRef.get)
-    ? await postsRef.get()
-    : await import("firebase/firestore").then((fb) => fb.getDocs(postsRef));
-  const docs = postsSnap.docs || postsSnap._docs || [];
-  for (const postDoc of docs) {
-    await deleteDoc(postDoc.ref);
-  }
-  // Delete the topic itself
-  await deleteDoc(doc(db, `forums/${forumRoom}/topics`, selectedTopic));
-  setSelectedTopic(null);
-};
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";

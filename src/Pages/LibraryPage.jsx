@@ -27,12 +27,13 @@ function buildLibraryPopupDoc(content) {
   const isDark =
     typeof document !== "undefined" &&
     !!document.querySelector('[data-theme="dark"]');
-  const bg = isDark ? "#1a1a1a" : "#e8ddd4";
+  const bg = isDark ? "#252525" : "#e8ddd4";
   const fg = isDark ? "#e0e0e0" : "#2c2c2c";
+  const scrollbarHide = "scrollbar-width:none;-ms-overflow-style:none;} html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}";
   return `<!DOCTYPE html>
 <html style="background:${bg}">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;}</style>
+<style>html,body{margin:0 auto;padding:1rem 1rem 1rem 0.4rem;background:${bg}!important;color:${fg};box-sizing:border-box;max-width:720px;}*{box-sizing:inherit;} html,body{${scrollbarHide}}</style>
 </head>
 <body>${raw}</body>
 </html>`;
@@ -149,31 +150,25 @@ export default function LibraryPage() {
           aria-modal="true"
           aria-label="Library content"
         >
-          <button
-            type="button"
-            className={styles.closePopupButton}
-            onClick={() => setPopupItem(null)}
-            aria-label="Close"
-          >
-            ×
-          </button>
           <div
             className={styles.popupContainer}
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              className={styles.popupBackButton}
-              onClick={() => setPopupItem(null)}
-            >
-              ← Tilbake til listen
-            </button>
             <div className={styles.popupContent}>
-              <iframe
-                title="Library content"
-                className={styles.popupIframe}
-                srcDoc={buildLibraryPopupDoc(popupItem.content || "")}
-              />
+              <div className={styles.documentBox}>
+                <button
+                  type="button"
+                  className={styles.popupBackButton}
+                  onClick={() => setPopupItem(null)}
+                >
+                  ← Back to list
+                </button>
+                <iframe
+                  title="Library content"
+                  className={styles.popupIframe}
+                  srcDoc={buildLibraryPopupDoc(popupItem.content || "")}
+                />
+              </div>
             </div>
           </div>
         </div>

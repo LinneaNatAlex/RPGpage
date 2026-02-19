@@ -354,6 +354,75 @@ td:first-child .archivistName {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Dark mode: Race Championship – lysere skrift så Vampire og alle racer/PTS synes på mørk bakgrunn */
+:global(html[data-theme="dark"]) .raceChampionship {
+  background: linear-gradient(135deg, #3d3529 0%, #4a4035 100%) !important;
+  border-color: #7b6857 !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .championshipTitle {
+  color: #D4C4A8 !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .leaderboardItem.first {
+  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%) !important;
+  border-color: #8b7a6b !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .leaderboardItem.second,
+:global(html[data-theme="dark"]) .raceChampionship .leaderboardItem.third {
+  background: linear-gradient(135deg, #4a4035 0%, #5d4e37 100%) !important;
+  border-color: #7b6857 !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .leaderboardItem.other {
+  background: linear-gradient(135deg, #3d3529 0%, #4a4035 100%) !important;
+  border-color: #6b5b4a !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .leaderboardItem .points {
+  color: #f5efe0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .leaderboardItem .raceName {
+  color: #f5efe0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Lysere rasefarger i dark mode for Race Championship */
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="vampire"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="vampyr"] {
+  color: #f87171 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="wizard"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="trollmann"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="witch"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="heks"] {
+  color: #4ade80 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="werewolf"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="varulv"] {
+  color: #60a5fa !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="elf"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="alv"] {
+  color: #22d3ee !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="human"],
+:global(html[data-theme="dark"]) .raceChampionship .raceName[data-race*="menneske"] {
+  color: #fbbf24 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .userListWrapper {

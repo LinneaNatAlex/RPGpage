@@ -354,6 +354,12 @@ function App() {
             background: transparent !important;
             border-color: transparent !important;
           }
+          /* Popup rundt news/library-iframe: ingen ekstra lag – kun iframe-innholdet har bakgrunn */
+          html[data-theme="dark"] [class*="popupContent"],
+          html[data-theme="dark"] [class*="popupContainer"] {
+            background: transparent !important;
+            border-color: transparent !important;
+          }
         `
             : ""
         }

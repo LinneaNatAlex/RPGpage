@@ -7,6 +7,14 @@ import { doc, updateDoc, getDoc, deleteField } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import GearIcon from "../Icons/Gear.svg";
 
+/** Vis kun fornavn og etternavn: første og siste ord av displayName */
+function getFirstAndLastName(displayName) {
+  if (!displayName || typeof displayName !== "string") return displayName || "";
+  const parts = displayName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 2) return displayName.trim();
+  return `${parts[0]} ${parts[parts.length - 1]}`;
+}
+
 const OnlineUsers = () => {
   const users = useOnlineUsers();
   const { user } = useAuth();
@@ -203,7 +211,7 @@ const OnlineUsers = () => {
                   }}
                 />
                 <span className={nameClass}>
-                  {u.displayName}
+                  {getFirstAndLastName(u.displayName)}
                   {inDarkMode && (
                     <span
                       style={{
