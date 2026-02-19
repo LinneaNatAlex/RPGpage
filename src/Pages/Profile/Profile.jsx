@@ -365,9 +365,9 @@ const Profile = () => {
                   )
                     roleClass += ` ${styles.headmasterAvatar}`;
                   else if (
-                    userData.roles?.some((r) => r.toLowerCase() === "teacher")
+                    userData.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
                   )
-                    roleClass += ` ${styles.teacherAvatar}`;
+                    roleClass += ` ${styles.professorAvatar}`;
                   else if (
                     userData.roles?.some(
                       (r) => r.toLowerCase() === "shadowpatrol",
@@ -454,9 +454,9 @@ const Profile = () => {
                       if (roles?.some((r) => r.toLowerCase() === "headmaster"))
                         nameClass += ` ${styles.headmasterName}`;
                       else if (
-                        roles?.some((r) => r.toLowerCase() === "teacher")
+                        roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
                       )
-                        nameClass += ` ${styles.teacherName}`;
+                        nameClass += ` ${styles.professorName}`;
                       else if (
                         roles?.some((r) => r.toLowerCase() === "shadowpatrol")
                       )
@@ -660,7 +660,7 @@ const Profile = () => {
                     <p>
                       <strong>Roles</strong>
                     </p>{" "}
-                    {userData.roles?.join(", ")}
+                    {userData.roles?.map((r) => ["teacher", "professor"].includes((r || "").toLowerCase()) ? "Professor" : (r || "").charAt(0).toUpperCase() + (r || "").slice(1).toLowerCase()).join(", ")}
                   </div>
 
                   {/* Pet: paw button only – opens popup with full pet details */}
@@ -709,7 +709,7 @@ const Profile = () => {
                       const isDark =
                         typeof document !== "undefined" &&
                         !!document.querySelector('[data-theme="dark"]');
-                      const bg = isDark ? "#1a1a1a" : "#EBE1D7";
+                      const bg = isDark ? "#252525" : "#EBE1D7";
                       const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                       return `<!DOCTYPE html>
 <html style="background:${bg}">

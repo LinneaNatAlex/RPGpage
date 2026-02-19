@@ -398,8 +398,8 @@ const UserProfile = () => {
   let nameClass = styles.userName;
   if (userData.roles?.some((r) => r.toLowerCase() === "headmaster"))
     nameClass += ` ${styles.headmasterName}`;
-  else if (userData.roles?.some((r) => r.toLowerCase() === "teacher"))
-    nameClass += ` ${styles.teacherName}`;
+  else if (userData.roles?.some((r) => (r || "").toLowerCase() === "teacher" || (r || "").toLowerCase() === "professor"))
+    nameClass += ` ${styles.professorName}`;
   else if (userData.roles?.some((r) => r.toLowerCase() === "shadowpatrol"))
     nameClass += ` ${styles.shadowPatrolName}`;
   else if (userData.roles?.some((r) => r.toLowerCase() === "admin"))
@@ -414,7 +414,7 @@ const UserProfile = () => {
             let roleClass = styles.profileImage;
             if (userData.roles?.some((r) => r.toLowerCase() === "headmaster"))
               roleClass += ` ${styles.headmasterAvatar}`;
-            else if (userData.roles?.some((r) => r.toLowerCase() === "teacher"))
+            else if (userData.roles?.some((r) => (r || "").toLowerCase() === "teacher" || (r || "").toLowerCase() === "professor"))
               roleClass += ` ${styles.teacherAvatar}`;
             else if (
               userData.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
@@ -549,9 +549,9 @@ const UserProfile = () => {
                 )
                   roleNameClass += ` ${styles.headmasterName}`;
                 else if (
-                  userData.roles?.some((r) => r.toLowerCase() === "teacher")
+                  userData.roles?.some((r) => (r || "").toLowerCase() === "teacher" || (r || "").toLowerCase() === "professor")
                 )
-                  roleNameClass += ` ${styles.teacherName}`;
+                  roleNameClass += ` ${styles.professorName}`;
                 else if (
                   userData.roles?.some(
                     (r) => r.toLowerCase() === "shadowpatrol",
@@ -887,7 +887,7 @@ const UserProfile = () => {
               >
                 Roles:
               </strong>{" "}
-              {userData.roles?.join(", ")}
+              {userData.roles?.map((r) => ["teacher", "professor"].includes((r || "").toLowerCase()) ? "Professor" : (r || "").charAt(0).toUpperCase() + (r || "").slice(1).toLowerCase()).join(", ")}
             </p>
 
             {/* Pet: paw button only – opens popup with full pet details */}

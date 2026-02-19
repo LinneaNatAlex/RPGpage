@@ -6,7 +6,7 @@
   color: #fff !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.teacherName {
+.professorName {
   color: gold !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -22,6 +22,16 @@
   color: #a084e8 !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
+/* Dark mode: default (no role) = beige so rector stands out */
+:global(html[data-theme="dark"]) .posterName { color: #D4C4A8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+/* Dark mode: keep role colors on names */
+:global(html[data-theme="dark"]) .headmasterName { color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .professorName { color: gold !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .shadowPatrolName { color: #1ecb8c !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .adminName { color: #ff5e5e !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .archivistName { color: #a084e8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
 .newsFeedWrapper {
   display: flex;
   flex-direction: column;
@@ -566,4 +576,44 @@ iframe {
 .popupContent img {
   max-width: 100%;
   height: auto;
+}
+
+/* Dark mode: ingen egen bakgrunn – samme som side */
+:global(html[data-theme="dark"]) .newsFeedWrapper {
+  background: transparent !important;
+  color: #f5f5f5 !important;
+  border-color: transparent !important;
+}
+:global(html[data-theme="dark"]) .newsContainer {
+  background: transparent !important;
+  color: #f5f5f5 !important;
+  border-color: transparent !important;
+}
+:global(html[data-theme="dark"]) .title {
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .newsAdminContainer {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .newsAdminContainer input,
+:global(html[data-theme="dark"]) .newsAdminContainer .textArea {
+  background: #383838 !important;
+  color: #f5f5f5 !important;
+  border-color: #555 !important;
+}
+:global(html[data-theme="dark"]) .newsAdminContainer input::placeholder,
+:global(html[data-theme="dark"]) .newsAdminContainer .textArea::placeholder {
+  color: #e0e0e0 !important;
+}
+:global(html[data-theme="dark"]) .posterName {
+  color: #d4c4a8 !important;
+}
+:global(html[data-theme="dark"]) .otherNewsSidebar {
+  border-color: #444 !important;
+}
+:global(html[data-theme="dark"]) .otherNewsSidebar h3 {
+  color: #d4c4a8 !important;
+  border-color: #444 !important;
 }

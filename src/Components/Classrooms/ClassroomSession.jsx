@@ -115,10 +115,10 @@ const ClassroomSession = () => {
   const { users: allUsers = [] } = useUsers();
   const { users: allUsersList = [] } = useAllUsers();
   const { wisdomUntil } = useUserData();
-  // Users who can be assigned as teacher for this class (teacher, admin, headmaster)
+  // Users who can be assigned as professor for this class (professor, teacher, admin, headmaster)
   const teachersList = (allUsersList || []).filter((u) =>
     (u.roles || []).some((r) =>
-      ["teacher", "admin", "headmaster"].includes((r || "").toLowerCase())
+      ["professor", "teacher", "admin", "headmaster"].includes((r || "").toLowerCase())
     )
   );
   const [students, setStudents] = useState([]);
@@ -151,7 +151,7 @@ const ClassroomSession = () => {
   const chatRef = useRef(null);
 
   // For teachers/admins: allow year selection
-  const isTeacher = roles.includes("teacher") || roles.includes("admin");
+  const isTeacher = roles.includes("professor") || roles.includes("teacher") || roles.includes("admin");
   const [selectedYear, setSelectedYear] = useState(getUserYear(user));
 
   // Allow year selection for teachers OR users who are above year 1
@@ -285,7 +285,7 @@ const ClassroomSession = () => {
 
       // Check if user has permission
       const hasPermission =
-        roles.includes("teacher") ||
+        (roles.includes("professor") || roles.includes("teacher")) ||
         roles.includes("admin") ||
         roles.includes("headmaster");
 
@@ -336,7 +336,7 @@ const ClassroomSession = () => {
 
       // Check if user has permission - more lenient check
       const hasPermission =
-        roles.includes("teacher") ||
+        (roles.includes("professor") || roles.includes("teacher")) ||
         roles.includes("admin") ||
         roles.includes("headmaster");
 
@@ -673,7 +673,7 @@ const ClassroomSession = () => {
     const ref = doc(db, "classChats", `${classId}-year${userYear}`);
     const msgToDelete = messages[idx];
     // Only allow if user is admin/teacher
-    const canDelete = roles.includes("admin") || roles.includes("teacher");
+    const canDelete = roles.includes("admin") || roles.includes("professor") || roles.includes("teacher");
     if (!canDelete) return;
     const newMessages = messages.filter((_, i) => i !== idx);
     await updateDoc(ref, { messages: newMessages });
@@ -998,7 +998,7 @@ const ClassroomSession = () => {
           )}
           {messages.map((m, i) => {
             const canDelete =
-              roles.includes("admin") || roles.includes("teacher");
+              roles.includes("admin") || roles.includes("professor") || roles.includes("teacher");
             return (
               <div
                 key={i}
@@ -1029,8 +1029,8 @@ const ClassroomSession = () => {
                       onlineUserStyles.userName,
                       m.roles?.some((r) => r.toLowerCase() === "headmaster")
                         ? onlineUserStyles.headmasterName
-                        : m.roles?.some((r) => r.toLowerCase() === "teacher")
-                        ? onlineUserStyles.teacherName
+                        : m.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
+                        ? onlineUserStyles.professorName
                         : m.roles?.some(
                             (r) => r.toLowerCase() === "shadowpatrol"
                           )

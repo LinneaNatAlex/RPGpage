@@ -288,6 +288,13 @@
   -webkit-overflow-scrolling: touch;
   padding-bottom: 80px;
   box-sizing: border-box;
+  /* Usynlig scrollbar på mobil, scroll fungerer */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-main::-webkit-scrollbar {
+  display: none;
 }
 
 /* Mobile Home Page */
@@ -798,6 +805,122 @@
   font-weight: 700;
 }
 
+.mobile-dashboard-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-menu-notification-wrap {
+  position: relative;
+}
+
+.mobile-menu-notification-bell {
+  background: transparent;
+  border: none;
+  color: #f5efe0;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 0;
+}
+
+.mobile-menu-notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: #ff5e5e;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-notification-popup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  width: min(320px, 90vw);
+  max-height: 60vh;
+  background: #2e2e2e;
+  border: 1px solid #555;
+  border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 10020;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mobile-menu-notification-popup-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #f5f5f5;
+}
+
+.mobile-menu-notification-mark-read {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  background: rgba(123, 104, 87, 0.4);
+  color: #d4c4a8;
+  border: 1px solid rgba(212, 196, 168, 0.3);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.mobile-menu-notification-popup-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 0;
+}
+
+.mobile-menu-notification-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.mobile-menu-notification-item:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mobile-menu-notification-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.mobile-menu-notification-empty {
+  margin: 0;
+  padding: 16px 12px;
+  color: #999;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .mobile-dashboard-close {
   background: rgba(255, 107, 107, 0.3);
   border: 1px solid rgba(255, 107, 107, 0.5);
@@ -905,6 +1028,38 @@
 .mobile-app-light .mobile-dashboard-close {
   background: rgba(139, 122, 107, 0.2);
   color: #2c1810;
+}
+
+.mobile-app-light .mobile-menu-notification-bell {
+  color: #2c1810;
+}
+
+.mobile-app-light .mobile-menu-notification-popup {
+  background: #f5efe0;
+  border-color: #d4c4a8;
+}
+
+.mobile-app-light .mobile-menu-notification-popup-header {
+  border-bottom-color: rgba(212, 196, 168, 0.5);
+  color: #2c2c2c;
+}
+
+.mobile-app-light .mobile-menu-notification-mark-read {
+  background: rgba(123, 104, 87, 0.2);
+  color: #5d4e37;
+  border-color: rgba(123, 104, 87, 0.3);
+}
+
+.mobile-app-light .mobile-menu-notification-item {
+  color: #2c2c2c;
+}
+
+.mobile-app-light .mobile-menu-notification-item:active {
+  background: rgba(123, 104, 87, 0.15);
+}
+
+.mobile-app-light .mobile-menu-notification-empty {
+  color: #7b6857;
 }
 
 .mobile-app-light .mobile-dashboard-item {
@@ -1207,6 +1362,12 @@
   margin-bottom: 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-topbar-container::-webkit-scrollbar {
+  display: none;
 }
 
 .mobile-page-content {
@@ -1219,6 +1380,10 @@
   min-height: auto;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* Usynlig scrollbar på mobil, men scroll fungerer */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   max-width: calc(100vw - 10px);
   width: calc(100vw - 10px);
   box-sizing: border-box;
@@ -1229,6 +1394,10 @@
   left: 0;
   right: 0;
   color: #2c2c2c;
+}
+
+.mobile-page-content::-webkit-scrollbar {
+  display: none;
 }
 
 /* Light Mode Mobile Page Content */
@@ -1411,7 +1580,7 @@
 }
 
 .mobile-topbar-container::-webkit-scrollbar {
-  height: 4px;
+  display: none;
 }
 
 .mobile-topbar-container::-webkit-scrollbar-track {
@@ -1431,6 +1600,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 100%;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0;
   overflow: hidden;
@@ -1438,26 +1608,49 @@
   box-sizing: border-box;
 }
 
-/* Keep private chat input always visible at bottom; avoid truncation */
+/* Private chat: constrain width so input row fits container */
+.mobile-private-chat-container .private-chat-mobile,
+.mobile-private-chat-container .privateChat {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.mobile-private-chat-container [class*="chatContainer"] {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Keep private chat input always visible at bottom; fit inside container */
 .mobile-private-chat-container .private-chat-form-mobile {
   flex-shrink: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
   min-width: 0 !important;
+  padding: 0.5rem 0.75rem !important;
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
 }
 .mobile-private-chat-container .private-chat-form-mobile > div {
   min-width: 0 !important;
   width: 100% !important;
+  max-width: 100% !important;
   gap: 6px !important;
+  overflow: hidden !important;
 }
 .mobile-private-chat-container .private-chat-form-mobile input[type="text"] {
   min-width: 0 !important;
-  flex: 1 !important;
+  max-width: 100% !important;
+  flex: 1 1 0% !important;
+  width: 0 !important; /* allow flex shrink */
 }
 .mobile-private-chat-container .private-chat-form-mobile button[type="submit"] {
-  min-width: 52px !important;
+  min-width: 48px !important;
+  flex-shrink: 0 !important;
+}
+.mobile-private-chat-container .private-chat-form-mobile button[type="button"] {
   flex-shrink: 0 !important;
 }
 /* Brukertagger mer kompakt på mobil */
@@ -1468,6 +1661,15 @@
 .mobile-private-chat-container .activeChatsRow button {
   padding: 4px 8px !important;
   font-size: 0.9rem !important;
+}
+
+/* Search and content area: stay within container width */
+.mobile-private-chat-container input#private-chat-search-user {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+.mobile-private-chat-container #private-chat-message {
+  box-sizing: border-box !important;
 }
 
 .mobile-online-container {
@@ -1553,6 +1755,29 @@
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Global chat: message input row fits container */
+.mobile-global-chat-container .chatForm {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  overflow: hidden !important;
+}
+.mobile-global-chat-container .chatForm .chatInput,
+.mobile-global-chat-container .chatForm input[type="text"] {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  flex: 1 1 0% !important;
+}
+.mobile-global-chat-container .chatForm .chatBtn,
+.mobile-global-chat-container .chatForm button[type="submit"] {
+  flex-shrink: 0 !important;
 }
 
 .mobile-global-chat-container .chat *,
@@ -1717,7 +1942,7 @@
   color: #a48d6e !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.mobile-page-content .teacherName {
+.mobile-page-content .professorName {
   color: gold !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -1776,7 +2001,7 @@
     color: #4c1d95 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
-  .mobile-page-content .teacherName {
+  .mobile-page-content .professorName {
     color: gold !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
@@ -1824,7 +2049,7 @@
     color: #4c1d95 !important;
     text-shadow: none;
   }
-  .mobile-page-content .teacherName {
+  .mobile-page-content .professorName {
     color: #b45309 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
@@ -2369,3 +2594,79 @@ select:focus {
 }
 
 /* Light mode container centering */
+
+/* Dark mode: mobil innhold lesbart (samme palett som Chrome) */
+html[data-theme="dark"] .mobile-page-content {
+  background: #252525 !important;
+  color: #f5f5f5 !important;
+  border-color: #444 !important;
+}
+html[data-theme="dark"] .mobile-page-content h1,
+html[data-theme="dark"] .mobile-page-content h2,
+html[data-theme="dark"] .mobile-page-content h3,
+html[data-theme="dark"] .mobile-page-content h4,
+html[data-theme="dark"] .mobile-page-content h5,
+html[data-theme="dark"] .mobile-page-content h6 {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-page-content p,
+html[data-theme="dark"] .mobile-page-content div,
+html[data-theme="dark"] .mobile-page-content span,
+html[data-theme="dark"] .mobile-page-content li {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-section-card {
+  background: #2e2e2e !important;
+  border-color: #444 !important;
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-section-card .mobile-dashboard-item-label,
+html[data-theme="dark"] .mobile-section-card span {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-welcome-card {
+  background: #2e2e2e !important;
+  border-color: #444 !important;
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-welcome-card h2,
+html[data-theme="dark"] .mobile-welcome-card p {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-page-content button {
+  background: #383838 !important;
+  border-color: #555 !important;
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-page-content input,
+html[data-theme="dark"] .mobile-page-content textarea {
+  background: #383838 !important;
+  border-color: #555 !important;
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .mobile-page-content input::placeholder,
+html[data-theme="dark"] .mobile-page-content textarea::placeholder {
+  color: #cccccc !important;
+}
+
+/* Dark mode: role name colors in mobile (override generic span color) */
+html[data-theme="dark"] .mobile-page-content .headmasterName {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .mobile-page-content .professorName {
+  color: gold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .mobile-page-content .shadowPatrolName {
+  color: #1ecb8c !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .mobile-page-content .adminName {
+  color: #ff5e5e !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .mobile-page-content .archivistName {
+  color: #a084e8 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}

@@ -45,13 +45,13 @@ const OnlineUsers = () => {
     };
   }, [user]);
 
-  // Sjekk om innlogget bruker har admin, teacher, shadowpatrol, archivist eller headmaster rolle
+  // Sjekk om innlogget bruker har admin, professor, shadowpatrol, archivist eller headmaster rolle
   const isPrivileged = user?.roles?.some((r) =>
-    ["admin", "teacher", "shadowpatrol", "headmaster", "archivist"].includes(r.toLowerCase())
+    ["admin", "professor", "teacher", "shadowpatrol", "headmaster", "archivist"].includes(r.toLowerCase())
   );
-  // Only admin, teacher, shadow patrol, headmaster can assign/clear detention (not archivist)
+  // Only admin, professor, shadow patrol, headmaster can assign/clear detention (not archivist)
   const canAssignDetention = user?.roles?.some((r) =>
-    ["admin", "teacher", "shadowpatrol", "headmaster"].includes((r || "").toLowerCase())
+    ["admin", "professor", "teacher", "shadowpatrol", "headmaster"].includes((r || "").toLowerCase())
   );
 
   const handleTimeoutClick = (targetUser) => {
@@ -83,11 +83,11 @@ const OnlineUsers = () => {
     setSuspendReason("");
   };
 
-  // Detention functions (only admin, teacher, shadow patrol, headmaster)
+  // Detention functions (only admin, professor, shadow patrol, headmaster)
   const handleDetentionUser = async () => {
     if (!selectedUser) return;
     if (!canAssignDetention) {
-      setDetentionStatus("Only admin, teacher, Shadow Patrol, or Headmaster can assign detention.");
+      setDetentionStatus("Only admin, professor, Shadow Patrol, or Headmaster can assign detention.");
       return;
     }
     setDetentionStatus("Working...");
@@ -113,7 +113,7 @@ const OnlineUsers = () => {
   const handleClearDetention = async () => {
     if (!selectedUser) return;
     if (!canAssignDetention) {
-      setDetentionStatus("Only admin, teacher, Shadow Patrol, or Headmaster can clear detention.");
+      setDetentionStatus("Only admin, professor, Shadow Patrol, or Headmaster can clear detention.");
       return;
     }
     setDetentionStatus("Working...");
@@ -154,9 +154,9 @@ const OnlineUsers = () => {
           if (u.roles?.some((r) => r.toLowerCase() === "headmaster")) {
             roleClass += ` ${style.headmasterAvatar}`;
             nameClass += ` ${style.headmasterName}`;
-          } else if (u.roles?.some((r) => r.toLowerCase() === "teacher")) {
-            roleClass += ` ${style.teacherAvatar}`;
-            nameClass += ` ${style.teacherName}`;
+          } else if (u.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")) {
+            roleClass += ` ${style.professorAvatar}`;
+            nameClass += ` ${style.professorName}`;
           } else if (u.roles?.some((r) => r.toLowerCase() === "shadowpatrol")) {
             roleClass += ` ${style.shadowPatrolAvatar}`;
             nameClass += ` ${style.shadowPatrolName}`;
@@ -326,7 +326,7 @@ const OnlineUsers = () => {
                 </button>
               </div>
               
-              {/* Detention Controls - only for admin, teacher, shadow patrol, headmaster (not archivist) */}
+              {/* Detention Controls - only for admin, professor, shadow patrol, headmaster (not archivist) */}
               {canAssignDetention && (
               <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,0.2)" }}>
                 <h4 style={{ color: "#ff6b6b", marginBottom: 12 }}>Detention Controls</h4>

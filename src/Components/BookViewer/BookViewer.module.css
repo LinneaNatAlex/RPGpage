@@ -138,13 +138,14 @@
   font-size: 0.8rem;
 }
 
-/* Document-style reading area: most space for text, A4-ish feel */
+/* Document-style reading area: most space for text, A4-ish feel. min-height: 0 så flex gir fast høyde og scroll fungerer. */
 .pageText {
   flex: 1;
-  min-height: 420px;
+  min-height: 0;
   padding: 2rem 2.5rem;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   line-height: 1.75;
   font-size: 1.05rem;
   background: rgba(248, 245, 238, 0.95);
@@ -476,4 +477,47 @@
   border-bottom: 6px solid transparent;
   left: 4px;
   top: 0;
+}
+
+/* Dark mode: kun headeren får dark mode (lys tekst på mørk bakgrunn). Resten uendret. */
+:global(html[data-theme="dark"]) .bookViewer .bookHeader {
+  background: #2e2e2e !important;
+  border-bottom-color: #444 !important;
+}
+:global(html[data-theme="dark"]) .bookViewer .bookHeaderText h2 {
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .bookViewer .bookAuthor {
+  color: #e0e0e0 !important;
+}
+:global(html[data-theme="dark"]) .bookViewer .bookDescription {
+  color: #d0d0d0 !important;
+}
+:global(html[data-theme="dark"]) .pageText {
+  background: #f8f5ee !important;
+  color: #2c2c2c !important;
+  box-shadow: inset 0 0 0 1px rgba(123, 104, 87, 0.2);
+}
+:global(html[data-theme="dark"]) .pageText *,
+:global(html[data-theme="dark"]) .pageText p,
+:global(html[data-theme="dark"]) .pageText div,
+:global(html[data-theme="dark"]) .pageText span,
+:global(html[data-theme="dark"]) .pageText h1,
+:global(html[data-theme="dark"]) .pageText h2,
+:global(html[data-theme="dark"]) .pageText h3,
+:global(html[data-theme="dark"]) .pageText h4,
+:global(html[data-theme="dark"]) .pageText h5,
+:global(html[data-theme="dark"]) .pageText h6,
+:global(html[data-theme="dark"]) .pageText a,
+:global(html[data-theme="dark"]) .pageText li,
+:global(html[data-theme="dark"]) .pageText strong,
+:global(html[data-theme="dark"]) .pageText em {
+  color: #2c2c2c !important;
+  background: transparent !important;
+}
+:global(html[data-theme="dark"]) .pageText pre,
+:global(html[data-theme="dark"]) .pageText code {
+  background: rgba(44, 44, 44, 0.08) !important;
+  color: #2c2c2c !important;
+  border: 1px solid rgba(123, 104, 87, 0.25);
 }

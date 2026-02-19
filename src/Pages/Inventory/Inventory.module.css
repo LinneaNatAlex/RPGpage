@@ -551,3 +551,15 @@
   text-shadow: 0 0 4px rgba(255, 107, 107, 0.8);
   transform: rotate(-15deg);
 }
+
+/* Dark mode: ingen ekstra bakgrunn bak teksten – ett lag */
+:global(html[data-theme="dark"]) .inventoryItem,
+:global(html[data-theme="dark"]) .inventoryItem[data-item-type="book"],
+:global(html[data-theme="dark"]) .inventoryItem[data-item-type="potion"],
+:global(html[data-theme="dark"]) .inventoryItem[data-item-type="food"] {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+:global(html[data-theme="dark"]) .inventoryItem:hover {
+  background: transparent !important;
+}

@@ -106,12 +106,12 @@ const NewsFeed = () => {
   const [newPost, setNewPost] = useState("");
   const [titles, setTitles] = useState("");
 
-  // This CHECKS if the user has the role of admin, teacher, or archivist. These roles can post news and delete posts.
+  // This CHECKS if the user has the role of admin, professor/teacher, or archivist. These roles can post news and delete posts.
   const isAdminOrTeacher =
     !loadingRoles &&
     Array.isArray(userRoles) &&
     (userRoles.includes("admin") ||
-      userRoles.includes("teacher") ||
+      (userRoles.includes("professor") || userRoles.includes("teacher")) ||
       userRoles.includes("archivist"));
 
   const fetchNews = async () => {
@@ -202,8 +202,8 @@ const NewsFeed = () => {
             let nameClass = styles.posterName;
             if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
               nameClass += ` ${styles.headmasterName}`;
-            else if (userObj?.roles?.some((r) => r.toLowerCase() === "teacher"))
-              nameClass += ` ${styles.teacherName}`;
+            else if (userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher"))
+              nameClass += ` ${styles.professorName}`;
             else if (
               userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
             )
@@ -372,9 +372,9 @@ const NewsFeed = () => {
                     )
                       nameClass += ` ${styles.headmasterName}`;
                     else if (
-                      userObj?.roles?.some((r) => r.toLowerCase() === "teacher")
+                      userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
                     )
-                      nameClass += ` ${styles.teacherName}`;
+                      nameClass += ` ${styles.professorName}`;
                     else if (
                       userObj?.roles?.some(
                         (r) => r.toLowerCase() === "archivist",

@@ -165,9 +165,9 @@ const UserList = ({ userQuery }) => {
                   if (user.roles?.some((r) => r.toLowerCase() === "headmaster"))
                     nameClass += ` ${styles.headmasterName}`;
                   else if (
-                    user.roles?.some((r) => r.toLowerCase() === "teacher")
+                    user.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
                   )
-                    nameClass += ` ${styles.teacherName}`;
+                    nameClass += ` ${styles.professorName}`;
                   else if (
                     user.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
                   )

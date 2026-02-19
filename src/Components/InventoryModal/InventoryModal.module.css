@@ -393,3 +393,13 @@
     font-size: 1rem;
   }
 }
+
+/* Dark mode: ingen ekstra bakgrunn bak teksten – ett lag */
+:global(html[data-theme="dark"]) .inventoryItem,
+:global(html[data-theme="dark"]) .inventoryItem[data-item-type="book"] {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+:global(html[data-theme="dark"]) .inventoryItem[data-item-type="book"]:hover {
+  background: transparent !important;
+}

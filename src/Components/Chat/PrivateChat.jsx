@@ -93,13 +93,16 @@ import {
   serverTimestamp,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
   where,
   limit,
+  deleteDoc,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import { playPrivateChatPling, preparePrivateChatSound } from "./ping_alt";
+import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 
 const PrivateChat = () => {
   // Mute state for varsler
@@ -280,6 +283,7 @@ const PrivateChat = () => {
   const lastMessageRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
+  const { openWithUid, setOpenWithUid } = useOpenPrivateChat();
 
   // Load active chats from Firestore on mount
   useEffect(() => {
@@ -338,7 +342,10 @@ const PrivateChat = () => {
   // Optimized: Only listen for messages from the currently selected chat
   // Remove the multiple listeners for all active chats to reduce Firebase quota usage
 
-  // Only listen for messages for the selected user when chat is open
+  // Max 20 messages in private chat (like main chat limit)
+  const MAX_PRIVATE_CHAT_MESSAGES = 20;
+
+  // Only listen for messages for the selected user when chat is open (last 20 only)
   // On mobile the panel is always visible, so subscribe whenever selectedUser is set (ignore isCollapsed)
   const isPcForSubscription =
     typeof window !== "undefined" && window.innerWidth > 768;
@@ -354,13 +361,16 @@ const PrivateChat = () => {
     const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
     const q = query(
       collection(db, "privateMessages", chatId, "messages"),
-      orderBy("timestamp"),
+      orderBy("timestamp", "desc"),
+      limit(MAX_PRIVATE_CHAT_MESSAGES),
     );
     return onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const messages = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .reverse(); // show oldest first
       setSelectedMessages(messages);
     });
   }, [currentUser, selectedUser, isCollapsed, isPcForSubscription]);
@@ -391,6 +401,48 @@ const PrivateChat = () => {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, [selectedMessages.length, scrollToLatest]);
 
+  // When notification click asks to open private chat with a user (must be before any conditional return)
+  useEffect(() => {
+    if (!openWithUid || !currentUser) return;
+    const applyUser = (userObj) => {
+      setActiveChats((prev) =>
+        prev.some((c) => c.user.uid === userObj.uid)
+          ? prev
+          : [...prev, { user: userObj, messages: [] }],
+      );
+      setSelectedUser(userObj);
+      setSearch("");
+      setIsCollapsed(false);
+      const userChatsRef = doc(db, "userChats", currentUser.uid);
+      getDoc(userChatsRef).then((snap) => {
+        const chatUids = snap.exists() ? snap.data().chats || [] : [];
+        if (!chatUids.includes(userObj.uid)) {
+          setDoc(userChatsRef, { chats: [...chatUids, userObj.uid] }, { merge: true }).catch(() => {});
+        }
+      });
+    };
+    const user = users?.find((u) => u.uid === openWithUid);
+    if (user) {
+      applyUser(user);
+      setOpenWithUid(null);
+    } else {
+      getDoc(doc(db, "users", openWithUid))
+        .then((snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            applyUser({
+              uid: openWithUid,
+              displayName: data.displayName || data.name || data.email || "Unknown",
+              email: data.email,
+              profileImageUrl: data.profileImageUrl,
+            });
+          }
+        })
+        .catch(() => {})
+        .finally(() => setOpenWithUid(null));
+    }
+  }, [openWithUid, currentUser, users]);
+
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;
   if (loading) return <div>Loading...</div>;
@@ -415,6 +467,27 @@ const PrivateChat = () => {
             ),
         )
       : [];
+
+  // Trim private chat to max N messages (delete oldest). Runs after send.
+  const trimPrivateChatToLimit = async (chatId, maxCount = MAX_PRIVATE_CHAT_MESSAGES) => {
+    try {
+      while (true) {
+        const q = query(
+          collection(db, "privateMessages", chatId, "messages"),
+          orderBy("timestamp", "asc"),
+          limit(100),
+        );
+        const snap = await getDocs(q);
+        if (snap.size <= maxCount) break;
+        const toDelete = snap.docs.slice(0, snap.size - maxCount);
+        for (const d of toDelete) {
+          await deleteDoc(d.ref);
+        }
+      }
+    } catch (err) {
+      // Non-blocking; ignore trim errors
+    }
+  };
 
   // Add new private chat
   const addChat = async (user) => {
@@ -505,6 +578,9 @@ const PrivateChat = () => {
         potionEffects:
           Object.keys(potionEffects).length > 0 ? potionEffects : null,
       });
+
+      // Keep only last 20 messages in this chat
+      trimPrivateChatToLimit(chatId).catch(() => {});
 
       // Notify recipient
       const fromDisplayName =

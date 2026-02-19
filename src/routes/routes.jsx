@@ -44,7 +44,7 @@ import Shop from "../Components/Shop/Shop.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import { Navigate } from "react-router-dom";
 import Admin from "../Pages/Admin.jsx";
-import Teacher from "../Pages/Teacher.jsx";
+import Professor from "../Pages/Professor.jsx";
 import AgeRestrictedForum from "../Components/Forum/AgeRestrictedForum";
 import DetentionGuard from "../Components/Forum/DetentionGuard";
 
@@ -58,14 +58,14 @@ const ForumWithOptional18Guard = () => {
   );
 };
 
-const TeacherRouteGuard = ({ children }) => {
+const ProfessorRouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
   const { roles, rolesLoading } = useUserRoles();
   if (loading || rolesLoading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/sign-in" />;
   if (
     !(
-      roles.includes("teacher") ||
+      roles.includes("professor") || roles.includes("teacher") ||
       roles.includes("admin") ||
       roles.includes("archivist") ||
       roles.includes("headmaster")
@@ -220,11 +220,11 @@ export const router = createBrowserRouter(
         }
       />
       <Route
-        path="teacher"
+        path="professor"
         element={
-          <TeacherRouteGuard>
-            <Teacher />
-          </TeacherRouteGuard>
+          <ProfessorRouteGuard>
+            <Professor />
+          </ProfessorRouteGuard>
         }
       />
       <Route

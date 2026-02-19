@@ -9,7 +9,7 @@ const CACHE_DURATION = 5000; // 5 seconds cache
 
 const useTopicCounts = () => {
   const [topicCounts, setTopicCounts] = useState({
-    commonroom: 0,
+    commons: 0,
     ritualroom: 0,
     moongarden: 0,
     bloodbank: 0,
@@ -38,7 +38,7 @@ const useTopicCounts = () => {
         // Always fetch fresh data on first load
         setLoading(true);
         const counts = {
-          commonroom: 0,
+          commons: 0,
           ritualroom: 0,
           moongarden: 0,
           bloodbank: 0,
@@ -69,7 +69,7 @@ const useTopicCounts = () => {
           '18plus'
         ];
 
-        // Race-specific commonrooms
+        // Race-specific commons (Firestore: elf_commonroom etc.)
         const raceCommonrooms = ['elf_commonroom', 'witch_commonroom', 'vampire_commonroom', 'werewolf_commonroom'];
 
         // Fetch topic counts for each room
@@ -83,17 +83,17 @@ const useTopicCounts = () => {
           }
         }
 
-        // Fetch topic counts for race-specific commonrooms and combine them
-        let totalCommonroomTopics = 0;
+        // Fetch topic counts for race-specific commons (elf_commonroom etc.) and combine
+        let totalCommonsTopics = 0;
         for (const room of raceCommonrooms) {
           try {
             const topicsRef = collection(db, `forums/${room}/topics`);
             const topicsSnap = await getDocs(topicsRef);
-            totalCommonroomTopics += topicsSnap.size;
+            totalCommonsTopics += topicsSnap.size;
           } catch (error) {
           }
         }
-        counts.commonroom = totalCommonroomTopics;
+        counts.commons = totalCommonsTopics;
 
         // Cache the results
         cachedTopicCounts = counts;

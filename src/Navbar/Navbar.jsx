@@ -84,9 +84,9 @@ const Navbar = () => {
               </span>
               <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
                 <NavLink to="/Rpg/GreatHall">Starshade Hall</NavLink>
-                <NavLink to="/forum/commonroom">
-                  <span>Commonroom</span>
-                  <span>({topicCounts.commonroom || 0})</span>
+                <NavLink to="/forum/commons">
+                  <span>Commons</span>
+                  <span>({topicCounts.commons || 0})</span>
                 </NavLink>
                 <NavLink to="/forum/ritualroom">
                   <span>Ritual Room</span>
@@ -190,10 +190,10 @@ const Navbar = () => {
               {/* Removed Alchemy & Potions from dropdown */}
             </div>
             {roles.includes("admin") && <NavLink to="/admin">Admin</NavLink>}{" "}
-            {(roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist") || roles.includes("headmaster")) && (
-              <NavLink to="/teacher">TeacherPanel</NavLink>
+            {(roles.includes("professor") || roles.includes("teacher") || roles.includes("admin") || roles.includes("archivist") || roles.includes("headmaster")) && (
+              <NavLink to="/professor">Professor Panel</NavLink>
             )}{" "}
-            {/* Shows the Admin link only for admin, TeacherPanel for teacher/admin */}
+            {/* Shows the Admin link only for admin, Professor Panel for professor/admin */}
             {/* Makes the butten only avalible when logged in */}
             <button onClick={handleSignOut} className={styles.signOutBtn}>
               Exit

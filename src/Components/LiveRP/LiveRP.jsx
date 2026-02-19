@@ -62,7 +62,7 @@ const LiveRP = () => {
         const roles = data.roles || [];
         setIsPrivilegedUser(
           roles.includes("admin") ||
-          roles.includes("teacher") ||
+          (roles.includes("professor") || roles.includes("teacher")) ||
           roles.includes("headmaster") ||
           roles.includes("shadowpatrol")
         );
@@ -421,9 +421,9 @@ const LiveRP = () => {
                 )
                   nameClass += ` ${styles.headmasterName}`;
                 else if (
-                  userObj?.roles?.some((r) => r.toLowerCase() === "teacher")
+                  userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
                 )
-                  nameClass += ` ${styles.teacherName}`;
+                  nameClass += ` ${styles.professorName}`;
                 else if (
                   userObj?.roles?.some(
                     (r) => r.toLowerCase() === "shadowpatrol",
@@ -440,7 +440,7 @@ const LiveRP = () => {
                   nameClass += ` ${styles.archivistName}`;
                 const staffRedText =
                   userObj?.roles?.some((r) => r.toLowerCase() === "headmaster") ||
-                  userObj?.roles?.some((r) => r.toLowerCase() === "teacher") ||
+                  userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher") ||
                   userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol");
                 return (
                   <div key={message.id} className={styles.message}>

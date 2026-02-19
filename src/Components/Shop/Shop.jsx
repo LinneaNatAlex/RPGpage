@@ -45,12 +45,12 @@ const Shop = ({ open = true }) => {
   const { user } = useAuth();
   const { userData } = useUserData();
   const { roles } = useUserRoles();
-  // Potions/Ingredients kun synlig og kjøpbare for admin, headmaster, teacher (ikke archivist)
+  // Potions/Ingredients kun synlig og kjøpbare for admin, headmaster, professor (ikke archivist)
   const canAccessPotionsCategory =
     user &&
     (roles?.some((r) => String(r).toLowerCase() === "admin") ||
       roles?.some((r) => String(r).toLowerCase() === "headmaster") ||
-      roles?.some((r) => String(r).toLowerCase() === "teacher"));
+      roles?.some((r) => String(r).toLowerCase() === "professor" || String(r).toLowerCase() === "teacher"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
@@ -486,25 +486,6 @@ const Shop = ({ open = true }) => {
                     )}
                 </div>
                 <div className={styles.itemActions}>
-                  {itemWithImage.type === "book" && (
-                    <div className={styles.bookLikeRow}>
-                      <button
-                        type="button"
-                        className={styles.bookLikeButton}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBookLike(itemWithImage);
-                        }}
-                        title={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
-                        aria-label={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
-                      >
-                        {(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "❤️" : "🤍"}
-                      </button>
-                      {Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.length > 0 && (
-                        <span className={styles.bookLikeCount}>{itemWithImage.likedBy.length}</span>
-                      )}
-                    </div>
-                  )}
                   <span className={styles.itemPrice}>
                     {itemWithImage.price} Nits
                   </span>
@@ -526,7 +507,7 @@ const Shop = ({ open = true }) => {
                         Buy
                       </button>
                     )}
-                    {/* Delete button for Firestore items (admin/headmaster/teacher) */}
+                    {/* Delete button for Firestore items (admin/headmaster/professor) */}
                     {itemWithImage.firestore && canAccessPotionsCategory && (
                       <button
                         className={styles.deleteBtn}
@@ -567,6 +548,25 @@ const Shop = ({ open = true }) => {
                       </button>
                     )}
                   </div>
+                  {itemWithImage.type === "book" && (
+                    <div className={styles.bookLikeRow}>
+                      <button
+                        type="button"
+                        className={styles.bookLikeButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookLike(itemWithImage);
+                        }}
+                        title={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                        aria-label={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                      >
+                        {(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "❤️" : "🤍"}
+                      </button>
+                      {Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.length > 0 && (
+                        <span className={styles.bookLikeCount}>{itemWithImage.likedBy.length}</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </li>
             );

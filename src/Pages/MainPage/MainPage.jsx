@@ -118,7 +118,7 @@ const MainPage = () => {
               <div className={styles.featureCard}>
                 <h3 className={styles.featureCardTitle}>Mystical Classes</h3>
                 <p className={styles.featureCardText}>
-                  Attend classes like Alchemy, Potions, Astronomy, Ancient Languages, 
+                  Attend classes like Alchemy, Potions, Astronomy, Ancient Languages & World Culture, 
                   and more. Each class offers unique knowledge and rewards. Learn the 
                   arts that shape the magical world and earn points for your house.
                 </p>
@@ -253,7 +253,7 @@ const MainPage = () => {
     <section className={styles.introductionPage}>
       <AnnouncementBanner user={user} />
       {user?.roles?.includes("admin") ||
-      user?.roles?.includes("teacher") ||
+      (user?.roles?.includes("professor") || user?.roles?.includes("teacher")) ||
       user?.roles?.includes("archivist") ? (
         <AnnouncementAdmin user={user} />
       ) : null}

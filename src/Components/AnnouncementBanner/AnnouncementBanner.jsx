@@ -82,7 +82,7 @@ export default function AnnouncementBanner({ user }) {
                 <React.Fragment key={a.id}>
                   {a.text}
                   {user?.roles?.includes("admin") ||
-                  user?.roles?.includes("teacher") ? (
+                  (user?.roles?.includes("professor") || user?.roles?.includes("teacher")) ? (
                     <button
                       className={styles.deleteBtn}
                       onClick={() => handleDelete(a.id)}

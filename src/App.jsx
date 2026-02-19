@@ -22,6 +22,7 @@ import Navbar from "./Navbar/Navbar";
 import PrivateChat from "./Components/Chat/PrivateChat";
 import Chat from "./Components/Chat/Chat";
 import TopBar from "./Components/TopBar/TopBar";
+import { OpenPrivateChatProvider } from "./context/openPrivateChatContext";
 import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
 import "./utils/dailyPetDiscoveryScheduler"; // Daily pet discovery system
@@ -115,6 +116,19 @@ function App() {
     // TODO: Implement more efficient private chat notifications
     // Consider using Firebase Cloud Messaging instead of realtime listeners
   }, [user, lastPrivateMessageId, lastPingTime]);
+
+  // Sync data-theme to <html> so IE/Edge/all browsers get same dark/pink styles
+  const isDark = globalDarkMode || (darkModeUntil && typeof darkModeUntil === "number" && darkModeUntil > Date.now());
+  useEffect(() => {
+    const html = document.documentElement;
+    if (globalPinkMode) {
+      html.setAttribute("data-theme", "pink");
+    } else if (isDark) {
+      html.setAttribute("data-theme", "dark");
+    } else {
+      html.removeAttribute("data-theme");
+    }
+  }, [isDark, globalPinkMode]);
 
   // Load global site config (dark mode, pink mode – leses for alle så tema lastes med en gang)
   useEffect(() => {
@@ -250,84 +264,95 @@ function App() {
         /* VIP Themes */
         ${vipThemeCSS}
         
-        /* Dark Mode: global (admin) eller potion per bruker */
+        /* Dark Mode: samme palett som Chrome i alle browsere (IE, Edge, Safari, etc.) */
         ${
           globalDarkMode ||
           (darkModeUntil &&
             typeof darkModeUntil === "number" &&
             darkModeUntil > Date.now())
             ? `
-          [data-theme="dark"] {
-            background: #1a1a1a !important;
+          /* Samme mørke gråtoner – sidens bakgrunn litt lysere så det ikke blir «svart vs grått» */
+          html[data-theme="dark"], [data-theme="dark"] { background: #252525 !important; }
+          html[data-theme="dark"], html[data-theme="dark"] body,
+          html[data-theme="dark"] div, html[data-theme="dark"] span, html[data-theme="dark"] p,
+          html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3,
+          html[data-theme="dark"] h4, html[data-theme="dark"] h5, html[data-theme="dark"] h6,
+          html[data-theme="dark"] a, html[data-theme="dark"] button, html[data-theme="dark"] label,
+          html[data-theme="dark"] li, html[data-theme="dark"] ul, html[data-theme="dark"] ol,
+          html[data-theme="dark"] td, html[data-theme="dark"] th, html[data-theme="dark"] table,
+          html[data-theme="dark"] tr, html[data-theme="dark"] thead, html[data-theme="dark"] tbody,
+          html[data-theme="dark"] strong, html[data-theme="dark"] em,
+          html[data-theme="dark"] nav, html[data-theme="dark"] header, html[data-theme="dark"] footer,
+          html[data-theme="dark"] main, html[data-theme="dark"] section, html[data-theme="dark"] article {
+            background: #252525 !important;
+            color: #f5f5f5 !important;
           }
-          html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, ul, ol, td, th, table, tr, thead, tbody, tfoot, caption, strong, em, b, i, u, small, big, code, pre, blockquote, cite, time, mark, del, ins, sub, sup, dfn, abbr, acronym, address, q, samp, kbd, var, output, progress, meter, details, summary, dialog, menu, menuitem, nav, header, footer, main, section, article, aside, figure, figcaption {
-            background: #1a1a1a !important;
-            color: #e0e0e0 !important;
-          }
-          .navbar, .topbar, .inventory, .chat, .sidebar, .main-content, .container, .wrapper {
-            background: #2a2a2a !important;
+          html[data-theme="dark"] .navbar, html[data-theme="dark"] .topbar,
+          html[data-theme="dark"] .inventory, html[data-theme="dark"] .chat,
+          html[data-theme="dark"] .sidebar {
+            background: #2e2e2e !important;
             border-color: #444 !important;
           }
-          /* ReactQuill Dark Mode */
-          .ql-editor, .ql-container, .ql-toolbar {
-            background: #2a2a2a !important;
-            color: #e0e0e0 !important;
+          /* Innholdsområde uten egen bakgrunn – samme som side */
+          html[data-theme="dark"] .main-content,
+          html[data-theme="dark"] .container,
+          html[data-theme="dark"] .wrapper {
+            background: transparent !important;
+            border-color: transparent !important;
+          }
+          html[data-theme="dark"] .ql-editor, html[data-theme="dark"] .ql-container,
+          html[data-theme="dark"] .ql-toolbar {
+            background: #2e2e2e !important;
+            color: #f5f5f5 !important;
             border-color: #444 !important;
           }
-          .ql-editor {
-            background: #1a1a1a !important;
+          html[data-theme="dark"] .ql-editor { background: #252525 !important; }
+          html[data-theme="dark"] .ql-toolbar {
+            background: #2e2e2e !important;
+            border-bottom: 1px solid #a88800 !important;
           }
-          .ql-toolbar {
-            background: #2a2a2a !important;
-            border-bottom: 1px solid #444 !important;
+          html[data-theme="dark"] .ql-toolbar .ql-stroke { stroke: #f5f5f5 !important; }
+          html[data-theme="dark"] .ql-toolbar .ql-fill { fill: #f5f5f5 !important; }
+          html[data-theme="dark"] .ql-toolbar button { color: #f5f5f5 !important; }
+          html[data-theme="dark"] .ql-toolbar button:hover { background: #383838 !important; }
+          html[data-theme="dark"] .ql-toolbar button.ql-active { background: #a88800 !important; }
+          html[data-theme="dark"] .ql-toolbar .ql-picker-label { color: #f5f5f5 !important; }
+          html[data-theme="dark"] .ql-toolbar .ql-picker-options {
+            background: #2e2e2e !important;
+            border: 1px solid #a88800 !important;
           }
-          .ql-toolbar .ql-stroke {
-            stroke: #e0e0e0 !important;
+          html[data-theme="dark"] .ql-toolbar .ql-picker-item { color: #f5f5f5 !important; }
+          html[data-theme="dark"] .ql-toolbar .ql-picker-item:hover { background: #383838 !important; }
+          html[data-theme="dark"] input, html[data-theme="dark"] textarea, html[data-theme="dark"] select {
+            background-color: #383838 !important;
+            color: #f5f5f5 !important;
+            border: 1px solid #555 !important;
           }
-          .ql-toolbar .ql-fill {
-            fill: #e0e0e0 !important;
+          html[data-theme="dark"] input::placeholder,
+          html[data-theme="dark"] textarea::placeholder { color: #e0e0e0 !important; }
+          html[data-theme="dark"] input:-webkit-autofill,
+          html[data-theme="dark"] input:-webkit-autofill:hover,
+          html[data-theme="dark"] input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #f5f5f5 !important;
+            -webkit-box-shadow: 0 0 0 30px #383838 inset !important;
+            box-shadow: 0 0 0 30px #383838 inset !important;
+            background-color: #383838 !important;
           }
-          .ql-toolbar button {
-            color: #e0e0e0 !important;
+          /* Ekstra: fang opp alle mørke tekster (News, Welcome, seksjoner) */
+          html[data-theme="dark"] main,
+          html[data-theme="dark"] main *,
+          html[data-theme="dark"] [class*="introduction"],
+          html[data-theme="dark"] [class*="newsFeed"],
+          html[data-theme="dark"] [class*="newsContainer"],
+          html[data-theme="dark"] [class*="newsAdmin"],
+          html[data-theme="dark"] [class*="welcome"],
+          html[data-theme="dark"] [class*="section-card"] {
+            color: #f5f5f5 !important;
           }
-          .ql-toolbar button:hover {
-            background: #444 !important;
-          }
-          .ql-toolbar button.ql-active {
-            background: #555 !important;
-          }
-          .ql-toolbar .ql-picker-label {
-            color: #e0e0e0 !important;
-          }
-          .ql-toolbar .ql-picker-options {
-            background: #2a2a2a !important;
-            border: 1px solid #444 !important;
-          }
-          .ql-toolbar .ql-picker-item {
-            color: #e0e0e0 !important;
-          }
-          .ql-toolbar .ql-picker-item:hover {
-            background: #444 !important;
-          }
-          /* Innlogging/sign-up: input og textarea inni theme-container – overstyr moduler og autofill */
-          [data-theme="dark"] input,
-          [data-theme="dark"] textarea,
-          [data-theme="dark"] select {
-            background-color: #2a2a2a !important;
-            color: #e0e0e0 !important;
-            border-color: #555 !important;
-          }
-          [data-theme="dark"] input::placeholder,
-          [data-theme="dark"] textarea::placeholder {
-            color: #999 !important;
-          }
-          [data-theme="dark"] input:-webkit-autofill,
-          [data-theme="dark"] input:-webkit-autofill:hover,
-          [data-theme="dark"] input:-webkit-autofill:focus {
-            -webkit-text-fill-color: #e0e0e0 !important;
-            -webkit-box-shadow: 0 0 0 30px #2a2a2a inset !important;
-            box-shadow: 0 0 0 30px #2a2a2a inset !important;
-            background-color: #2a2a2a !important;
+          html[data-theme="dark"] main [class*="Wrapper"],
+          html[data-theme="dark"] main [class*="Container"] {
+            background: transparent !important;
+            border-color: transparent !important;
           }
         `
             : ""
@@ -491,6 +516,7 @@ function App() {
       `}</style>
 
       <RotateDevicePopup />
+      <OpenPrivateChatProvider>
       <MobileLayout>
         <div
           className={styles.rootContainer}
@@ -524,6 +550,7 @@ function App() {
           {user && <DetentionPopup />}
         </div>
       </MobileLayout>
+      </OpenPrivateChatProvider>
     </>
   );
 }

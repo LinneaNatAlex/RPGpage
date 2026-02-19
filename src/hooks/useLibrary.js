@@ -10,7 +10,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-/** Library (tips). Write access: Firestore rules allow admin, headmaster, teacher, archivist. */
+/** Library (tips). Write access: Firestore rules allow admin, headmaster, professor, archivist. */
 const useLibrary = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);

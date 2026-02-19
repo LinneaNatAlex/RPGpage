@@ -13,6 +13,11 @@ export default function RulesList() {
         Choose a category to read the full rules.
       </p>
       <ul className={styles.list}>
+        <li key="/library" className={styles.item}>
+          <Link to="/library" className={styles.linkLibrary}>
+            Library (tips you should know)
+          </Link>
+        </li>
         {RULES_LINKS.map(({ path, label }) => (
           <li key={path} className={styles.item}>
             <Link to={path} className={styles.link}>

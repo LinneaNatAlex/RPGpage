@@ -10,25 +10,25 @@ const ROLES = [
       "Leads the magical school. Can edit class descriptions and class info in classrooms. Highest authority in the role hierarchy. Names appear in white on the site.",
   },
   {
-    name: "Teacher",
+    name: "Professor",
     color: "gold",
     colorLabel: "Gold",
     description:
-      "Runs classrooms, can delete messages in class chat, edit class info, and post news. Has access to the Teacher panel and classroom management. Names appear in gold.",
+      "Runs classrooms, can delete messages in class chat, edit class info, and post news. Has access to the Professor panel and classroom management. Names appear in gold.",
   },
   {
     name: "Admin",
     color: "#ff5e5e",
     colorLabel: "Red",
     description:
-      "Full site management: Admin panel (users, shop products, announcements), age verification requests, and all teacher abilities. Names appear in red.",
+      "Full site management: Admin panel (users, shop products, announcements), age verification requests, and all professor abilities. Names appear in red.",
   },
   {
     name: "Archivist",
     color: "#a084e8",
     colorLabel: "Purple",
     description:
-      "Curates content: can post and delete news, access teacher-related areas, and test shop items (e.g. potions). Names appear in purple.",
+      "Curates content: can post and delete news, access professor-related areas, and test shop items (e.g. potions). Names appear in purple.",
   },
   {
     name: "Shadow Patrol",

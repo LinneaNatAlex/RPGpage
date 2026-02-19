@@ -245,3 +245,30 @@ body::-webkit-scrollbar-track,
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 }
+
+/* Dark mode: preserve role colors on names (online list, maps, chats, classroom, profiles) */
+html[data-theme="dark"] .headmasterName,
+html[data-theme="dark"] .headmasterSender {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .professorName,
+html[data-theme="dark"] .professorSender {
+  color: gold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .shadowPatrolName,
+html[data-theme="dark"] .shadowPatrolSender {
+  color: #1ecb8c !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .adminName,
+html[data-theme="dark"] .adminSender {
+  color: #ff5e5e !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .archivistName,
+html[data-theme="dark"] .archivistSender {
+  color: #a084e8 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}

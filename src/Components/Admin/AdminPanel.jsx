@@ -60,6 +60,7 @@ export default function AdminPanel() {
   const [unfaintStatus, setUnfaintStatus] = useState("");
   const [potionClearStatus, setPotionClearStatus] = useState("");
   const [chatClearStatus, setChatClearStatus] = useState("");
+  const [privateChatClearStatus, setPrivateChatClearStatus] = useState("");
 
   // Rediger bruker: navn, klassetrinn, rase, roller
   const [editDisplayName, setEditDisplayName] = useState("");
@@ -69,8 +70,8 @@ export default function AdminPanel() {
   const [editLeadForRole, setEditLeadForRole] = useState("");
   const [editUserStatus, setEditUserStatus] = useState("");
   const [roleToRemove, setRoleToRemove] = useState("");
-  const AVAILABLE_ROLES = ["user", "admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
-  const REMOVABLE_ROLES = ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"];
+  const AVAILABLE_ROLES = ["user", "admin", "professor", "headmaster", "shadowpatrol", "archivist"];
+  const REMOVABLE_ROLES = ["admin", "professor", "headmaster", "shadowpatrol", "archivist"];
   const LEADABLE_ROLES = [
     { value: "archivist", label: "Archivist" },
     { value: "shadowpatrol", label: "Shadow Patrol" },
@@ -140,7 +141,7 @@ export default function AdminPanel() {
       setEditRace(selected.race || "");
       setEditRoles(
         Array.isArray(selected.roles)
-          ? Array.from(new Set([...selected.roles.map((r) => String(r).toLowerCase()), "user"]))
+          ? Array.from(new Set([...selected.roles.map((r) => { const lower = String(r).toLowerCase(); return lower === "teacher" ? "professor" : lower; }), "user"]))
           : ["user"]
       );
       setEditLeadForRole(selected.leadForRole || "");
@@ -248,12 +249,12 @@ export default function AdminPanel() {
     if (!selected) return;
     if (
       !roles.includes("admin") &&
-      !roles.includes("teacher") &&
+      !(roles.includes("professor") || roles.includes("teacher")) &&
       !roles.includes("shadowpatrol") &&
       !roles.includes("headmaster")
     ) {
       setDetentionStatus(
-        "Only admin, teacher, shadow patrol, or headmaster can assign detention."
+        "Only admin, professor, shadow patrol, or headmaster can assign detention."
       );
       return;
     }
@@ -280,12 +281,12 @@ export default function AdminPanel() {
     if (!selected) return;
     if (
       !roles.includes("admin") &&
-      !roles.includes("teacher") &&
+      !(roles.includes("professor") || roles.includes("teacher")) &&
       !roles.includes("shadowpatrol") &&
       !roles.includes("headmaster")
     ) {
       setDetentionStatus(
-        "Only admin, teacher, shadow patrol, or headmaster can clear detention."
+        "Only admin, professor, shadow patrol, or headmaster can clear detention."
       );
       return;
     }
@@ -431,7 +432,7 @@ export default function AdminPanel() {
       const isGraduated = classVal === "graduated";
       const yearNum = isGraduated ? 7 : parseInt(editClass, 10) || 1;
       const newName = (editDisplayName || "").trim() || selected.displayName;
-      const isTeacher = editRoles.includes("teacher");
+      const isProfessor = editRoles.includes("professor") || editRoles.includes("teacher");
       const update = {
         displayName: newName,
         class: isGraduated ? "Graduated" : editClass,
@@ -439,7 +440,7 @@ export default function AdminPanel() {
         year: yearNum,
         race: editRace || selected.race,
         roles: Array.from(new Set([...editRoles, "user"])),
-        leadForRole: isTeacher && editLeadForRole ? editLeadForRole : null,
+        leadForRole: isProfessor && editLeadForRole ? editLeadForRole : null,
       };
       await updateDoc(ref, update);
       setSelected({ ...selected, ...update });
@@ -493,6 +494,41 @@ export default function AdminPanel() {
       );
     } catch (error) {
       setChatClearStatus(`Error: ${error.message}`);
+    }
+  }
+
+  async function clearAllPrivateChatMessages() {
+    if (!roles.includes("admin")) {
+      setPrivateChatClearStatus("Only admin can clear private chats.");
+      return;
+    }
+    setPrivateChatClearStatus("Clearing…");
+    try {
+      const privateChatsRef = collection(db, "privateMessages");
+      const chatsSnap = await getDocs(privateChatsRef);
+      let totalDeleted = 0;
+      const BATCH_SIZE = 500;
+      for (const chatDoc of chatsSnap.docs) {
+        const chatId = chatDoc.id;
+        const messagesRef = collection(db, "privateMessages", chatId, "messages");
+        while (true) {
+          const snap = await getDocs(messagesRef);
+          if (snap.empty) break;
+          const batch = writeBatch(db);
+          const toDelete = snap.docs.slice(0, BATCH_SIZE);
+          toDelete.forEach((d) => batch.delete(d.ref));
+          await batch.commit();
+          totalDeleted += toDelete.length;
+          if (toDelete.length < BATCH_SIZE) break;
+        }
+      }
+      setPrivateChatClearStatus(
+        totalDeleted > 0
+          ? `Done. Deleted ${totalDeleted} private chat message(s).`
+          : "No private chat messages found."
+      );
+    } catch (error) {
+      setPrivateChatClearStatus(`Error: ${error.message}`);
     }
   }
 
@@ -615,13 +651,13 @@ export default function AdminPanel() {
       {roles.includes("admin") && <RulesAdmin />}
 
       {(roles.includes("admin") ||
-        roles.includes("teacher") ||
+        (roles.includes("professor") || roles.includes("teacher")) ||
         roles.includes("archivist")) && (
         <ShopProductAdmin
           restrictToBooksOnly={
             roles.includes("archivist") &&
             !roles.includes("admin") &&
-            !roles.includes("teacher")
+            !(roles.includes("professor") || roles.includes("teacher"))
           }
         />
       )}
@@ -1013,7 +1049,7 @@ export default function AdminPanel() {
                   The &quot;user&quot; role is always kept. Use the dropdown to remove a single role.
                 </p>
               </div>
-              {editRoles.includes("teacher") && (
+              {(editRoles.includes("professor") || editRoles.includes("teacher")) && (
                 <div>
                   <div style={{ marginBottom: 6 }}>
                     <span style={{ fontWeight: 600, color: theme.text }}>Lead for segment</span>
@@ -1040,7 +1076,7 @@ export default function AdminPanel() {
                     ))}
                   </select>
                   <p style={{ fontSize: "0.8rem", color: theme.secondaryText, marginTop: 4 }}>
-                    Only one teacher can be lead per segment. Gives access to segment overview and tasks in Teacher Panel.
+                    Only one professor can be lead per segment. Gives access to segment overview and tasks in Professor Panel.
                   </p>
                 </div>
               )}
@@ -1627,8 +1663,8 @@ export default function AdminPanel() {
               <div style={{ color: "#ffd86b" }}>User's IP is banned</div>
             )}
 
-            {/* Detention Controls - only admin, teacher, shadow patrol, headmaster (not archivist) */}
-            {(roles.includes("admin") || roles.includes("teacher") || roles.includes("shadowpatrol") || roles.includes("headmaster")) && (
+            {/* Detention Controls - only admin, professor, shadow patrol, headmaster (not archivist) */}
+            {(roles.includes("admin") || roles.includes("professor") || roles.includes("teacher") || roles.includes("shadowpatrol") || roles.includes("headmaster")) && (
             <div
               style={{
                 marginTop: 20,
@@ -1722,8 +1758,8 @@ export default function AdminPanel() {
       )}
       {status && <div style={{ color: "#ff0", marginTop: 8 }}>{status}</div>}
 
-      {/* Points management section – admin and teacher only; archivists manage only books */}
-      {(roles.includes("admin") || roles.includes("teacher")) && (
+      {/* Points management section – admin and professor only; archivists manage only books */}
+      {(roles.includes("admin") || roles.includes("professor") || roles.includes("teacher")) && (
         <div
           style={{
             marginTop: 24,
@@ -1911,6 +1947,53 @@ export default function AdminPanel() {
           {chatClearStatus && (
             <div style={{ marginTop: 12, fontSize: "0.9rem", color: theme.secondaryText }}>
               {chatClearStatus}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Private chat – clear all messages (admin only) */}
+      {roles.includes("admin") && (
+        <div
+          style={{
+            marginTop: 24,
+            padding: 20,
+            background: "rgba(245, 239, 224, 0.1)",
+            borderRadius: 0,
+            border: `2px solid ${theme.border}`,
+          }}
+        >
+          <h3
+            style={{
+              color: theme.secondaryText,
+              fontSize: "1.2rem",
+              fontFamily: '"Cinzel", serif',
+              marginBottom: 12,
+            }}
+          >
+            Private chat
+          </h3>
+          <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
+            Remove all private chat messages from Firestore (all conversations). This cannot be undone.
+          </p>
+          <button
+            type="button"
+            onClick={clearAllPrivateChatMessages}
+            style={{
+              padding: "10px 20px",
+              background: "#c62828",
+              color: "#fff",
+              border: "none",
+              borderRadius: 0,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Clear all private chat messages
+          </button>
+          {privateChatClearStatus && (
+            <div style={{ marginTop: 12, fontSize: "0.9rem", color: theme.secondaryText }}>
+              {privateChatClearStatus}
             </div>
           )}
         </div>

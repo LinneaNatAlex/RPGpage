@@ -24,7 +24,7 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
   const [loading, setLoading] = useState(true);
 
   // Check if user has permission
-  const canEditQuiz = roles.includes("teacher") || roles.includes("admin");
+  const canEditQuiz = roles.includes("professor") || roles.includes("teacher") || roles.includes("admin");
 
   useEffect(() => {
     const loadQuiz = async () => {

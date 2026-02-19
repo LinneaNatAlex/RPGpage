@@ -1,10 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext.jsx";
 import useUserRoles from "../../hooks/useUserRoles";
+import useUserData from "../../hooks/useUserData";
+import useNotifications from "../../hooks/useNotifications";
+import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import React, { Suspense } from "react";
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { cacheHelpers } from "../../utils/firebaseCache";
 const Chat = React.lazy(() => import("../Chat/Chat"));
 const PrivateChat = React.lazy(() => import("../Chat/PrivateChat"));
 const RPGClock = React.lazy(() => import("../RPGClock/RPGClock"));
@@ -17,7 +23,7 @@ const PROTECTED_PATHS = [
   "/Rpg",
   "/shop",
   "/admin",
-  "/teacher",
+  "/professor",
   "/housepoints",
   "/inventory",
 ];
@@ -56,6 +62,12 @@ const RULES_PATHS = [
 ];
 const isRulesPage = (pathname) =>
   RULES_PATHS.some((p) => pathname === p || pathname === p + "/");
+const isRulesOrLibraryPage = (pathname) =>
+  pathname === "/rules" ||
+  pathname === "/library" ||
+  pathname === "/rules/" ||
+  pathname === "/library/" ||
+  isRulesPage(pathname);
 
 import "./MobileLayout.css";
 
@@ -74,6 +86,9 @@ const MobileLayout = ({ children }) => {
     overlaySetter(true);
   };
   const { user, loading: authLoading } = useAuth();
+  const { userData } = useUserData();
+  const { notifications, recentNews, markAllAsRead, unreadCount } = useNotifications(user, userData);
+  const { setOpenWithUid } = useOpenPrivateChat();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(false);
@@ -82,6 +97,20 @@ const MobileLayout = ({ children }) => {
   const [showPrivateChat, setShowPrivateChat] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showForumSelection, setShowForumSelection] = useState(false);
+  const [showSegmentSchedule, setShowSegmentSchedule] = useState(false);
+  const [showNotificationsPopup, setShowNotificationsPopup] = useState(false);
+  const notificationsPopupRef = useRef(null);
+
+  useEffect(() => {
+    if (!showNotificationsPopup) return;
+    const handleClick = (e) => {
+      if (notificationsPopupRef.current && !notificationsPopupRef.current.contains(e.target)) {
+        setShowNotificationsPopup(false);
+      }
+    };
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [showNotificationsPopup]);
 
   // Check if device is mobile
   useEffect(() => {
@@ -197,21 +226,20 @@ const MobileLayout = ({ children }) => {
           <div className="mobile-logo-section">
             <h1 className="mobile-logo-text">Vayloria</h1>
           </div>
-          <SegmentSchedulePopup />
         </div>
       </header>
 
       {/* Mobile Main Content - TopBar not shown on mobile per design */}
       <main className="mobile-main">
-        {/* Back to rules list when viewing a rule page */}
-        {isRulesPage(location.pathname) && (
+        {/* Back to rules list when viewing a rule page or Library */}
+        {isRulesOrLibraryPage(location.pathname) && location.pathname !== "/rules" && location.pathname !== "/rules/" && (
           <div className="mobile-rules-back-bar">
             <button
               type="button"
               className="mobile-rules-back-btn"
               onClick={() => navigate("/rules")}
             >
-              ← Choose another rule
+              ← {location.pathname === "/library" || location.pathname === "/library/" ? "Back to Rules & Library" : "Choose another rule"}
             </button>
           </div>
         )}
@@ -258,8 +286,8 @@ const MobileLayout = ({ children }) => {
         )}
       </main>
 
-      {/* Mobile Dashboard Button - Hide when chat is open */}
-      {!showChat && (
+      {/* Mobile Dashboard Button - Only when logged in, hide when chat is open */}
+      {user && !showChat && (
         <div className="mobile-dashboard-button">
           <button
             className="mobile-dashboard-btn"
@@ -284,21 +312,138 @@ const MobileLayout = ({ children }) => {
         </div>
       )}
 
+      {/* Archivist / Shadow Patrol modal (opened from menu) */}
+      <SegmentSchedulePopup
+        open={showSegmentSchedule}
+        onOpenChange={setShowSegmentSchedule}
+      />
+
       {/* Mobile Dashboard Overlay */}
       {showDashboard && (
         <div className="mobile-dashboard-overlay">
           <div className="mobile-dashboard-header">
             <h2>Navigation</h2>
-            <button
-              className="mobile-dashboard-close"
-              onClick={() => {
-                setShowDashboard(false);
-                navigate("/");
-                setActiveTab("home");
-              }}
-            >
-              ✕
-            </button>
+            <div className="mobile-dashboard-header-actions">
+              {user && (
+                <div className="mobile-menu-notification-wrap" ref={notificationsPopupRef}>
+                  <button
+                    type="button"
+                    className="mobile-menu-notification-bell"
+                    onClick={() => setShowNotificationsPopup((v) => !v)}
+                    title="Notifications"
+                    aria-label="Notifications"
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+                    </svg>
+                    {unreadCount > 0 && (
+                      <span className="mobile-menu-notification-badge">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  {showNotificationsPopup && (
+                    <div className="mobile-menu-notification-popup">
+                      <div className="mobile-menu-notification-popup-header">
+                        <span>Notifications</span>
+                        {notifications.filter((n) => !n.read).length > 0 && (
+                          <button
+                            type="button"
+                            className="mobile-menu-notification-mark-read"
+                            onClick={() => markAllAsRead()}
+                          >
+                            Mark all read
+                          </button>
+                        )}
+                      </div>
+                      <div className="mobile-menu-notification-popup-list">
+                        {recentNews.length > 0 &&
+                          recentNews.map((news) => (
+                            <div
+                              key={`news-${news.id}`}
+                              className="mobile-menu-notification-item"
+                              role="button"
+                              tabIndex={0}
+                              onClick={async () => {
+                                const seenAt = news.createdAt?.toMillis?.() ?? news.createdAt ?? Date.now();
+                                try {
+                                  await updateDoc(doc(db, "users", user.uid), {
+                                    lastSeenNewsAt: typeof seenAt === "number" ? seenAt : Date.now(),
+                                  });
+                                  cacheHelpers.clearUserCache(user.uid);
+                                } catch (err) {}
+                                setShowNotificationsPopup(false);
+                                setShowDashboard(false);
+                                navigate("/");
+                              }}
+                              onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
+                            >
+                              <span className="mobile-menu-notification-icon">📰</span>
+                              <span>New news: {news.title || "Untitled"}</span>
+                            </div>
+                          ))}
+                        {notifications
+                          .filter((n) => !n.read)
+                          .slice(0, 15)
+                          .map((n) => {
+                            const isReply = n.type === "topic_reply" || n.type === "new_topic";
+                            const label =
+                              n.type === "private_chat"
+                                ? `Message from ${n.fromName || "Someone"}`
+                                : isReply
+                                  ? n.message || n.title || "New forum activity"
+                                  : n.message || n.title || "Notification";
+                            return (
+                              <div
+                                key={n.id}
+                                className="mobile-menu-notification-item"
+                                role="button"
+                                tabIndex={0}
+                                onClick={async () => {
+                                  try {
+                                    await updateDoc(doc(db, "notifications", n.id), { read: true });
+                                  } catch (err) {}
+                                  setShowNotificationsPopup(false);
+                                  setShowDashboard(false);
+                                  if (isReply && n.topicId) navigate(`/forum/commons?topic=${n.topicId}`);
+                                  else if (n.type === "private_chat") {
+                                    const fromUid = n.fromUid || n.from;
+                                    if (fromUid) {
+                                      setOpenWithUid(fromUid);
+                                      setShowChat(true);
+                                      setShowPrivateChat(true);
+                                    }
+                                  }
+                                }}
+                                onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
+                              >
+                                <span className="mobile-menu-notification-icon">
+                                  {n.type === "private_chat" ? "💬" : isReply ? "📌" : "🎁"}
+                                </span>
+                                <span>{label}</span>
+                              </div>
+                            );
+                          })}
+                        {unreadCount === 0 && (
+                          <p className="mobile-menu-notification-empty">No notifications</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              <button
+                className="mobile-dashboard-close"
+                onClick={() => {
+                  setShowDashboard(false);
+                  setShowNotificationsPopup(false);
+                  navigate("/");
+                  setActiveTab("home");
+                }}
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <div className="mobile-dashboard-grid">
             <button
@@ -341,7 +486,7 @@ const MobileLayout = ({ children }) => {
 
             <button
               className={`mobile-dashboard-item ${
-                location.pathname === "/rules" || location.pathname.includes("rules") ? "active" : ""
+                location.pathname === "/rules" || (location.pathname.includes("rules") && location.pathname !== "/library") ? "active" : ""
               }`}
               onClick={() => {
                 setShowDashboard(false);
@@ -351,6 +496,35 @@ const MobileLayout = ({ children }) => {
               <span className="mobile-dashboard-item-icon">📋</span>
               <span className="mobile-dashboard-item-label">Page Rules</span>
             </button>
+
+            <button
+              className={`mobile-dashboard-item ${
+                location.pathname === "/library" ? "active" : ""
+              }`}
+              onClick={() => {
+                setShowDashboard(false);
+                navigate("/library");
+              }}
+            >
+              <span className="mobile-dashboard-item-icon">📚</span>
+              <span className="mobile-dashboard-item-label">Library (tips)</span>
+            </button>
+
+            {(userData?.roles || []).some((r) => ["archivist", "shadowpatrol"].includes(String(r).toLowerCase())) && (
+              <button
+                className="mobile-dashboard-item"
+                onClick={() => {
+                  setShowSegmentSchedule(true);
+                }}
+              >
+                <span className="mobile-dashboard-item-icon">📋</span>
+                <span className="mobile-dashboard-item-label">
+                  {userData?.roles?.some((r) => String(r).toLowerCase() === "archivist")
+                    ? "Archivist tasks"
+                    : "Shadow Patrol tasks"}
+                </span>
+              </button>
+            )}
 
             <button
               className={`mobile-dashboard-item ${
@@ -453,11 +627,11 @@ const MobileLayout = ({ children }) => {
               <button
                 className="mobile-forum-selection-item"
                 onClick={() => {
-                  navigate("/forum/commonroom");
+                  navigate("/forum/commons");
                   setShowForumSelection(false);
                 }}
               >
-                <span className="mobile-forum-selection-label">Commonroom</span>
+                <span className="mobile-forum-selection-label">Commons</span>
               </button>
 
               <button

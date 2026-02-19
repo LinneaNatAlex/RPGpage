@@ -25,6 +25,7 @@ import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import useUserRoles from "../../hooks/useUserRoles";
 import { cacheHelpers } from "../../utils/firebaseCache";
+import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 
 import styles from "./TopBar.module.css";
 
@@ -63,6 +64,7 @@ const TopBar = () => {
   const { userData, loading: userDataLoading } = useUserData();
   const { roles } = useUserRoles();
   const navigate = useNavigate();
+  const { setOpenWithUid } = useOpenPrivateChat();
   const [infirmary, setInfirmary] = useState(false);
   const isAdmin = roles?.some((r) => String(r).toLowerCase() === "admin");
   const [detentionUntil, setDetentionUntil] = useState(null);
@@ -710,8 +712,8 @@ const TopBar = () => {
             );
             if (lower.includes("headmaster"))
               roleClass += ` ${styles.headmasterPic}`;
-            else if (lower.includes("teacher"))
-              roleClass += ` ${styles.teacherPic}`;
+            else if (lower.includes("professor") || lower.includes("teacher"))
+              roleClass += ` ${styles.professorPic}`;
             else if (lower.includes("shadowpatrol"))
               roleClass += ` ${styles.shadowPatrolPic}`;
             else if (lower.includes("admin"))
@@ -1039,7 +1041,10 @@ const TopBar = () => {
                               navigate(
                                 `/forum/${forumPath || "general"}?topic=${n.topicId || ""}`,
                               );
-                            if (isChat) navigate("/chat");
+                            if (isChat) {
+                              const fromUid = n.fromUid || n.from;
+                              if (fromUid) setOpenWithUid(fromUid);
+                            }
                             if (
                               isLike &&
                               (n.targetType === "news" ||

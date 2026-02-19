@@ -9,9 +9,9 @@ export const classesList = [
   },
   {
     id: "ancient-languages",
-    name: "Ancient Languages",
+    name: "Ancient Languages & World Culture",
     description:
-      "Learn the roots of spells, runes, and rituals in Latin, Elvish, and more.",
+      "Learn the roots of spells, runes, and rituals in Latin, Elvish, and more; explore the customs, music, and art of all fantasy races.",
     points: 2,
   },
   {
@@ -57,16 +57,24 @@ export const classesList = [
     points: 2,
   },
   {
+    id: "archery",
+    name: "Archery",
+    description:
+      "Master the bow: precision, range, and the ancient art of archery for hunt and combat.",
+    points: 2,
+  },
+  {
+    id: "sword-and-weapons",
+    name: "Sword & Weapons",
+    description:
+      "Train in blades and melee weapons—swords, axes, and traditional arms for combat and ceremony.",
+    points: 2,
+  },
+  {
     id: "rituals-symbols",
     name: "Rituals & Symbols",
     description:
       "Explore the meaning and power of rituals, symbols, and traditions.",
-    points: 2,
-  },
-  {
-    id: "world-cultures",
-    name: "World Cultures",
-    description: "Celebrate the customs, music, and art of all fantasy races.",
     points: 2,
   },
   {

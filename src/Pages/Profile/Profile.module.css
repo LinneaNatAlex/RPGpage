@@ -4,7 +4,7 @@
     0 0 18px 4px #fff,
     0 0 12px #b0aac2 !important;
 }
-.teacherAvatar {
+.professorAvatar {
   border: 4px solid gold !important;
   box-shadow:
     0 0 18px 4px gold,
@@ -37,7 +37,7 @@ body,
 }
 
 :global([data-theme="dark"]) .profileWrapper {
-  background: #1a1a1a;
+  background: #252525;
 }
 
 :global([data-theme="pink"]) .profileWrapper {
@@ -66,7 +66,7 @@ body,
 }
 
 :global([data-theme="dark"]) .profileContainer {
-  background: #2a2a2a;
+  background: #252525;
   border: 1px solid #444;
 }
 
@@ -475,7 +475,7 @@ body,
   color: #fff !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.teacherName {
+.professorName {
   color: gold !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -491,6 +491,15 @@ body,
   color: #a084e8 !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
+/* Dark mode: default (no role) = beige so rector stands out */
+:global(html[data-theme="dark"]) .userName { color: #D4C4A8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+/* Dark mode: keep role colors on names */
+:global(html[data-theme="dark"]) .headmasterName { color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .professorName { color: gold !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .shadowPatrolName { color: #1ecb8c !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .adminName { color: #ff5e5e !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .archivistName { color: #a084e8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
 .profileLikesOverview {
   display: flex;
@@ -1105,7 +1114,7 @@ body,
     color: #fff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
-  .teacherName {
+  .professorName {
     color: gold !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }

@@ -77,6 +77,7 @@
   align-items: center;
   gap: 4px;
   margin-bottom: 4px;
+  order: -1; /* Desktop: vis hjertet øverst i kolonnen */
 }
 
 .bookLikeButton {
@@ -321,14 +322,15 @@
   transform: scale(1.05);
 }
 
-/* Mobile: egen layout så ingenting glir utenfor */
+/* Mobile: egen layout – ytre boks får full bredde så indre knapper får plass */
 @media screen and (max-width: 768px) {
   .shopWrapper {
-    padding: 0.75rem;
-    margin: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem 0;
     border-radius: 0;
     max-width: 100%;
     width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     overflow-x: hidden;
   }
@@ -361,16 +363,17 @@
     transform: none;
   }
 
-  /* Kort: like marginer, full bredde, stables vertikalt (overstyr PC grid) */
+  /* Kort: full bredde, min-width 0 så indre flex får plass */
   .item {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     margin: 0 0 1rem 0;
     gap: 0.75rem;
     border-radius: 0;
     align-items: stretch;
     width: 100%;
+    min-width: 0;
     box-sizing: border-box;
   }
 
@@ -416,21 +419,37 @@
     margin-left: 0;
   }
 
-  /* Pris og knapper: samme rad, Buy og Delete ved siden av hverandre */
+  /* Én linje på mobil: pris + knapper venstre, hjerteknapp til høyre (ytre boks har nå plass) */
   .itemActions {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.5rem;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding-top: 0.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.15);
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .itemActions .itemPrice,
+  .itemActions .itemButtons {
+    flex-shrink: 0;
   }
 
   .itemActions .itemButtons {
     display: flex;
     gap: 0.5rem;
+  }
+
+  /* Mobil: hjerteknapp sist (etter pris/knapper), skjøves til høyre på samme linje */
+  .itemActions .bookLikeRow {
+    order: 1;
+    margin-left: auto;
     flex-shrink: 0;
+    margin-bottom: 0;
   }
 
   .item button,

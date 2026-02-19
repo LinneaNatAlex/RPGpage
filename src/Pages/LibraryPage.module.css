@@ -237,3 +237,79 @@
   color: #f5efe0;
   text-decoration: underline;
 }
+
+/* Mobile: ensure Library card and content are visible and usable */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: 40vh;
+  }
+
+  .card {
+    padding: 20px 16px;
+  }
+
+  .title {
+    font-size: clamp(1.4rem, 5vw, 1.75rem);
+    margin-bottom: 10px;
+  }
+
+  .intro {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .sectionsByCategory {
+    gap: 16px;
+  }
+
+  .categoryToggle {
+    padding: 12px 14px;
+    font-size: 1.05rem;
+  }
+
+  .categoryDropdown {
+    padding-left: 12px;
+    margin-left: 8px;
+  }
+
+  .titleButton {
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
+
+  .popupOverlay {
+    padding: 70px 12px 12px 12px;
+    align-items: flex-start;
+  }
+
+  .popupContainer {
+    height: 85vh;
+    max-height: none;
+  }
+
+  .closePopupButton {
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+
+  .popupBackButton {
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .popupIframe {
+    min-height: 60vh;
+  }
+
+  .back {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+}

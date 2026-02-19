@@ -50,7 +50,7 @@ import "react-quill/dist/quill.snow.css";
 import RepetitionWarningComponent from "../../Components/RepetitionWarning/RepetitionWarningComponent";
 
 const forumNames = {
-  commonroom: "Commonroom",
+  commons: "Commons",
   ritualroom: "Ritual Room",
   moongarden: "Moon Garden",
   bloodbank: "Blood Bank",
@@ -82,11 +82,11 @@ const forumWordConfig = {
   },
 };
 
-const raceCommonrooms = {
-  elf: "Elf Commonroom",
-  witch: "Witch Commonroom",
-  vampire: "Vampire Commonroom",
-  werewolf: "Werewolf Commonroom",
+const raceCommons = {
+  elf: "Elf Commons",
+  witch: "Witch Commons",
+  vampire: "Vampire Commons",
+  werewolf: "Werewolf Commons",
 };
 
 const Forum = () => {
@@ -128,12 +128,12 @@ const Forum = () => {
   let forumRoom = normalizedForumId;
   let forumTitle = forumNames[normalizedForumId] || forumNames[forumId] || "Forum";
 
-  // Hvis commonroom: bruk rasebasert commonroom hvis mulig
-  if (forumId === "commonroom" && user && user.race) {
+  // Hvis commons: bruk rasebasert commons (fellesareal med senger) hvis mulig
+  if (forumId === "commons" && user && user.race) {
     const raceKey = user.race.toLowerCase();
-    if (raceCommonrooms[raceKey]) {
-      forumRoom = raceKey + "_commonroom";
-      forumTitle = raceCommonrooms[raceKey];
+    if (raceCommons[raceKey]) {
+      forumRoom = raceKey + "_commonroom"; // Firestore-collection beholdt
+      forumTitle = raceCommons[raceKey];
     }
   }
 
@@ -746,8 +746,8 @@ const Forum = () => {
     let nameClass = styles.posterName;
     if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
       nameClass += ` ${styles.headmasterName}`;
-    else if (userObj?.roles?.some((r) => r.toLowerCase() === "teacher"))
-      nameClass += ` ${styles.teacherName}`;
+    else if (userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher"))
+      nameClass += ` ${styles.professorName}`;
     else if (userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol"))
       nameClass += ` ${styles.shadowPatrolName}`;
     else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
@@ -1186,7 +1186,7 @@ const Forum = () => {
               Back to topics
             </Button>
             {(() => {
-              const isTeacherOrAdmin = roles?.includes("teacher") || roles?.includes("admin") || roles?.includes("archivist");
+              const isTeacherOrAdmin = roles?.includes("professor") || roles?.includes("teacher") || roles?.includes("admin") || roles?.includes("archivist");
               
               return isTeacherOrAdmin && (
                 <>
@@ -1324,7 +1324,7 @@ const Forum = () => {
                       </span>
                     )}
                     {(post.uid === user.uid ||
-                      roles?.includes("teacher") ||
+                      (roles?.includes("professor") || roles?.includes("teacher")) ||
                       roles?.includes("admin")) && (
                       <>
                         <Button
@@ -1493,7 +1493,7 @@ const Forum = () => {
                       </span>
                       {follower.roles && follower.roles.length > 0 && (
                         <span className={styles.followerRoles}>
-                          {follower.roles.join(", ")}
+                          {follower.roles?.map((r) => ["teacher", "professor"].includes((r || "").toLowerCase()) ? "Professor" : (r || "").charAt(0).toUpperCase() + (r || "").slice(1).toLowerCase()).join(", ")}
                         </span>
                       )}
                     </div>

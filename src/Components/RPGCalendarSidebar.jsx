@@ -236,10 +236,28 @@ export default function RPGCalendarSidebar() {
     rpgDaysThisWeek,
   } = getRPGCalendar(today);
 
-  // ========== RENDERING: Sidebar-container ==========
-  return (
-    <aside
-      style={{
+  const isDark =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "dark";
+
+  const asideStyle = isDark
+    ? {
+        background: "#252525",
+        color: "#f5f5f5",
+        borderRadius: 0,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+        border: "1px solid #444",
+        padding: "1.5rem",
+        margin: 0,
+        minWidth: 280,
+        maxWidth: 320,
+        fontFamily: "inherit",
+        fontSize: 16,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }
+    : {
         background: "#E8DDD4",
         color: "#2C2C2C",
         borderRadius: 0,
@@ -254,12 +272,26 @@ export default function RPGCalendarSidebar() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-      }}
-    >
+      };
+
+  const titleColor = isDark ? "#f5f5f5" : "#D4C4A8";
+  const mutedColor = isDark ? "#d0d0d0" : "#D4C4A8";
+  const subColor = isDark ? "#b0b0b0" : "#B8A082";
+  const boxBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(212, 196, 168, 0.2)";
+  const boxBorder = isDark ? "#444" : "#D4C4A8";
+  const cellBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(212, 196, 168, 0.15)";
+  const todayBg = isDark ? "rgba(255,255,255,0.15)" : "rgba(212, 196, 168, 0.35)";
+  const linkBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(212, 196, 168, 0.1)";
+  const linkBgHover = isDark ? "rgba(255,255,255,0.12)" : "rgba(212, 196, 168, 0.2)";
+  const borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(212, 196, 168, 0.3)";
+
+  // ========== RENDERING: Sidebar-container ==========
+  return (
+    <aside style={asideStyle}>
       {/* ----- Tittel ----- */}
       <h3
         style={{
-          color: "#D4C4A8",
+          color: titleColor,
           marginBottom: 8,
           fontSize: 18,
           letterSpacing: 0.5,
@@ -272,18 +304,18 @@ export default function RPGCalendarSidebar() {
       {/* ----- RPG-tid: klokke + dag/måned/år + "Real: Mon X–Y" ----- */}
       <div
         style={{
-          background: "rgba(212, 196, 168, 0.2)",
+          background: boxBg,
           borderRadius: 0,
           padding: "12px",
           marginBottom: "16px",
-          border: "1px solid #D4C4A8",
+          border: `1px solid ${boxBorder}`,
           textAlign: "center",
           width: "100%",
         }}
       >
         <div
           style={{
-            color: "#D4C4A8",
+            color: mutedColor,
             fontSize: 14,
             fontWeight: 600,
             marginBottom: 4,
@@ -293,7 +325,7 @@ export default function RPGCalendarSidebar() {
         </div>
         <div
           style={{
-            color: "#F5EFE0",
+            color: isDark ? "#f5f5f5" : "#F5EFE0",
             fontSize: 20,
             fontWeight: 700,
             marginBottom: 4,
@@ -304,7 +336,7 @@ export default function RPGCalendarSidebar() {
         </div>
         <div
           style={{
-            color: "#D4C4A8",
+            color: mutedColor,
             fontSize: 12,
             marginBottom: 4,
           }}
@@ -313,9 +345,9 @@ export default function RPGCalendarSidebar() {
         </div>
         <div
           style={{
-            color: "#B8A082",
+            color: subColor,
             fontSize: 10,
-            borderTop: "1px solid rgba(212, 196, 168, 0.3)",
+            borderTop: `1px solid ${borderColor}`,
             paddingTop: 4,
           }}
         >
@@ -329,12 +361,12 @@ export default function RPGCalendarSidebar() {
           fontSize: 14,
           marginBottom: 4,
           fontWeight: 600,
-          color: "#D4C4A8",
+          color: mutedColor,
         }}
       >
         {monthNames[(rpgMonth || 1) - 1]}, Year {rpgYear}
       </div>
-      <div style={{ fontSize: 12, marginBottom: 12, color: "#B8A082" }}>
+      <div style={{ fontSize: 12, marginBottom: 12, color: subColor }}>
         Days left in this week:{" "}
         {(() => {
           // Countdown to end of current IRL week (Sunday 23:59:59)
@@ -370,7 +402,7 @@ export default function RPGCalendarSidebar() {
             style={{
               textAlign: "center",
               fontWeight: 600,
-              color: "#D4C4A8",
+              color: mutedColor,
               fontSize: 11,
               letterSpacing: 0.5,
             }}
@@ -389,10 +421,10 @@ export default function RPGCalendarSidebar() {
                 textAlign: "center",
                 padding: 5,
                 borderRadius: 0,
-                background: isToday ? "#2C2C2C" : "#E8DDD4",
-                color: isToday ? "#F5EFE0" : "#D4C4A8",
+                background: isToday ? todayBg : cellBg,
+                color: isToday ? (isDark ? "#f5f5f5" : "#F5EFE0") : mutedColor,
                 fontWeight: isToday ? 700 : 400,
-                border: isToday ? "2px solid #D4C4A8" : "1px solid #E0D5C7",
+                border: isToday ? `2px solid ${boxBorder}` : `1px solid ${isDark ? "#555" : "#E0D5C7"}`,
                 fontSize: 10,
                 minWidth: 0,
                 boxShadow: isToday ? "0 0 8px rgba(0, 0, 0, 0.2)" : undefined,
@@ -401,7 +433,7 @@ export default function RPGCalendarSidebar() {
               {date.getDate()}
               <br />
               <span
-                style={{ fontSize: 8, color: isToday ? "#F5EFE0" : "#B8A082" }}
+                style={{ fontSize: 8, color: isToday ? (isDark ? "#f5f5f5" : "#F5EFE0") : subColor }}
               >
                 Days {rpgRange.start}
                 {rpgRange.start !== rpgRange.end ? `–${rpgRange.end}` : ""}
@@ -415,7 +447,7 @@ export default function RPGCalendarSidebar() {
       </div>
 
       {/* ----- Uke-datointervall (f.eks. 2/9/2026 - 2/15/2026) ----- */}
-      <div style={{ fontSize: 10, color: "#B8A082", marginBottom: 8 }}>
+      <div style={{ fontSize: 10, color: subColor, marginBottom: 8 }}>
         {weekDates[0].toLocaleDateString("en-US")} -{" "}
         {weekDates[6].toLocaleDateString("en-US")}
       </div>
@@ -425,7 +457,7 @@ export default function RPGCalendarSidebar() {
         style={{
           marginTop: 8,
           fontSize: 10,
-          color: "#D4C4A8",
+          color: mutedColor,
           textAlign: "center",
           lineHeight: 1.4,
         }}
@@ -445,13 +477,13 @@ export default function RPGCalendarSidebar() {
           style={{
             marginTop: 16,
             paddingTop: 16,
-            borderTop: "1px solid rgba(212, 196, 168, 0.3)",
+            borderTop: `1px solid ${borderColor}`,
             width: "100%",
           }}
         >
           <div
             style={{
-              color: "#D4C4A8",
+              color: mutedColor,
               fontSize: 14,
               fontWeight: 600,
               marginBottom: 8,
@@ -471,11 +503,11 @@ export default function RPGCalendarSidebar() {
           >
             {birthdayUsers.map((user) => {
               // Determine name color based on role or race
-              let nameColor = "#F5EFE0"; // Default color
+              let nameColor = isDark ? "#f5f5f5" : "#F5EFE0"; // Default color
               if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
                 nameColor = "#fff";
               } else if (
-                user.roles?.some((r) => r.toLowerCase() === "teacher")
+                user.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
               ) {
                 nameColor = "gold";
               } else if (
@@ -503,18 +535,16 @@ export default function RPGCalendarSidebar() {
                     gap: 8,
                     padding: 6,
                     borderRadius: 0,
-                    background: "rgba(212, 196, 168, 0.1)",
+                    background: linkBg,
                     textDecoration: "none",
-                    color: "#F5EFE0",
+                    color: isDark ? "#f5f5f5" : "#F5EFE0",
                     transition: "background 0.2s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      "rgba(212, 196, 168, 0.2)";
+                    e.currentTarget.style.background = linkBgHover;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background =
-                      "rgba(212, 196, 168, 0.1)";
+                    e.currentTarget.style.background = linkBg;
                   }}
                 >
                   <img
@@ -525,7 +555,7 @@ export default function RPGCalendarSidebar() {
                       height: 24,
                       borderRadius: "50%",
                       objectFit: "cover",
-                      border: "1px solid rgba(212, 196, 168, 0.3)",
+                      border: `1px solid ${borderColor}`,
                     }}
                   />
                   <span
@@ -554,13 +584,13 @@ export default function RPGCalendarSidebar() {
           style={{
             marginTop: 16,
             paddingTop: 16,
-            borderTop: "1px solid rgba(212, 196, 168, 0.3)",
+            borderTop: `1px solid ${borderColor}`,
             width: "100%",
           }}
         >
           <div
             style={{
-              color: "#D4C4A8",
+              color: mutedColor,
               fontSize: 14,
               fontWeight: 600,
               marginBottom: 8,
@@ -580,11 +610,11 @@ export default function RPGCalendarSidebar() {
           >
             {upcomingBirthdays.map((user) => {
               // Determine name color based on role or race
-              let nameColor = "#F5EFE0"; // Default color
+              let nameColor = isDark ? "#f5f5f5" : "#F5EFE0"; // Default color
               if (user.roles?.some((r) => r.toLowerCase() === "headmaster")) {
                 nameColor = "#fff";
               } else if (
-                user.roles?.some((r) => r.toLowerCase() === "teacher")
+                user.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
               ) {
                 nameColor = "gold";
               } else if (
@@ -612,18 +642,16 @@ export default function RPGCalendarSidebar() {
                     gap: 8,
                     padding: 6,
                     borderRadius: 0,
-                    background: "rgba(212, 196, 168, 0.1)",
+                    background: linkBg,
                     textDecoration: "none",
-                    color: "#F5EFE0",
+                    color: isDark ? "#f5f5f5" : "#F5EFE0",
                     transition: "background 0.2s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      "rgba(212, 196, 168, 0.2)";
+                    e.currentTarget.style.background = linkBgHover;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background =
-                      "rgba(212, 196, 168, 0.1)";
+                    e.currentTarget.style.background = linkBg;
                   }}
                 >
                   <img
@@ -634,7 +662,7 @@ export default function RPGCalendarSidebar() {
                       height: 24,
                       borderRadius: "50%",
                       objectFit: "cover",
-                      border: "1px solid rgba(212, 196, 168, 0.3)",
+                      border: `1px solid ${borderColor}`,
                     }}
                   />
                   <div
@@ -660,7 +688,7 @@ export default function RPGCalendarSidebar() {
                     <span
                       style={{
                         fontSize: 10,
-                        color: "#B8A082",
+                        color: subColor,
                       }}
                     >
                       Day {user.birthdayDay}

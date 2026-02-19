@@ -106,3 +106,32 @@
     text-align: center;
   }
 }
+
+/* Dark mode: ingen egen bakgrunn */
+:global(html[data-theme="dark"]) .announcementAdminContainer {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+:global(html[data-theme="dark"]) .announcementAdminContainer::before {
+  background: linear-gradient(90deg, #555 0%, #666 50%, #555 100%) !important;
+}
+:global(html[data-theme="dark"]) .announcementInput {
+  background: #383838 !important;
+  color: #f5f5f5 !important;
+  border-color: #555 !important;
+}
+:global(html[data-theme="dark"]) .announcementInput::placeholder {
+  color: #e0e0e0 !important;
+}
+:global(html[data-theme="dark"]) .announcementButton {
+  background: linear-gradient(135deg, #555 0%, #666 100%) !important;
+  color: #f5f5f5 !important;
+  border-color: #666 !important;
+}
+:global(html[data-theme="dark"]) .announcementButton:hover {
+  background: linear-gradient(135deg, #666 0%, #777 100%) !important;
+}
+:global(html[data-theme="dark"]) .errorMessage {
+  color: #f5a0a0 !important;
+  background: #383838 !important;
+}

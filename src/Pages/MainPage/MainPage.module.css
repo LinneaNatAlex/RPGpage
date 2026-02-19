@@ -881,3 +881,45 @@
     right: 1rem;
   }
 }
+
+/* Dark mode: ingen egen bakgrunn – teksten ligger på sidens bakgrunn */
+:global(html[data-theme="dark"]) .introductionPage {
+  background-color: transparent !important;
+}
+:global(html[data-theme="dark"]) .introductionHeader {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .introductionTitle {
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .introductionText {
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .mainContentHome {
+  background-color: transparent !important;
+}
+:global(html[data-theme="dark"]) .userStats {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+:global(html[data-theme="dark"]) .statNumber,
+:global(html[data-theme="dark"]) .statLabel {
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .featuresTitle,
+:global(html[data-theme="dark"]) .featureCardTitle,
+:global(html[data-theme="dark"]) .featureCardText {
+  color: #f5f5f5 !important;
+}
+:global(html[data-theme="dark"]) .featureCard {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+:global(html[data-theme="dark"]) .newsFeedContainer {
+  color: #f5f5f5 !important;
+}

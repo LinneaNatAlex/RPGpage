@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 
 const MOBILE_PORTRAIT_MAX_WIDTH = 768;
+const STORAGE_KEY = "rotateDevicePopupSeen";
 
 export default function RotateDevicePopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     function checkOrientation() {
+      const alreadySeen = typeof sessionStorage !== "undefined" && sessionStorage.getItem(STORAGE_KEY);
+      if (alreadySeen) {
+        setShow(false);
+        return;
+      }
       const isMobile = window.innerWidth <= MOBILE_PORTRAIT_MAX_WIDTH;
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
       setShow(isMobile && isPortrait);
@@ -20,6 +26,13 @@ export default function RotateDevicePopup() {
     };
   }, []);
 
+  const handleClose = () => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, "1");
+    } catch (_) {}
+    setShow(false);
+  };
+
   if (!show) return null;
 
   return (
@@ -27,7 +40,7 @@ export default function RotateDevicePopup() {
       <div style={popupStyles.popup}>
         <button
           style={popupStyles.closeBtn}
-          onClick={() => setShow(false)}
+          onClick={handleClose}
           aria-label="Close"
         >
           ×
@@ -36,6 +49,7 @@ export default function RotateDevicePopup() {
         <div style={popupStyles.text}>
           For the best experience, please rotate your device to landscape mode.
         </div>
+        <div style={popupStyles.hint}>You can close this and use the site in portrait if you prefer.</div>
       </div>
     </div>
   );
@@ -85,6 +99,12 @@ const popupStyles = {
     color: "#7b6857",
     fontSize: 18,
     fontWeight: 500,
-    marginBottom: 0,
+    marginBottom: 8,
+  },
+  hint: {
+    color: "#8b7a6b",
+    fontSize: 13,
+    fontWeight: 400,
+    marginTop: 4,
   },
 };

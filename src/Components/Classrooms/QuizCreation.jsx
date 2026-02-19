@@ -23,7 +23,7 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
   const [error, setError] = useState("");
 
   // Check if user has permission
-  const canCreateQuiz = roles.includes("teacher") || roles.includes("admin");
+  const canCreateQuiz = roles.includes("professor") || roles.includes("teacher") || roles.includes("admin");
 
   if (!canCreateQuiz) {
     return (

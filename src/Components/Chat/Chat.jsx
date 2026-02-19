@@ -239,7 +239,7 @@ const Chat = () => {
     return text;
   };
 
-  // Sjekk om innlogget bruker har admin, teacher, headmaster eller shadow patrol-rolle
+  // Sjekk om innlogget bruker har admin, professor, headmaster eller shadow patrol-rolle
   const currentUserObj = users.find(
     (u) =>
       u.displayName &&
@@ -247,8 +247,8 @@ const Chat = () => {
         auth.currentUser?.displayName?.toLowerCase(),
   );
   const canDelete = currentUserObj?.roles?.some((r) =>
-    ["admin", "teacher", "headmaster", "shadowpatrol", "archivist"].includes(
-      r.toLowerCase(),
+    ["admin", "professor", "teacher", "headmaster", "shadowpatrol", "archivist"].includes(
+      (r || "").toLowerCase(),
     ),
   );
 
@@ -665,9 +665,9 @@ const Chat = () => {
               if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
                 roleClass += ` ${styles.headmasterSender}`;
               else if (
-                userObj?.roles?.some((r) => r.toLowerCase() === "teacher")
+                userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
               )
-                roleClass += ` ${styles.teacherSender}`;
+                roleClass += ` ${styles.professorSender}`;
               else if (
                 userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
               )
@@ -679,8 +679,12 @@ const Chat = () => {
               )
                 roleClass += ` ${styles.archivistSender}`;
               else {
-                // Use race color for students without roles
-                nameColor = getRaceColor(userObj?.race);
+                // Use race color for students with race; otherwise light beige so they stand out (especially in dark mode)
+                const raceColor = getRaceColor(userObj?.race);
+                nameColor =
+                  userObj?.race && raceColor !== "#FFFFFF"
+                    ? raceColor
+                    : "#D4C4A8"; /* default: light beige for users without role */
               }
               return (
                 <div key={message.id} className={styles.message}>
@@ -738,6 +742,7 @@ const Chat = () => {
                     <strong
                       className={roleClass}
                       style={{
+                        ...(nameColor ? { color: nameColor, textShadow: "0 1px 2px rgba(0,0,0,0.3)" } : {}),
                         ...(message.potionEffects && message.potionEffects.glow
                           ? {
                               textShadow:

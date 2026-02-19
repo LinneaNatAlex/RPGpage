@@ -5,10 +5,14 @@ import styles from "./SegmentSchedulePopup.module.css";
 
 const ROLE_LABELS = { archivist: "Archivist", shadowpatrol: "Shadow Patrol" };
 
-export default function SegmentSchedulePopup() {
+export default function SegmentSchedulePopup({ open: controlledOpen, onOpenChange, renderTrigger }) {
   const { userData } = useUserData();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const roleWhenOpenedRef = useRef(null);
+
+  const isControlled = controlledOpen !== undefined && typeof onOpenChange === "function";
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? onOpenChange : setInternalOpen;
 
   const segmentRole = Array.isArray(userData?.roles)
     ? userData.roles.map((r) => String(r).toLowerCase()).find((r) => r === "archivist" || r === "shadowpatrol")
@@ -24,17 +28,24 @@ export default function SegmentSchedulePopup() {
 
   if (!effectiveRole && !open) return null;
 
+  const trigger =
+    renderTrigger
+      ? renderTrigger({ open: () => setOpen(true), label: ROLE_LABELS[effectiveRole] })
+      : !isControlled && (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className={styles.trigger}
+            title={`${ROLE_LABELS[effectiveRole]} – tasks and info`}
+            aria-label={`Open ${ROLE_LABELS[effectiveRole]} tasks`}
+          >
+            📋 {ROLE_LABELS[effectiveRole]}
+          </button>
+        );
+
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className={styles.trigger}
-        title={`${ROLE_LABELS[effectiveRole]} – tasks and info`}
-        aria-label={`Open ${ROLE_LABELS[effectiveRole]} tasks`}
-      >
-        📋 {ROLE_LABELS[effectiveRole]}
-      </button>
+      {trigger}
       {open && (
         <div className={styles.overlay} onClick={() => setOpen(false)} aria-hidden="true">
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
