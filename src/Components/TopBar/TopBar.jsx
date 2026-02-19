@@ -949,6 +949,8 @@ const TopBar = () => {
                         return `content_like:${n.targetType || ""}:${n.targetId || ""}`;
                       if (n.type === "gift")
                         return `gift:${n.fromUid || n.from || ""}:${n.item || ""}`;
+                      if (n.type === "group_chat" || n.type === "group_chat_added")
+                        return `group_chat:${String(n.groupId || "")}`;
                       return `other:${n.id}`;
                     };
                     const groups = [];
@@ -994,15 +996,19 @@ const TopBar = () => {
                         ? `You received ${itemName} from ${senderName}`
                         : isChat
                           ? `Message from ${senderName}`
-                          : isProfileLike
-                            ? `${senderName} liked your profile`
-                            : isLike
-                              ? likeLabel
-                              : isReply
-                                ? n.message ||
-                                  n.title ||
-                                  `New activity in ${n.topicTitle || n.forumRoom || "forum"}`
-                                : `You received ${itemName} from ${senderName}`;
+                          : isGroupChat
+                            ? n.type === "group_chat_added"
+                              ? `${senderName} added you to group "${n.groupName || "Group"}"`
+                              : `Reply from group "${n.groupName || "Group"}" — ${senderName}`
+                            : isProfileLike
+                              ? `${senderName} liked your profile`
+                              : isLike
+                                ? likeLabel
+                                : isReply
+                                  ? n.message ||
+                                    n.title ||
+                                    `New activity in ${n.topicTitle || n.forumRoom || "forum"}`
+                                  : `You received ${itemName} from ${senderName}`;
                       const label =
                         count > 1 && (isChat || isGroupChat || isReply)
                           ? `${baseLabel} (${count} ${isChat ? "messages" : isGroupChat ? "group" : "updates"})`

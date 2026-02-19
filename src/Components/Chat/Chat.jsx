@@ -28,6 +28,7 @@ const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
   const onlineUsers = useOnlineUsers();
+  const onlineUids = new Set(onlineUsers.map((u) => u.id));
   const [newMess, setNewMess] = useState("");
   const [mentionQuery, setMentionQuery] = useState("");
   const [showMentions, setShowMentions] = useState(false);
@@ -776,6 +777,9 @@ const Chat = () => {
                       {message.potionEffects &&
                         message.potionEffects.love &&
                         " 💖"}
+                      {userObj && onlineUids.has(userObj.uid || userObj.id) && (
+                        <span className={styles.mainChatOnlineDot} aria-hidden title="Online" />
+                      )}
                     </strong>
                   </span>
                   {/* Uthev @mentions og @all i meldingen */}

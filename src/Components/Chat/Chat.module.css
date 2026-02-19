@@ -72,6 +72,16 @@
   vertical-align: middle;
   flex-shrink: 0;
 }
+.mainChatOnlineDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-left: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
 .privateMessageRow {
   display: flex;
   align-items: flex-end;
@@ -990,6 +1000,15 @@
 :global(html[data-theme="dark"]) .messagesFullPageLeaveGroup:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.3);
+}
+:global(html[data-theme="dark"]) .messagesFullPageDeleteGroup {
+  background: rgba(255, 77, 79, 0.2);
+  border-color: rgba(255, 77, 79, 0.4);
+  color: #f87171;
+}
+:global(html[data-theme="dark"]) .messagesFullPageDeleteGroup:hover {
+  background: rgba(255, 77, 79, 0.3);
+  border-color: #f87171;
 }
 :global(html[data-theme="dark"]) .messagesFullPageOnlineDot {
   border-color: #2e2e2e;

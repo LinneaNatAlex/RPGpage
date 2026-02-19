@@ -755,6 +755,20 @@ const PrivateChat = ({ fullPage = false }) => {
     }
   };
 
+  const deleteGroup = async () => {
+    if (!currentUser || !selectedGroup) return;
+    const group = groupChats.find((g) => g.id === selectedGroup);
+    if (group?.createdBy !== currentUser.uid) return;
+    if (!window.confirm("Delete this group for everyone? This cannot be undone.")) return;
+    try {
+      await deleteDoc(doc(db, "groupChats", selectedGroup));
+      setSelectedGroup(null);
+    } catch (err) {
+      console.error("Delete group failed:", err);
+      alert(err?.message || "Could not delete group.");
+    }
+  };
+
   // Calculate per-chat unread messages for the current user
   // Badge skal kun vises for mottaker, ikke for meldinger man selv har sendt
   const getUnreadCount = (chat) => {
@@ -883,7 +897,12 @@ const PrivateChat = ({ fullPage = false }) => {
                         </span>
                       )}
                     </span>
-                    <button type="button" className={styles.messagesFullPageLeaveGroup} onClick={leaveGroup} title="Leave group">Leave group</button>
+                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                      <button type="button" className={styles.messagesFullPageLeaveGroup} onClick={leaveGroup} title="Leave group">Leave group</button>
+                      {group?.createdBy === currentUser.uid && (
+                        <button type="button" className={styles.messagesFullPageDeleteGroup} onClick={deleteGroup} title="Delete group for everyone">Delete group</button>
+                      )}
+                    </div>
                   </div>
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, width: "100%" }}>
                     <div className={styles.chatMessages} ref={chatBoxRef} style={{ flex: 1, minHeight: 0 }}>

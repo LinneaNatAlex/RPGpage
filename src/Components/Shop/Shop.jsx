@@ -45,20 +45,19 @@ const Shop = ({ open = true }) => {
   const { user } = useAuth();
   const { userData } = useUserData();
   const { roles } = useUserRoles();
-  // Potions/Ingredients kun synlig og kjøpbare for admin, headmaster, professor (ikke archivist)
+  // Potions/Ingredients synlig for alle. Kun admin/headmaster/professor/teacher kan kjøpe potions uten å ha brygget dem (canAccessPotionsCategory).
   const canAccessPotionsCategory =
     user &&
     (roles?.some((r) => String(r).toLowerCase() === "admin") ||
       roles?.some((r) => String(r).toLowerCase() === "headmaster") ||
-      roles?.some((r) => String(r).toLowerCase() === "professor" || String(r).toLowerCase() === "teacher"));
+      roles?.some((r) => String(r).toLowerCase() === "professor") ||
+      roles?.some((r) => String(r).toLowerCase() === "teacher"));
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("Books");
-  const shopCategories = canAccessPotionsCategory
-    ? categories
-    : categories.filter((c) => c !== "Potions" && c !== "Ingredients");
+  const shopCategories = categories;
   useEffect(() => {
     if (!shopCategories.includes(activeCategory)) {
       setActiveCategory(shopCategories[0] || "Books");
