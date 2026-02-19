@@ -78,6 +78,7 @@ import useUserRoles from "../hooks/useUserRoles";
 import HousePointsPage from "../Pages/HousePoints.jsx";
 import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
 import Inventory from "../Pages/Inventory/Inventory.jsx";
+import MessagesPage from "../Pages/MessagesPage.jsx";
 
 const RouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
@@ -156,6 +157,14 @@ export const router = createBrowserRouter(
         element={
           <RouteGuard>
             <LibraryPage />
+          </RouteGuard>
+        }
+      />
+      <Route
+        path="messages"
+        element={
+          <RouteGuard>
+            <MessagesPage />
           </RouteGuard>
         }
       />

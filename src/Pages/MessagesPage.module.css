@@ -1,0 +1,16 @@
+/* Full-page private chat – light mode (samme farger som resten av siden i light mode) */
+.wrapper {
+  height: calc(100vh - 70px);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  background: #f5efe0;
+  border: 1px solid rgba(123, 104, 87, 0.3);
+  box-sizing: border-box;
+}
+
+/* Dark mode: chat-siden følger tema */
+:global(html[data-theme="dark"]) .wrapper {
+  background: #252525;
+  border-color: #444;
+}

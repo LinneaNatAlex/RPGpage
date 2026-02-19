@@ -20,6 +20,12 @@
     />
 
     <title>Arcane School</title>
+    <script>
+      (function() {
+        var t = localStorage.getItem('vayloria-theme');
+        if (t === 'dark' || t === 'pink') document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

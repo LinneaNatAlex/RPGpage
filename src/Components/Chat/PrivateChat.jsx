@@ -99,12 +99,15 @@ import {
   where,
   limit,
   deleteDoc,
+  writeBatch,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import { playPrivateChatPling, preparePrivateChatSound } from "./ping_alt";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
+import { useNavigate, Link } from "react-router-dom";
 
-const PrivateChat = () => {
+const PrivateChat = ({ fullPage = false }) => {
+  const navigate = useNavigate();
   // Mute state for varsler
   const [muted, setMuted] = useState(() => {
     const stored = localStorage.getItem("privateChatMuted");
@@ -278,6 +281,7 @@ const PrivateChat = () => {
     selectedUserRef.current = selectedUser;
   }, [selectedUser]);
   const [message, setMessage] = useState("");
+  const [messageError, setMessageError] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const chatBoxRef = useRef(null);
   const lastMessageRef = useRef(null);
@@ -344,9 +348,12 @@ const PrivateChat = () => {
 
   // Max 20 messages in private chat (like main chat limit)
   const MAX_PRIVATE_CHAT_MESSAGES = 20;
+  const MAX_PRIVATE_MESSAGE_WORDS = 200;
+  const getWordCount = (text) =>
+    (text || "").trim() ? (text || "").trim().split(/\s+/).length : 0;
 
   // Only listen for messages for the selected user when chat is open (last 20 only)
-  // On mobile the panel is always visible, so subscribe whenever selectedUser is set (ignore isCollapsed)
+  // On mobile / full-page the panel is always visible, so subscribe whenever selectedUser is set (ignore isCollapsed)
   const isPcForSubscription =
     typeof window !== "undefined" && window.innerWidth > 768;
   useEffect(() => {
@@ -354,7 +361,7 @@ const PrivateChat = () => {
       setSelectedMessages([]);
       return;
     }
-    if (isPcForSubscription && isCollapsed) {
+    if (isPcForSubscription && isCollapsed && !fullPage) {
       setSelectedMessages([]);
       return;
     }
@@ -373,7 +380,7 @@ const PrivateChat = () => {
         .reverse(); // show oldest first
       setSelectedMessages(messages);
     });
-  }, [currentUser, selectedUser, isCollapsed, isPcForSubscription]);
+  }, [currentUser, selectedUser, isCollapsed, isPcForSubscription, fullPage]);
 
   // Alltid scroll til siste melding (bruk scrollTop så det alltid er på bunnen)
   const scrollToLatest = useCallback(() => {
@@ -644,6 +651,143 @@ const PrivateChat = () => {
   const hasUnread = activeChats.some((c) => getUnreadCount(c) > 0);
 
   const isPc = typeof window !== "undefined" && window.innerWidth > 768;
+
+  if (fullPage) {
+    const selectUserAndMarkRead = (c) => {
+      setSelectedUser(c.user);
+      setActiveChats((prev) => [...prev]);
+      const chatId = [currentUser.uid, c.user.uid].sort().join("_");
+      const msgsRef = collection(db, "privateMessages", chatId, "messages");
+      if (getUnreadCount(c) > 0) {
+        getDocs(msgsRef).then((docsSnap) => {
+          const batch = writeBatch(db);
+          docsSnap.forEach((docSnap) => {
+            const data = docSnap.data();
+            if (data.to === currentUser.uid && !data.read) batch.update(docSnap.ref, { read: true });
+          });
+          batch.commit();
+        });
+      }
+    };
+    return (
+      <div className={styles.messagesFullPage}>
+        <aside className={styles.messagesFullPageSidebar}>
+          <h3 className={styles.messagesFullPageSidebarTitle}>Conversations</h3>
+          {activeChats.filter((c) => !hiddenChats.includes(c.user.uid)).map((c) => (
+            <button
+              key={c.user.uid}
+              type="button"
+              className={`${styles.messagesFullPageSidebarItem} ${styles.messagesFullPageSidebarItemWithAvatar} ${selectedUser?.uid === c.user.uid ? styles.selected : ""} ${getUnreadCount(c) > 0 ? styles.unread : ""}`}
+              onClick={() => selectUserAndMarkRead(c)}
+            >
+              <img src={c.user.profileImageUrl || "/icons/avatar.svg"} alt="" className={styles.messagesFullPageSidebarAvatar} />
+              <span className={styles.messagesFullPageSidebarItemText}>
+                {c.user.displayName || c.user.name || c.user.uid}
+                {getUnreadCount(c) > 0 ? ` (${getUnreadCount(c)})` : ""}
+              </span>
+            </button>
+          ))}
+          <h3 className={styles.messagesFullPageSidebarTitle}>New conversation</h3>
+          <input
+            type="text"
+            placeholder="Search user..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.messagesFullPageSidebarSearch}
+          />
+          {search.trim() ? (
+            <div className={styles.messagesFullPageSidebarUserList}>
+              {filteredUsers.map((u) => (
+                <button
+                  key={u.uid}
+                  type="button"
+                  className={`${styles.messagesFullPageSidebarItem} ${styles.messagesFullPageSidebarItemWithAvatar}`}
+                  onClick={() => {
+                    setHiddenChats((prev) => {
+                      if (!prev.includes(u.uid)) return prev;
+                      const updated = prev.filter((id) => id !== u.uid);
+                      localStorage.setItem("hiddenPrivateChats", JSON.stringify(updated));
+                      return updated;
+                    });
+                    const existing = activeChats.find((c) => c.user.uid === u.uid);
+                    if (existing) setSelectedUser(existing.user);
+                    else addChat(u);
+                    setSearch("");
+                  }}
+                >
+                  <img src={u.profileImageUrl || "/icons/avatar.svg"} alt="" className={styles.messagesFullPageSidebarAvatar} />
+                  <span className={styles.messagesFullPageSidebarItemText}>{u.displayName || u.name || u.uid}</span>
+                </button>
+              ))}
+              {filteredUsers.length === 0 && <span className={styles.messagesFullPageSidebarHint}>No users found</span>}
+            </div>
+          ) : (
+            <p className={styles.messagesFullPageSidebarHint}>Type to search for a user</p>
+          )}
+        </aside>
+        <div className={styles.messagesFullPageMain}>
+          <header className={styles.messagesFullPagePageHeader}>
+            <Link to="/" className={styles.messagesFullPageBackLink}>← Back</Link>
+            <h1 className={styles.messagesFullPagePageTitle}>Private messages</h1>
+          </header>
+          {!selectedUser ? (
+            <div className={styles.messagesFullPageEmpty}>
+              <p>Select a conversation or search for a user to start a new chat.</p>
+              <Link to="/" className={styles.messagesFullPageEmptyLink}>← Back to home</Link>
+            </div>
+          ) : (
+            <>
+              <div className={styles.messagesFullPageHeader}>
+                <span>{selectedUser.displayName || selectedUser.name || selectedUser.uid}</span>
+              </div>
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, width: "100%" }}>
+                <div className={styles.chatMessages} ref={chatBoxRef} style={{ flex: 1, minHeight: 0 }}>
+                  {selectedMessages.map((m, i) => {
+                    const isLast = i === selectedMessages.length - 1;
+                    return (
+                      <div key={m.id || i} ref={isLast ? lastMessageRef : undefined} className={styles.privateMessageRow + (m.from === currentUser?.uid ? " " + styles.me : "")}>
+                        <div className={styles.privateMessageBubble}>
+                          <img src={m.from === currentUser?.uid ? (currentUserData?.profileImageUrl || "/icons/avatar.svg") : (selectedUser.profileImageUrl || "/icons/avatar.svg")} alt="Profile" className={styles.privateMessageProfilePic} />
+                          <div className={styles.privateMessageContent}>
+                            <div className={styles.privateMessageSender} style={{ ...(m.potionEffects && m.potionEffects.glow ? { textShadow: "0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700", color: "#ffd700" } : {}), ...(m.potionEffects && m.potionEffects.charm ? { textShadow: "0 0 8px #ff69b4, 0 0 16px #ff1493, 0 0 24px #ff69b4", color: "#ff69b4" } : {}) }}>
+                              {m.from === currentUser?.uid ? (m.potionEffects?.mystery ? "???" : "You") : (selectedUser.displayName || selectedUser.name || selectedUser.uid)}
+                              {m.potionEffects && m.potionEffects.charm && " 💕"}
+                              {m.potionEffects && m.potionEffects.love && " 💖"}
+                            </div>
+                            <div style={{ position: "relative" }}>
+                              {m.from === currentUser?.uid && (
+                                <div style={{ position: "absolute", top: -28, right: -10, zIndex: 3 }}>
+                                  <MessageMenu message={m} currentUser={currentUser} selectedUser={selectedUser} db={db} onEdit={(msg) => { setEditingMessage(msg); setMessage(msg.text); }} />
+                                </div>
+                              )}
+                              <span style={{ display: "block", wordBreak: "break-word", whiteSpace: "normal", overflowWrap: "break-word", ...(m.potionEffects ? { ...(m.potionEffects.hairColor ? { color: m.potionEffects.hairColor } : {}), ...(m.potionEffects.rainbow ? { color: m.potionEffects.rainbowColor } : {}), ...(m.potionEffects.shout ? { textTransform: "uppercase", fontWeight: "bold" } : {}) } : {}) }}>
+                                {m.potionEffects?.translation ? translateText(m.text) : m.text}
+                              </span>
+                            </div>
+                            <div className={styles.privateMessageTimestamp}>
+                              {m.timestamp?.seconds ? new Date(m.timestamp.seconds * 1000).toLocaleString("no-NO", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "2-digit" }) : ""}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <form className={`${styles.chatForm} ${styles.privateChatForm}`} onSubmit={sendMessage} style={{ width: "100%", boxSizing: "border-box", flexShrink: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, flex: 1, minWidth: 0, width: "100%" }}>
+                    <input id="private-chat-message-fullpage" value={message} onChange={(e) => { setMessage(e.target.value); setMessageError(""); }} type="text" placeholder={editingMessage ? "Edit message..." : `Message ${selectedUser.displayName || selectedUser.name || selectedUser.uid}...`} maxLength={1500} className={styles.chatInput} style={{ flex: 1, minWidth: 0 }} />
+                    <button type="submit" className={styles.chatBtn}>{editingMessage ? "Save" : "Send"}</button>
+                  </div>
+                  <div className={styles.messagesFullPageFormHint}>{messageError || (message.trim() ? `${getWordCount(message)} / ${MAX_PRIVATE_MESSAGE_WORDS} ord` : "")}</div>
+                </form>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={

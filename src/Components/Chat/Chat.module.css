@@ -578,3 +578,261 @@
   background: #4a3f35 !important;
   color: #d4c4a8 !important;
 }
+
+/* Full-page private chat (egen side /messages) – light mode */
+.messagesFullPage {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  background: #f5efe0;
+  border: none;
+  position: relative;
+}
+.messagesFullPageSidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: #e8ddd4;
+  border-right: 1px solid rgba(123, 104, 87, 0.35);
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.messagesFullPageMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #e8ddd4;
+}
+.messagesFullPageSidebarTitle {
+  font-family: "Cinzel", serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #5d4e37;
+  margin: 0 0 8px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(123, 104, 87, 0.4);
+}
+.messagesFullPageSidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(123, 104, 87, 0.3);
+  color: #2c2c2c;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s, border-color 0.2s;
+  border-radius: 6px;
+}
+.messagesFullPageSidebarItemWithAvatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.messagesFullPageSidebarAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.messagesFullPageSidebarItemText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.messagesFullPageSidebarItem:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(123, 104, 87, 0.5);
+}
+.messagesFullPageSidebarItem.selected {
+  background: #7b6857;
+  border-color: #8b7a6b;
+  color: #f5efe0;
+}
+.messagesFullPageSidebarItem.unread {
+  font-weight: 600;
+  border-color: rgba(255, 77, 79, 0.5);
+}
+.messagesFullPageSidebarSearch {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid rgba(123, 104, 87, 0.4);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  color: #2c2c2c;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.messagesFullPageSidebarSearch::placeholder {
+  color: rgba(44, 44, 44, 0.6);
+}
+.messagesFullPageSidebarSearch:focus {
+  border-color: #7b6857;
+}
+.messagesFullPageSidebarUserList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.messagesFullPageSidebarHint {
+  font-size: 0.85rem;
+  color: rgba(44, 44, 44, 0.65);
+  margin: 8px 0 0 0;
+}
+.messagesFullPagePageHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(123, 104, 87, 0.35);
+  background: #e0d5c8;
+  flex-shrink: 0;
+}
+.messagesFullPageBackLink {
+  color: #7b6857;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.messagesFullPageBackLink:hover {
+  color: #5d4e37;
+}
+.messagesFullPagePageTitle {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #2c2c2c;
+}
+.messagesFullPageEmpty {
+  padding: 24px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #5d4e37;
+}
+.messagesFullPageEmpty p {
+  margin: 0;
+  font-size: 1.05rem;
+  max-width: 360px;
+}
+.messagesFullPageEmpty a,
+.messagesFullPageEmptyLink {
+  color: #7b6857;
+  font-weight: 600;
+  text-decoration: none;
+}
+.messagesFullPageEmpty a:hover,
+.messagesFullPageEmptyLink:hover {
+  text-decoration: underline;
+}
+.messagesFullPageHeader {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(123, 104, 87, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  background: #e0d5c8;
+  font-weight: 600;
+  color: #2c2c2c;
+}
+.messagesFullPageFormHint {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  color: rgba(0, 0, 0, 0.5);
+}
+/* Dark mode: full-page private chat følger tema */
+:global(html[data-theme="dark"]) .messagesFullPage {
+  background: #252525;
+}
+:global(html[data-theme="dark"]) .messagesFullPageMain {
+  background: #2e2e2e;
+  border-color: #444;
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebar {
+  background: #2e2e2e;
+  border-color: #444;
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarTitle {
+  color: #d4c4a8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarItem {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e8e0d0;
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarItem:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarItem.selected {
+  background: #5d4e37;
+  border-color: #7b6857;
+  color: #f5efe0;
+}
+:global(html[data-theme="dark"]) .messagesFullPageEmpty {
+  color: #d4c4a8;
+}
+:global(html[data-theme="dark"]) .messagesFullPageEmpty a {
+  color: #c4b89a;
+}
+:global(html[data-theme="dark"]) .messagesFullPageHeader {
+  background: #3a3a3a;
+  border-color: #444;
+  color: #e8e0d0;
+}
+:global(html[data-theme="dark"]) .messagesFullPagePageHeader {
+  background: #2a2a2a;
+  border-color: #444;
+}
+:global(html[data-theme="dark"]) .messagesFullPageBackLink {
+  color: #c4b89a;
+}
+:global(html[data-theme="dark"]) .messagesFullPageBackLink:hover {
+  color: #d4c4a8;
+}
+:global(html[data-theme="dark"]) .messagesFullPagePageTitle {
+  color: #e8e0d0;
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarSearch {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e8e0d0;
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarSearch::placeholder {
+  color: rgba(232, 224, 208, 0.5);
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarSearch:focus {
+  border-color: #7b6857;
+}
+:global(html[data-theme="dark"]) .messagesFullPageSidebarHint {
+  color: rgba(232, 224, 208, 0.65);
+}
+:global(html[data-theme="dark"]) .messagesFullPageFormHint {
+  color: rgba(255, 255, 255, 0.5);
+}

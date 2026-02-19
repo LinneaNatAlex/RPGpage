@@ -1,5 +1,5 @@
 // import the nessesary modules
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./context/authContext.jsx";
 import styles from "./App.module.css";
 import { useState, useEffect, startTransition } from "react";
@@ -34,6 +34,7 @@ import "./App.mobile.css";
 
 function App() {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   // Track user location for Surveillance Potion
   useLocationTracker();
@@ -117,16 +118,19 @@ function App() {
     // Consider using Firebase Cloud Messaging instead of realtime listeners
   }, [user, lastPrivateMessageId, lastPingTime]);
 
-  // Sync data-theme to <html> so IE/Edge/all browsers get same dark/pink styles
+  // Sync data-theme to <html> so IE/Edge/all browsers get same dark/pink styles (og lagre for reload)
   const isDark = globalDarkMode || (darkModeUntil && typeof darkModeUntil === "number" && darkModeUntil > Date.now());
   useEffect(() => {
     const html = document.documentElement;
     if (globalPinkMode) {
       html.setAttribute("data-theme", "pink");
+      try { localStorage.setItem("vayloria-theme", "pink"); } catch (_) {}
     } else if (isDark) {
       html.setAttribute("data-theme", "dark");
+      try { localStorage.setItem("vayloria-theme", "dark"); } catch (_) {}
     } else {
       html.removeAttribute("data-theme");
+      try { localStorage.setItem("vayloria-theme", "light"); } catch (_) {}
     }
   }, [isDark, globalPinkMode]);
 
@@ -221,38 +225,11 @@ function App() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          background: "linear-gradient(135deg, #5D4E37 0%, #8B7A6B 100%)",
-          color: "#F5EFE0",
-          fontSize: "1.2rem",
-          fontFamily: "serif",
-        }}
-      >
-        <div style={{ textAlign: "center" }}>
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              border: "3px solid #F5EFE0",
-              borderTop: "3px solid transparent",
-              borderRadius: "50%",
-              animation: "spin 1s linear infinite",
-              margin: "0 auto 20px",
-            }}
-          ></div>
+      <div className={styles.appLoadingScreen}>
+        <div className={styles.appLoadingInner}>
+          <div className={styles.appLoadingSpinner} />
           <div>Loading Vayloria...</div>
         </div>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
     );
   }
@@ -550,7 +527,7 @@ function App() {
           </main>
           {/* Main chat and PrivateChat only for logged-in users */}
           {user && <Chat />}
-          {user && <PrivateChat />}
+          {user && location.pathname !== "/messages" && <PrivateChat />}
           {/* Pet Discovery Popup Only for logged-in users */}
           {user && <PetDiscoveryPopupOnly />}
           {user && <DetentionPopup />}

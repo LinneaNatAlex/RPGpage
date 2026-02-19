@@ -1,7 +1,7 @@
 // src/Components/TopBar/TopBar.jsx
 
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import {
@@ -1155,6 +1155,22 @@ const TopBar = () => {
         >
           ※
         </button>
+        <Link
+          to="/messages"
+          className={styles.inventoryIconBtn}
+          title="Private messages"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0.4rem 0.6rem",
+            textDecoration: "none",
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          </svg>
+        </Link>
         <a
           href="https://discord.gg/gAdpq5ZE6E"
           target="_blank"
