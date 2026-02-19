@@ -2670,3 +2670,69 @@ html[data-theme="dark"] .mobile-page-content .archivistName {
   color: #a084e8 !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
+
+/* Dark mode: fjern unødvendige tekst-/ikonbakgrunner (alt er allerede mørkt) */
+html[data-theme="dark"] .mobile-forum-selection-content {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] .mobile-forum-selection-close {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+html[data-theme="dark"] .mobile-forum-selection-close:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+html[data-theme="dark"] .mobile-forum-selection-item {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] .mobile-forum-selection-item:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .mobile-forum-selection-label {
+  color: #f5efe0 !important;
+}
+
+/* Dark mode: Menu-knapp og menypunkter uten ekstra svart boks */
+html[data-theme="dark"] .mobile-dashboard-btn {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] .mobile-dashboard-btn:active {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+html[data-theme="dark"] .mobile-dashboard-item {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+html[data-theme="dark"] .mobile-dashboard-item:active,
+html[data-theme="dark"] .mobile-dashboard-item:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .mobile-dashboard-item.active {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] .mobile-dashboard-item.logout-btn {
+  background: transparent !important;
+  border-color: rgba(255, 92, 92, 0.4) !important;
+}
+html[data-theme="dark"] .mobile-dashboard-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .mobile-dashboard-close {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .mobile-dashboard-close:hover,
+html[data-theme="dark"] .mobile-dashboard-close:active {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
