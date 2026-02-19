@@ -619,17 +619,22 @@ export default function TeacherPanel() {
               border: "2px solid rgba(255, 255, 255, 0.2)",
             }}
           >
-            <h3
-              style={{
-                color: "#D4C4A8",
-                fontSize: "1.3rem",
-                fontWeight: 600,
-                fontFamily: '"Cinzel", serif',
-                margin: 0,
-              }}
-            >
-              Library – tips you should know
-            </h3>
+            <div>
+              <h3
+                style={{
+                  color: "#D4C4A8",
+                  fontSize: "1.3rem",
+                  fontWeight: 600,
+                  fontFamily: '"Cinzel", serif',
+                  margin: 0,
+                }}
+              >
+                Library – tips you should know
+              </h3>
+              <p style={{ margin: "6px 0 0 0", fontSize: "0.9rem", color: "rgba(212, 196, 168, 0.9)" }}>
+                Archivist, teacher, headmaster and admin can add and edit tips.
+              </p>
+            </div>
             <div style={{ display: "flex", gap: "10px" }}>
               <button
                 onClick={() => refetchLibrary()}
@@ -1086,6 +1091,7 @@ export default function TeacherPanel() {
           >
             <LibraryEditor
               entry={editingLibraryItem}
+              existingCategories={[...new Set(libraryItems.map((i) => i.category).filter(Boolean))]}
               onSave={() => {
                 setShowLibraryEditor(false);
                 setEditingLibraryItem(null);

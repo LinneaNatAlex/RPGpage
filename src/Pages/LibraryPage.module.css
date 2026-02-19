@@ -40,80 +40,144 @@
   padding: 2rem;
 }
 
-.sections {
+/* Categories and list of title buttons */
+.sectionsByCategory {
   display: flex;
   flex-direction: column;
   gap: 28px;
 }
 
-.section {
-  background: rgba(245, 239, 224, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0;
-  padding: 20px 24px;
+.categorySection {
+  margin: 0;
 }
 
-.sectionTitle {
+.categoryTitle {
   font-family: "Cinzel", serif;
-  font-size: 1.35rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #d4c4a8;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid rgba(212, 196, 168, 0.4);
+}
+
+.buttonList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popupBackButton {
+  flex-shrink: 0;
+  margin: 0 0 12px 0;
+  padding: 10px 16px;
+  font-size: 1rem;
   font-weight: 600;
   color: #f5efe0;
-  margin: 0 0 12px 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(212, 196, 168, 0.3);
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(212, 196, 168, 0.5);
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.sectionContent {
-  font-size: 1rem;
-  line-height: 1.65;
+.popupBackButton:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: #d4c4a8;
+}
+
+.titleButton {
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  font-family: "Cinzel", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
   color: #f5efe0;
-}
-
-.sectionContent p {
-  margin: 0 0 0.75em 0;
-}
-
-.sectionContent p:last-child {
-  margin-bottom: 0;
-}
-
-.sectionContent ul,
-.sectionContent ol {
-  margin: 0.5em 0;
-  padding-left: 1.5em;
-}
-
-.sectionContent a {
-  color: #d4c4a8;
-  text-decoration: underline;
-}
-
-.sectionContent a:hover {
-  color: #f5efe0;
-}
-
-/* Inline code and code blocks */
-.sectionContent code {
-  font-family: "Consolas", "Monaco", "Courier New", monospace;
-  font-size: 0.9em;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 0.15em 0.4em;
-  border-radius: 4px;
-  border: 1px solid rgba(212, 196, 168, 0.2);
-}
-
-.sectionContent pre,
-.sectionContent pre.ql-syntax {
-  font-family: "Consolas", "Monaco", "Courier New", monospace;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 1rem 1.25rem;
+  background: rgba(245, 239, 224, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 0;
-  border: 1px solid rgba(212, 196, 168, 0.2);
-  overflow-x: auto;
-  margin: 0.75em 0;
-  white-space: pre;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.titleButton:hover {
+  background: rgba(245, 239, 224, 0.18);
+  border-color: rgba(212, 196, 168, 0.5);
+}
+
+/* Same popup pattern as NewsFeed; extra top padding so back button is below navbar (~70px) */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 10000;
+  padding: 80px 20px 20px 20px;
+  overflow-y: auto;
+}
+
+.closePopupButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 50%;
+  z-index: 10001;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closePopupButton:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.popupContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1400px;
+  height: 90vh;
+  background: transparent;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.popupContent {
+  flex: 1;
+  padding: 0;
+  min-width: 0;
+  display: flex;
+  background: transparent;
+}
+
+.popupIframe {
+  width: 100%;
+  min-height: 70vh;
+  height: 100%;
+  border: none;
+  background: #f5efe0;
+  display: block;
+}
+
+:global([data-theme="dark"]) .popupIframe {
+  background: #1a1a1a;
 }
 
 .back {

@@ -10,6 +10,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
+/** Library (tips). Write access: Firestore rules allow admin, headmaster, teacher, archivist. */
 const useLibrary = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +32,7 @@ const useLibrary = () => {
     const docRef = await addDoc(collection(db, "library"), {
       title: itemData.title || "",
       content: itemData.content || "",
+      category: (itemData.category || "").trim() || null,
       order: itemData.order ?? items.length,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -42,12 +44,12 @@ const useLibrary = () => {
 
   const updateItem = async (id, itemData) => {
     const ref = doc(db, "library", id);
-    await updateDoc(ref, {
-      title: itemData.title ?? undefined,
-      content: itemData.content ?? undefined,
-      order: itemData.order !== undefined ? itemData.order : undefined,
-      updatedAt: serverTimestamp(),
-    });
+    const updateData = { updatedAt: serverTimestamp() };
+    if (itemData.title !== undefined) updateData.title = itemData.title;
+    if (itemData.content !== undefined) updateData.content = itemData.content;
+    if (itemData.category !== undefined) updateData.category = (itemData.category || "").trim() || null;
+    if (typeof itemData.order === "number") updateData.order = itemData.order;
+    await updateDoc(ref, updateData);
     await fetchItems();
   };
 

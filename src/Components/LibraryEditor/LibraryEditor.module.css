@@ -1,3 +1,28 @@
+/* Raw HTML textarea – full HTML/CSS pasted here is saved as-is (no Quill stripping) */
+.rawHtmlTextarea {
+  width: 100%;
+  min-height: 320px;
+  padding: 12px;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5efe0;
+  border: 2px solid rgba(123, 104, 87, 0.5);
+  border-radius: 0;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.rawHtmlTextarea::placeholder {
+  color: rgba(212, 196, 168, 0.6);
+}
+
+.rawHtmlTextarea:focus {
+  outline: none;
+  border-color: rgba(212, 196, 168, 0.7);
+}
+
 /* Wrapper so the Quill editor area is clearly visible and focusable */
 .quillWrapper {
   width: 100%;
