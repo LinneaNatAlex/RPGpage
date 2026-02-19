@@ -69,13 +69,13 @@ const LibraryEditor = ({ entry = null, existingCategories = [], onSave, onCancel
         />
       </div>
       <div className={styles.formGroup}>
-        <label>Kategori (valgfritt)</label>
+        <label>Category (optional)</label>
         <input
           type="text"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           list="library-categories"
-          placeholder="e.g. Skapninger, Regler, Tips"
+          placeholder="e.g. Creatures, Rules, Tips"
           className={styles.input}
         />
         {existingCategories.length > 0 && (
