@@ -96,9 +96,19 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
-    // PRIVATE MESSAGES - kun de to brukerne i chatten kan lese/skriv
-    match /privateMessages/{chatId}/messages/{messageId} {
-      allow read, write: if request.auth != null && request.auth.uid in chatId.split('_');
+    // PRIVATE MESSAGES - de to brukerne kan lese/skrive; admin kan liste alle chatter og slette alle meldinger (Clear all)
+    match /privateMessages/{chatId} {
+      allow read: if request.auth != null && (
+        request.auth.uid in chatId.split('_') ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get("roles", []).hasAny(["admin"])
+      );
+      match /messages/{messageId} {
+        allow read, create, update: if request.auth != null && request.auth.uid in chatId.split('_');
+        allow delete: if request.auth != null && (
+          request.auth.uid in chatId.split('_') ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get("roles", []).hasAny(["admin"])
+        );
+      }
     }
 
     // RPGGRATEHALL (Starshade Hall) - alle innloggede kan lese og poste meldinger; admin/professor kan slette
