@@ -41,6 +41,15 @@ function buildLibraryPopupDoc(content) {
 export default function LibraryPage() {
   const { items, loading } = useLibrary();
   const [popupItem, setPopupItem] = useState(null);
+  const [openCategories, setOpenCategories] = useState(() => new Set());
+  const toggleCategory = (name) => {
+    setOpenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!popupItem) return;
@@ -85,23 +94,45 @@ export default function LibraryPage() {
           <p className={styles.empty}>No library entries yet. Check back later.</p>
         ) : (
           <div className={styles.sectionsByCategory}>
-            {byCategory.map(([categoryName, categoryItems]) => (
-              <section key={categoryName} className={styles.categorySection}>
-                <h2 className={styles.categoryTitle}>{categoryName}</h2>
-                <div className={styles.buttonList}>
-                  {categoryItems.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={styles.titleButton}
-                      onClick={() => setPopupItem(item)}
-                    >
-                      {item.title || "Untitled"}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ))}
+            {byCategory.map(([categoryName, categoryItems]) => {
+              const isOpen = openCategories.has(categoryName);
+              const categoryId = `library-cat-${categoryName.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "") || "cat"}`;
+              return (
+                <section key={categoryName} className={styles.categorySection}>
+                  <button
+                    type="button"
+                    className={styles.categoryToggle}
+                    onClick={() => toggleCategory(categoryName)}
+                    aria-expanded={isOpen}
+                    aria-controls={categoryId}
+                  >
+                    <span className={styles.categoryToggleIcon} aria-hidden>
+                      {isOpen ? "▼" : "▶"}
+                    </span>
+                    <span className={styles.categoryToggleLabel}>{categoryName}</span>
+                    <span className={styles.categoryToggleCount}>({categoryItems.length})</span>
+                  </button>
+                  <div
+                    id={categoryId}
+                    className={styles.categoryDropdown}
+                    hidden={!isOpen}
+                  >
+                    <div className={styles.buttonList}>
+                      {categoryItems.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className={styles.titleButton}
+                          onClick={() => setPopupItem(item)}
+                        >
+                          {item.title || "Untitled"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              );
+            })}
           </div>
         )}
         <p className={styles.back}>
