@@ -187,6 +187,18 @@
     0 0 12px #b0aac2;
 }
 
+/* VIP: outer gold glow only; inner ring stays role color */
+.vipAvatarGlowWrap {
+  display: inline-block;
+  border-radius: 50%;
+  box-shadow: 0 0 24px 10px rgba(255, 215, 0, 0.6), 0 0 48px 20px rgba(255, 215, 0, 0.3);
+  line-height: 0;
+}
+.vipAvatarGlowWrap img {
+  display: block;
+  border-radius: 50%;
+}
+
 /* -------------------------CHARACTER INFO------------------------- */
 .characterInfo {
   display: flex;

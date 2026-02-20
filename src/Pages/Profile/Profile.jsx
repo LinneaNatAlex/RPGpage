@@ -387,22 +387,21 @@ const Profile = () => {
                   )
                     roleClass += ` ${styles.archivistAvatar}`;
                   const hasVip = isProfileOwnerVip(userData);
-                  const avatarStyle = hasVip
-                    ? {
-                        boxShadow:
-                          "0 0 20px 8px rgba(255, 215, 0, 0.8), 0 0 40px 16px rgba(255, 215, 0, 0.4)",
-                        borderRadius: "50%",
-                      }
-                    : undefined;
+                  const imgEl = (
+                    <img
+                      src={userData?.profileImageUrl || "/icons/avatar.svg"}
+                      alt="Image"
+                      className={roleClass}
+                      loading="lazy"
+                    />
+                  );
                   return (
                     <>
-                      <img
-                        src={userData?.profileImageUrl || "/icons/avatar.svg"}
-                        alt="Image"
-                        className={roleClass}
-                        loading="lazy"
-                        style={avatarStyle}
-                      />
+                      {hasVip ? (
+                        <div className={styles.vipAvatarGlowWrap}>{imgEl}</div>
+                      ) : (
+                        imgEl
+                      )}
                       {hasVip && (
                         <div
                           style={{

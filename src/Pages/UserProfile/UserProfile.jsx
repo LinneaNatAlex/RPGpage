@@ -441,21 +441,22 @@ const UserProfile = () => {
                     "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
                   borderRadius: "50%",
                 }
-              : hasVip
-                ? {
-                    boxShadow:
-                      "0 0 20px 8px rgba(255, 215, 0, 0.8), 0 0 40px 16px rgba(255, 215, 0, 0.4)",
-                    borderRadius: "50%",
-                  }
-                : {};
+              : {};
+            const imgEl = (
+              <img
+                src={userData?.profileImageUrl || "/icons/avatar.svg"}
+                alt="Image"
+                className={roleClass}
+                style={avatarStyle}
+              />
+            );
             return (
               <>
-                <img
-                  src={userData?.profileImageUrl || "/icons/avatar.svg"}
-                  alt="Image"
-                  className={roleClass}
-                  style={avatarStyle}
-                />
+                {hasVip && !inLove ? (
+                  <div className={styles.vipAvatarGlowWrap}>{imgEl}</div>
+                ) : (
+                  imgEl
+                )}
                 {hasVip && (
                   <div
                     style={{

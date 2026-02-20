@@ -9,15 +9,13 @@ export function isProfileOwnerVip(userData) {
   if (!userData) return false;
   const v = userData.vipExpiresAt;
   if (v == null || v === undefined) return false;
-  const ms =
-    typeof v === "number"
-      ? v
-      : typeof v?.toMillis === "function"
-        ? v.toMillis()
-        : typeof v?.seconds === "number"
-          ? v.seconds * 1000
-          : null;
-  return ms != null && ms > Date.now();
+  let ms = null;
+  if (typeof v === "number") ms = v;
+  else if (typeof v?.toMillis === "function") ms = v.toMillis();
+  else if (typeof v?.toDate === "function") ms = v.toDate().getTime();
+  else if (typeof v?.seconds === "number") ms = v.seconds * 1000 + ((v.nanoseconds || 0) / 1e6);
+  else if (v instanceof Date) ms = v.getTime();
+  return ms != null && !Number.isNaN(ms) && ms > Date.now();
 }
 
 /**
