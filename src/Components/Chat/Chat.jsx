@@ -6,7 +6,6 @@ import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { db, auth } from "../../firebaseConfig";
-import { getRaceColor } from "../../utils/raceColors";
 import styles from "./Chat.module.css";
 import {
   addDoc,
@@ -32,7 +31,15 @@ const Chat = () => {
   const { users } = useUsers();
   const { isVip } = useUserData();
   const onlineUsers = useOnlineUsers();
-  const onlineUids = new Set(onlineUsers.map((u) => u.id));
+  // Samme logikk som online-listen på forsiden: kun brukere med lastActive innen 10 min
+  const now = Date.now();
+  const activeOnlineUsers = onlineUsers.filter((u) => {
+    const la = u.lastActive;
+    if (!la) return false;
+    const ms = typeof la?.toMillis === "function" ? la.toMillis() : la;
+    return now - ms < 10 * 60 * 1000;
+  });
+  const onlineUids = new Set(activeOnlineUsers.map((u) => u.id));
   const [newMess, setNewMess] = useState("");
   const [mentionQuery, setMentionQuery] = useState("");
   const [showMentions, setShowMentions] = useState(false);
@@ -690,12 +697,8 @@ const Chat = () => {
               )
                 roleClass += ` ${styles.archivistSender}`;
               else {
-                // Use race color for students with race; otherwise light beige so they stand out (especially in dark mode)
-                const raceColor = getRaceColor(userObj?.race);
-                nameColor =
-                  userObj?.race && raceColor !== "#FFFFFF"
-                    ? raceColor
-                    : "#D4C4A8"; /* default: light beige for users without role */
+                // Users without staff role: only default (reddish) color on names
+                nameColor = "#B85C4A";
               }
               return (
                 <div key={message.id} className={styles.message}>

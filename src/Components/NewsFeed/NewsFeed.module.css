@@ -1,6 +1,6 @@
 .posterName {
   font-weight: bold;
-  color: #b8860b;
+  color: #B85C4A;
 }
 .headmasterName {
   color: #fff !important;
@@ -24,7 +24,7 @@
 }
 
 /* Dark mode: default (no role) = beige so rector stands out */
-:global(html[data-theme="dark"]) .posterName { color: #D4C4A8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+:global(html[data-theme="dark"]) .posterName { color: #B85C4A !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 /* Dark mode: keep role colors on names */
 :global(html[data-theme="dark"]) .headmasterName { color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 :global(html[data-theme="dark"]) .professorName { color: gold !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
@@ -541,7 +541,7 @@ iframe {
   color: #e0e0e0 !important;
 }
 :global(html[data-theme="dark"]) .posterName {
-  color: #d4c4a8 !important;
+  color: #B85C4A !important;
 }
 :global(html[data-theme="dark"]) .otherNewsSidebar {
   border-color: #444 !important;

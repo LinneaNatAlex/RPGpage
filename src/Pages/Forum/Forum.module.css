@@ -275,7 +275,7 @@
 }
 
 /* Dark mode: default (no role) = beige so rector stands out */
-:global(html[data-theme="dark"]) .posterName { color: #D4C4A8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+:global(html[data-theme="dark"]) .posterName { color: #B85C4A !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 /* Dark mode: keep role colors on names */
 :global(html[data-theme="dark"]) .headmasterName { color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 :global(html[data-theme="dark"]) .professorName { color: gold !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }

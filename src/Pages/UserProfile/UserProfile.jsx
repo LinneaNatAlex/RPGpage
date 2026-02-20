@@ -20,7 +20,7 @@ import { db, auth } from "../../firebaseConfig";
 import styles from "./UserProfile.module.css";
 import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
-import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
+import { getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
 import { isProfileOwnerVip, getProfileDisplayBody } from "../../utils/profileCodeAccess";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
@@ -593,8 +593,8 @@ const UserProfile = () => {
                 )
                   roleNameClass += ` ${styles.archivistName}`;
                 else {
-                  // Use race color for students without roles
-                  nameColor = getRaceColor(userData?.race);
+                  // Users without staff role: only default (reddish) color on names
+                  nameColor = "#B85C4A";
                 }
 
                 return (

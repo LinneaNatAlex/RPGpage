@@ -5,11 +5,12 @@ import useUserData from "../../hooks/useUserData";
 import useSegmentSchedule from "../../hooks/useSegmentSchedule";
 import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import BookEditor from "../BookEditor/BookEditor";
 import LibraryEditor from "../LibraryEditor/LibraryEditor";
 import DeleteConfirmModal from "../DeleteConfirmModal/DeleteConfirmModal";
 import useLibrary from "../../hooks/useLibrary";
+import { forumList } from "../../data/forumList";
 
 const LEAD_LABELS = { archivist: "Archivist", shadowpatrol: "Shadow Patrol" };
 
@@ -38,6 +39,10 @@ export default function TeacherPanel() {
   const [bookToDelete, setBookToDelete] = useState(null);
   const [userSearch, setUserSearch] = useState("");
   const [userPage, setUserPage] = useState(1);
+  const [forumDescForumId, setForumDescForumId] = useState("");
+  const [forumDescText, setForumDescText] = useState("");
+  const [forumDescLoading, setForumDescLoading] = useState(false);
+  const [forumDescSaving, setForumDescSaving] = useState(false);
 
   const USERS_PER_PAGE = 10;
 
@@ -134,6 +139,48 @@ export default function TeacherPanel() {
   const handleBookCancel = () => {
     setShowBookEditor(false);
     setEditingBook(null);
+  };
+
+  const forumDescRef = doc(db, "config", "forumDescriptions");
+
+  useEffect(() => {
+    if (!forumDescForumId) {
+      setForumDescText("");
+      return;
+    }
+    let cancelled = false;
+    setForumDescLoading(true);
+    getDoc(forumDescRef)
+      .then((snap) => {
+        if (cancelled) return;
+        const data = snap.exists() ? snap.data() : {};
+        const descriptions = data.descriptions || {};
+        setForumDescText(descriptions[forumDescForumId] || "");
+      })
+      .catch(() => {
+        if (!cancelled) setForumDescText("");
+      })
+      .finally(() => {
+        if (!cancelled) setForumDescLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [forumDescForumId]);
+
+  const saveForumDescription = async () => {
+    if (!forumDescForumId) return;
+    setForumDescSaving(true);
+    setStatus("");
+    try {
+      const snap = await getDoc(forumDescRef);
+      const data = snap.exists() ? snap.data() : {};
+      const descriptions = { ...(data.descriptions || {}), [forumDescForumId]: forumDescText };
+      await setDoc(forumDescRef, { descriptions }, { merge: true });
+      setStatus("Forum description saved.");
+    } catch (err) {
+      setStatus("Error saving: " + (err?.message || "Unknown error"));
+    } finally {
+      setForumDescSaving(false);
+    }
   };
 
   return (
@@ -245,6 +292,25 @@ export default function TeacherPanel() {
           }}
         >
           Library (tips)
+        </button>
+        <button
+          onClick={() => setActiveTab("forumDescriptions")}
+          style={{
+            flex: 1,
+            padding: "12px 24px",
+            background:
+              activeTab === "forumDescriptions"
+                ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)"
+                : "transparent",
+            color: activeTab === "forumDescriptions" ? "#F5EFE0" : "#D4C4A8",
+            border: "none",
+            borderRadius: 0,
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+          }}
+        >
+          Forum descriptions
         </button>
         {leadForRole && (
           <button
@@ -739,6 +805,115 @@ export default function TeacherPanel() {
                   </div>
                 </div>
               ))
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Forum descriptions Tab */}
+      {activeTab === "forumDescriptions" && (
+        <>
+          <div
+            style={{
+              marginBottom: 20,
+              background: "rgba(245, 239, 224, 0.1)",
+              padding: 20,
+              borderRadius: 12,
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <label
+              htmlFor="forum-desc-select"
+              style={{
+                color: "#D4C4A8",
+                fontSize: "1.1rem",
+                fontWeight: 600,
+                fontFamily: '"Cinzel", serif',
+                display: "block",
+                marginBottom: 12,
+              }}
+            >
+              Forum
+            </label>
+            <select
+              id="forum-desc-select"
+              value={forumDescForumId}
+              onChange={(e) => setForumDescForumId(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                borderRadius: 0,
+                background: "#F5EFE0",
+                color: "#2C2C2C",
+                border: "2px solid #D4C4A8",
+                fontSize: "1rem",
+                marginBottom: 16,
+                boxSizing: "border-box",
+              }}
+            >
+              <option value="">Choose forum…</option>
+              {forumList.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
+            {forumDescForumId && (
+              <>
+                <label
+                  htmlFor="forum-desc-textarea"
+                  style={{
+                    color: "#D4C4A8",
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: 8,
+                  }}
+                >
+                  Beskrivelse (vises øverst i forumet)
+                </label>
+                {forumDescLoading ? (
+                  <p style={{ color: "#D4C4A8", fontStyle: "italic" }}>Laster…</p>
+                ) : (
+                  <textarea
+                    id="forum-desc-textarea"
+                    value={forumDescText}
+                    onChange={(e) => setForumDescText(e.target.value)}
+                    placeholder="Skriv en beskrivelse av stedet så brukere kan danne seg et bilde når de roller her."
+                    rows={8}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      borderRadius: 0,
+                      background: "#F5EFE0",
+                      color: "#2C2C2C",
+                      border: "2px solid #D4C4A8",
+                      fontSize: "1rem",
+                      boxSizing: "border-box",
+                      resize: "vertical",
+                      fontFamily: "inherit",
+                    }}
+                  />
+                )}
+                <button
+                  type="button"
+                  onClick={saveForumDescription}
+                  disabled={forumDescSaving || forumDescLoading}
+                  style={{
+                    marginTop: 12,
+                    background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    color: "#F5EFE0",
+                    border: "none",
+                    padding: "10px 20px",
+                    borderRadius: 0,
+                    fontWeight: 600,
+                    cursor: forumDescSaving || forumDescLoading ? "not-allowed" : "pointer",
+                    opacity: forumDescSaving || forumDescLoading ? 0.7 : 1,
+                  }}
+                >
+                  {forumDescSaving ? "Lagrer…" : "Lagre beskrivelse"}
+                </button>
+              </>
             )}
           </div>
         </>

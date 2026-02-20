@@ -11,7 +11,7 @@ import Chat from "../../Components/Chat/Chat";
 import FriendsList from "../../Components/FriendsList/FriendsList";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
-import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
+import { getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
 import {
   isProfileOwnerVip,
@@ -495,8 +495,8 @@ const Profile = () => {
                       )
                         nameClass += ` ${styles.archivistName}`;
                       else {
-                        // Use race color for students without roles
-                        nameColor = getRaceColor(userData?.race);
+                        // Users without staff role: only default (reddish) color on names
+                        nameColor = "#B85C4A";
                       }
 
                       return (

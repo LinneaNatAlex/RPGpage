@@ -29,22 +29,7 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import RepetitionWarningComponent from "../../Components/RepetitionWarning/RepetitionWarningComponent";
-
-const forumNames = {
-  commons: "Commons",
-  ritualroom: "Ritual Room",
-  moongarden: "Moon Garden",
-  bloodbank: "Blood Bank",
-  nightlibrary: "Night Library",
-  gymnasium: "The Gymnasium",
-  infirmary: "The Infirmary",
-  greenhouse: "The Greenhouse",
-  artstudio: "The Art Studio",
-  kitchen: "Kitchen",
-  detentionclassroom: "Detention Classroom",
-  "18plus": "18+ Forum",
-  shortbutlong: "Short, but long",
-};
+import { forumNames } from "../../data/forumList";
 
 // Per-forum word limits and reward (default = standard forum: 300 min, global reward)
 const forumWordConfig = {
@@ -100,6 +85,7 @@ const Forum = () => {
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [selectedTopicFollowers, setSelectedTopicFollowers] = useState([]);
   const [followerCounts, setFollowerCounts] = useState({});
+  const [forumDescription, setForumDescription] = useState("");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -117,6 +103,9 @@ const Forum = () => {
       forumTitle = raceCommons[raceKey];
     }
   }
+
+  // Nøkkel for beskrivelse: race-commons bruker "commons", ellers forumRoom
+  const forumDescriptionKey = forumRoom.includes("_commonroom") ? "commons" : forumRoom;
 
   const is18PlusForum = forumRoom === "18plus";
   const wordConfig = forumWordConfig[forumRoom] || forumWordConfig.default;
@@ -173,6 +162,26 @@ const Forum = () => {
   useEffect(() => {
     if (!loading && !user) navigate("/login");
   }, [user, loading, navigate]);
+
+  // Hent forum-beskrivelse fra config (vises under tittelen)
+  useEffect(() => {
+    if (!forumDescriptionKey) {
+      setForumDescription("");
+      return;
+    }
+    let cancelled = false;
+    getDoc(doc(db, "config", "forumDescriptions"))
+      .then((snap) => {
+        if (cancelled) return;
+        const data = snap.exists() ? snap.data() : {};
+        const descriptions = data.descriptions || {};
+        setForumDescription(descriptions[forumDescriptionKey] || "");
+      })
+      .catch(() => {
+        if (!cancelled) setForumDescription("");
+      });
+    return () => { cancelled = true; };
+  }, [forumDescriptionKey]);
 
   // Fetch forum posts for this room
   // Fetch topics for this forum room
@@ -741,6 +750,22 @@ const Forum = () => {
   return (
     <div className={styles.forumWrapper}>
       <h2>{forumTitle}</h2>
+      {forumDescription && (
+        <div
+          style={{
+            marginBottom: 16,
+            padding: "12px 16px",
+            background: "rgba(245, 239, 224, 0.06)",
+            borderLeft: "4px solid rgba(123, 104, 87, 0.6)",
+            color: "rgba(212, 196, 168, 0.95)",
+            fontSize: "0.95rem",
+            lineHeight: 1.5,
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {forumDescription}
+        </div>
+      )}
       {/* Topic list view */}
       {!selectedTopic && (
         <>

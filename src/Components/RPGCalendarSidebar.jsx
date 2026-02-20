@@ -12,7 +12,6 @@ import {
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Link } from "react-router-dom";
-import { getRaceColor } from "../utils/raceColors";
 
 export default function RPGCalendarSidebar() {
   const today = new Date();
@@ -521,8 +520,8 @@ export default function RPGCalendarSidebar() {
               ) {
                 nameColor = "#a084e8";
               } else {
-                // Use race color for students without roles
-                nameColor = getRaceColor(user.race);
+                // Users without staff role: only default (reddish) color on names
+                nameColor = "#B85C4A";
               }
 
               return (
@@ -628,8 +627,8 @@ export default function RPGCalendarSidebar() {
               ) {
                 nameColor = "#a084e8";
               } else {
-                // Use race color for students without roles
-                nameColor = getRaceColor(user.race);
+                // Users without staff role: only default (reddish) color on names
+                nameColor = "#B85C4A";
               }
 
               return (

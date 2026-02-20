@@ -107,7 +107,7 @@ import {
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
-import { playPrivateChatPling, preparePrivateChatSound } from "./ping_alt";
+import { preparePrivateChatSound } from "./ping_alt";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 import { useNavigate, Link } from "react-router-dom";
 import SiteModal from "./SiteModal";
@@ -120,16 +120,6 @@ import {
 
 const PrivateChat = ({ fullPage = false }) => {
   const navigate = useNavigate();
-  // Mute state for varsler
-  const [muted, setMuted] = useState(() => {
-    const stored = localStorage.getItem("privateChatMuted");
-    return stored === "true";
-  });
-  const mutedRef = useRef(muted);
-  useEffect(() => {
-    localStorage.setItem("privateChatMuted", muted);
-    mutedRef.current = muted;
-  }, [muted]);
   const [editingMessage, setEditingMessage] = useState(null);
   const [selectedMessages, setSelectedMessages] = useState([]);
   // Husk om chatten var lukket eller åpen (default: lukket)
@@ -309,7 +299,15 @@ const PrivateChat = ({ fullPage = false }) => {
   const { users, loading } = useUsers();
   const { isVip } = useUserData();
   const onlineUsersList = useOnlineUsers();
-  const onlineUids = new Set(onlineUsersList.map((u) => u.id));
+  // Samme logikk som online-listen på forsiden: kun brukere med lastActive innen 10 min
+  const now = Date.now();
+  const activeOnlineUsers = onlineUsersList.filter((u) => {
+    const la = u.lastActive;
+    if (!la) return false;
+    const ms = typeof la?.toMillis === "function" ? la.toMillis() : la;
+    return now - ms < 10 * 60 * 1000;
+  });
+  const onlineUids = new Set(activeOnlineUsers.map((u) => u.id));
   const { openWithUid, setOpenWithUid, openWithGroupId, setOpenWithGroupId } = useOpenPrivateChat();
 
   const showSiteAlert = (msg) => {
@@ -351,7 +349,7 @@ const PrivateChat = ({ fullPage = false }) => {
     fetchChats();
   }, [currentUser, users]);
 
-  // When chat is collapsed: listen for new private_chat notifications → same soft pling as main chat
+  // When chat is collapsed: track new private_chat notifications (no sound – lydnotifikasjon er av i privat chat)
   const lastSeenPrivateNotifIdRef = useRef(null);
   useEffect(() => {
     if (!currentUser || !isCollapsed) return;
@@ -367,17 +365,6 @@ const PrivateChat = ({ fullPage = false }) => {
       (snap) => {
         const doc = snap.docs[0];
         if (!doc) return;
-        const data = doc.data();
-        const fromUid = data.fromUid || data.from;
-        const isFromOther = fromUid && fromUid !== currentUser.uid;
-        if (
-          lastSeenPrivateNotifIdRef.current !== null &&
-          lastSeenPrivateNotifIdRef.current !== doc.id &&
-          isFromOther &&
-          !mutedRef.current
-        ) {
-          playPrivateChatPling();
-        }
         lastSeenPrivateNotifIdRef.current = doc.id;
       },
       () => {},
@@ -1213,67 +1200,6 @@ const PrivateChat = ({ fullPage = false }) => {
               </span>
             )}
           </span>
-          {/* Mute/unmute icon button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMuted((m) => !m);
-            }}
-            style={{
-              background: "none",
-              border: "none",
-              marginLeft: 8,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              padding: 0,
-              outline: "none",
-            }}
-            title={muted ? "Turn on notifications" : "Turn off notifications"}
-          >
-            {muted ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="none"
-                stroke="#7B6857"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ filter: "drop-shadow(0 0 2px #7B6857)" }}
-              >
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                <line
-                  x1="1"
-                  y1="1"
-                  x2="23"
-                  y2="23"
-                  stroke="#7B6857"
-                  strokeWidth="2"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="none"
-                stroke="#7B6857"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ filter: "drop-shadow(0 0 2px #7B6857)" }}
-              >
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-            )}
-          </button>
           <button
             type="button"
             style={{
