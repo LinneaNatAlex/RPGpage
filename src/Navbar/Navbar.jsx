@@ -83,7 +83,7 @@ const Navbar = () => {
                 Roleplay
               </span>
               <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
-                <NavLink to="/Rpg/GreatHall">Starshade Hall</NavLink>
+                <NavLink to="/starshade-hall">Starshade Hall</NavLink>
                 <NavLink to="/forum/commons">
                   <span>Commons</span>
                   <span>({topicCounts.commons || 0})</span>

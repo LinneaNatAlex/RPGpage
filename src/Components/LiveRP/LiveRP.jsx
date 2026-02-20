@@ -34,7 +34,7 @@ const hallRules = [
 
 // costume hooks usestate to hold the new message input value
 // useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
-const LiveRP = () => {
+const LiveRP = ({ descriptionText }) => {
   const { rpgGrateHall } = useChatMessages(); // destructuring the messages to get the rpgGrateHall messages
   const { users } = useUsers();
   const [newMess, setNewMess] = useState("");
@@ -333,6 +333,39 @@ const LiveRP = () => {
           onNeverShow={handleNeverShowRulesPopup}
         />
       )}
+      {isMobile && descriptionText && (
+        <div
+          style={{
+            width: "100%",
+            background: "rgba(44, 43, 53, 0.9)",
+            border: "1px solid rgba(176, 170, 194, 0.4)",
+            borderRadius: 0,
+            padding: "1rem 1.25rem",
+            color: "rgba(212, 196, 168, 0.95)",
+            fontSize: "0.9rem",
+            lineHeight: 1.55,
+            whiteSpace: "pre-wrap",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+            marginBottom: "1rem",
+          }}
+        >
+          <span
+            style={{
+              display: "block",
+              fontFamily: "'Cinzel', serif",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              color: "rgba(176, 170, 194, 0.95)",
+              marginBottom: "0.5rem",
+              textTransform: "uppercase",
+            }}
+          >
+            About this place
+          </span>
+          {descriptionText}
+        </div>
+      )}
       <div
         style={{
           display: "flex",
@@ -347,57 +380,96 @@ const LiveRP = () => {
           <div
             style={{
               flex: 1,
-              background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-              border: "2px solid #7B6857",
-              borderRadius: 0,
-              color: "#F5EFE0",
-              padding: "1.5rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.5rem",
               minWidth: "220px",
               maxWidth: "300px",
-              boxShadow:
-                "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
-              position: "relative",
-              overflow: "hidden",
             }}
           >
+            {descriptionText && (
+              <div
+                style={{
+                  background: "rgba(44, 43, 53, 0.9)",
+                  border: "1px solid rgba(176, 170, 194, 0.4)",
+                  borderRadius: 0,
+                  padding: "1rem 1.25rem",
+                  color: "rgba(212, 196, 168, 0.95)",
+                  fontSize: "0.9rem",
+                  lineHeight: 1.55,
+                  whiteSpace: "pre-wrap",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                <span
+                  style={{
+                    display: "block",
+                    fontFamily: "'Cinzel', serif",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.06em",
+                    color: "rgba(176, 170, 194, 0.95)",
+                    marginBottom: "0.5rem",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  About this place
+                </span>
+                {descriptionText}
+              </div>
+            )}
             <div
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "4px",
-                background:
-                  "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
-              }}
-            />
-            <h2
-              style={{
+                background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+                border: "2px solid #7B6857",
+                borderRadius: 0,
                 color: "#F5EFE0",
-                fontSize: "1.2rem",
-                marginBottom: "1rem",
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                fontFamily: "'Cinzel', serif",
-                fontWeight: "600",
+                padding: "1.5rem",
+                boxShadow:
+                  "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
+                position: "relative",
+                overflow: "hidden",
               }}
             >
-              Starshade Hall Rules
-            </h2>
-            <ul
-              style={{
-                fontSize: "0.95rem",
-                lineHeight: "1.6",
-                paddingLeft: "1.2rem",
-                color: "#D4C4A8",
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-              }}
-            >
-              {hallRules.map((rule, idx) => (
-                <li key={idx} style={{ marginBottom: "0.5rem" }}>
-                  {rule}
-                </li>
-              ))}
-            </ul>
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "4px",
+                  background:
+                    "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
+                }}
+              />
+              <h2
+                style={{
+                  color: "#F5EFE0",
+                  fontSize: "1.2rem",
+                  marginBottom: "1rem",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                  fontFamily: "'Cinzel', serif",
+                  fontWeight: "600",
+                }}
+              >
+                Starshade Hall Rules
+              </h2>
+              <ul
+                style={{
+                  fontSize: "0.95rem",
+                  lineHeight: "1.6",
+                  paddingLeft: "1.2rem",
+                  color: "#D4C4A8",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                }}
+              >
+                {hallRules.map((rule, idx) => (
+                  <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                    {rule}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
         <div style={{ flex: 2 }}>

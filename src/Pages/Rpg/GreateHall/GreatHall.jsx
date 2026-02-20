@@ -28,23 +28,7 @@ const GreatHall = () => {
   return (
     <div className={styles.GreatHallClass}>
       <h1 className={styles.title}>Starshade Hall</h1>
-      {forumDescription && (
-        <div
-          style={{
-            marginBottom: 16,
-            padding: "12px 16px",
-            background: "rgba(245, 239, 224, 0.06)",
-            borderLeft: "4px solid rgba(123, 104, 87, 0.6)",
-            color: "rgba(212, 196, 168, 0.95)",
-            fontSize: "0.95rem",
-            lineHeight: 1.5,
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {forumDescription}
-        </div>
-      )}
-      <LiveRP />
+      <LiveRP descriptionText={forumDescription} />
     </div>
   );
 };

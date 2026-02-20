@@ -195,8 +195,9 @@ export const router = createBrowserRouter(
         element={<DatingRelationshipRules />}
       />
       <Route path="18forumrules" element={<Forum18Rules />} />
+      <Route path="Rpg/GreatHall" element={<Navigate to="/starshade-hall" replace />} />
       <Route
-        path="Rpg/GreatHall"
+        path="starshade-hall"
         element={
           <RouteGuard>
             <GreatHall />
