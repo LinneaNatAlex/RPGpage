@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 // MessageMenu component for edit/delete menu
 // ...existing code...
 // ...existing code...
-function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
+function MessageMenu({ message, currentUser, selectedUser, db, onEdit, onAlert }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
   useEffect(() => {
@@ -19,7 +19,7 @@ function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
     <div className={styles.privateMessageMenu} ref={menuRef}>
       <button
         className={styles.privateMessageMenuBtn}
-        aria-label="Meldingsmeny"
+        aria-label="Message menu"
         onClick={(e) => {
           e.preventDefault();
           setOpen((v) => !v);
@@ -54,11 +54,13 @@ function MessageMenu({ message, currentUser, selectedUser, db, onEdit }) {
                   await deleteDoc(messageRef);
                 } else {
                   console.error("Message ID not found, cannot delete");
-                  alert("Could not delete message - missing ID.");
+                  if (onAlert) onAlert("Could not delete message - missing ID.");
+                  else alert("Could not delete message - missing ID.");
                 }
               } catch (error) {
                 console.error("Error deleting message:", error);
-                alert("Could not delete message. Try again.");
+                if (onAlert) onAlert("Could not delete message. Try again.");
+                else alert("Could not delete message. Try again.");
               }
             }}
           >
@@ -103,10 +105,18 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
+import useUserData from "../../hooks/useUserData";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { playPrivateChatPling, preparePrivateChatSound } from "./ping_alt";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 import { useNavigate, Link } from "react-router-dom";
+import SiteModal from "./SiteModal";
+import { stripEmoji } from "../../utils/stripEmoji";
+import {
+  getPrivateMessagesSentToday,
+  incrementPrivateMessagesSentToday,
+  MAX_PRIVATE_MESSAGES_PER_DAY,
+} from "../../utils/privateChatDailyLimit";
 
 const PrivateChat = ({ fullPage = false }) => {
   const navigate = useNavigate();
@@ -139,6 +149,7 @@ const PrivateChat = ({ fullPage = false }) => {
   const [showNewGroupModal, setShowNewGroupModal] = useState(false);
   const [newGroupSelectedUids, setNewGroupSelectedUids] = useState([]);
   const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupMemberSearch, setNewGroupMemberSearch] = useState("");
 
   // Potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
@@ -291,10 +302,12 @@ const PrivateChat = ({ fullPage = false }) => {
   const [message, setMessage] = useState("");
   const [messageError, setMessageError] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
+  const [siteModal, setSiteModal] = useState({ open: false, message: "", variant: "alert", onConfirm: null, onCancel: null });
   const chatBoxRef = useRef(null);
   const lastMessageRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
+  const { isVip } = useUserData();
   const onlineUsersList = useOnlineUsers();
   const onlineUids = new Set(onlineUsersList.map((u) => u.id));
   const { openWithUid, setOpenWithUid, openWithGroupId, setOpenWithGroupId } = useOpenPrivateChat();
@@ -576,6 +589,13 @@ const PrivateChat = ({ fullPage = false }) => {
     e.preventDefault();
     preparePrivateChatSound();
     if (!message.trim() || !selectedUser || !currentUser) return;
+    // Non-VIP: max 30 private messages per day (resets at midnight)
+    if (!isVip && getPrivateMessagesSentToday() >= MAX_PRIVATE_MESSAGES_PER_DAY) {
+      showSiteAlert(
+        `You can only send ${MAX_PRIVATE_MESSAGES_PER_DAY} private messages per day. The limit resets at midnight. Get VIP for unlimited messages.`
+      );
+      return;
+    }
     if (editingMessage) {
       // Edit existing message
       const chatId = [currentUser.uid, selectedUser.uid].sort().join("_");
@@ -592,7 +612,7 @@ const PrivateChat = ({ fullPage = false }) => {
         await updateDoc(messageRef, { text: message });
       } else {
         console.error("Editing message ID not found");
-        alert("Could not edit message - missing ID.");
+        showSiteAlert("Could not edit message - missing ID.");
       }
       setEditingMessage(null);
       setMessage("");
@@ -637,6 +657,8 @@ const PrivateChat = ({ fullPage = false }) => {
         potionEffects:
           Object.keys(potionEffects).length > 0 ? potionEffects : null,
       });
+
+      if (!isVip) incrementPrivateMessagesSentToday();
 
       // Keep only last 20 messages in this chat
       trimPrivateChatToLimit(chatId).catch(() => {});
@@ -691,6 +713,10 @@ const PrivateChat = ({ fullPage = false }) => {
 
   const createGroup = async () => {
     if (!currentUser || newGroupSelectedUids.length === 0) return;
+    if (!isVip) {
+      alert("Kun VIP kan opprette gruppechatter.");
+      return;
+    }
     const members = [currentUser.uid, ...newGroupSelectedUids];
     try {
       const ref = await addDoc(collection(db, "groupChats"), {
@@ -706,7 +732,7 @@ const PrivateChat = ({ fullPage = false }) => {
       setNewGroupName("");
     } catch (err) {
       console.error("Create group failed:", err);
-      alert(err?.message || "Kunne ikke opprette gruppe. Sjekk at Firestore-regler er deployet (firebase deploy --only firestore:rules).");
+      showSiteAlert(err?.message || "Could not create group. Check that Firestore rules are deployed (firebase deploy --only firestore:rules).");
     }
   };
 
@@ -759,14 +785,15 @@ const PrivateChat = ({ fullPage = false }) => {
     if (!currentUser || !selectedGroup) return;
     const group = groupChats.find((g) => g.id === selectedGroup);
     if (group?.createdBy !== currentUser.uid) return;
-    if (!window.confirm("Delete this group for everyone? This cannot be undone.")) return;
-    try {
-      await deleteDoc(doc(db, "groupChats", selectedGroup));
-      setSelectedGroup(null);
-    } catch (err) {
-      console.error("Delete group failed:", err);
-      alert(err?.message || "Could not delete group.");
-    }
+    showSiteConfirm("Delete this group for everyone? This cannot be undone.", async () => {
+      try {
+        await deleteDoc(doc(db, "groupChats", selectedGroup));
+        setSelectedGroup(null);
+      } catch (err) {
+        console.error("Delete group failed:", err);
+        showSiteAlert(err?.message || "Could not delete group.");
+      }
+    });
   };
 
   // Calculate per-chat unread messages for the current user
@@ -864,7 +891,23 @@ const PrivateChat = ({ fullPage = false }) => {
             <p className={styles.messagesFullPageSidebarHint}>Type to search for an online user</p>
           )}
           <h3 className={styles.messagesFullPageSidebarTitle}>Group chats</h3>
-          <button type="button" className={styles.messagesFullPageSidebarItem} onClick={() => setShowNewGroupModal(true)} style={{ justifyContent: "center", fontWeight: 600 }}>
+          <button
+            type="button"
+            className={styles.messagesFullPageSidebarItem}
+            onClick={() => {
+              if (!isVip) {
+                showSiteAlert("Only VIP can create group chats.");
+                return;
+              }
+              setShowNewGroupModal(true);
+            }}
+            style={{
+              justifyContent: "center",
+              fontWeight: 600,
+              opacity: isVip ? 1 : 0.7,
+            }}
+            title={!isVip ? "Only VIP can create group chats" : undefined}
+          >
             + New group
           </button>
           {groupChats.map((g) => (
@@ -928,7 +971,7 @@ const PrivateChat = ({ fullPage = false }) => {
                     </div>
                     <form className={`${styles.chatForm} ${styles.privateChatForm}`} onSubmit={sendGroupMessage} style={{ width: "100%", boxSizing: "border-box", flexShrink: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 4, flex: 1, minWidth: 0, width: "100%" }}>
-                        <input value={message} onChange={(e) => setMessage(e.target.value)} type="text" placeholder="Message group..." maxLength={1500} className={styles.chatInput} style={{ flex: 1, minWidth: 0 }} />
+                        <input value={message} onChange={(e) => handleMessageChange(e, false)} type="text" placeholder="Message group..." maxLength={1500} className={styles.chatInput} style={{ flex: 1, minWidth: 0 }} />
                         <button type="submit" className={styles.chatBtn}>Send</button>
                       </div>
                     </form>
@@ -963,7 +1006,7 @@ const PrivateChat = ({ fullPage = false }) => {
                             <div style={{ position: "relative" }}>
                               {m.from === currentUser?.uid && (
                                 <div style={{ position: "absolute", top: -28, right: -10, zIndex: 3 }}>
-                                  <MessageMenu message={m} currentUser={currentUser} selectedUser={selectedUser} db={db} onEdit={(msg) => { setEditingMessage(msg); setMessage(msg.text); }} />
+                                  <MessageMenu message={m} currentUser={currentUser} selectedUser={selectedUser} db={db} onEdit={(msg) => { setEditingMessage(msg); setMessage(msg.text); }} onAlert={showSiteAlert} />
                                 </div>
                               )}
                               <span style={{ display: "block", wordBreak: "break-word", whiteSpace: "normal", overflowWrap: "break-word", ...(m.potionEffects ? { ...(m.potionEffects.hairColor ? { color: m.potionEffects.hairColor } : {}), ...(m.potionEffects.rainbow ? { color: m.potionEffects.rainbowColor } : {}), ...(m.potionEffects.shout ? { textTransform: "uppercase", fontWeight: "bold" } : {}) } : {}) }}>
@@ -981,10 +1024,10 @@ const PrivateChat = ({ fullPage = false }) => {
                 </div>
                 <form className={`${styles.chatForm} ${styles.privateChatForm}`} onSubmit={sendMessage} style={{ width: "100%", boxSizing: "border-box", flexShrink: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 4, flex: 1, minWidth: 0, width: "100%" }}>
-                    <input id="private-chat-message-fullpage" value={message} onChange={(e) => { setMessage(e.target.value); setMessageError(""); }} type="text" placeholder={editingMessage ? "Edit message..." : `Message ${selectedUser.displayName || selectedUser.name || selectedUser.uid}...`} maxLength={1500} className={styles.chatInput} style={{ flex: 1, minWidth: 0 }} />
+                    <input id="private-chat-message-fullpage" value={message} onChange={handleMessageChange} type="text" placeholder={editingMessage ? "Edit message..." : `Message ${selectedUser.displayName || selectedUser.name || selectedUser.uid}...`} maxLength={1500} className={styles.chatInput} style={{ flex: 1, minWidth: 0 }} />
                     <button type="submit" className={styles.chatBtn}>{editingMessage ? "Save" : "Send"}</button>
                   </div>
-                  <div className={styles.messagesFullPageFormHint}>{messageError || (message.trim() ? `${getWordCount(message)} / ${MAX_PRIVATE_MESSAGE_WORDS} ord` : "")}</div>
+                  <div className={styles.messagesFullPageFormHint}>{messageError || (message.trim() ? `${getWordCount(message)} / ${MAX_PRIVATE_MESSAGE_WORDS} words` : "")}</div>
                 </form>
               </div>
             </>
@@ -994,33 +1037,57 @@ const PrivateChat = ({ fullPage = false }) => {
           <div className={styles.messagesFullPageModalOverlay} onClick={() => setShowNewGroupModal(false)}>
             <div className={styles.messagesFullPageModal} onClick={(e) => e.stopPropagation()}>
               <h3 className={styles.messagesFullPageSidebarTitle}>New group</h3>
-              <p className={styles.messagesFullPageSidebarHint}>Add people one by one from the dropdown. At least one required.</p>
+              <p className={styles.messagesFullPageSidebarHint}>Search and select users to add. At least one required.</p>
               <input type="text" placeholder="Group name (optional)" value={newGroupName} onChange={(e) => setNewGroupName(e.target.value)} className={styles.messagesFullPageSidebarSearch} />
               <label className={styles.messagesFullPageGroupDropdownLabel}>
-                Add person
+                Search user
               </label>
-              <select
-                className={styles.messagesFullPageGroupDropdown}
-                value=""
-                onChange={(e) => {
-                  const uid = e.target.value;
-                  if (uid && !newGroupSelectedUids.includes(uid)) {
-                    setNewGroupSelectedUids((prev) => [...prev, uid]);
-                  }
-                  e.target.value = "";
-                }}
-              >
-                <option value="">— Choose someone —</option>
-                {onlineUsersList
-                  .filter((u) => u.id !== currentUser.uid && !newGroupSelectedUids.includes(u.id))
+              <input
+                type="text"
+                placeholder="Type name to search..."
+                value={newGroupMemberSearch}
+                onChange={(e) => setNewGroupMemberSearch(e.target.value)}
+                className={styles.messagesFullPageSidebarSearch}
+              />
+              <div className={styles.messagesFullPageSidebarUserList} style={{ maxHeight: 220, overflowY: "auto", marginTop: 8 }}>
+                {(users || [])
+                  .filter(
+                    (u) =>
+                      u.uid !== currentUser.uid &&
+                      !newGroupSelectedUids.includes(u.uid) &&
+                      (u.displayName || u.name || u.uid)
+                  )
+                  .filter(
+                    (u) =>
+                      !newGroupMemberSearch.trim() ||
+                      (u.displayName || u.name || u.uid)
+                        .toLowerCase()
+                        .includes(newGroupMemberSearch.trim().toLowerCase())
+                  )
+                  .slice(0, 80)
                   .map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.displayName || u.name || u.id}
-                    </option>
+                    <button
+                      key={u.uid}
+                      type="button"
+                      className={styles.messagesFullPageSidebarItem}
+                      onClick={() => {
+                        if (!newGroupSelectedUids.includes(u.uid)) {
+                          setNewGroupSelectedUids((prev) => [...prev, u.uid]);
+                        }
+                      }}
+                    >
+                      <span className={styles.messagesFullPageSidebarItemText}>
+                        {u.displayName || u.name || u.uid}
+                      </span>
+                    </button>
                   ))}
-              </select>
-              {onlineUsersList.filter((u) => u.id !== currentUser.uid).length === 0 && (
-                <p className={styles.messagesFullPageSidebarHint}>No other users online right now.</p>
+              </div>
+              {users && (
+                <p className={styles.messagesFullPageSidebarHint}>
+                  {!newGroupMemberSearch.trim()
+                    ? "Type in the search field to find users."
+                    : "Klikk på en bruker for å legge til."}
+                </p>
               )}
               <div className={styles.messagesFullPageGroupTags}>
                 {newGroupSelectedUids.map((uid) => {
@@ -1035,7 +1102,7 @@ const PrivateChat = ({ fullPage = false }) => {
                 })}
               </div>
               <div className={styles.messagesFullPageModalActions}>
-                <button type="button" className={styles.chatBtn} onClick={() => { setShowNewGroupModal(false); setNewGroupSelectedUids([]); setNewGroupName(""); }}>Cancel</button>
+                <button type="button" className={styles.chatBtn} onClick={() => { setShowNewGroupModal(false); setNewGroupSelectedUids([]); setNewGroupName(""); setNewGroupMemberSearch(""); }}>Cancel</button>
                 <button type="button" className={styles.chatBtn} onClick={() => { if (newGroupSelectedUids.length > 0) createGroup(); }} disabled={newGroupSelectedUids.length === 0}>Create group</button>
               </div>
             </div>
@@ -1670,16 +1737,22 @@ const PrivateChat = ({ fullPage = false }) => {
                       fontSize: 22,
                       cursor: "pointer",
                       color: "#F5EFE0",
+                      opacity: isVip ? 1 : 0.7,
                     }}
                     onClick={() => {
+                      if (!isVip) {
+                        alert("Kun VIP kan bruke emojis i chat.");
+                        return;
+                      }
                       preparePrivateChatSound();
                       setShowEmoji((v) => !v);
                     }}
                     aria-label="Add emoji"
+                    title={!isVip ? "Kun VIP kan bruke emojis" : undefined}
                   >
                     😊
                   </button>
-                  {showEmoji && (
+                  {isVip && showEmoji && (
                     <div
                       style={{
                         position: "absolute",
@@ -1723,6 +1796,13 @@ const PrivateChat = ({ fullPage = false }) => {
           )}
         </div>
       )}
+      <SiteModal
+        open={siteModal.open}
+        message={siteModal.message}
+        variant={siteModal.variant}
+        onConfirm={siteModal.onConfirm}
+        onCancel={siteModal.onCancel}
+      />
     </div>
   );
 };

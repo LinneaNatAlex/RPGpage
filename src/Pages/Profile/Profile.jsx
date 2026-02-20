@@ -13,6 +13,10 @@ import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import useUserRoles from "../../hooks/useUserRoles";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
+import {
+  isProfileOwnerVip,
+  getProfileDisplayBody,
+} from "../../utils/profileCodeAccess";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -382,6 +386,14 @@ const Profile = () => {
                     userData.roles?.some((r) => r.toLowerCase() === "archivist")
                   )
                     roleClass += ` ${styles.archivistAvatar}`;
+                  const hasVip = isProfileOwnerVip(userData);
+                  const avatarStyle = hasVip
+                    ? {
+                        boxShadow:
+                          "0 0 20px 8px rgba(255, 215, 0, 0.8), 0 0 40px 16px rgba(255, 215, 0, 0.4)",
+                        borderRadius: "50%",
+                      }
+                    : undefined;
                   return (
                     <>
                       <img
@@ -389,7 +401,23 @@ const Profile = () => {
                         alt="Image"
                         className={roleClass}
                         loading="lazy"
+                        style={avatarStyle}
                       />
+                      {hasVip && (
+                        <div
+                          style={{
+                            marginTop: 8,
+                            color: "#FFD700",
+                            fontWeight: 700,
+                            fontSize: "1rem",
+                            textShadow:
+                              "0 0 10px rgba(255,215,0,0.8), 0 1px 2px rgba(0,0,0,0.5)",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          VIP
+                        </div>
+                      )}
                       <label
                         className={styles.editBtn}
                         style={{ marginTop: 20, display: "block" }}
@@ -699,9 +727,8 @@ const Profile = () => {
                   <iframe
                     key={`iframe-${profileTextKey}`}
                     srcDoc={(() => {
-                      let raw = (userData.profileText || "")
-                        .replace("{{code}}", "")
-                        .replace("{{/code}}", "");
+                      const ownerIsVip = isProfileOwnerVip(userData);
+                      let raw = getProfileDisplayBody(userData.profileText || "", ownerIsVip);
                       raw = raw.replace(
                         /(\s(?:src|href)\s*=\s*["'])http:\/\//gi,
                         "$1https://",

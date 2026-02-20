@@ -39,6 +39,7 @@ const defaultUserData = {
   lastHealthUpdate: null,
   currentPet: null,
   craftedPotions: [],
+  vipExpiresAt: null,
 };
 
 // User data via onSnapshot – live updates (health/inventory/currency update without reload)
@@ -91,6 +92,7 @@ const useUserData = () => {
         currentPet: data.currentPet || null,
         craftedPotions: data.craftedPotions || [],
         lastSeenNewsAt: data.lastSeenNewsAt ?? null,
+        vipExpiresAt: data.vipExpiresAt ?? null,
       });
     };
 
@@ -138,7 +140,16 @@ const useUserData = () => {
     return () => unsubscribe();
   }, [user]);
 
-  return { userData, loading };
+  const vipExpiresAt = userData?.vipExpiresAt;
+  const vipExpiresAtMs =
+    vipExpiresAt == null
+      ? null
+      : typeof vipExpiresAt === "number"
+        ? vipExpiresAt
+        : vipExpiresAt?.toMillis?.() ?? null;
+  const isVip = vipExpiresAtMs != null && vipExpiresAtMs > Date.now();
+
+  return { userData, loading, isVip };
 };
 
 export default useUserData;

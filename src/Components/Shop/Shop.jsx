@@ -43,15 +43,16 @@ const shortCategoryLabels = {
 const Shop = ({ open = true }) => {
   // Books use display names only - no author payments
   const { user } = useAuth();
-  const { userData } = useUserData();
+  const { userData, isVip } = useUserData();
   const { roles } = useUserRoles();
-  // Potions/Ingredients synlig for alle. Kun admin/headmaster/professor/teacher kan kjøpe potions uten å ha brygget dem (canAccessPotionsCategory).
+  // Potions/Ingredients synlig for alle. Staff ELLER VIP kan kjøpe potions uten å ha brygget dem (canAccessPotionsCategory).
   const canAccessPotionsCategory =
     user &&
     (roles?.some((r) => String(r).toLowerCase() === "admin") ||
       roles?.some((r) => String(r).toLowerCase() === "headmaster") ||
       roles?.some((r) => String(r).toLowerCase() === "professor") ||
-      roles?.some((r) => String(r).toLowerCase() === "teacher"));
+      roles?.some((r) => String(r).toLowerCase() === "teacher") ||
+      isVip);
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
@@ -237,6 +238,11 @@ const Shop = ({ open = true }) => {
           }
         });
       } else if (item.category === "Pets") {
+        if (!isVip) {
+          setErrorMessage("Kun VIP kan kjøpe pets. Oppgrader til VIP for å kjøpe dyr.");
+          setTimeout(() => setErrorMessage(""), 5000);
+          return;
+        }
         // Special handling for pets - user can only have one pet at a time
         const itemWithImage = addImageToItem(item);
 
@@ -421,12 +427,16 @@ const Shop = ({ open = true }) => {
           .map((item) => {
             const itemWithImage = addImageToItem(item);
 
-            // Check if potion is locked (not crafted) – kun admin/headmaster/teacher kan kjøpe uten å ha brygget
+            // Check if potion is locked (not crafted) – kun admin/headmaster/teacher/VIP kan kjøpe uten å ha brygget
             const isPotionLocked =
               !canAccessPotionsCategory &&
               item.category === "Potions" &&
               item.type === "potion" &&
               !craftedPotions.has(item.name);
+
+            // Pets: kun VIP kan kjøpe
+            const isPetLocked =
+              item.category === "Pets" && !isVip;
 
             return (
               <li
@@ -435,7 +445,7 @@ const Shop = ({ open = true }) => {
                   (itemWithImage.firestore ? "-fs" : "-static")
                 }
                 className={`${styles.item} ${
-                  isPotionLocked ? styles.lockedItem : ""
+                  isPotionLocked || isPetLocked ? styles.lockedItem : ""
                 }`}
               >
                 <div className={styles.itemInfo}>
@@ -500,6 +510,19 @@ const Shop = ({ open = true }) => {
                         }}
                       >
                         🔒 Locked - Craft First
+                      </button>
+                    ) : isPetLocked ? (
+                      <button
+                        disabled
+                        style={{
+                          background: "#666",
+                          color: "#ccc",
+                          cursor: "not-allowed",
+                          opacity: 0.6,
+                        }}
+                        title="Kun VIP kan kjøpe pets"
+                      >
+                        🔒 VIP required
                       </button>
                     ) : (
                       <button onClick={() => handleBuy(itemWithImage)}>

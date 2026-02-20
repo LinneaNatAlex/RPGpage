@@ -3,6 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Button from "../Button/Button";
 import useProfileText from "../../hooks/useProfileText";
+import useUserData from "../../hooks/useUserData";
 import { bbcodeToHtml, htmlToBbcode } from "../../utils/bbcode";
 import styles from "./ProfileTextEditor.module.css";
 
@@ -12,6 +13,7 @@ import styles from "./ProfileTextEditor.module.css";
  * 2) Code: {{code}} ... {{/code}} for custom HTML/CSS (same as News).
  */
 const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
+  const { isVip } = useUserData();
   const [editing, setEditing] = useState(autoEdit || false);
   const [mode, setMode] = useState("rich"); // "rich" | "code" | "bbcode"
   const [richContent, setRichContent] = useState("");
@@ -24,26 +26,27 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
   useEffect(() => {
     const raw = currentText || "";
     if (raw.startsWith("{{code}}")) {
+      const body = getRawBody(raw).trim();
       setCodeContent(raw);
-      setRichContent(
-        raw.replace("{{code}}", "").replace("{{/code}}", "").trim() || "",
-      );
-      setBbcodeContent(htmlToBbcode(getRawBody(raw)));
-      setMode("code");
+      setRichContent(body || "");
+      setBbcodeContent(htmlToBbcode(body));
+      // HTML/CSS (code) mode is VIP only; non-VIP see content as rich
+      setMode(isVip ? "code" : "rich");
     } else {
       setRichContent(raw);
       setCodeContent("");
       setBbcodeContent(htmlToBbcode(raw));
       setMode("rich");
     }
-  }, [currentText]);
+  }, [currentText, isVip]);
 
   const getRawBody = (str) =>
     (str || "").replace("{{code}}", "").replace("{{/code}}", "");
 
   const handleSave = async () => {
     let toStore;
-    if (mode === "code") toStore = codeContent;
+    // HTML/CSS (code) mode is VIP only; non-VIP cannot save as code
+    if (mode === "code" && isVip) toStore = codeContent;
     else if (mode === "bbcode") toStore = bbcodeToHtml(bbcodeContent);
     else toStore = richContent;
     await storeText("html", toStore);
@@ -143,23 +146,25 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
               >
                 BBCode
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (mode === "rich" && richContent.trim())
-                    setCodeContent(`{{code}}${richContent}{{/code}}`);
-                  if (mode === "bbcode" && bbcodeContent.trim())
-                    setCodeContent(
-                      `{{code}}${bbcodeToHtml(bbcodeContent)}{{/code}}`,
-                    );
-                  setMode("code");
-                }}
-                className={
-                  mode === "code" ? styles.activeModeButton : styles.modeButton
-                }
-              >
-                Code ({"{{code}}"} for HTML)
-              </button>
+              {isVip && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (mode === "rich" && richContent.trim())
+                      setCodeContent(`{{code}}${richContent}{{/code}}`);
+                    if (mode === "bbcode" && bbcodeContent.trim())
+                      setCodeContent(
+                        `{{code}}${bbcodeToHtml(bbcodeContent)}{{/code}}`,
+                      );
+                    setMode("code");
+                  }}
+                  className={
+                    mode === "code" ? styles.activeModeButton : styles.modeButton
+                  }
+                >
+                  Code ({"{{code}}"} for HTML)
+                </button>
+              )}
             </div>
 
             {mode === "rich" && (
@@ -323,8 +328,9 @@ img{max-width:100% !important;height:auto !important;}`;
             <div
               style={{ color: "#888", fontStyle: "italic", margin: "1rem 0" }}
             >
-              No profile text yet. Click Edit – use rich text or {`{{code}}`}{" "}
-              for HTML.
+              No profile text yet. Click Edit – use rich text or BBCode
+              {isVip ? ` or ${"{{code}}"}` : ""}
+              {isVip ? " for HTML/CSS" : ""}.
             </div>
           )}
           <Button
@@ -334,11 +340,14 @@ img{max-width:100% !important;height:auto !important;}`;
               const raw = currentText || "";
               if (raw.startsWith("{{code}}")) {
                 setCodeContent(raw);
-                setRichContent(getRawBody(raw).trim() || "");
-                setMode("code");
+                const body = getRawBody(raw).trim();
+                setRichContent(body || "");
+                setBbcodeContent(htmlToBbcode(body));
+                setMode(isVip ? "code" : "rich");
               } else {
                 setRichContent(raw);
                 setCodeContent("");
+                setBbcodeContent(htmlToBbcode(raw));
                 setMode("rich");
               }
             }}

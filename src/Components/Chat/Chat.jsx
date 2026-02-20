@@ -3,6 +3,7 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
+import useUserData from "../../hooks/useUserData";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { db, auth } from "../../firebaseConfig";
 import { getRaceColor } from "../../utils/raceColors";
@@ -23,10 +24,13 @@ import {
 import Button from "../Button/Button";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { playPing, preparePingSound } from "./ping_alt";
+import SiteModal from "./SiteModal";
+import { stripEmoji } from "../../utils/stripEmoji";
 
 const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
+  const { isVip } = useUserData();
   const onlineUsers = useOnlineUsers();
   const onlineUids = new Set(onlineUsers.map((u) => u.id));
   const [newMess, setNewMess] = useState("");
@@ -39,6 +43,7 @@ const Chat = () => {
   const [mentionActiveIdx, setMentionActiveIdx] = useState(0);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [notificationText, setNotificationText] = useState("");
+  const [siteModal, setSiteModal] = useState({ open: false, message: "", variant: "alert", onConfirm: null, onCancel: null });
   // Husk om chatten var lukket eller åpen (default: lukket)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = localStorage.getItem("mainChatCollapsed");
@@ -464,9 +469,14 @@ const Chat = () => {
         u.displayName.toLowerCase().startsWith(mentionQuery.toLowerCase())),
   );
 
+  const showSiteAlert = (message) => {
+    setSiteModal({ open: true, message, variant: "alert", onConfirm: () => setSiteModal((m) => ({ ...m, open: false })), onCancel: null });
+  };
+
   // Håndter input for @mention
   const handleInputChange = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    if (!isVip) value = stripEmoji(value);
     setNewMess(value);
     // Finn siste @ og tekst etter
     const match = value.match(/@([\wæøåÆØÅ\- ]*)$/);
@@ -907,12 +917,20 @@ const Chat = () => {
                 <button
                   type="button"
                   className={styles.emojiBtn}
-                  onClick={() => setShowEmoji((v) => !v)}
+                  onClick={() => {
+                    if (!isVip) {
+                      showSiteAlert("Only VIP can use emojis in chat.");
+                      return;
+                    }
+                    setShowEmoji((v) => !v);
+                  }}
                   aria-label="Add emoji"
+                  title={!isVip ? "Only VIP can use emojis" : undefined}
+                  style={!isVip ? { opacity: 0.7 } : undefined}
                 >
                   😊
                 </button>
-                {showEmoji && (
+                {isVip && showEmoji && (
                   <div className={styles.emojiPickerWrapper}>
                     <Picker
                       data={data}
@@ -997,6 +1015,14 @@ const Chat = () => {
           </div>
         </div>
       )}
+
+      <SiteModal
+        open={siteModal.open}
+        message={siteModal.message}
+        variant={siteModal.variant}
+        onConfirm={siteModal.onConfirm}
+        onCancel={siteModal.onCancel}
+      />
     </div>
   );
 };

@@ -135,6 +135,7 @@ export const AuthProvider = ({ children }) => {
             // create a basic user document and set the user
             if (currentUser.emailVerified) {
               try {
+                const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
                 const basicUserData = {
                   uid: currentUser.uid,
                   displayName: currentUser.displayName || currentUser.email,
@@ -147,6 +148,7 @@ export const AuthProvider = ({ children }) => {
                   createdAt: new Date(),
                   lastLogin: new Date(),
                   online: true,
+                  vipExpiresAt: Date.now() + oneMonthMs, // New users get free VIP for 1 month
                 };
 
                 await setDoc(doc(db, "users", currentUser.uid), basicUserData);

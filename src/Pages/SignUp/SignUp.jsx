@@ -158,6 +158,7 @@ const SignUp = () => {
         : "";
 
       // Store user data in localStorage temporarily until email is verified
+      const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
       const tempUserData = {
         uid: user.uid,
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
@@ -167,7 +168,8 @@ const SignUp = () => {
         race: formData.race,
         class: formData.class,
         currency: 1000, // Start with 1000 Nits
-        inventory: [], // Legg til inventory-feltet fra start
+        inventory: [],
+        vipExpiresAt: Date.now() + oneMonthMs, // New users get free VIP for 1 month
       };
 
       localStorage.setItem("tempUserData", JSON.stringify(tempUserData));
@@ -202,6 +204,17 @@ const SignUp = () => {
         )}
         <form className={styles.signUpForm} onSubmit={handleSignUp}>
           <h1>Sign up</h1>
+          <p
+            style={{
+              textAlign: "center",
+              marginBottom: "1rem",
+              color: "#5d4e37",
+              fontWeight: 600,
+              fontSize: "0.95rem",
+            }}
+          >
+            All new users get free VIP for one month.
+          </p>
           {error && (
             <div
               style={{

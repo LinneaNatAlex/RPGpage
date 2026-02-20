@@ -61,6 +61,8 @@ export default function AdminPanel() {
   const [potionClearStatus, setPotionClearStatus] = useState("");
   const [chatClearStatus, setChatClearStatus] = useState("");
   const [privateChatClearStatus, setPrivateChatClearStatus] = useState("");
+  const [vipStatus, setVipStatus] = useState("");
+  const [giveAllVipStatus, setGiveAllVipStatus] = useState("");
 
   // Rediger bruker: navn, klassetrinn, rase, roller
   const [editDisplayName, setEditDisplayName] = useState("");
@@ -242,6 +244,118 @@ export default function AdminPanel() {
     const ref = doc(db, "users", selected.uid);
     await updateDoc(ref, { banned: false });
     setBanStatus("User unbanned.");
+  }
+
+  /** Get VIP expiry in ms from user doc (supports number or Firestore Timestamp). */
+  function getVipExpiresAtMs(u) {
+    const v = u?.vipExpiresAt;
+    if (v == null) return null;
+    return typeof v === "number" ? v : v?.toMillis?.() ?? null;
+  }
+
+  /** List of users with active VIP (expiry in the future). */
+  const vipUsers = (users || []).filter(
+    (u) => getVipExpiresAtMs(u) != null && getVipExpiresAtMs(u) > Date.now()
+  );
+
+  /** Remove VIP from a user (admin only). Pass user or use selected. */
+  async function handleRemoveVip(userToUpdate) {
+    const target = userToUpdate || selected;
+    if (!target) return;
+    if (!roles.includes("admin")) {
+      setVipStatus("Only admin can remove VIP.");
+      return;
+    }
+    setVipStatus("Working...");
+    try {
+      const ref = doc(db, "users", target.uid);
+      await updateDoc(ref, { vipExpiresAt: deleteField() });
+      setVipStatus(
+        `VIP removed for ${target.displayName || target.email || target.uid}.`
+      );
+      usersListStore.invalidateAndRefetch();
+      setTimeout(() => setVipStatus(""), 5000);
+    } catch (err) {
+      setVipStatus("Error: " + (err?.message || "Could not update."));
+    }
+  }
+
+  /** Give all users VIP for 1 month (admin only). Uses batched writes. */
+  async function handleGiveAllVipOneMonth() {
+    if (!roles.includes("admin")) {
+      setGiveAllVipStatus("Only admin can do this.");
+      return;
+    }
+    if (
+      !window.confirm(
+        "Give ALL users VIP for 1 month? This will update every user in the database."
+      )
+    ) {
+      return;
+    }
+    setGiveAllVipStatus("Working...");
+    try {
+      const snapshot = await getDocs(collection(db, "users"));
+      const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
+      const newExpiresAt = Date.now() + oneMonthMs;
+      const BATCH_SIZE = 500;
+      let committed = 0;
+      let batch = writeBatch(db);
+      let ops = 0;
+      for (const d of snapshot.docs) {
+        batch.update(doc(db, "users", d.id), { vipExpiresAt: newExpiresAt });
+        ops++;
+        if (ops >= BATCH_SIZE) {
+          await batch.commit();
+          committed += ops;
+          ops = 0;
+          batch = writeBatch(db);
+        }
+      }
+      if (ops > 0) {
+        await batch.commit();
+        committed += ops;
+      }
+      setGiveAllVipStatus(`VIP for 1 month granted to all ${committed} users.`);
+      usersListStore.invalidateAndRefetch();
+      setTimeout(() => setGiveAllVipStatus(""), 8000);
+    } catch (err) {
+      setGiveAllVipStatus("Error: " + (err?.message || "Could not update."));
+    }
+  }
+
+  /** Grant VIP for 1 month (admin only). Extends from now or from current expiry if still active. */
+  async function handleGrantVipOneMonth() {
+    if (!selected) return;
+    if (!roles.includes("admin")) {
+      setVipStatus("Kun admin kan gi VIP.");
+      return;
+    }
+    setVipStatus("Working...");
+    try {
+      const ref = doc(db, "users", selected.uid);
+      const snap = await getDoc(ref);
+      const data = snap.exists() ? snap.data() : {};
+      const now = Date.now();
+      const current = data.vipExpiresAt;
+      const currentMs =
+        current == null
+          ? null
+          : typeof current === "number"
+            ? current
+            : current?.toMillis?.() ?? null;
+      const base = currentMs != null && currentMs > now ? currentMs : now;
+      const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
+      const newExpiresAt = base + oneMonthMs;
+      await updateDoc(ref, { vipExpiresAt: newExpiresAt });
+      setVipStatus(
+        `VIP gitt til ${selected.displayName || selected.email || selected.uid} til ${new Date(newExpiresAt).toLocaleDateString()}.`
+      );
+      usersListStore.invalidateAndRefetch();
+      setTimeout(() => setVipStatus(""), 5000);
+    } catch (err) {
+      setVipStatus("Feil: " + (err?.message || "Kunne ikke oppdatere."));
+    }
   }
 
   // Detention functions
@@ -751,6 +865,105 @@ export default function AdminPanel() {
             ))}
           </ul>
           {ipBanStatus && <div style={{ color: "#ffd86b" }}>{ipBanStatus}</div>}
+        </div>
+      )}
+      {/* VIP users overview – admin only */}
+      {roles.includes("admin") && (
+        <div
+          style={{
+            background: "rgba(245, 239, 224, 0.1)",
+            padding: 20,
+            borderRadius: 0,
+            marginBottom: 24,
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+            boxShadow:
+              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <h3
+            style={{
+              color: theme.secondaryText,
+              fontSize: "1.3rem",
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 600,
+              marginBottom: 16,
+            }}
+          >
+            VIP users ({vipUsers.length})
+          </h3>
+          <ul style={{ maxHeight: 200, overflowY: "auto" }}>
+            {vipUsers.length === 0 && (
+              <li style={{ color: theme.secondaryText }}>No users with active VIP.</li>
+            )}
+            {vipUsers.map((u) => {
+              const expiresMs = getVipExpiresAtMs(u);
+              const expiresStr =
+                expiresMs != null
+                  ? new Date(expiresMs).toLocaleString()
+                  : "";
+              return (
+                <li
+                  key={u.uid}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 8,
+                    marginBottom: 8,
+                    padding: "8px 0",
+                    borderBottom: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  <span style={{ color: theme.text }}>
+                    {u.displayName || u.email || u.uid}
+                    {expiresStr && (
+                      <span style={{ color: theme.secondaryText, fontSize: "0.9rem", marginLeft: 8 }}>
+                        – expires {expiresStr}
+                      </span>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveVip(u)}
+                    style={{
+                      background: "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)",
+                      color: "#F5EFE0",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: 0,
+                      padding: "6px 12px",
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Remove VIP
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div style={{ marginTop: 16 }}>
+            <button
+              type="button"
+              onClick={handleGiveAllVipOneMonth}
+              style={{
+                background: "linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)",
+                color: "#F5EFE0",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 0,
+                padding: "10px 20px",
+                fontWeight: 600,
+                fontSize: "0.95rem",
+                cursor: "pointer",
+              }}
+            >
+              Give all users VIP for 1 month
+            </button>
+            {giveAllVipStatus && (
+              <div style={{ color: "#ffd86b", marginTop: 8 }}>{giveAllVipStatus}</div>
+            )}
+          </div>
         </div>
       )}
       <label
@@ -1661,6 +1874,81 @@ export default function AdminPanel() {
             )}
             {selected.bannedIp && (
               <div style={{ color: "#ffd86b" }}>User's IP is banned</div>
+            )}
+
+            {/* VIP – admin can grant 1 month */}
+            {roles.includes("admin") && (
+              <div
+                style={{
+                  marginTop: 20,
+                  paddingTop: 20,
+                  borderTop: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                <h4>VIP</h4>
+                {selected.vipExpiresAt != null && (
+                  <div style={{ color: "#ffd86b", marginBottom: 8 }}>
+                    VIP utløper:{" "}
+                    {new Date(
+                      typeof selected.vipExpiresAt === "number"
+                        ? selected.vipExpiresAt
+                        : selected.vipExpiresAt?.toMillis?.() ?? 0
+                    ).toLocaleString()}
+                  </div>
+                )}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                  <button
+                    onClick={handleGrantVipOneMonth}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)",
+                      color: "#F5EFE0",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: 0,
+                      padding: "8px 16px",
+                      fontWeight: 600,
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      boxShadow:
+                        "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+                      fontFamily: '"Cinzel", serif',
+                      letterSpacing: "0.5px",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = "translateY(-2px)";
+                      e.target.style.boxShadow =
+                        "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow =
+                        "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
+                    }}
+                  >
+                    Gi VIP i 1 måned
+                  </button>
+                  <button
+                    onClick={() => handleRemoveVip()}
+                    style={{
+                      background: "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)",
+                      color: "#F5EFE0",
+                      border: "2px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: 0,
+                      padding: "8px 16px",
+                      fontWeight: 600,
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Remove VIP
+                  </button>
+                </div>
+                {vipStatus && (
+                  <div style={{ color: "#ffd86b", marginTop: 8 }}>{vipStatus}</div>
+                )}
+              </div>
             )}
 
             {/* Detention Controls - only admin, professor, shadow patrol, headmaster (not archivist) */}

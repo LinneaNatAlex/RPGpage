@@ -1,12 +1,14 @@
 // import the necessary libraries and components
 import { useState, useEffect, startTransition } from "react";
 import useUsers from "../../hooks/useUser";
+import useUserData from "../../hooks/useUserData";
 import { useParams } from "react-router-dom";
 import {
   collection,
   query,
   where,
   getDocs,
+  getDocsFromServer,
   updateDoc,
   doc,
   serverTimestamp,
@@ -20,6 +22,7 @@ import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
 import { getRaceColor, getRaceDisplayName } from "../../utils/raceColors";
 import { addImageToItem } from "../../utils/itemImages";
+import { isProfileOwnerVip, getProfileDisplayBody } from "../../utils/profileCodeAccess";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import { Suspense } from "react";
 
@@ -73,7 +76,7 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         const q = query(collection(db, "users"), where("uid", "==", uid));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocsFromServer(q);
 
         if (!querySnapshot.empty) {
           const docSnap = querySnapshot.docs[0];
@@ -170,6 +173,7 @@ const UserProfile = () => {
   const canPet = () => {
     if (!userData?.currentPet) return false;
     if (calculatePetHP(userData.currentPet) <= 0) return false;
+    if (user?.uid !== userData.uid || !isVip) return false;
     const today = getTodayString();
     const lastReset = userData.currentPet.lastResetDate || "";
     const petCountToday =
@@ -180,6 +184,7 @@ const UserProfile = () => {
   const canPlay = () => {
     if (!userData?.currentPet) return false;
     if (calculatePetHP(userData.currentPet) <= 0) return false;
+    if (user?.uid !== userData.uid || !isVip) return false;
     const today = getTodayString();
     const lastReset = userData.currentPet.lastResetDate || "";
     const playCountToday =
@@ -429,22 +434,42 @@ const UserProfile = () => {
             // Love Potion effect: pink glow if inLoveUntil in future
             const inLove =
               userData.inLoveUntil && userData.inLoveUntil > Date.now();
+            const hasVip = isProfileOwnerVip(userData);
+            const avatarStyle = inLove
+              ? {
+                  boxShadow:
+                    "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
+                  borderRadius: "50%",
+                }
+              : hasVip
+                ? {
+                    boxShadow:
+                      "0 0 20px 8px rgba(255, 215, 0, 0.8), 0 0 40px 16px rgba(255, 215, 0, 0.4)",
+                    borderRadius: "50%",
+                  }
+                : {};
             return (
               <>
                 <img
                   src={userData?.profileImageUrl || "/icons/avatar.svg"}
                   alt="Image"
                   className={roleClass}
-                  style={
-                    inLove
-                      ? {
-                          boxShadow:
-                            "0 0 16px 6px #ff69b4, 0 0 32px 12px #ffb6d5 inset",
-                          borderRadius: "50%",
-                        }
-                      : {}
-                  }
+                  style={avatarStyle}
                 />
+                {hasVip && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      color: "#FFD700",
+                      fontWeight: 700,
+                      fontSize: "1rem",
+                      textShadow: "0 0 10px rgba(255,215,0,0.8), 0 1px 2px rgba(0,0,0,0.5)",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    VIP
+                  </div>
+                )}
                 {inLove && userData.inLoveWith && (
                   <div
                     style={{
@@ -929,14 +954,13 @@ const UserProfile = () => {
           <h2>Profile Text</h2>
           <iframe
             srcDoc={(() => {
-              let raw = (userData.profileText || "")
-                .replace("{{code}}", "")
-                .replace("{{/code}}", "");
+              const ownerIsVip = isProfileOwnerVip(userData);
+              let raw = getProfileDisplayBody(userData.profileText || "", ownerIsVip);
               raw = raw.replace(/(\s(?:src|href)\s*=\s*["'])http:\/\//gi, "$1https://");
               const isDark =
                 typeof document !== "undefined" &&
                 !!document.querySelector('[data-theme="dark"]');
-              const bg = isDark ? "#1a1a1a" : "#e8ddd4";
+              const bg = isDark ? "#252525" : "#e8ddd4";
               const fg = isDark ? "#e0e0e0" : "#2c2c2c";
               return `<!DOCTYPE html>
 <html style="background:${bg}">
@@ -1020,7 +1044,11 @@ const UserProfile = () => {
                 className={styles.petInteractionBtn}
                 onClick={() => handlePetInteraction("play", 10)}
                 disabled={isInteracting || !canPlay()}
-                title="Play with the animal (+10 mood). Max 3 per day."
+                title={
+                  !isVip && user?.uid === userData?.uid
+                    ? "Kun VIP kan leke med kjæledyret"
+                    : "Play with the animal (+10 mood). Max 3 per day."
+                }
               >
                 {isInteracting ? "Playing..." : "Play"}
               </button>
