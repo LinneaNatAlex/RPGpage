@@ -312,6 +312,25 @@ const PrivateChat = ({ fullPage = false }) => {
   const onlineUids = new Set(onlineUsersList.map((u) => u.id));
   const { openWithUid, setOpenWithUid, openWithGroupId, setOpenWithGroupId } = useOpenPrivateChat();
 
+  const showSiteAlert = (msg) => {
+    setSiteModal({ open: true, message: msg, variant: "alert", onConfirm: () => setSiteModal((m) => ({ ...m, open: false })), onCancel: null });
+  };
+  const showSiteConfirm = (msg, onOk, onCancelHandler) => {
+    setSiteModal({
+      open: true,
+      message: msg,
+      variant: "confirm",
+      onConfirm: () => { setSiteModal((m) => ({ ...m, open: false })); onOk?.(); },
+      onCancel: () => { setSiteModal((m) => ({ ...m, open: false })); onCancelHandler?.(); },
+    });
+  };
+  const handleMessageChange = (e, clearError = true) => {
+    let value = e.target.value;
+    if (!isVip) value = stripEmoji(value);
+    setMessage(value);
+    if (clearError) setMessageError("");
+  };
+
   // Load active chats from Firestore on mount
   useEffect(() => {
     if (!currentUser || !users) return;
@@ -1713,7 +1732,7 @@ const PrivateChat = ({ fullPage = false }) => {
                     id="private-chat-message"
                     name="privateChatMessage"
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={handleMessageChange}
                     onFocus={preparePrivateChatSound}
                     type="text"
                     placeholder={
