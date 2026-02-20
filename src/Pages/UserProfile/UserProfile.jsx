@@ -420,7 +420,7 @@ const UserProfile = () => {
             if (userData.roles?.some((r) => r.toLowerCase() === "headmaster"))
               roleClass += ` ${styles.headmasterAvatar}`;
             else if (userData.roles?.some((r) => (r || "").toLowerCase() === "teacher" || (r || "").toLowerCase() === "professor"))
-              roleClass += ` ${styles.teacherAvatar}`;
+              roleClass += ` ${styles.professorAvatar}`;
             else if (
               userData.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
             )
