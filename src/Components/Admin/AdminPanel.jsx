@@ -40,12 +40,43 @@ export default function AdminPanel() {
 
   // Light theme colors to match the beige page design
   const theme = {
-    background: "#F5EFE0", // Light beige background
-    text: "#2C2C2C", // Dark text for readability
-    secondaryText: "#7B6857", // Brown secondary text
-    border: "#D4C4A8", // Light brown borders
-    accent: "#ffd86b", // Gold accent color
+    background: "#F5EFE0",
+    text: "#2C2C2C",
+    secondaryText: "#7B6857",
+    border: "#D4C4A8",
+    accent: "#ffd86b",
   };
+
+  // Section cards: one per block, stacked vertically
+  const sectionBox = {
+    marginTop: 24,
+    padding: 24,
+    background: "#fff",
+    borderRadius: 10,
+    border: `1px solid ${theme.border}`,
+    boxShadow: "0 2px 8px rgba(123, 104, 87, 0.12)",
+  };
+  const sectionTitle = (title, subtitle) => (
+    <div style={{ marginBottom: 16 }}>
+      <h3 style={{ color: theme.secondaryText, fontSize: "1.25rem", fontFamily: '"Cinzel", serif', fontWeight: 600, margin: 0 }}>
+        {title}
+      </h3>
+      {subtitle && <p style={{ margin: "6px 0 0", fontSize: "0.9rem", color: theme.secondaryText, opacity: 0.95 }}>{subtitle}</p>}
+    </div>
+  );
+  const subHeading = (text) => (
+    <h4 style={{ color: theme.text, fontSize: "1rem", fontWeight: 600, margin: "20px 0 10px", borderBottom: `1px solid ${theme.border}`, paddingBottom: 6 }}>
+      {text}
+    </h4>
+  );
+  // Users section: inner card and form controls
+  const userCard = { padding: 16, background: "rgba(123, 104, 87, 0.06)", borderRadius: 8, border: `1px solid ${theme.border}`, marginBottom: 16 };
+  const inputStyle = { width: "100%", padding: "10px 12px", border: `1px solid ${theme.border}`, borderRadius: 8, background: "#fff", color: theme.text, fontSize: "0.95rem" };
+  const labelStyle = { display: "block", marginBottom: 6, fontWeight: 600, color: theme.text, fontSize: "0.9rem" };
+  const btnPrimary = { padding: "10px 18px", borderRadius: 8, fontWeight: 600, fontSize: "0.9rem", cursor: "pointer", border: "none", background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)", color: "#F5EFE0", fontFamily: '"Cinzel", serif' };
+  const btnDanger = { ...btnPrimary, background: "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)", color: "#fff" };
+  const btnSuccess = { ...btnPrimary, background: "linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)", color: "#fff" };
+  const btnWarning = { ...btnPrimary, background: "linear-gradient(135deg, #ed6c02 0%, #e65100 100%)", color: "#fff" };
 
   // Suspension/ban/IP-ban state
   const [suspendHours, setSuspendHours] = useState(0);
@@ -785,18 +816,18 @@ export default function AdminPanel() {
   return (
     <div
       style={{
-        maxWidth: 800,
+        maxWidth: 920,
         margin: "2rem auto",
         background: isDarkMode
           ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)"
           : "linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%)",
         color: theme.text,
         padding: 40,
-        borderRadius: 0,
+        borderRadius: 12,
         boxShadow: isDarkMode
           ? "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)"
-          : "0 12px 48px rgba(139, 69, 19, 0.15), 0 4px 16px rgba(139, 69, 19, 0.1)",
-        border: `3px solid ${theme.border}`,
+          : "0 12px 48px rgba(139, 69, 19, 0.12), 0 4px 16px rgba(139, 69, 19, 0.08)",
+        border: `2px solid ${theme.border}`,
         position: "relative",
         overflow: "visible",
       }}
@@ -808,42 +839,31 @@ export default function AdminPanel() {
           left: 0,
           right: 0,
           height: "4px",
-          background:
-            "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: 0,
+          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
+          borderRadius: "12px 12px 0 0",
         }}
       />
       <h2
         style={{
           fontFamily: '"Cinzel", serif',
-          fontSize: "2.2rem",
+          fontSize: "2rem",
           fontWeight: 700,
-          letterSpacing: "1.5px",
-          textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-          marginBottom: "2rem",
+          letterSpacing: "1px",
+          marginBottom: 8,
           textAlign: "center",
+          color: theme.text,
         }}
       >
         Admin Panel
       </h2>
+      <p style={{ textAlign: "center", fontSize: "0.95rem", color: theme.secondaryText, marginBottom: 28 }}>
+        Manage site settings, users, moderation, and chat below.
+      </p>
 
-      {/* Global site themes (dark mode + pink/Valentine's) – kun admin */}
+      {/* 1. Site theme */}
       {roles.includes("admin") && (
-        <div
-          style={{
-            marginBottom: 24,
-            padding: 16,
-            background: "rgba(123, 104, 87, 0.15)",
-            border: `2px solid ${theme.border}`,
-            borderRadius: 0,
-          }}
-        >
-          <h3 style={{ color: theme.secondaryText, fontSize: "1.1rem", marginBottom: 8, fontFamily: '"Cinzel", serif' }}>
-            Site theme
-          </h3>
-          <p style={{ fontSize: "0.9rem", color: theme.text, marginBottom: 12 }}>
-            Turn themes off or on for the <strong>entire site</strong>. Pink mode is for Valentine's.
-          </p>
+        <div style={sectionBox}>
+          {sectionTitle("Site theme", "Turn dark or pink mode on or off for the entire site.")}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-start" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <button
@@ -898,78 +918,52 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {roles.includes("admin") && <RulesAdmin />}
+      {/* 2. Rules & shop */}
+      {roles.includes("admin") && (
+        <div style={sectionBox}>
+          {sectionTitle("Rules & shop", "Edit site rules and manage shop items or books.")}
+          <RulesAdmin />
+        </div>
+      )}
 
       {(roles.includes("admin") ||
         (roles.includes("professor") || roles.includes("teacher")) ||
         roles.includes("archivist")) && (
-        <ShopProductAdmin
-          restrictToBooksOnly={
-            roles.includes("archivist") &&
-            !roles.includes("admin") &&
-            !(roles.includes("professor") || roles.includes("teacher"))
-          }
-        />
+        <div style={sectionBox}>
+          {sectionTitle("Shop & books", "Products and library.")}
+          <ShopProductAdmin
+            restrictToBooksOnly={
+              roles.includes("archivist") &&
+              !roles.includes("admin") &&
+              !(roles.includes("professor") || roles.includes("teacher"))
+            }
+          />
+        </div>
       )}
 
-      <button
-        onClick={() => setShowBanned((v) => !v)}
-        style={{
-          background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-          color: "#F5EFE0",
-          border: "2px solid rgba(255, 255, 255, 0.2)",
-          borderRadius: 0,
-          padding: "12px 24px",
-          fontWeight: 600,
-          fontSize: "1rem",
-          cursor: "pointer",
-          transition: "all 0.3s ease",
-          boxShadow:
-            "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-          textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-          fontFamily: '"Cinzel", serif',
-          letterSpacing: "0.5px",
-          marginBottom: 20,
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.transform = "translateY(-2px)";
-          e.target.style.boxShadow =
-            "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.transform = "translateY(0)";
-          e.target.style.boxShadow =
-            "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
-        }}
-      >
-        {showBanned ? "Hide banned users/IPs" : "Show banned users/IPs"}
-      </button>
-      {showBanned && (
-        <div
-          style={{
-            background: "rgba(245, 239, 224, 0.1)",
-            padding: 20,
-            borderRadius: 0,
-            marginBottom: 24,
-            border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow:
-              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <h3
+      {/* 3. Moderation: banned users & VIP */}
+      {roles.includes("admin") && (
+        <div style={sectionBox}>
+          {sectionTitle("Moderation", "Banned users, IP bans, and VIP status.")}
+          <button
+            onClick={() => setShowBanned((v) => !v)}
             style={{
-              color: theme.secondaryText,
-              fontSize: "1.3rem",
-              fontFamily: '"Cinzel", serif',
+              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              color: "#F5EFE0",
+              border: `2px solid ${theme.border}`,
+              borderRadius: 8,
+              padding: "10px 20px",
               fontWeight: 600,
-              textShadow: isDarkMode
-                ? "0 1px 2px rgba(0, 0, 0, 0.3)"
-                : "0 1px 2px rgba(255, 255, 255, 0.3)",
-              marginBottom: 16,
+              fontSize: "0.95rem",
+              cursor: "pointer",
+              fontFamily: '"Cinzel", serif',
             }}
           >
-            Banned users & IPs
-          </h3>
+            {showBanned ? "Hide banned users & IPs" : "Show banned users & IPs"}
+          </button>
+          {showBanned && (
+            <div style={{ marginTop: 16, padding: 16, background: "rgba(0,0,0,0.05)", borderRadius: 8, border: `1px solid ${theme.border}` }}>
+              <h4 style={{ margin: "0 0 12px", fontSize: "1rem", fontWeight: 600, color: theme.text }}>Banned users & IPs</h4>
           <ul style={{ maxHeight: 100, overflowY: "auto" }}>
             {bannedUsers.length === 0 && <li>No banned users/IPs.</li>}
             {bannedUsers.map((u) => (
@@ -1001,33 +995,10 @@ export default function AdminPanel() {
             ))}
           </ul>
           {ipBanStatus && <div style={{ color: "#ffd86b" }}>{ipBanStatus}</div>}
-        </div>
-      )}
-      {/* VIP users overview – admin only */}
-      {roles.includes("admin") && (
-        <div
-          style={{
-            background: "rgba(245, 239, 224, 0.1)",
-            padding: 20,
-            borderRadius: 0,
-            marginBottom: 24,
-            border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow:
-              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <h3
-            style={{
-              color: theme.secondaryText,
-              fontSize: "1.3rem",
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 600,
-              marginBottom: 16,
-            }}
-          >
-            VIP users ({vipUsers.length})
-          </h3>
-          <ul style={{ maxHeight: 200, overflowY: "auto" }}>
+            </div>
+          )}
+          {subHeading(`VIP users (${vipUsers.length})`)}
+          <ul style={{ maxHeight: 200, overflowY: "auto", margin: "0 0 16px", paddingLeft: 20 }}>
             {vipUsers.length === 0 && (
               <li style={{ color: theme.secondaryText }}>No users with active VIP.</li>
             )}
@@ -1102,72 +1073,35 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
-      <label
-        htmlFor="admin-user-search"
-        style={{
-          display: "block",
-          marginBottom: 6,
-          color: theme.secondaryText,
-          fontWeight: 600,
-        }}
-      >
-        Search user
-      </label>
-      <input
-        id="admin-user-search"
-        name="adminUserSearch"
-        type="search"
-        autoComplete="off"
-        placeholder="Search by name or email..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: "100%",
-          marginBottom: 16,
-          padding: "12px 16px",
-          borderRadius: 0,
-          border: `2px solid ${theme.border}`,
-          background: theme.background,
-          color: theme.text,
-          fontSize: "1rem",
-          fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
-          outline: "none",
-          transition: "all 0.3s ease",
-        }}
-        onFocus={(e) => {
-          e.target.style.borderColor = theme.secondaryText;
-          e.target.style.boxShadow = `0 0 16px ${
-            isDarkMode ? "rgba(123, 104, 87, 0.4)" : "rgba(212, 196, 168, 0.4)"
-          }`;
-        }}
-        onBlur={(e) => {
-          e.target.style.borderColor = theme.border;
-          e.target.style.boxShadow = "none";
-        }}
-      />
-      {/* User count info */}
-      <div
-        style={{
-          marginBottom: "8px",
-          fontSize: "14px",
-          color: theme.secondaryText,
-          fontStyle: "italic",
-        }}
-      >
-        Showing up to {Math.min(filtered.length, 20)} of {filtered.length} users
-        {filtered.length > 20 && " (scroll to see more)"}
-      </div>
+
+      {/* 4. Users: search, select, edit */}
+      <div style={sectionBox}>
+        {sectionTitle("Users", "Search for a user, then edit profile, roles, currency, or moderation.")}
+        <label htmlFor="admin-user-search" style={labelStyle}>Search by name or email</label>
+        <input
+          id="admin-user-search"
+          name="adminUserSearch"
+          type="search"
+          autoComplete="off"
+          placeholder="Type to search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={inputStyle}
+        />
+      <p style={{ margin: "4px 0 12px", fontSize: "0.85rem", color: theme.secondaryText }}>
+        {filtered.length} user{filtered.length !== 1 ? "s" : ""} found · showing up to 20
+      </p>
 
       <ul
         style={{
-          maxHeight: "200px", // Space for about 5 items
+          maxHeight: 220,
           overflowY: "auto",
           marginBottom: 16,
-          background: theme.background,
-          borderRadius: 0,
-          padding: 12,
-          border: `2px solid ${theme.border}`,
-          boxShadow: "0 4px 16px rgba(123, 104, 87, 0.15)",
+          padding: "8px 0",
+          listStyle: "none",
+          border: `1px solid ${theme.border}`,
+          borderRadius: 8,
+          background: "rgba(123, 104, 87, 0.04)",
         }}
       >
         {filtered.slice(0, 20).map(
@@ -1187,29 +1121,12 @@ export default function AdminPanel() {
                     ? "rgba(245, 239, 224, 0.1)"
                     : "rgba(123, 104, 87, 0.1)",
                 color: theme.text,
-                padding: "12px 16px",
-                borderRadius: 0,
-                marginBottom: 8,
-                border:
-                  selected?.uid === u.uid
-                    ? `2px solid ${
-                        isDarkMode
-                          ? "rgba(255, 255, 255, 0.3)"
-                          : "rgba(123, 104, 87, 0.3)"
-                      }`
-                    : `1px solid ${
-                        isDarkMode
-                          ? "rgba(255, 255, 255, 0.1)"
-                          : "rgba(123, 104, 87, 0.1)"
-                      }`,
-                transition: "all 0.3s ease",
+                padding: "10px 14px",
+                margin: "0 8px 4px",
+                borderRadius: 8,
+                background: selected?.uid === u.uid ? "rgba(123, 104, 87, 0.2)" : "transparent",
+                border: selected?.uid === u.uid ? `2px solid ${theme.secondaryText}` : "1px solid transparent",
                 fontWeight: selected?.uid === u.uid ? 600 : 400,
-                boxShadow:
-                  selected?.uid === u.uid
-                    ? isDarkMode
-                      ? "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)"
-                      : "0 4px 16px rgba(123, 104, 87, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.8)"
-                    : "none",
               }}
               onClick={() => {
                 setSelected(u);
@@ -1230,7 +1147,7 @@ export default function AdminPanel() {
                 }
               }}
             >
-              {u.displayName || u.email || u.uid} ({u.currency ?? 0} nits)
+              {u.displayName || u.email || u.uid} <span style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>({u.currency ?? 0} nits)</span>
             </li>
           )
         )}
@@ -1248,87 +1165,31 @@ export default function AdminPanel() {
         )}
       </ul>
       {selected && roles.includes("admin") && (
-        <div
-          style={{
-            marginBottom: 24,
-            background: "rgba(245, 239, 224, 0.1)",
-            padding: 20,
-            borderRadius: 0,
-            border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow:
-              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          {/* Rediger bruker: navn, klassetrinn, rase, roller */}
-          <div style={{ marginBottom: 24 }}>
-            <h3
-              style={{
-                color: theme.secondaryText,
-                fontSize: "1.15rem",
-                fontFamily: '"Cinzel", serif',
-                fontWeight: 600,
-                marginBottom: 12,
-              }}
-            >
-              Edit user (Firestore)
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ borderTop: `2px solid ${theme.border}`, paddingTop: 20 }}>
+          <h3 style={{ color: theme.secondaryText, fontSize: "1.1rem", fontFamily: '"Cinzel", serif', marginBottom: 16 }}>
+            Editing: {selected.displayName || selected.email || selected.uid}
+          </h3>
+          <div style={userCard}>
+            <h4 style={{ margin: "0 0 12px", fontSize: "1rem", fontWeight: 600, color: theme.text }}>Profile</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={{ display: "block", marginBottom: 4, fontWeight: 600, color: theme.text }}>Name</label>
-                <input
-                  type="text"
-                  value={editDisplayName}
-                  onChange={(e) => setEditDisplayName(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: `2px solid ${theme.border}`,
-                    borderRadius: 0,
-                    background: theme.background,
-                    color: theme.text,
-                  }}
-                  placeholder="Display name"
-                />
+                <label style={labelStyle}>Name</label>
+                <input type="text" value={editDisplayName} onChange={(e) => setEditDisplayName(e.target.value)} style={inputStyle} placeholder="Display name" />
               </div>
               <div>
-                <label style={{ display: "block", marginBottom: 4, fontWeight: 600, color: theme.text }}>Class year</label>
-                <select
-                  value={editClass}
-                  onChange={(e) => setEditClass(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: `2px solid ${theme.border}`,
-                    borderRadius: 0,
-                    background: theme.background,
-                    color: theme.text,
-                  }}
-                >
-                  {CLASS_OPTIONS.map((c) => (
-                    <option key={c} value={c}>{c === "graduated" ? "Graduated" : c}</option>
-                  ))}
+                <label style={labelStyle}>Class year</label>
+                <select value={editClass} onChange={(e) => setEditClass(e.target.value)} style={inputStyle}>
+                  {CLASS_OPTIONS.map((c) => <option key={c} value={c}>{c === "graduated" ? "Graduated" : c}</option>)}
                 </select>
               </div>
-              <div>
-                <label style={{ display: "block", marginBottom: 4, fontWeight: 600, color: theme.text }}>Race</label>
-                <select
-                  value={editRace}
-                  onChange={(e) => setEditRace(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: `2px solid ${theme.border}`,
-                    borderRadius: 0,
-                    background: theme.background,
-                    color: theme.text,
-                  }}
-                >
-                  <option value="">— Select race —</option>
-                  {RACE_OPTIONS.map((r) => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                </select>
-              </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelStyle}>Race</label>
+              <select value={editRace} onChange={(e) => setEditRace(e.target.value)} style={inputStyle}>
+                <option value="">— Select race —</option>
+                {RACE_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
               <div>
                 <div style={{ marginBottom: 6 }}>
                   <span style={{ fontWeight: 600, color: theme.text }}>Roles</span>
@@ -1429,87 +1290,21 @@ export default function AdminPanel() {
                   </p>
                 </div>
               )}
-              <button
-                type="button"
-                onClick={handleSaveUserEdit}
-                style={{
-                  background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                  color: "#F5EFE0",
-                  border: "2px solid #D4C4A8",
-                  borderRadius: 4,
-                  padding: "10px 20px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  alignSelf: "flex-start",
-                  fontFamily: '"Cinzel", serif',
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                }}
-              >
-                Save changes
+              <button type="button" onClick={handleSaveUserEdit} style={btnPrimary}>
+                Save profile
               </button>
               {editUserStatus && (
                 <div style={{ color: theme.secondaryText, fontSize: "0.9rem" }}>{editUserStatus}</div>
               )}
-            </div>
           </div>
 
-          {/* Unfaint user (Infirmary) – admin kan hente brukere ut av infirmary */}
-          <div style={{ marginBottom: 20 }}>
-            <h3
-              style={{
-                color: theme.secondaryText,
-                fontSize: "1.15rem",
-                fontFamily: '"Cinzel", serif',
-                fontWeight: 600,
-                textShadow: isDarkMode
-                  ? "0 1px 2px rgba(0, 0, 0, 0.3)"
-                  : "0 1px 2px rgba(255, 255, 255, 0.3)",
-                marginBottom: 10,
-              }}
-            >
-              Unfaint user (Infirmary)
-            </h3>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                color: theme.text,
-                opacity: 0.9,
-                marginBottom: 10,
-              }}
-            >
-              Select a user above and click to release them from the infirmary (health
-              100, no wait time).
+          <div style={userCard}>
+            <h4 style={{ margin: "0 0 8px", fontSize: "1rem", fontWeight: 600, color: theme.text }}>Infirmary</h4>
+            <p style={{ fontSize: "0.9rem", color: theme.secondaryText, marginBottom: 10 }}>
+              Release selected user from infirmary (health 100, no wait).
             </p>
-            <button
-              onClick={handleUnfaintUser}
-              style={{
-                background: "linear-gradient(135deg, #2196F3 0%, #1976D2 100%)",
-                color: "#F5EFE0",
-                border: "2px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: 0,
-                padding: "8px 16px",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow:
-                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                fontFamily: '"Cinzel", serif',
-                letterSpacing: "0.5px",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow =
-                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow =
-                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
-              }}
-            >
-              Unfaint selected user
+            <button onClick={handleUnfaintUser} style={{ ...btnPrimary, background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)" }}>
+              Unfaint user
             </button>
             {unfaintStatus && (
               <div
@@ -1528,62 +1323,13 @@ export default function AdminPanel() {
             )}
           </div>
 
-          {/* Remove all potion effects from selected user */}
-          <div style={{ marginBottom: 20 }}>
-            <h3
-              style={{
-                color: theme.secondaryText,
-                fontSize: "1.15rem",
-                fontFamily: '"Cinzel", serif',
-                fontWeight: 600,
-                textShadow: isDarkMode
-                  ? "0 1px 2px rgba(0, 0, 0, 0.3)"
-                  : "0 1px 2px rgba(255, 255, 255, 0.3)",
-                marginBottom: 10,
-              }}
-            >
-              Remove potion effects
-            </h3>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                color: theme.text,
-                opacity: 0.9,
-                marginBottom: 10,
-              }}
-            >
-              Remove all active potion effects from the selected user (dark mode, love, sparkle, speed, etc.).
+          <div style={userCard}>
+            <h4 style={{ margin: "0 0 8px", fontSize: "1rem", fontWeight: 600, color: theme.text }}>Potion effects</h4>
+            <p style={{ fontSize: "0.9rem", color: theme.secondaryText, marginBottom: 10 }}>
+              Remove all active potion effects (dark mode, love, sparkle, etc.) from selected user.
             </p>
-            <button
-              onClick={handleRemovePotionEffects}
-              style={{
-                background: "linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)",
-                color: "#F5EFE0",
-                border: "2px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: 0,
-                padding: "8px 16px",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow:
-                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                fontFamily: '"Cinzel", serif',
-                letterSpacing: "0.5px",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow =
-                  "0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow =
-                  "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)";
-              }}
-            >
-              Remove potion effects from selected user
+            <button onClick={handleRemovePotionEffects} style={{ ...btnPrimary, background: "linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%)" }}>
+              Remove potion effects
             </button>
             {potionClearStatus && (
               <div
@@ -1602,66 +1348,19 @@ export default function AdminPanel() {
             )}
           </div>
 
-          <h3
-            style={{
-              color: theme.secondaryText,
-              fontSize: "1.3rem",
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 600,
-              textShadow: isDarkMode
-                ? "0 1px 2px rgba(0, 0, 0, 0.3)"
-                : "0 1px 2px rgba(255, 255, 255, 0.3)",
-              marginBottom: 16,
-            }}
-          >
-            Currency Management
-          </h3>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 16,
-            }}
-          >
-            <label
-              htmlFor="admin-nits-amount"
-              style={{ fontWeight: 600, color: theme.text }}
-            >
-              Amount:
-            </label>
-            <input
-              id="admin-nits-amount"
-              name="nitsAmount"
-              type="number"
-              autoComplete="off"
-              value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              style={{
-                width: 100,
-                padding: "8px 12px",
-                borderRadius: 0,
-                border: `2px solid ${theme.border}`,
-                background: theme.background,
-                color: theme.text,
-                fontSize: "1rem",
-                fontFamily: '"Segoe UI", "Roboto", "Arial", sans-serif',
-                outline: "none",
-                transition: "all 0.3s ease",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = theme.secondaryText;
-                e.target.style.boxShadow = `0 0 16px ${
-                  isDarkMode
-                    ? "rgba(123, 104, 87, 0.4)"
-                    : "rgba(212, 196, 168, 0.4)"
-                }`;
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = theme.border;
-                e.target.style.boxShadow = "none";
-              }}
-            />
+          <div style={userCard}>
+            <h4 style={{ margin: "0 0 12px", fontSize: "1rem", fontWeight: 600, color: theme.text }}>Currency (nits)</h4>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+              <label htmlFor="admin-nits-amount" style={{ fontWeight: 600, color: theme.text }}>Amount</label>
+              <input
+                id="admin-nits-amount"
+                name="nitsAmount"
+                type="number"
+                autoComplete="off"
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                style={{ ...inputStyle, width: 90 }}
+              />
             <button
               onClick={() => handleNitsChange(amount)}
               style={{
@@ -1806,9 +1505,10 @@ export default function AdminPanel() {
               - Nits to all
             </button>
           </div>
-          <div style={{ marginTop: 12 }}>
-            <h4>Suspend / ban controls</h4>
-            <label htmlFor="admin-suspend-hours">
+          </div>
+          <div style={userCard}>
+            <h4 style={{ margin: "0 0 12px", fontSize: "1rem", fontWeight: 600, color: theme.text }}>Suspend / ban</h4>
+            <label htmlFor="admin-suspend-hours" style={{ display: "block", marginBottom: 4, fontSize: "0.9rem", color: theme.text }}>
               Suspension (hours):
               <input
                 id="admin-suspend-hours"
@@ -2182,31 +1882,10 @@ export default function AdminPanel() {
       )}
       {status && <div style={{ color: "#ff0", marginTop: 8 }}>{status}</div>}
 
-      {/* Points management section – admin and professor only; archivists manage only books */}
+      {/* Points – admin and professor only */}
       {(roles.includes("admin") || roles.includes("professor") || roles.includes("teacher")) && (
-        <div
-          style={{
-            marginTop: 24,
-            background: "rgba(245, 239, 224, 0.1)",
-            padding: 20,
-            borderRadius: 0,
-            border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow:
-              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <h3
-            style={{
-              color: "#D4C4A8",
-              fontSize: "1.3rem",
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 600,
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-              marginBottom: 16,
-            }}
-          >
-            Add / subtract points
-          </h3>
+        <>
+          {subHeading("Add / subtract points")}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <label
               htmlFor="admin-points-username"
@@ -2316,7 +1995,7 @@ export default function AdminPanel() {
                   marginTop: 8,
                   padding: "8px 12px",
                   background: "rgba(255, 216, 107, 0.1)",
-                  borderRadius: 0,
+                  borderRadius: 8,
                   border: "1px solid rgba(255, 216, 107, 0.3)",
                   fontSize: "0.9rem",
                   fontWeight: 500,
@@ -2326,32 +2005,17 @@ export default function AdminPanel() {
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
+      </div>
 
-      {/* General chat – clear all messages (admin only) */}
+      {/* 5. General chat (admin only) */}
       {roles.includes("admin") && (
-        <div
-          style={{
-            marginTop: 32,
-            padding: 20,
-            background: "rgba(245, 239, 224, 0.1)",
-            borderRadius: 0,
-            border: `2px solid ${theme.border}`,
-          }}
-        >
-          <h3
-            style={{
-              color: theme.secondaryText,
-              fontSize: "1.2rem",
-              fontFamily: '"Cinzel", serif',
-              marginBottom: 12,
-            }}
-          >
-            General chat
-          </h3>
-          <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
-            Fill in senderUid on old messages so general chat shows current display names. Matches messages where the stored sender name equals exactly one user. Run before renaming users for best results.
+        <div style={sectionBox}>
+          {sectionTitle("General chat", "Fix display names on old messages or clear all messages.")}
+          {subHeading("Display names")}
+          <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.9rem" }}>
+            Fill in senderUid on old messages so chat shows current names. Run before renaming users for best results.
           </p>
           <button
             type="button"
@@ -2421,8 +2085,9 @@ export default function AdminPanel() {
               {assignOldNameStatus}
             </div>
           )}
-          <p style={{ marginTop: 20, marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
-            Remove all messages from the general (main) chat in Firestore. This cannot be undone.
+          {subHeading("Clear messages")}
+          <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.9rem" }}>
+            Remove all messages from the main chat. Cannot be undone.
           </p>
           <button
             type="button"
@@ -2432,12 +2097,12 @@ export default function AdminPanel() {
               background: "#c62828",
               color: "#fff",
               border: "none",
-              borderRadius: 0,
+              borderRadius: 8,
               fontWeight: 600,
               cursor: "pointer",
             }}
           >
-            Clear all chat messages
+            Clear all general chat messages
           </button>
           {chatClearStatus && (
             <div style={{ marginTop: 12, fontSize: "0.9rem", color: theme.secondaryText }}>
@@ -2447,30 +2112,10 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* Private chat – clear all messages (admin only) */}
+      {/* 6. Private chat (admin only) */}
       {roles.includes("admin") && (
-        <div
-          style={{
-            marginTop: 24,
-            padding: 20,
-            background: "rgba(245, 239, 224, 0.1)",
-            borderRadius: 0,
-            border: `2px solid ${theme.border}`,
-          }}
-        >
-          <h3
-            style={{
-              color: theme.secondaryText,
-              fontSize: "1.2rem",
-              fontFamily: '"Cinzel", serif',
-              marginBottom: 12,
-            }}
-          >
-            Private chat
-          </h3>
-          <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
-            Remove all private chat messages from Firestore (all conversations). This cannot be undone.
-          </p>
+        <div style={sectionBox}>
+          {sectionTitle("Private chat", "Clear all private conversations. Cannot be undone.")}
           <button
             type="button"
             onClick={clearAllPrivateChatMessages}
@@ -2479,7 +2124,7 @@ export default function AdminPanel() {
               background: "#c62828",
               color: "#fff",
               border: "none",
-              borderRadius: 0,
+              borderRadius: 8,
               fontWeight: 600,
               cursor: "pointer",
             }}
@@ -2494,8 +2139,9 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* 18+ Forum Access Section */}
-      <div style={{ marginTop: 32 }}>
+      {/* 7. Age verification */}
+      <div style={sectionBox}>
+        {sectionTitle("Age verification", "Approve or reject 18+ forum access requests.")}
         <AgeVerificationAdmin />
       </div>
     </div>
