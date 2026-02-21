@@ -14,6 +14,10 @@ import {
   writeBatch,
   onSnapshot,
   deleteField,
+  query,
+  orderBy,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import * as usersListStore from "../../utils/usersListStore";
@@ -60,6 +64,10 @@ export default function AdminPanel() {
   const [unfaintStatus, setUnfaintStatus] = useState("");
   const [potionClearStatus, setPotionClearStatus] = useState("");
   const [chatClearStatus, setChatClearStatus] = useState("");
+  const [backfillChatSenderUidStatus, setBackfillChatSenderUidStatus] = useState("");
+  const [assignOldName, setAssignOldName] = useState("");
+  const [assignOldNameToUid, setAssignOldNameToUid] = useState("");
+  const [assignOldNameStatus, setAssignOldNameStatus] = useState("");
   const [privateChatClearStatus, setPrivateChatClearStatus] = useState("");
   const [vipStatus, setVipStatus] = useState("");
   const [giveAllVipStatus, setGiveAllVipStatus] = useState("");
@@ -608,6 +616,134 @@ export default function AdminPanel() {
       );
     } catch (error) {
       setChatClearStatus(`Error: ${error.message}`);
+    }
+  }
+
+  /** Fill senderUid on old general-chat messages so chat shows current display name. */
+  async function backfillChatSenderUid() {
+    if (!roles.includes("admin")) {
+      setBackfillChatSenderUidStatus("Only admin can run this.");
+      return;
+    }
+    setBackfillChatSenderUidStatus("Running…");
+    try {
+      const messagesSnap = await getDocs(collection(db, "messages"));
+      const usersSnap = await getDocs(collection(db, "users"));
+      const usersList = usersSnap.docs.map((d) => ({ uid: d.id, ...d.data() }));
+      const byDisplayName = new Map();
+      usersList.forEach((u) => {
+        const name = (u.displayName || "").trim().toLowerCase();
+        if (!name) return;
+        if (!byDisplayName.has(name)) byDisplayName.set(name, []);
+        byDisplayName.get(name).push(u.uid);
+      });
+      let updated = 0;
+      const BATCH_SIZE = 500;
+      let batch = writeBatch(db);
+      let ops = 0;
+      for (const docSnap of messagesSnap.docs) {
+        const data = docSnap.data();
+        if (data.senderUid != null && data.senderUid !== "") continue;
+        if (data.type === "notification") continue;
+        const sender = (data.sender || "").trim();
+        if (!sender) continue;
+        const uids = byDisplayName.get(sender.toLowerCase());
+        if (!uids || uids.length !== 1) continue;
+        const messageRef = doc(db, "messages", docSnap.id);
+        batch.update(messageRef, { senderUid: uids[0] });
+        ops++;
+        updated++;
+        if (ops >= BATCH_SIZE) {
+          await batch.commit();
+          batch = writeBatch(db);
+          ops = 0;
+        }
+      }
+      if (ops > 0) await batch.commit();
+      if (updated > 0) usersListStore.invalidateAndRefetch();
+      setBackfillChatSenderUidStatus(
+        updated > 0
+          ? `Done. Set senderUid on ${updated} message(s). Refresh the chat page to see current names.`
+          : "No messages needed updating (all have senderUid, or sender name did not match exactly one user). If you already renamed someone, use “Assign old sender name” below."
+      );
+    } catch (error) {
+      setBackfillChatSenderUidStatus(`Error: ${error.message}`);
+    }
+  }
+
+  /** Normalize sender name for comparison: collapse whitespace, trim, lowercase. */
+  function normalizeSenderName(str) {
+    return (str || "").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  /** Assign all messages with a given sender name (old name) to a selected user so chat shows their current name. */
+  async function assignOldSenderNameToUser() {
+    if (!roles.includes("admin")) {
+      setAssignOldNameStatus("Only admin can run this.");
+      return;
+    }
+    const name = (assignOldName || "").trim();
+    if (!name) {
+      setAssignOldNameStatus("Enter the old name that still appears in chat.");
+      return;
+    }
+    if (!assignOldNameToUid) {
+      setAssignOldNameStatus("Select the user those messages belong to.");
+      return;
+    }
+    setAssignOldNameStatus("Running…");
+    try {
+      const key = normalizeSenderName(name);
+      let updated = 0;
+      const BATCH_SIZE = 500;
+      const READ_BATCH = 500;
+      let batch = writeBatch(db);
+      let ops = 0;
+      const messagesRef = collection(db, "messages");
+      let lastDoc = null;
+      let hasMore = true;
+      while (hasMore) {
+        const q = lastDoc
+          ? query(
+              messagesRef,
+              orderBy("timestamp", "desc"),
+              limit(READ_BATCH),
+              startAfter(lastDoc),
+            )
+          : query(
+              messagesRef,
+              orderBy("timestamp", "desc"),
+              limit(READ_BATCH),
+            );
+        const messagesSnap = await getDocs(q);
+        if (messagesSnap.empty) break;
+        for (const docSnap of messagesSnap.docs) {
+          const data = docSnap.data();
+          if (data.type === "notification") continue;
+          const sender = normalizeSenderName(data.sender);
+          if (sender !== key) continue;
+          const messageRef = doc(db, "messages", docSnap.id);
+          batch.update(messageRef, { senderUid: assignOldNameToUid });
+          ops++;
+          updated++;
+          if (ops >= BATCH_SIZE) {
+            await batch.commit();
+            batch = writeBatch(db);
+            ops = 0;
+          }
+        }
+        lastDoc = messagesSnap.docs[messagesSnap.docs.length - 1];
+        hasMore = messagesSnap.docs.length === READ_BATCH;
+      }
+      if (ops > 0) await batch.commit();
+      if (updated > 0) usersListStore.invalidateAndRefetch();
+      setAssignOldNameStatus(
+        updated > 0
+          ? `Done. Assigned ${updated} message(s) to the selected user. Refresh the chat page to see the new name.`
+          : `No messages found with sender "${name}". Try normalizing spaces, or the name may be stored differently in the database.`
+      );
+    } catch (error) {
+      setAssignOldNameStatus(`Error: ${error.message}`);
     }
   }
 
@@ -2215,6 +2351,77 @@ export default function AdminPanel() {
             General chat
           </h3>
           <p style={{ marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
+            Fill in senderUid on old messages so general chat shows current display names. Matches messages where the stored sender name equals exactly one user. Run before renaming users for best results.
+          </p>
+          <button
+            type="button"
+            onClick={backfillChatSenderUid}
+            style={{
+              padding: "10px 20px",
+              marginRight: 10,
+              background: theme.accent,
+              color: theme.text,
+              border: "none",
+              borderRadius: 0,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Fill senderUid on old messages
+          </button>
+          {backfillChatSenderUidStatus && (
+            <div style={{ marginTop: 12, fontSize: "0.9rem", color: theme.secondaryText }}>
+              {backfillChatSenderUidStatus}
+            </div>
+          )}
+          <p style={{ marginTop: 20, marginBottom: 8, color: theme.secondaryText, fontSize: "0.95rem" }}>
+            Already renamed someone? Enter the <strong>old full name</strong> and assign those messages to the correct user:
+          </p>
+          <p style={{ marginBottom: 8, color: theme.secondaryText, fontSize: "0.85rem", opacity: 0.9 }}>
+            Chat shows first + last name only; the database stores the full name (including middle name). Use the full name here.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 12 }}>
+            <input
+              type="text"
+              placeholder="Old full name (e.g. with middle name)"
+              value={assignOldName}
+              onChange={(e) => setAssignOldName(e.target.value)}
+              style={{ padding: "8px 12px", minWidth: 180, border: `1px solid ${theme.border}` }}
+            />
+            <select
+              value={assignOldNameToUid}
+              onChange={(e) => setAssignOldNameToUid(e.target.value)}
+              style={{ padding: "8px 12px", minWidth: 160, border: `1px solid ${theme.border}` }}
+            >
+              <option value="">Select user</option>
+              {(users || []).map((u) => (
+                <option key={u.uid || u.id} value={u.uid || u.id}>
+                  {u.displayName || u.uid || "—"}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={assignOldSenderNameToUser}
+              style={{
+                padding: "8px 16px",
+                background: theme.accent,
+                color: theme.text,
+                border: "none",
+                borderRadius: 0,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Assign old sender name to user
+            </button>
+          </div>
+          {assignOldNameStatus && (
+            <div style={{ marginBottom: 12, fontSize: "0.9rem", color: theme.secondaryText }}>
+              {assignOldNameStatus}
+            </div>
+          )}
+          <p style={{ marginTop: 20, marginBottom: 12, color: theme.secondaryText, fontSize: "0.95rem" }}>
             Remove all messages from the general (main) chat in Firestore. This cannot be undone.
           </p>
           <button

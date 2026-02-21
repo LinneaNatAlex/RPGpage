@@ -235,12 +235,22 @@ const Chat = () => {
   };
 
   const getDisplayName = (message) => {
-    // Check if message has potion effects stored
     if (message.potionEffects && message.potionEffects.mystery) {
       return "???";
     }
-
-    return message.sender;
+    // Alltid vise nåværende navn fra users (så admin-navneendring gjelder overalt)
+    if (message.senderUid && Array.isArray(users) && users.length > 0) {
+      const u = users.find(
+        (x) =>
+          (x.uid && x.uid === message.senderUid) ||
+          (x.id && x.id === message.senderUid),
+      );
+      if (u && (u.displayName != null && u.displayName !== "")) {
+        return u.displayName;
+      }
+    }
+    // Eldre meldinger uten senderUid: vis lagret navn
+    return message.sender ?? "";
   };
 
   const getDisplayText = (text, message) => {
@@ -435,6 +445,7 @@ const Chat = () => {
         await addDoc(collection(db, "messages"), {
           text: messageText,
           sender: auth.currentUser?.displayName || "",
+          senderUid: auth.currentUser?.uid || null,
           timestamp: serverTimestamp(),
           potionEffects:
             Object.keys(potionEffects).length > 0 ? potionEffects : null,
@@ -443,6 +454,7 @@ const Chat = () => {
         await addDoc(collection(db, "messages"), {
           text: messageText,
           sender: auth.currentUser?.displayName || "",
+          senderUid: auth.currentUser?.uid || null,
           timestamp: serverTimestamp(),
           potionEffects:
             Object.keys(potionEffects).length > 0 ? potionEffects : null,
@@ -452,6 +464,7 @@ const Chat = () => {
         await addDoc(collection(db, "messages"), {
           text: messageText,
           sender: auth.currentUser?.displayName || "",
+          senderUid: auth.currentUser?.uid || null,
           timestamp: serverTimestamp(),
           potionEffects:
             Object.keys(potionEffects).length > 0 ? potionEffects : null,
@@ -672,11 +685,13 @@ const Chat = () => {
                 );
               }
 
-              const userObj = users.find(
-                (u) =>
-                  u.displayName &&
-                  u.displayName.toLowerCase() === message.sender?.toLowerCase(),
-              );
+              const userObj = message.senderUid
+                ? users.find((u) => u.uid === message.senderUid || u.id === message.senderUid)
+                : users.find(
+                    (u) =>
+                      u.displayName &&
+                      u.displayName.toLowerCase() === message.sender?.toLowerCase(),
+                  );
 
               let roleClass = styles.messageSender;
               let nameColor = null;

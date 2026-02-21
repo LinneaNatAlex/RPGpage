@@ -194,11 +194,16 @@ const NewsFeed = () => {
           {newsList.map((item, idx) => {
             // ...existing code...
             // Finn brukerobjekt for å hente roller
-            const userObj = users.find(
-              (u) =>
-                u.displayName &&
-                u.displayName.toLowerCase() === item.author?.toLowerCase(),
-            );
+            const displayName = item.authorUid
+              ? (users?.find((u) => u.uid === item.authorUid)?.displayName ?? item.author)
+              : item.author;
+            const userObj = item.authorUid
+              ? users?.find((u) => u.uid === item.authorUid)
+              : users.find(
+                  (u) =>
+                    u.displayName &&
+                    u.displayName.toLowerCase() === item.author?.toLowerCase(),
+                );
             let nameClass = styles.posterName;
             if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
               nameClass += ` ${styles.headmasterName}`;
@@ -220,7 +225,7 @@ const NewsFeed = () => {
                   <div className={styles.newsInfo}>
                     <h3>{item.title}</h3>
                     <div className={styles.authorDateInfo}>
-                      <span className={nameClass}>{item.author}</span>
+                      <span className={nameClass}>{displayName}</span>
                       {item.createdAt && (
                         <span className={styles.postDate}>
                           •{" "}
@@ -359,12 +364,17 @@ const NewsFeed = () => {
                   )
                   .slice(0, 4)
                   .map((post) => {
-                    const userObj = users.find(
-                      (u) =>
-                        u.displayName &&
-                        u.displayName.toLowerCase() ===
-                          post.author?.toLowerCase(),
-                    );
+                    const postDisplayName = post.authorUid
+                      ? (users?.find((u) => u.uid === post.authorUid)?.displayName ?? post.author)
+                      : post.author;
+                    const userObj = post.authorUid
+                      ? users?.find((u) => u.uid === post.authorUid)
+                      : users.find(
+                          (u) =>
+                            u.displayName &&
+                            u.displayName.toLowerCase() ===
+                              post.author?.toLowerCase(),
+                        );
                     let nameClass = styles.posterName;
                     if (
                       userObj?.roles?.some(
@@ -391,7 +401,7 @@ const NewsFeed = () => {
                       >
                         <h4>{post.title}</h4>
                         <div className={styles.otherNewsAuthor}>
-                          <span className={nameClass}>{post.author}</span>
+                          <span className={nameClass}>{postDisplayName}</span>
                           {post.createdAt && (
                             <span className={styles.otherNewsDate}>
                               {new Date(

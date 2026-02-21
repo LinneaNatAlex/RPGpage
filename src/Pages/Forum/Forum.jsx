@@ -1097,7 +1097,7 @@ const Forum = () => {
                         </span>
                       )}
                       <span className={styles.topicAuthor}>
-                        by {topic.author}
+                        by {users?.find((u) => u.uid === topic.uid)?.displayName ?? topic.author}
                       </span>
                       <span className={styles.topicDates}>
                         {outOfGameStr && (
@@ -1321,8 +1321,8 @@ const Forum = () => {
                 return (
                 <div key={post.id} className={styles.postBox}>
                   <div className={styles.postHeader}>
-                    <span className={getNameClass(post.author)}>
-                      {post.author}
+                    <span className={getNameClass(users?.find((u) => u.uid === post.uid)?.displayName || post.author)}>
+                      {users?.find((u) => u.uid === post.uid)?.displayName ?? post.author}
                     </span>
                     {postDateStr && (
                       <span className={styles.postTime} title={postDateStr}>

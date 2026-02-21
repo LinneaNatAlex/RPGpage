@@ -143,6 +143,7 @@ const LiveRP = ({ descriptionText }) => {
         text: text,
         timestamp: serverTimestamp(),
         sender: user.displayName || "Anonymous",
+        senderUid: user.uid,
       });
       if (autoScrollToBottom) {
         setTimeout(scrollChatToBottom, 100);
@@ -480,13 +481,18 @@ const LiveRP = ({ descriptionText }) => {
             <div className={styles.chatMessages} ref={chatBoxRef}>
               {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
               {rpgGrateHall.map((message) => {
+                const displayName = message.senderUid
+                  ? (users?.find((u) => u.uid === message.senderUid)?.displayName ?? message.sender)
+                  : message.sender;
                 // Finn brukerobjekt for å hente roller
-                const userObj = users.find(
-                  (u) =>
-                    u.displayName &&
-                    u.displayName.toLowerCase() ===
-                      message.sender?.toLowerCase(),
-                );
+                const userObj = message.senderUid
+                  ? users?.find((u) => u.uid === message.senderUid)
+                  : users.find(
+                      (u) =>
+                        u.displayName &&
+                        u.displayName.toLowerCase() ===
+                          message.sender?.toLowerCase(),
+                    );
                 let nameClass = styles.messageSender;
                 if (
                   userObj?.roles?.some((r) => r.toLowerCase() === "headmaster")
@@ -526,7 +532,7 @@ const LiveRP = ({ descriptionText }) => {
                     >
                       <strong>
                         <span className={nameClass} style={{ margin: 0 }}>
-                          {message.sender}:
+                          {displayName}:
                         </span>
                       </strong>
                       {message.timestamp && (
