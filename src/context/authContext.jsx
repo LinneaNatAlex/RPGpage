@@ -207,10 +207,10 @@ export const AuthProvider = ({ children }) => {
           try {
             if (currentUser.emailVerified && userDoc && userDoc.exists()) {
               // Use a timeout to prevent this from blocking the auth process
+              // Only update online + lastLogin; do not overwrite displayName (admin may have edited it in Firestore)
               const updateOnlinePromise = setDoc(
                 doc(db, "users", currentUser.uid),
                 {
-                  displayName: currentUser.displayName || currentUser.email,
                   online: true,
                   lastLogin: new Date(),
                 },
