@@ -39,10 +39,13 @@ export default function TeacherPanel() {
   const [bookToDelete, setBookToDelete] = useState(null);
   const [userSearch, setUserSearch] = useState("");
   const [userPage, setUserPage] = useState(1);
-  const [forumDescForumId, setForumDescForumId] = useState("");
-  const [forumDescText, setForumDescText] = useState("");
-  const [forumDescLoading, setForumDescLoading] = useState(false);
+  const [forumDescSelectedSlug, setForumDescSelectedSlug] = useState("");
+  const [forumDescOpenTabs, setForumDescOpenTabs] = useState([]);
+  const [forumDescActiveId, setForumDescActiveId] = useState("");
+  const [forumDescEdits, setForumDescEdits] = useState({});
+  const [forumDescLoading, setForumDescLoading] = useState(null);
   const [forumDescSaving, setForumDescSaving] = useState(false);
+  const [forumDescStatus, setForumDescStatus] = useState("");
 
   const USERS_PER_PAGE = 10;
 
@@ -143,41 +146,65 @@ export default function TeacherPanel() {
 
   const forumDescRef = doc(db, "config", "forumDescriptions");
 
-  useEffect(() => {
-    if (!forumDescForumId) {
-      setForumDescText("");
+  const openForumDescPage = async () => {
+    const slug = forumDescSelectedSlug;
+    if (!slug) return;
+    if (forumDescOpenTabs.includes(slug)) {
+      setForumDescActiveId(slug);
       return;
     }
-    let cancelled = false;
-    setForumDescLoading(true);
-    getDoc(forumDescRef)
-      .then((snap) => {
-        if (cancelled) return;
-        const data = snap.exists() ? snap.data() : {};
-        const descriptions = data.descriptions || {};
-        setForumDescText(descriptions[forumDescForumId] || "");
-      })
-      .catch(() => {
-        if (!cancelled) setForumDescText("");
-      })
-      .finally(() => {
-        if (!cancelled) setForumDescLoading(false);
-      });
-    return () => { cancelled = true; };
-  }, [forumDescForumId]);
+    setForumDescLoading(slug);
+    setForumDescStatus("");
+    try {
+      const snap = await getDoc(forumDescRef);
+      const data = snap.exists() ? snap.data() : {};
+      const descriptions = data.descriptions || {};
+      setForumDescEdits((prev) => ({ ...prev, [slug]: descriptions[slug] || "" }));
+      setForumDescOpenTabs((prev) => (prev.includes(slug) ? prev : [...prev, slug]));
+      setForumDescActiveId(slug);
+    } catch {
+      setForumDescStatus("Failed to load.");
+    } finally {
+      setForumDescLoading(null);
+    }
+  };
 
-  const saveForumDescription = async () => {
-    if (!forumDescForumId) return;
+  const closeForumDescTab = (slug) => {
+    setForumDescOpenTabs((prev) => prev.filter((s) => s !== slug));
+    setForumDescEdits((prev) => {
+      const next = { ...prev };
+      delete next[slug];
+      return next;
+    });
+    if (forumDescActiveId === slug) {
+      const remaining = forumDescOpenTabs.filter((s) => s !== slug);
+      setForumDescActiveId(remaining[0] ?? "");
+    }
+  };
+
+  const setForumDescEdit = (slug, text) => {
+    setForumDescEdits((prev) => ({ ...prev, [slug]: text }));
+  };
+
+  const saveAllForumDescriptions = async () => {
+    if (forumDescOpenTabs.length === 0) return;
     setForumDescSaving(true);
+    setForumDescStatus("");
     setStatus("");
     try {
       const snap = await getDoc(forumDescRef);
       const data = snap.exists() ? snap.data() : {};
-      const descriptions = { ...(data.descriptions || {}), [forumDescForumId]: forumDescText };
-      await setDoc(forumDescRef, { descriptions }, { merge: true });
-      setStatus("Forum description saved.");
+      const base = data.descriptions || {};
+      const merged = { ...base };
+      forumDescOpenTabs.forEach((slug) => {
+        merged[slug] = (forumDescEdits[slug] ?? "").trim();
+      });
+      await setDoc(forumDescRef, { descriptions: merged }, { merge: true });
+      setForumDescStatus(`Saved ${forumDescOpenTabs.length} forum(s).`);
+      setStatus("Forum descriptions saved.");
+      setTimeout(() => setForumDescStatus(""), 4000);
     } catch (err) {
-      setStatus("Error saving: " + (err?.message || "Unknown error"));
+      setForumDescStatus(err?.message || "Failed to save.");
     } finally {
       setForumDescSaving(false);
     }
@@ -822,97 +849,152 @@ export default function TeacherPanel() {
               border: "2px solid rgba(255, 255, 255, 0.2)",
             }}
           >
-            <label
-              htmlFor="forum-desc-select"
-              style={{
-                color: "#D4C4A8",
-                fontSize: "1.1rem",
-                fontWeight: 600,
-                fontFamily: '"Cinzel", serif',
-                display: "block",
-                marginBottom: 12,
-              }}
-            >
-              Forum
-            </label>
-            <select
-              id="forum-desc-select"
-              value={forumDescForumId}
-              onChange={(e) => setForumDescForumId(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                borderRadius: 0,
-                background: "#F5EFE0",
-                color: "#2C2C2C",
-                border: "2px solid #D4C4A8",
-                fontSize: "1rem",
-                marginBottom: 16,
-                boxSizing: "border-box",
-              }}
-            >
-              <option value="">Choose forum…</option>
-              {forumList.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name}
-                </option>
-              ))}
-            </select>
-            {forumDescForumId && (
+            <p style={{ fontSize: "0.9rem", color: "#D4C4A8", marginBottom: 16 }}>
+              Open one or more forums, edit descriptions, then click Save once to save all open forums.
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+              <select
+                value={forumDescSelectedSlug}
+                onChange={(e) => setForumDescSelectedSlug(e.target.value)}
+                style={{
+                  width: "100%",
+                  maxWidth: 320,
+                  padding: "10px 12px",
+                  borderRadius: 0,
+                  background: "#F5EFE0",
+                  color: "#2C2C2C",
+                  border: "2px solid #D4C4A8",
+                  fontSize: "1rem",
+                  boxSizing: "border-box",
+                }}
+              >
+                <option value="">Choose forum…</option>
+                {forumList.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={openForumDescPage}
+                disabled={!forumDescSelectedSlug || forumDescLoading !== null}
+                style={{
+                  background: forumDescSelectedSlug && !forumDescLoading ? "linear-gradient(135deg, #5D4E37 0%, #4a3d2a 100%)" : "#999",
+                  color: "#F5EFE0",
+                  border: "2px solid #D4C4A8",
+                  borderRadius: 0,
+                  padding: "10px 16px",
+                  fontSize: "0.95rem",
+                  fontWeight: 600,
+                  cursor: forumDescSelectedSlug && !forumDescLoading ? "pointer" : "not-allowed",
+                }}
+              >
+                {forumDescLoading ? "Loading…" : "Open page"}
+              </button>
+            </div>
+
+            {forumDescOpenTabs.length > 0 && (
               <>
-                <label
-                  htmlFor="forum-desc-textarea"
-                  style={{
-                    color: "#D4C4A8",
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                    display: "block",
-                    marginBottom: 8,
-                  }}
-                >
-                  Beskrivelse (vises øverst i forumet)
-                </label>
-                {forumDescLoading ? (
-                  <p style={{ color: "#D4C4A8", fontStyle: "italic" }}>Laster…</p>
-                ) : (
-                  <textarea
-                    id="forum-desc-textarea"
-                    value={forumDescText}
-                    onChange={(e) => setForumDescText(e.target.value)}
-                    placeholder="Skriv en beskrivelse av stedet så brukere kan danne seg et bilde når de roller her."
-                    rows={8}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      borderRadius: 0,
-                      background: "#F5EFE0",
-                      color: "#2C2C2C",
-                      border: "2px solid #D4C4A8",
-                      fontSize: "1rem",
-                      boxSizing: "border-box",
-                      resize: "vertical",
-                      fontFamily: "inherit",
-                    }}
-                  />
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 12, borderBottom: "2px solid rgba(255,255,255,0.2)", paddingBottom: 8 }}>
+                  {forumDescOpenTabs.map((slug) => {
+                    const label = forumList.find((f) => f.id === slug)?.name ?? slug;
+                    const isActive = slug === forumDescActiveId;
+                    return (
+                      <div
+                        key={slug}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setForumDescActiveId(slug)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setForumDescActiveId(slug);
+                          }
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4,
+                          padding: "6px 10px",
+                          background: isActive ? "rgba(245,239,224,0.15)" : "rgba(123,104,87,0.2)",
+                          border: `2px solid ${isActive ? "#D4C4A8" : "rgba(212,196,168,0.4)"}`,
+                          borderRadius: 0,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <span style={{ color: "#F5EFE0", fontSize: "0.9rem", fontWeight: isActive ? 600 : 400 }}>
+                          {label}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); closeForumDescTab(slug); }}
+                          aria-label="Close tab"
+                          style={{
+                            background: "none",
+                            border: "none",
+                            padding: "0 4px",
+                            cursor: "pointer",
+                            color: "#D4C4A8",
+                            fontSize: "1.1rem",
+                            lineHeight: 1,
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {forumDescActiveId && (
+                  <>
+                    <label style={{ display: "block", marginBottom: 8, fontWeight: 600, color: "#D4C4A8" }}>
+                      Description (shown at top of forum)
+                    </label>
+                    <textarea
+                      value={forumDescEdits[forumDescActiveId] ?? ""}
+                      onChange={(e) => setForumDescEdit(forumDescActiveId, e.target.value)}
+                      placeholder="Write a description of the place so users can picture it when roleplaying here."
+                      rows={8}
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        borderRadius: 0,
+                        background: "#F5EFE0",
+                        color: "#2C2C2C",
+                        border: "2px solid #D4C4A8",
+                        fontSize: "1rem",
+                        boxSizing: "border-box",
+                        resize: "vertical",
+                        fontFamily: "inherit",
+                        marginBottom: 16,
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={saveAllForumDescriptions}
+                      disabled={forumDescSaving}
+                      style={{
+                        background: forumDescSaving ? "#999" : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                        color: "#F5EFE0",
+                        border: "none",
+                        padding: "10px 24px",
+                        borderRadius: 0,
+                        fontWeight: 600,
+                        cursor: forumDescSaving ? "not-allowed" : "pointer",
+                        fontFamily: '"Cinzel", serif',
+                      }}
+                    >
+                      {forumDescSaving ? "Saving…" : "Save all open forums"}
+                    </button>
+                    {forumDescStatus && (
+                      <span style={{ marginLeft: 12, color: forumDescStatus.startsWith("Failed") ? "#e57373" : "#D4C4A8" }}>
+                        {forumDescStatus}
+                      </span>
+                    )}
+                  </>
                 )}
-                <button
-                  type="button"
-                  onClick={saveForumDescription}
-                  disabled={forumDescSaving || forumDescLoading}
-                  style={{
-                    marginTop: 12,
-                    background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                    color: "#F5EFE0",
-                    border: "none",
-                    padding: "10px 20px",
-                    borderRadius: 0,
-                    fontWeight: 600,
-                    cursor: forumDescSaving || forumDescLoading ? "not-allowed" : "pointer",
-                    opacity: forumDescSaving || forumDescLoading ? 0.7 : 1,
-                  }}
-                >
-                  {forumDescSaving ? "Lagrer…" : "Lagre beskrivelse"}
-                </button>
               </>
             )}
           </div>

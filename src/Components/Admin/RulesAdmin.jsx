@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { db } from "../../firebaseConfig";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, writeBatch } from "firebase/firestore";
 import { RULES_PAGES } from "../../data/rulesPages";
 import { getRulesDefaults } from "../../data/rulesDefaults";
 
@@ -19,6 +19,7 @@ export default function RulesAdmin() {
   const [loadingSlug, setLoadingSlug] = useState(null);
   const [savingSlug, setSavingSlug] = useState(null);
   const [statusBySlug, setStatusBySlug] = useState({});
+  const [saveAllStatus, setSaveAllStatus] = useState("");
 
   const openPage = useCallback(async () => {
     if (!selectedSlug) return;
@@ -91,24 +92,32 @@ export default function RulesAdmin() {
     }
   };
 
-  const handleSave = async () => {
-    if (!activeSlug) return;
-    const data = edits[activeSlug];
-    if (!data) return;
-    const selectedPage = RULES_PAGES.find((p) => p.slug === activeSlug);
-    setSavingSlug(activeSlug);
-    setStatusBySlug((prev) => ({ ...prev, [activeSlug]: "" }));
+  const getPageLabel = (slug) => RULES_PAGES.find((p) => p.slug === slug)?.label ?? slug;
+
+  const handleSaveAll = async () => {
+    const slugsToSave = openTabs.filter((slug) => edits[slug] != null);
+    if (slugsToSave.length === 0) return;
+    setSavingSlug("_all");
+    setSaveAllStatus("");
+    setStatusBySlug({});
     try {
-      const ref = doc(db, "pageRules", activeSlug);
-      await setDoc(ref, {
-        title: (data.title || "").trim() || getPageLabel(activeSlug),
-        items: (data.items || []).map((s) => String(s).trim()).filter(Boolean),
-        updatedAt: new Date().toISOString(),
-      });
-      setStatusBySlug((prev) => ({ ...prev, [activeSlug]: "Saved." }));
-      setTimeout(() => setStatusBySlug((prev) => ({ ...prev, [activeSlug]: "" })), 3000);
+      const batch = writeBatch(db);
+      const iso = new Date().toISOString();
+      for (const slug of slugsToSave) {
+        const data = edits[slug];
+        if (!data) continue;
+        const ref = doc(db, "pageRules", slug);
+        batch.set(ref, {
+          title: (data.title || "").trim() || getPageLabel(slug),
+          items: (data.items || []).map((s) => String(s).trim()).filter(Boolean),
+          updatedAt: iso,
+        });
+      }
+      await batch.commit();
+      setSaveAllStatus(`Saved ${slugsToSave.length} page(s).`);
+      setTimeout(() => setSaveAllStatus(""), 4000);
     } catch (err) {
-      setStatusBySlug((prev) => ({ ...prev, [activeSlug]: err?.message || "Failed to save." }));
+      setSaveAllStatus(err?.message || "Failed to save.");
     } finally {
       setSavingSlug(null);
     }
@@ -126,7 +135,6 @@ export default function RulesAdmin() {
 
   const activeData = activeSlug ? edits[activeSlug] : null;
   const saving = savingSlug !== null;
-  const getPageLabel = (slug) => RULES_PAGES.find((p) => p.slug === slug)?.label ?? slug;
 
   return (
     <div
@@ -142,8 +150,8 @@ export default function RulesAdmin() {
         Page Rules (edit rules for each rules page)
       </h3>
       <p style={{ fontSize: "0.9rem", color: theme.text, marginBottom: 16 }}>
-        Open one or more rules pages below (each loads once). Edit and save per page. Visitors see saved rules after
-        they reload the rules page; no live sync to limit reads/writes.
+        Open one or more rules pages, edit any of them, then click Save once to save all open pages. Fewer writes and
+        no need to switch back to each tab to save.
       </p>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
@@ -328,7 +336,7 @@ export default function RulesAdmin() {
 
               <button
                 type="button"
-                onClick={handleSave}
+                onClick={handleSaveAll}
                 disabled={saving}
                 style={{
                   background: saving ? "#999" : "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
@@ -342,11 +350,11 @@ export default function RulesAdmin() {
                   fontFamily: '"Cinzel", serif',
                 }}
               >
-                {saving ? "Saving…" : "Save rules for this page"}
+                {saving ? "Saving…" : "Save all open pages"}
               </button>
-              {statusBySlug[activeSlug] && (
-                <span style={{ marginLeft: 12, color: (statusBySlug[activeSlug] || "").startsWith("Failed") ? "#c62828" : theme.secondaryText }}>
-                  {statusBySlug[activeSlug]}
+              {(saveAllStatus || statusBySlug[activeSlug]) && (
+                <span style={{ marginLeft: 12, color: (saveAllStatus || statusBySlug[activeSlug] || "").startsWith("Failed") ? "#c62828" : theme.secondaryText }}>
+                  {saveAllStatus || statusBySlug[activeSlug]}
                 </span>
               )}
             </>
