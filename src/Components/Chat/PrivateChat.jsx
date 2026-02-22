@@ -261,10 +261,7 @@ const PrivateChat = ({ fullPage = false }) => {
     fetchPotionEffects();
     // Refresh every 5 minutes instead of real-time listening
     const interval = setInterval(fetchPotionEffects, 5 * 60 * 1000);
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   // Rainbow Potion effect - change color every 10 seconds
