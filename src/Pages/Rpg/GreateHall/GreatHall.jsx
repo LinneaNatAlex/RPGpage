@@ -1,12 +1,11 @@
 // imports the necessary modules and components.
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { db } from "../../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import styles from "./GreatHall.module.css";
 import LiveRP from "../../../Components/LiveRP/LiveRP.jsx";
 // Imports Live chat component for role-playing in the Starshade Hall
 const DESCRIPTION_KEY = "starshadehall";
-const YT_PLAYER_CONTAINER_ID = "starshade-hall-yt-player";
 
 /** Parse YouTube URL: { videoId, playlistId? }. Single video = loop; playlist = play through. */
 function parseYoutubeUrl(url) {
@@ -29,8 +28,6 @@ const GreatHall = () => {
   const [forumDescription, setForumDescription] = useState("");
   const [musicSource, setMusicSource] = useState(null); // { videoId, playlistId? }
   const [musicPlaying, setMusicPlaying] = useState(true);
-  const [volume, setVolume] = useState(70);
-  const playerRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,70 +57,16 @@ const GreatHall = () => {
     return () => { cancelled = true; };
   }, []);
 
-  // YouTube IFrame API – hidden player; single video = loop, playlist = play through
-  useEffect(() => {
-    if (!musicSource?.videoId) return;
-    const { videoId, playlistId } = musicSource;
-    const isPlaylist = Boolean(playlistId);
-    function initPlayer() {
-      const YT = window.YT;
-      if (!YT || !YT.Player) return;
-      if (!document.getElementById(YT_PLAYER_CONTAINER_ID)) return;
-      if (playerRef.current) return;
-      const playerVars = {
-        autoplay: 1,
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        modestbranding: 1,
-      };
-      if (isPlaylist) {
-        playerVars.listType = "playlist";
-        playerVars.list = playlistId;
-      } else {
-        playerVars.loop = 1;
-        playerVars.playlist = videoId; // required for loop with single video
-      }
-      const player = new YT.Player(YT_PLAYER_CONTAINER_ID, {
-        ...(isPlaylist ? {} : { videoId }),
-        width: 1,
-        height: 1,
-        playerVars,
-        events: {
-          onReady: (e) => {
-            playerRef.current = e.target;
-            e.target.setVolume(volume);
-          },
-        },
-      });
-    }
-    if (window.YT && window.YT.Player) {
-      initPlayer();
-    } else {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const first = document.getElementsByTagName("script")[0];
-      first?.parentNode?.insertBefore(tag, first);
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => { prev?.(); initPlayer(); };
-    }
-    return () => {
-      if (playerRef.current?.destroy) playerRef.current.destroy();
-      playerRef.current = null;
-    };
-  }, [musicSource?.videoId, musicSource?.playlistId]);
-
-  useEffect(() => {
-    if (playerRef.current?.setVolume) playerRef.current.setVolume(volume);
-  }, [volume]);
-
-  useEffect(() => {
-    if (!playerRef.current) return;
-    if (musicPlaying) playerRef.current.playVideo?.();
-    else playerRef.current.pauseVideo?.();
-  }, [musicPlaying]);
-
   const handlePlayPause = () => setMusicPlaying((p) => !p);
+
+  const iframeSrc = (() => {
+    if (!musicSource?.videoId) return null;
+    const { videoId, playlistId } = musicSource;
+    if (playlistId) {
+      return `https://www.youtube.com/embed/videoseries?list=${playlistId}&autoplay=1`;
+    }
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
+  })();
 
   return (
     <div className={styles.GreatHallClass}>
@@ -141,20 +84,15 @@ const GreatHall = () => {
                   {musicPlaying ? "Stop" : "Play"}
                 </button>
               </div>
-              <div className={styles.musicWidgetVolume}>
-                <label className={styles.musicWidgetVolumeLabel} htmlFor="starshade-volume">Volume</label>
-                <input
-                  id="starshade-volume"
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={volume}
-                  onChange={(e) => setVolume(Number(e.target.value))}
-                  className={styles.musicWidgetVolumeSlider}
+              {musicPlaying && iframeSrc && (
+                <iframe
+                  title="Background music"
+                  src={iframeSrc}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+                  allowFullScreen
+                  className={styles.musicIframeHidden}
                 />
-                <span className={styles.musicWidgetVolumeValue}>{volume}%</span>
-              </div>
-              <div id={YT_PLAYER_CONTAINER_ID} className={styles.musicIframeHidden} aria-hidden="true" />
+              )}
             </div>
           ) : null
         }
