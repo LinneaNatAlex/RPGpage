@@ -33,15 +33,15 @@ export default function SiteModal({
             <button
               type="button"
               className={`${styles.siteModalBtn} ${styles.siteModalBtnSecondary}`}
-              onClick={onCancel}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCancel?.(); }}
             >
-              Cancel
+              Avbryt
             </button>
           )}
           <button
             type="button"
             className={styles.siteModalBtn}
-            onClick={onConfirm}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onConfirm?.(); }}
           >
             OK
           </button>

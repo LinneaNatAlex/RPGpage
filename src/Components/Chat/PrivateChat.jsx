@@ -295,6 +295,7 @@ const PrivateChat = ({ fullPage = false }) => {
   const [siteModal, setSiteModal] = useState({ open: false, message: "", variant: "alert", onConfirm: null, onCancel: null });
   const chatBoxRef = useRef(null);
   const lastMessageRef = useRef(null);
+  const confirmOkRef = useRef(null);
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
   const { isVip } = useUserData();
@@ -787,19 +788,18 @@ const PrivateChat = ({ fullPage = false }) => {
     }
   };
 
-  const deleteGroup = async () => {
+  const deleteGroup = () => {
     if (!currentUser || !selectedGroup) return;
     const group = groupChats.find((g) => g.id === selectedGroup);
     if (group?.createdBy !== currentUser.uid) return;
-    showSiteConfirm("Delete this group for everyone? This cannot be undone.", async () => {
-      try {
-        await deleteDoc(doc(db, "groupChats", selectedGroup));
-        setSelectedGroup(null);
-      } catch (err) {
+    const groupIdToDelete = selectedGroup;
+    if (!window.confirm("Delete this group for everyone? This cannot be undone.")) return;
+    deleteDoc(doc(db, "groupChats", groupIdToDelete))
+      .then(() => setSelectedGroup(null))
+      .catch((err) => {
         console.error("Delete group failed:", err);
         showSiteAlert(err?.message || "Could not delete group.");
-      }
-    });
+      });
   };
 
   // Calculate per-chat unread messages for the current user
