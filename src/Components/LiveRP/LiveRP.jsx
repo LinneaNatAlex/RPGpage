@@ -34,7 +34,7 @@ const hallRules = [
 
 // costume hooks usestate to hold the new message input value
 // useChatMessages costume hook to fetch messages, useState manages the states of 'newMess' input value!
-const LiveRP = ({ descriptionText }) => {
+const LiveRP = ({ descriptionText, slotAboveDescription }) => {
   const { rpgGrateHall } = useChatMessages(); // destructuring the messages to get the rpgGrateHall messages
   const { users } = useUsers();
   const [newMess, setNewMess] = useState("");
@@ -388,6 +388,7 @@ const LiveRP = ({ descriptionText }) => {
               maxWidth: "300px",
             }}
           >
+            {slotAboveDescription}
             {descriptionText && (
               <div
                 style={{

@@ -13,7 +13,7 @@ const DEFAULT_RULES = [
       "Do not bump threads unnecessarily.",
       "Mark spoilers clearly and use spoiler tags where possible.",
       "Do not post unfinished or placeholder topics.",
-      "All forum posts must be at least 300 words.",
+      "All forum posts must be at least 200 words.",
       "Always write in third person (he/she/they/name).",
     ],
   },
@@ -156,8 +156,8 @@ export default function ForumRules() {
             Always write in <b style={{ color: "#D4C4A8" }}>third person</b> (he/she/they/name).
           </li>
           <li style={{ marginBottom: 8 }}>
-            All forum posts must be <b style={{ color: "#D4C4A8" }}>at least 300 words</b>. A counter will
-            appear as you write, and you cannot post until you reach 300 words.
+            All forum posts must be <b style={{ color: "#D4C4A8" }}>at least 200 words</b>. A counter will
+            appear as you write, and you cannot post until you reach 200 words.
           </li>
           <li style={{ marginBottom: 8 }}>
             Stay true to your character's personality and the forum's theme.

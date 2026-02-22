@@ -31,7 +31,7 @@ import "react-quill/dist/quill.snow.css";
 import RepetitionWarningComponent from "../../Components/RepetitionWarning/RepetitionWarningComponent";
 import { forumNames } from "../../data/forumList";
 
-// Per-forum word limits and reward (default = standard forum: 300 min, global reward)
+// Per-forum word limits and reward (default = standard forum: 200 min, global reward)
 const forumWordConfig = {
   shortbutlong: {
     minWords: 100,
@@ -42,9 +42,9 @@ const forumWordConfig = {
     rewardText: "2 nits per 100 words (100–500 words; 480+ = 10 nits).",
   },
   default: {
-    minWords: 300,
+    minWords: 200,
     maxWords: null,
-    rewardText: "Earn 50 nits for every 100 words written (minimum 300 words)!",
+    rewardText: "Earn 50 nits for every 100 words written (minimum 200 words)!",
   },
 };
 

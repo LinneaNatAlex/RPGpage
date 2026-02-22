@@ -126,6 +126,8 @@ export default function AdminPanel() {
   // Global site pink mode (Valentine's – admin-toggle)
   const [globalPinkMode, setGlobalPinkMode] = useState(false);
   const [globalPinkModeStatus, setGlobalPinkModeStatus] = useState("");
+  const [starshadeMusicUrl, setStarshadeMusicUrl] = useState("");
+  const [starshadeMusicStatus, setStarshadeMusicStatus] = useState("");
   useEffect(() => {
     if (!roles.includes("admin")) return;
     const configRef = doc(db, "config", "site");
@@ -161,6 +163,28 @@ export default function AdminPanel() {
       setTimeout(() => setGlobalPinkModeStatus(""), 3000);
     } catch (err) {
       setGlobalPinkModeStatus(`Error: ${err.message}`);
+    }
+  }
+
+  useEffect(() => {
+    if (!roles.includes("admin")) return;
+    getDoc(doc(db, "config", "starshadeHall"))
+      .then((snap) => {
+        const data = snap.exists() ? snap.data() : {};
+        setStarshadeMusicUrl(data.dailyMusicUrl || "");
+      })
+      .catch(() => setStarshadeMusicUrl(""));
+  }, [roles]);
+
+  async function handleSaveStarshadeMusic() {
+    if (!roles.includes("admin")) return;
+    setStarshadeMusicStatus("Saving...");
+    try {
+      await setDoc(doc(db, "config", "starshadeHall"), { dailyMusicUrl: starshadeMusicUrl.trim() || null }, { merge: true });
+      setStarshadeMusicStatus("Saved. Music will play on the Starshade Hall page.");
+      setTimeout(() => setStarshadeMusicStatus(""), 3000);
+    } catch (err) {
+      setStarshadeMusicStatus(`Error: ${err.message}`);
     }
   }
 
@@ -914,6 +938,40 @@ export default function AdminPanel() {
             <div style={{ marginTop: 10, fontSize: "0.9rem", color: theme.secondaryText }}>
               {globalDarkModeStatus || globalPinkModeStatus}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Starshade Hall – background music */}
+      {roles.includes("admin") && (
+        <div style={sectionBox}>
+          {sectionTitle("Starshade Hall – background music", "Set a YouTube link that plays as background music when users enter Starshade Hall. Only the audio is played; the video is not shown. Users can stop or start the music on the page.")}
+          <label style={labelStyle}>YouTube link (e.g. watch or youtu.be)</label>
+          <input
+            type="url"
+            value={starshadeMusicUrl}
+            onChange={(e) => setStarshadeMusicUrl(e.target.value)}
+            placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+            style={{ ...inputStyle, maxWidth: 480 }}
+          />
+          <button
+            type="button"
+            onClick={handleSaveStarshadeMusic}
+            style={{
+              marginTop: 10,
+              padding: "10px 20px",
+              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              color: "#F5EFE0",
+              border: `2px solid ${theme.border}`,
+              borderRadius: 8,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Save music link
+          </button>
+          {starshadeMusicStatus && (
+            <div style={{ marginTop: 8, fontSize: "0.9rem", color: theme.secondaryText }}>{starshadeMusicStatus}</div>
           )}
         </div>
       )}
