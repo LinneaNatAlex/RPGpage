@@ -152,6 +152,7 @@ const PrivateChat = ({ fullPage = false }) => {
   const [mysteryUntil, setMysteryUntil] = useState(null);
   const [charmUntil, setCharmUntil] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
+  const [sparkleUntil, setSparkleUntil] = useState(null);
   const [rainbowColor, setRainbowColor] = useState("#ff6b6b");
 
   // Helper functions for potion effects
@@ -260,7 +261,10 @@ const PrivateChat = ({ fullPage = false }) => {
     fetchPotionEffects();
     // Refresh every 5 minutes instead of real-time listening
     const interval = setInterval(fetchPotionEffects, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   // Rainbow Potion effect - change color every 10 seconds
@@ -655,6 +659,9 @@ const PrivateChat = ({ fullPage = false }) => {
       if (inLoveUntil && inLoveUntil > Date.now()) {
         potionEffects.love = true;
       }
+      if (sparkleUntil && sparkleUntil > Date.now()) {
+        potionEffects.sparkle = true;
+      }
 
       await addDoc(collection(db, "privateMessages", chatId, "messages"), {
         text: message,
@@ -1015,7 +1022,7 @@ const PrivateChat = ({ fullPage = false }) => {
                                   <MessageMenu message={m} currentUser={currentUser} selectedUser={selectedUser} db={db} onEdit={(msg) => { setEditingMessage(msg); setMessage(msg.text); }} onAlert={showSiteAlert} />
                                 </div>
                               )}
-                              <span style={{ display: "block", wordBreak: "break-word", whiteSpace: "normal", overflowWrap: "break-word", ...(m.potionEffects ? { ...(m.potionEffects.hairColor ? { color: m.potionEffects.hairColor } : {}), ...(m.potionEffects.rainbow ? { color: m.potionEffects.rainbowColor } : {}), ...(m.potionEffects.shout ? { textTransform: "uppercase", fontWeight: "bold" } : {}) } : {}) }}>
+                              <span style={{ display: "block", wordBreak: "break-word", whiteSpace: "normal", overflowWrap: "break-word", ...(m.potionEffects ? { ...(m.potionEffects.hairColor ? { color: m.potionEffects.hairColor } : {}), ...(m.potionEffects.rainbow ? { color: m.potionEffects.rainbowColor } : {}), ...(m.potionEffects.shout ? { textTransform: "uppercase", fontWeight: "bold" } : {}), ...(m.potionEffects.sparkle ? { textShadow: "0 0 6px #fff, 0 0 12px #ffeb3b, 0 0 18px #fff9c4", color: "#fffde7" } : {}) } : {}) }}>
                                 {m.potionEffects?.translation ? translateText(m.text) : m.text}
                               </span>
                             </div>
@@ -1544,6 +1551,13 @@ const PrivateChat = ({ fullPage = false }) => {
                                     color: "#ff69b4",
                                   }
                                 : {}),
+                              ...(m.potionEffects && m.potionEffects.sparkle
+                                ? {
+                                    textShadow:
+                                      "0 0 6px #fff, 0 0 12px #ffeb3b, 0 0 18px #fff9c4",
+                                    color: "#fffde7",
+                                  }
+                                : {}),
                             }}
                           >
                             {m.from === currentUser?.uid
@@ -1555,6 +1569,7 @@ const PrivateChat = ({ fullPage = false }) => {
                                 selectedUser.uid}
                             {m.potionEffects && m.potionEffects.charm && " 💕"}
                             {m.potionEffects && m.potionEffects.love && " 💖"}
+                            {m.potionEffects && m.potionEffects.sparkle && " ✨"}
                           </div>
                           <div style={{ position: "relative" }}>
                             {m.from === currentUser?.uid && (
@@ -1598,6 +1613,13 @@ const PrivateChat = ({ fullPage = false }) => {
                                         ? {
                                             textTransform: "uppercase",
                                             fontWeight: "bold",
+                                          }
+                                        : {}),
+                                      ...(m.potionEffects.sparkle
+                                        ? {
+                                            textShadow:
+                                              "0 0 6px #fff, 0 0 12px #ffeb3b, 0 0 18px #fff9c4",
+                                            color: "#fffde7",
                                           }
                                         : {}),
                                     }

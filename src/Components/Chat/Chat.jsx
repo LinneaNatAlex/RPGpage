@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import useChatMessages from "../../hooks/useChatMessages";
@@ -73,6 +73,7 @@ const Chat = () => {
   const [mysteryUntil, setMysteryUntil] = useState(null);
   const [charmUntil, setCharmUntil] = useState(null);
   const [inLoveUntil, setInLoveUntil] = useState(null);
+  const [sparkleUntil, setSparkleUntil] = useState(null);
   const [rainbowColor, setRainbowColor] = useState("#ff6b6b");
 
   // Rainbow Potion effect - change color every 10 seconds
@@ -95,79 +96,92 @@ const Chat = () => {
     localStorage.setItem("mainChatAutoScroll", String(autoScrollToBottom));
   }, [autoScrollToBottom]);
 
-  // Load user's potion effects
-  // QUOTA OPTIMIZATION: Use polling instead of real-time listener
-  useEffect(() => {
+  // Load user's potion effects (fetch so we can refetch when chat opens or tab gains focus)
+  const fetchUserPotions = useCallback(async () => {
     if (!auth.currentUser) return;
-
-    const fetchUserPotions = async () => {
-      try {
-        const userRef = doc(db, "users", auth.currentUser.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setHairColorUntil(
-            data.hairColorUntil && data.hairColorUntil > Date.now()
-              ? data.hairColorUntil
-              : null,
-          );
-          setRainbowUntil(
-            data.rainbowUntil && data.rainbowUntil > Date.now()
-              ? data.rainbowUntil
-              : null,
-          );
-          setGlowUntil(
-            data.glowUntil && data.glowUntil > Date.now()
-              ? data.glowUntil
-              : null,
-          );
-          setTranslationUntil(
-            data.translationUntil && data.translationUntil > Date.now()
-              ? data.translationUntil
-              : null,
-          );
-          setEchoUntil(
-            data.echoUntil && data.echoUntil > Date.now()
-              ? data.echoUntil
-              : null,
-          );
-          setWhisperUntil(
-            data.whisperUntil && data.whisperUntil > Date.now()
-              ? data.whisperUntil
-              : null,
-          );
-          setShoutUntil(
-            data.shoutUntil && data.shoutUntil > Date.now()
-              ? data.shoutUntil
-              : null,
-          );
-          setMysteryUntil(
-            data.mysteryUntil && data.mysteryUntil > Date.now()
-              ? data.mysteryUntil
-              : null,
-          );
-          setCharmUntil(
-            data.charmUntil && data.charmUntil > Date.now()
-              ? data.charmUntil
-              : null,
-          );
-          setInLoveUntil(
-            data.inLoveUntil && data.inLoveUntil > Date.now()
-              ? data.inLoveUntil
-              : null,
-          );
-        }
-      } catch (error) {}
-    };
-
-    // Fetch initially
-    fetchUserPotions();
-
-    // Poll every 60 seconds for potion effects
-    const interval = setInterval(fetchUserPotions, 60000);
-
-    return () => clearInterval(interval);
+    try {
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setHairColorUntil(
+          data.hairColorUntil && data.hairColorUntil > Date.now()
+            ? data.hairColorUntil
+            : null,
+        );
+        setRainbowUntil(
+          data.rainbowUntil && data.rainbowUntil > Date.now()
+            ? data.rainbowUntil
+            : null,
+        );
+        setGlowUntil(
+          data.glowUntil && data.glowUntil > Date.now()
+            ? data.glowUntil
+            : null,
+        );
+        setTranslationUntil(
+          data.translationUntil && data.translationUntil > Date.now()
+            ? data.translationUntil
+            : null,
+        );
+        setEchoUntil(
+          data.echoUntil && data.echoUntil > Date.now()
+            ? data.echoUntil
+            : null,
+        );
+        setWhisperUntil(
+          data.whisperUntil && data.whisperUntil > Date.now()
+            ? data.whisperUntil
+            : null,
+        );
+        setShoutUntil(
+          data.shoutUntil && data.shoutUntil > Date.now()
+            ? data.shoutUntil
+            : null,
+        );
+        setMysteryUntil(
+          data.mysteryUntil && data.mysteryUntil > Date.now()
+            ? data.mysteryUntil
+            : null,
+        );
+        setCharmUntil(
+          data.charmUntil && data.charmUntil > Date.now()
+            ? data.charmUntil
+            : null,
+        );
+        setInLoveUntil(
+          data.inLoveUntil && data.inLoveUntil > Date.now()
+            ? data.inLoveUntil
+            : null,
+        );
+        setSparkleUntil(
+          data.sparkleUntil && data.sparkleUntil > Date.now()
+            ? data.sparkleUntil
+            : null,
+        );
+      }
+    } catch (error) {}
   }, []);
+
+  useEffect(() => {
+    fetchUserPotions();
+    const interval = setInterval(fetchUserPotions, 60000);
+    return () => clearInterval(interval);
+  }, [fetchUserPotions]);
+
+  // Refetch potions when user opens chat or returns to tab (so drinking a potion shows up without waiting)
+  const prevCollapsedRef = useRef(isCollapsed);
+  useEffect(() => {
+    if (prevCollapsedRef.current && !isCollapsed) fetchUserPotions();
+    prevCollapsedRef.current = isCollapsed;
+  }, [isCollapsed, fetchUserPotions]);
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") fetchUserPotions();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [fetchUserPotions]);
   const chatBoxRef = useRef(null);
 
   // Helper functions for potion effects
@@ -228,6 +242,13 @@ const Chat = () => {
       if (message.potionEffects.shout) {
         style.textTransform = "uppercase";
         style.fontWeight = "bold";
+      }
+
+      // Sparkle Potion – shimmer on text
+      if (message.potionEffects.sparkle) {
+        style.textShadow =
+          "0 0 6px #fff, 0 0 12px #ffeb3b, 0 0 18px #fff9c4, 0 0 4px #fff";
+        style.color = "#fffde7";
       }
     }
 
@@ -438,6 +459,9 @@ const Chat = () => {
       }
       if (inLoveUntil && inLoveUntil > Date.now()) {
         potionEffects.love = true;
+      }
+      if (sparkleUntil && sparkleUntil > Date.now()) {
+        potionEffects.sparkle = true;
       }
 
       // Echo Potion - send message twice
@@ -805,6 +829,9 @@ const Chat = () => {
                       {message.potionEffects &&
                         message.potionEffects.love &&
                         " 💖"}
+                      {message.potionEffects &&
+                        message.potionEffects.sparkle &&
+                        " ✨"}
                       {userObj && onlineUids.has(userObj.uid || userObj.id) && (
                         <span className={styles.mainChatOnlineDot} aria-hidden title="Online" />
                       )}
