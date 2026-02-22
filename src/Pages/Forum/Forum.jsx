@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 import useUsers from "../../hooks/useUser";
@@ -88,6 +88,7 @@ const Forum = () => {
   const [forumDescription, setForumDescription] = useState("");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const forumContainerRef = useRef(null);
 
   // Hent forumId fra URL (normaliser "short,butlong" til "shortbutlong" for Firestore)
   const { forumId } = useParams();
@@ -589,6 +590,18 @@ const Forum = () => {
   const [editTopicTitle, setEditTopicTitle] = useState("");
   const [editTopicContent, setEditTopicContent] = useState("");
 
+  // Set spellcheck language to English for all Quill editors (so English isn’t marked wrong)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const container = forumContainerRef.current || document;
+      container.querySelectorAll?.(".ql-editor").forEach((el) => {
+        el.setAttribute("lang", "en");
+        el.setAttribute("spellcheck", "true");
+      });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [selectedTopic, editingId, editingTopic, newTopicContent, replyContent]);
+
   // Load topic and first post for editing
   const handleEditTopic = () => {
     const topic = topics.find((t) => t.id === selectedTopic);
@@ -748,7 +761,7 @@ const Forum = () => {
   };
 
   return (
-    <div className={styles.forumWrapper}>
+    <div ref={forumContainerRef} className={styles.forumWrapper}>
       <h2>{forumTitle}</h2>
       {forumDescription && (
         <div
@@ -789,6 +802,8 @@ const Forum = () => {
               }}
               placeholder="New topic title"
               className={styles.newTopicInput}
+              spellCheck
+              lang="en"
             />
             <ReactQuill
               id="forum-new-topic-content"
@@ -838,6 +853,8 @@ const Forum = () => {
               placeholder="e.g. 15th of Harvest, 302"
               className={styles.newTopicInput}
               style={{ marginBottom: 16 }}
+              spellCheck
+              lang="en"
             />
             {is18PlusForum && (
               <div
@@ -1272,6 +1289,8 @@ const Forum = () => {
                 className={styles.titleInput}
                 style={{ marginBottom: 16, width: "100%" }}
                 placeholder="Edit topic title"
+                spellCheck
+                lang="en"
               />
               <ReactQuill
                 id="forum-edit-topic-content"

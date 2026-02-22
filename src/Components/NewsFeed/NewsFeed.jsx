@@ -170,6 +170,8 @@ const NewsFeed = () => {
             onChange={(e) => setTitles(e.target.value)}
             placeholder="Title"
             required
+            spellCheck
+            lang="en"
           />
           <textarea
             id="news-post-content"
@@ -179,6 +181,8 @@ const NewsFeed = () => {
             placeholder="news here"
             className={styles.textArea}
             required
+            spellCheck
+            lang="en"
           />
           <Button
             onClick={handlePostSubmit}

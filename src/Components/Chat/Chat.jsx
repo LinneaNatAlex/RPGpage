@@ -910,6 +910,8 @@ const Chat = () => {
                   maxLength={200}
                   className={`${styles.chatInput} ${styles.textArea}`}
                   style={{ width: "100%", minWidth: 0 }}
+                  spellCheck
+                  lang="en"
                 />
                 {showMentions && mentionableUsers.length > 0 && (
                   <ul className={styles.mentionDropdown}>
@@ -1013,6 +1015,8 @@ const Chat = () => {
                 placeholder="e.g. Reminder: House meeting tonight at 8!"
                 rows={3}
                 autoComplete="off"
+                spellCheck
+                lang="en"
               />
               <div className={styles.notificationModalActions}>
                 <Button

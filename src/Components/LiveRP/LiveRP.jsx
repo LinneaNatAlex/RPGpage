@@ -694,6 +694,8 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
                 className={styles.chatInput}
                 suppressContentEditableWarning={true}
                 data-name="liveRpMessage"
+                spellCheck
+                lang="en"
               />
               <div
                 style={{
