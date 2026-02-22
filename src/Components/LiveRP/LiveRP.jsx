@@ -42,6 +42,8 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
   const [isPrivilegedUser, setIsPrivilegedUser] = useState(false);
   const [showRulesPopup, setShowRulesPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
+  const [canUseRedText, setCanUseRedText] = useState(false);
+  const [useRedText, setUseRedText] = useState(false);
   // const [nitsReward, setNitsReward] = useState(null); // Removed - no more popup messages
   const messagesEndRef = useRef(null);
   const chatBoxRef = useRef(null);
@@ -54,7 +56,11 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
   useEffect(() => {
     async function checkPrivileged() {
       const user = auth.currentUser;
-      if (!user) return setIsPrivilegedUser(false);
+      if (!user) {
+        setIsPrivilegedUser(false);
+        setCanUseRedText(false);
+        return;
+      }
       const q = query(collection(db, "users"), where("uid", "==", user.uid));
       const snap = await getDocs(q);
       if (!snap.empty) {
@@ -66,8 +72,16 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
           roles.includes("headmaster") ||
           roles.includes("shadowpatrol")
         );
+        setCanUseRedText(
+          roles.includes("admin") ||
+          roles.includes("headmaster") ||
+          roles.includes("shadowpatrol") ||
+          roles.includes("professor") ||
+          roles.includes("teacher")
+        );
       } else {
         setIsPrivilegedUser(false);
+        setCanUseRedText(false);
       }
     }
     checkPrivileged();
@@ -144,6 +158,7 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
         timestamp: serverTimestamp(),
         sender: user.displayName || "Anonymous",
         senderUid: user.uid,
+        ...(canUseRedText && useRedText ? { useRedText: true } : {}),
       });
       if (autoScrollToBottom) {
         setTimeout(scrollChatToBottom, 100);
@@ -517,10 +532,7 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
                   userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
                 )
                   nameClass += ` ${styles.archivistName}`;
-                const staffRedText =
-                  userObj?.roles?.some((r) => r.toLowerCase() === "headmaster") ||
-                  userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher") ||
-                  userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol");
+                const messageUsesRed = Boolean(message.useRedText);
                 return (
                   <div key={message.id} className={styles.message}>
                     <div
@@ -576,7 +588,8 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
                         textAlign: "left",
                         width: "100%",
                         fontSize: "1.15rem",
-                        ...(staffRedText
+                        color: "#2c2c2c",
+                        ...(messageUsesRed
                           ? {
                               color: "#c62828",
                               fontWeight: 500,
@@ -636,6 +649,16 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
                 readOnly
                 aria-hidden="true"
               />
+              {canUseRedText && (
+                <label className={styles.redTextLabel}>
+                  <input
+                    type="checkbox"
+                    checked={useRedText}
+                    onChange={(e) => setUseRedText(e.target.checked)}
+                  />
+                  <span>Write in red</span>
+                </label>
+              )}
               <div className={styles.formatBar}>
                 <button
                   type="button"

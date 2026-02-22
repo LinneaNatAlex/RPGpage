@@ -1,3 +1,15 @@
+/* Optional "Write in red" for staff roles */
+.redTextLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #D4C4A8;
+}
+.redTextLabel input { accent-color: #7b6857; }
+
 /* Format bar over input */
 .formatBar {
   display: flex;
