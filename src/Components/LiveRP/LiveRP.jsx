@@ -680,7 +680,7 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
                   textAlign: "center",
                 }}
               >
-                Earn 50 nits for every 100 words written (minimum 300 words)!
+                Earn 50 nits for every 100 words written (minimum 200 words)!
               </div>
               <Button
                 type="submit"
