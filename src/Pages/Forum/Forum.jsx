@@ -459,7 +459,6 @@ const Forum = () => {
         if (followsThis) followers.push(docSnap.id);
       });
 
-      // Send notification to each follower
       const now = Date.now();
       for (const followerId of followers) {
         try {
@@ -478,12 +477,16 @@ const Forum = () => {
             createdAt: serverTimestamp(),
             created: now
           });
-        } catch (error) {
-          // Skip this notification if it fails
+        } catch (err) {
+          if (process.env.NODE_ENV === "development") {
+            console.warn("Forum: failed to create topic_reply notification for", followerId, err?.message);
+          }
         }
       }
-    } catch (error) {
-      // Error fetching followers or sending notifications
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Forum: sendNotificationToTopicFollowers error", err?.message);
+      }
     }
   };
 

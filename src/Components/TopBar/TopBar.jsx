@@ -28,6 +28,12 @@ import { cacheHelpers } from "../../utils/firebaseCache";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 
 import styles from "./TopBar.module.css";
+import { forumNames } from "../../data/forumList";
+
+// Map forum display name → id (e.g. "18+ Forum" → "18plus") for followed topics that lack forumRoom
+const forumDisplayToId = Object.fromEntries(
+  Object.entries(forumNames).map(([id, name]) => [name, id])
+);
 
 // Helper function to update user doc and clear cache
 const updateUserDocWithCacheClear = async (userRef, updates, userId) => {
@@ -150,11 +156,14 @@ const TopBar = () => {
 
       for (const topic of followedTopics) {
         try {
+          // Use forumRoom (e.g. "18plus"); fallback: display name → id so "18+ Forum" → "18plus"
+          const roomId =
+            (topic.forumRoom && String(topic.forumRoom).trim()) ||
+            forumDisplayToId[String(topic.forum || "").trim()] ||
+            String(topic.forum || "").toLowerCase().replace(/\s+/g, "");
           const postsRef = collection(
             db,
-            `forums/${topic.forum.toLowerCase().replace(" ", "")}/topics/${
-              topic.id
-            }/posts`,
+            `forums/${roomId}/topics/${topic.id}/posts`,
           );
           const q = query(
             postsRef,
