@@ -22,7 +22,10 @@ import { getRPGCalendar, isExamPeriod } from "../../utils/rpgCalendar";
 
 // Helper: get year from user object (default 1)
 function getUserYear(user) {
-  if (user?.graduate || (user?.class && /^graduated?$/i.test(String(user.class)))) {
+  if (
+    user?.graduate ||
+    (user?.class && /^graduated?$/i.test(String(user.class)))
+  ) {
     return "graduate";
   }
   // Extract year from class field (e.g., "2nd year" -> 2)
@@ -119,8 +122,10 @@ const ClassroomSession = () => {
   // Users who can be assigned as professor for this class (professor, teacher, admin, headmaster)
   const teachersList = (allUsersList || []).filter((u) =>
     (u.roles || []).some((r) =>
-      ["professor", "teacher", "admin", "headmaster"].includes((r || "").toLowerCase())
-    )
+      ["professor", "teacher", "admin", "headmaster"].includes(
+        (r || "").toLowerCase(),
+      ),
+    ),
   );
   const [students, setStudents] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -152,7 +157,10 @@ const ClassroomSession = () => {
   const chatRef = useRef(null);
 
   // For teachers/admins: allow year selection
-  const isTeacher = roles.includes("professor") || roles.includes("teacher") || roles.includes("admin");
+  const isTeacher =
+    roles.includes("professor") ||
+    roles.includes("teacher") ||
+    roles.includes("admin");
   const [selectedYear, setSelectedYear] = useState(getUserYear(user));
 
   // Allow year selection for teachers OR users who are above year 1
@@ -162,7 +170,7 @@ const ClassroomSession = () => {
 
   // Filter online users for this class/year
   const attendingUsers = allUsers.filter(
-    (u) => u.online && (u.year === userYear || u.year === Number(userYear))
+    (u) => u.online && (u.year === userYear || u.year === Number(userYear)),
   );
   const classInfo = classesList.find((c) => c.id === classId);
 
@@ -170,9 +178,14 @@ const ClassroomSession = () => {
   useEffect(() => {
     if (!classInfo || !user) return;
     if (classInfo.minYear && userCurrentYear !== "graduate") {
-      const yearNum = typeof userCurrentYear === "number" ? userCurrentYear : parseInt(userCurrentYear) || 1;
+      const yearNum =
+        typeof userCurrentYear === "number"
+          ? userCurrentYear
+          : parseInt(userCurrentYear) || 1;
       if (yearNum < classInfo.minYear) {
-        setErrorMessage(`This class is only available from year ${classInfo.minYear} onwards.`);
+        setErrorMessage(
+          `This class is only available from year ${classInfo.minYear} onwards.`,
+        );
         setTimeout(() => {
           navigate("/classrooms");
         }, 2000);
@@ -196,9 +209,15 @@ const ClassroomSession = () => {
           if (data.classInfo) {
             setCustomClassInfo({
               points: data.classInfo.points ?? 2,
-              requirements: data.classInfo.requirements ?? "Class for all races and backgrounds",
-              activities: data.classInfo.activities ?? "Roleplay, ask questions, or just hang out!",
-              teacherIds: Array.isArray(data.classInfo.teacherIds) ? data.classInfo.teacherIds : [],
+              requirements:
+                data.classInfo.requirements ??
+                "Class for all races and backgrounds",
+              activities:
+                data.classInfo.activities ??
+                "Roleplay, ask questions, or just hang out!",
+              teacherIds: Array.isArray(data.classInfo.teacherIds)
+                ? data.classInfo.teacherIds
+                : [],
             });
           } else {
             setCustomClassInfo({
@@ -223,8 +242,7 @@ const ClassroomSession = () => {
                     ...quizData,
                   });
                 }
-              } catch (error) {
-              }
+              } catch (error) {}
             }
             setAvailableQuizzes(fullQuizzes);
           } else {
@@ -265,8 +283,7 @@ const ClassroomSession = () => {
           const userData = userSnap.data();
           setTakenQuizzes(userData.takenQuizzes || []);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     loadTakenQuizzes();
@@ -286,15 +303,16 @@ const ClassroomSession = () => {
 
       // Check if user has permission
       const hasPermission =
-        (roles.includes("professor") || roles.includes("teacher")) ||
+        roles.includes("professor") ||
+        roles.includes("teacher") ||
         roles.includes("admin") ||
         roles.includes("headmaster");
 
       if (!hasPermission) {
         setErrorMessage(
           `You don't have permission to edit class description. Your roles: ${roles.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
         return;
       }
@@ -308,12 +326,11 @@ const ClassroomSession = () => {
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(""), 5000);
     } catch (error) {
-
       if (error.code === "permission-denied") {
         setErrorMessage(
           `Permission denied: Make sure you have teacher/admin role and Firebase rules are updated. Your roles: ${roles.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
       } else if (error.code === "unauthenticated") {
         setErrorMessage("Authentication error: Please log out and log back in");
@@ -337,15 +354,16 @@ const ClassroomSession = () => {
 
       // Check if user has permission - more lenient check
       const hasPermission =
-        (roles.includes("professor") || roles.includes("teacher")) ||
+        roles.includes("professor") ||
+        roles.includes("teacher") ||
         roles.includes("admin") ||
         roles.includes("headmaster");
 
       if (!hasPermission) {
         setErrorMessage(
           `You don't have permission to edit class info. Your roles: ${roles.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
         return;
       }
@@ -359,13 +377,12 @@ const ClassroomSession = () => {
       // Clear success message after 5 seconds
       setTimeout(() => setSuccessMessage(""), 5000);
     } catch (error) {
-
       // Check for specific Firebase errors
       if (error.code === "permission-denied") {
         setErrorMessage(
           `Permission denied: Make sure you have teacher/admin role and Firebase rules are updated. Your roles: ${roles.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
       } else if (error.code === "unauthenticated") {
         setErrorMessage("Authentication error: Please log out and log back in");
@@ -385,7 +402,7 @@ const ClassroomSession = () => {
       (quiz) =>
         quiz.gradeLevel === gradeLevel &&
         quiz.month === currentMonth &&
-        quiz.classId === classId
+        quiz.classId === classId,
     );
   };
 
@@ -405,7 +422,7 @@ const ClassroomSession = () => {
         quiz.month === currentMonth &&
         quiz.gradeLevel === 7 &&
         quiz.grade &&
-        ["A", "B", "C", "D", "E"].includes(quiz.grade)
+        ["A", "B", "C", "D", "E"].includes(quiz.grade),
     );
 
     return passedSubjects.length >= 7; // Need to pass 7 out of 7 subjects
@@ -448,7 +465,9 @@ const ClassroomSession = () => {
           isActive: data.isActive !== false,
         };
       });
-      list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") || 0);
+      list.sort(
+        (a, b) => (b.createdAt || "").localeCompare(a.createdAt || "") || 0,
+      );
       setAllExamsList(list);
     } catch (err) {
       setAllExamsList([]);
@@ -518,8 +537,7 @@ const ClassroomSession = () => {
           setAvailableQuizzes(fullQuizzes);
         }
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleStartQuiz = (quiz) => {
@@ -572,8 +590,7 @@ const ClassroomSession = () => {
           setAvailableQuizzes(fullQuizzes);
         }
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   // Load students list once (no snapshot – list updates after reload)
@@ -627,7 +644,7 @@ const ClassroomSession = () => {
           await setDoc(
             ref,
             { students: [{ ...userInfo, attendedAt: Date.now() }] },
-            { merge: true }
+            { merge: true },
           );
         });
       }
@@ -674,7 +691,10 @@ const ClassroomSession = () => {
     const ref = doc(db, "classChats", `${classId}-year${userYear}`);
     const msgToDelete = messages[idx];
     // Only allow if user is admin/teacher
-    const canDelete = roles.includes("admin") || roles.includes("professor") || roles.includes("teacher");
+    const canDelete =
+      roles.includes("admin") ||
+      roles.includes("professor") ||
+      roles.includes("teacher");
     if (!canDelete) return;
     const newMessages = messages.filter((_, i) => i !== idx);
     await updateDoc(ref, { messages: newMessages });
@@ -697,8 +717,7 @@ const ClassroomSession = () => {
       const newStudents = studentsArr.filter((s) => s.uid !== user.uid);
       await updateDoc(ref, { students: newStudents });
       navigate("/ClassRooms");
-    } catch (err) {
-    }
+    } catch (err) {}
   }
 
   if (!classInfo) return <div>Class not found.</div>;
@@ -999,7 +1018,9 @@ const ClassroomSession = () => {
           )}
           {messages.map((m, i) => {
             const canDelete =
-              roles.includes("admin") || roles.includes("professor") || roles.includes("teacher");
+              roles.includes("admin") ||
+              roles.includes("professor") ||
+              roles.includes("teacher");
             return (
               <div
                 key={i}
@@ -1030,17 +1051,23 @@ const ClassroomSession = () => {
                       onlineUserStyles.userName,
                       m.roles?.some((r) => r.toLowerCase() === "headmaster")
                         ? onlineUserStyles.headmasterName
-                        : m.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
-                        ? onlineUserStyles.professorName
                         : m.roles?.some(
-                            (r) => r.toLowerCase() === "shadowpatrol"
-                          )
-                        ? onlineUserStyles.shadowPatrolName
-                        : m.roles?.some((r) => r.toLowerCase() === "admin")
-                        ? onlineUserStyles.adminName
-                        : m.roles?.some((r) => r.toLowerCase() === "archivist")
-                        ? onlineUserStyles.archivistName
-                        : "",
+                              (r) =>
+                                (r || "").toLowerCase() === "professor" ||
+                                (r || "").toLowerCase() === "teacher",
+                            )
+                          ? onlineUserStyles.professorName
+                          : m.roles?.some(
+                                (r) => r.toLowerCase() === "shadowpatrol",
+                              )
+                            ? onlineUserStyles.shadowPatrolName
+                            : m.roles?.some((r) => r.toLowerCase() === "admin")
+                              ? onlineUserStyles.adminName
+                              : m.roles?.some(
+                                    (r) => r.toLowerCase() === "archivist",
+                                  )
+                                ? onlineUserStyles.archivistName
+                                : "",
                     ].join(" ")}
                     style={{
                       fontSize: "1.1rem",
@@ -1336,8 +1363,14 @@ const ClassroomSession = () => {
                 size={Math.min(6, Math.max(3, teachersList.length + 1))}
                 value={(customClassInfo.teacherIds || []).slice()}
                 onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, (o) => o.value);
-                  setCustomClassInfo({ ...customClassInfo, teacherIds: selected });
+                  const selected = Array.from(
+                    e.target.selectedOptions,
+                    (o) => o.value,
+                  );
+                  setCustomClassInfo({
+                    ...customClassInfo,
+                    teacherIds: selected,
+                  });
                 }}
                 style={{
                   width: "100%",
@@ -1356,7 +1389,13 @@ const ClassroomSession = () => {
                   </option>
                 ))}
               </select>
-              <p style={{ color: "#D4C4A8", fontSize: "0.85rem", marginTop: "4px" }}>
+              <p
+                style={{
+                  color: "#D4C4A8",
+                  fontSize: "0.85rem",
+                  marginTop: "4px",
+                }}
+              >
                 Hold Ctrl (Windows) or Cmd (Mac) to select multiple teachers.
               </p>
             </div>
@@ -1468,7 +1507,7 @@ const ClassroomSession = () => {
                         (id) =>
                           allUsersList.find((u) => u.id === id)?.displayName ||
                           allUsersList.find((u) => u.uid === id)?.displayName ||
-                          id
+                          id,
                       )
                       .filter(Boolean)
                       .join(", ")
@@ -1614,7 +1653,8 @@ const ClassroomSession = () => {
               <div
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  background: "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
+                  background:
+                    "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
                   border: "2px solid #D4C4A8",
                   borderRadius: 0,
                   maxWidth: "90vw",
@@ -1663,9 +1703,17 @@ const ClassroomSession = () => {
                 </div>
                 <div style={{ padding: 16, overflowY: "auto", flex: 1 }}>
                   {loadingAllExams ? (
-                    <p style={{ color: "#F5EFE0", textAlign: "center" }}>Loading…</p>
+                    <p style={{ color: "#F5EFE0", textAlign: "center" }}>
+                      Loading…
+                    </p>
                   ) : allExamsList.length === 0 ? (
-                    <p style={{ color: "#F5EFE0", textAlign: "center", fontStyle: "italic" }}>
+                    <p
+                      style={{
+                        color: "#F5EFE0",
+                        textAlign: "center",
+                        fontStyle: "italic",
+                      }}
+                    >
                       No exams created yet.
                     </p>
                   ) : (
@@ -1678,11 +1726,56 @@ const ClassroomSession = () => {
                     >
                       <thead>
                         <tr style={{ borderBottom: "2px solid #E8DCC8" }}>
-                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Class</th>
-                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Title</th>
-                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Grade</th>
-                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Created</th>
-                          <th style={{ textAlign: "left", padding: "10px 8px", color: "#F5EFE0", fontWeight: 600 }}>Created by</th>
+                          <th
+                            style={{
+                              textAlign: "left",
+                              padding: "10px 8px",
+                              color: "#F5EFE0",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Class
+                          </th>
+                          <th
+                            style={{
+                              textAlign: "left",
+                              padding: "10px 8px",
+                              color: "#F5EFE0",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Title
+                          </th>
+                          <th
+                            style={{
+                              textAlign: "left",
+                              padding: "10px 8px",
+                              color: "#F5EFE0",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Grade
+                          </th>
+                          <th
+                            style={{
+                              textAlign: "left",
+                              padding: "10px 8px",
+                              color: "#F5EFE0",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Created
+                          </th>
+                          <th
+                            style={{
+                              textAlign: "left",
+                              padding: "10px 8px",
+                              color: "#F5EFE0",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Created by
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1691,30 +1784,53 @@ const ClassroomSession = () => {
                             key={exam.id}
                             onClick={() => fetchExamDetails(exam.id)}
                             style={{
-                              borderBottom: "1px solid rgba(232, 220, 200, 0.4)",
+                              borderBottom:
+                                "1px solid rgba(232, 220, 200, 0.4)",
                               cursor: "pointer",
                               transition: "background 0.2s",
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.background = "rgba(212, 196, 168, 0.15)";
+                              e.currentTarget.style.background =
+                                "rgba(212, 196, 168, 0.15)";
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.background = "transparent";
                             }}
                           >
-                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.classId || "—"}</td>
-                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.title}</td>
-                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.gradeLevel}</td>
-                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>
+                            <td
+                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                            >
+                              {exam.classId || "—"}
+                            </td>
+                            <td
+                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                            >
+                              {exam.title}
+                            </td>
+                            <td
+                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                            >
+                              {exam.gradeLevel}
+                            </td>
+                            <td
+                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                            >
                               {exam.createdAt
-                                ? new Date(exam.createdAt).toLocaleDateString(undefined, {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  })
+                                ? new Date(exam.createdAt).toLocaleDateString(
+                                    undefined,
+                                    {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    },
+                                  )
                                 : "—"}
                             </td>
-                            <td style={{ padding: "10px 8px", color: "#F5EFE0" }}>{exam.createdByName || "—"}</td>
+                            <td
+                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                            >
+                              {exam.createdByName || "—"}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -1743,7 +1859,8 @@ const ClassroomSession = () => {
               <div
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  background: "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
+                  background:
+                    "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
                   border: "2px solid #D4C4A8",
                   borderRadius: 0,
                   maxWidth: "90vw",
@@ -1777,16 +1894,30 @@ const ClassroomSession = () => {
                     >
                       {selectedExamDetails.title || "Exam Details"}
                     </h3>
-                    <p style={{ color: "#E8DCC8", fontSize: "0.9rem", margin: 0 }}>
-                      {selectedExamDetails.classId} • Grade {selectedExamDetails.gradeLevel}
-                      {selectedExamDetails.description && ` • ${selectedExamDetails.description}`}
+                    <p
+                      style={{
+                        color: "#E8DCC8",
+                        fontSize: "0.9rem",
+                        margin: 0,
+                      }}
+                    >
+                      {selectedExamDetails.classId} • Grade{" "}
+                      {selectedExamDetails.gradeLevel}
+                      {selectedExamDetails.description &&
+                        ` • ${selectedExamDetails.description}`}
                     </p>
                   </div>
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <div
+                    style={{ display: "flex", gap: 8, alignItems: "center" }}
+                  >
                     <button
-                      onClick={(e) => { e.stopPropagation(); openEditExamFromDetails(); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditExamFromDetails();
+                      }}
                       style={{
-                        background: "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
+                        background:
+                          "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
                         color: "#fff",
                         border: "2px solid rgba(255,255,255,0.3)",
                         borderRadius: 0,
@@ -1817,9 +1948,18 @@ const ClassroomSession = () => {
                 </div>
                 <div style={{ padding: 20, overflowY: "auto", flex: 1 }}>
                   {loadingExamDetails ? (
-                    <p style={{ color: "#F5EFE0", textAlign: "center" }}>Loading exam details…</p>
-                  ) : selectedExamDetails.questions && selectedExamDetails.questions.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                    <p style={{ color: "#F5EFE0", textAlign: "center" }}>
+                      Loading exam details…
+                    </p>
+                  ) : selectedExamDetails.questions &&
+                    selectedExamDetails.questions.length > 0 ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 20,
+                      }}
+                    >
                       {selectedExamDetails.questions.map((q, idx) => (
                         <div
                           key={idx}
@@ -1842,15 +1982,24 @@ const ClassroomSession = () => {
                           </h4>
                           <div style={{ marginLeft: 16 }}>
                             {q.options && q.options.length > 0 ? (
-                              <ul style={{ listStyle: "none", padding: 0, margin: "8px 0" }}>
+                              <ul
+                                style={{
+                                  listStyle: "none",
+                                  padding: 0,
+                                  margin: "8px 0",
+                                }}
+                              >
                                 {q.options.map((opt, optIdx) => (
                                   <li
                                     key={optIdx}
                                     style={{
                                       padding: "6px 0",
                                       color:
-                                        optIdx === q.correctAnswer ? "#6bcf7a" : "#F5EFE0",
-                                      fontWeight: optIdx === q.correctAnswer ? 600 : 400,
+                                        optIdx === q.correctAnswer
+                                          ? "#6bcf7a"
+                                          : "#F5EFE0",
+                                      fontWeight:
+                                        optIdx === q.correctAnswer ? 600 : 400,
                                     }}
                                   >
                                     {optIdx === q.correctAnswer && "✓ "}
@@ -1859,7 +2008,12 @@ const ClassroomSession = () => {
                                 ))}
                               </ul>
                             ) : (
-                              <p style={{ color: "#E8DCC8", fontStyle: "italic" }}>
+                              <p
+                                style={{
+                                  color: "#E8DCC8",
+                                  fontStyle: "italic",
+                                }}
+                              >
                                 No options available
                               </p>
                             )}
@@ -1871,14 +2025,21 @@ const ClassroomSession = () => {
                                 fontStyle: "italic",
                               }}
                             >
-                              Correct answer: {String.fromCharCode(65 + (q.correctAnswer ?? 0))}
+                              Correct answer:{" "}
+                              {String.fromCharCode(65 + (q.correctAnswer ?? 0))}
                             </p>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p style={{ color: "#F5EFE0", textAlign: "center", fontStyle: "italic" }}>
+                    <p
+                      style={{
+                        color: "#F5EFE0",
+                        textAlign: "center",
+                        fontStyle: "italic",
+                      }}
+                    >
                       No questions found in this exam.
                     </p>
                   )}
@@ -2095,7 +2256,7 @@ const ClassroomSession = () => {
                     ))}
 
                   {availableQuizzes.filter(
-                    (quiz) => quiz.gradeLevel === userYear
+                    (quiz) => quiz.gradeLevel === userYear,
                   ).length === 0 &&
                     availableQuizzes.length > 0 && (
                       <div

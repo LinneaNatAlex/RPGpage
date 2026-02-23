@@ -206,9 +206,12 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
         newGrade = userData.year;
       }
       if (passed) {
-        // Count passed subjects for current grade
+        // Count passed subjects for current grade – bare eksamener for ditt år teller
         const passedSubjects = takenQuizzes.filter(
-          (q) => q.passed && q.month === currentMonth
+          (q) =>
+            q.passed &&
+            q.month === currentMonth &&
+            (q.gradeLevel === newGrade || q.gradeLevel === Number(newGrade))
         ).length;
 
         if (passedSubjects >= 7 && newGrade < 7) {
@@ -227,6 +230,7 @@ const QuizTaking = ({ quizId, classId, gradeLevel, onClose, onComplete }) => {
           await updateDoc(userRef, {
             takenQuizzes,
             class: classNames[newGrade] || `${newGrade}th year`,
+            year: newGrade, // Synk med class så alt som bruker user.year viser riktig år
             points: increment(100), // Bonus points for advancing
           });
         } else {
