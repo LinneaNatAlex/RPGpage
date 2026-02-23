@@ -5,7 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { cacheHelpers } from "./firebaseCache";
 
 const VALID_RACES = [
-  "Witch", "witch", "Wizard", "wizard", "Vampire", "vampire",
+  "Wizard", "wizard", "Vampire", "vampire",
   "Werewolf", "werewolf", "Elf", "elf",
 ];
 

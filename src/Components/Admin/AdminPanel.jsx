@@ -217,7 +217,7 @@ export default function AdminPanel() {
     "7th year",
     "graduated",
   ];
-  const RACE_OPTIONS = ["Witch", "Wizard", "Vampire", "Werewolf", "Elf"];
+  const RACE_OPTIONS = ["Wizard", "Vampire", "Werewolf", "Elf"];
 
   // Global site dark mode (gjelder alle brukere – samme tema som dark mode-potion)
   const [globalDarkMode, setGlobalDarkMode] = useState(false);
