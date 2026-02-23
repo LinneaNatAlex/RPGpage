@@ -16,6 +16,8 @@ import {
   serverTimestamp,
   where,
   increment,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import styles from "./Forum.module.css";
@@ -213,11 +215,16 @@ const Forum = () => {
     fetchTopics();
   }, [forumRoom, is18PlusForum, user?.uid]);
 
-  // Fetch follower counts when topics change
+  // Follower counts: use topic.followerIds.length when present (0 reads); else fallback to getDocs(users)
   useEffect(() => {
-    if (topics.length > 0) {
-      fetchFollowerCounts();
-    }
+    if (topics.length === 0) return;
+    const fromIds = {};
+    topics.forEach((t) => {
+      if (Array.isArray(t.followerIds)) fromIds[t.id] = t.followerIds.length;
+    });
+    setFollowerCounts((prev) => ({ ...prev, ...fromIds }));
+    const hasOldTopics = topics.some((t) => !Array.isArray(t.followerIds));
+    if (hasOldTopics) fetchFollowerCounts();
   }, [topics]);
 
   // Handle URL parameter to open specific topic (e.g. from notification or followed list)
@@ -321,20 +328,19 @@ const Forum = () => {
       }));
   };
 
-  // Follow/Unfollow topic
+  // Follow/Unfollow topic (also update topic.followerIds to avoid getDocs(users) on every reply)
   const handleFollowTopic = async (topicId, topicTitle) => {
-    if (!user) return;
+    if (!user || !forumRoom) return;
     
     try {
       const userRef = doc(db, 'users', user.uid);
+      const topicRef = doc(db, `forums/${forumRoom}/topics`, topicId);
       const isFollowing = followedTopics.some(t => t && t.id === topicId);
       
       let updatedFollowedTopics;
       if (isFollowing) {
-        // Unfollow
         updatedFollowedTopics = followedTopics.filter(t => t && t.id !== topicId);
       } else {
-        // Follow – ensure no undefined is sent to Firestore
         const newTopic = {
           id: String(topicId ?? ""),
           title: String(topicTitle ?? ""),
@@ -347,20 +353,19 @@ const Forum = () => {
       
       const sanitized = sanitizeFollowedTopics(updatedFollowedTopics);
       
-      // Update database first (never send undefined to Firestore)
-      await updateDoc(userRef, {
-        followedTopics: sanitized
-      });
+      await updateDoc(userRef, { followedTopics: sanitized });
       
-      // Then update state
+      // Keep topic.followerIds in sync so reply notifications need 1 read instead of getDocs(users)
+      try {
+        await updateDoc(topicRef, {
+          followerIds: isFollowing ? arrayRemove(user.uid) : arrayUnion(user.uid),
+        });
+      } catch (e) {
+        // Topic may not exist or old doc; non-fatal
+      }
+      
       setFollowedTopics(sanitized);
-      
-      // Refresh follower counts after following/unfollowing
-      setTimeout(() => {
-        fetchFollowerCounts();
-      }, 1000);
-      
-      
+      setTimeout(() => fetchFollowerCounts(), 1000);
     } catch (error) {
       console.error("Error updating followed topics:", error);
       alert("Error updating followed topics: " + error.message);
@@ -443,21 +448,27 @@ const Forum = () => {
   };
 
   // When someone replies, notify everyone who follows this topic (except the author).
+  // Uses topic.followerIds when present (1 read); fallback to getDocs(users) for old topics.
   const sendNotificationToTopicFollowers = async (topicId, topicTitle) => {
-    if (!topicId || !user?.uid) return;
+    if (!topicId || !user?.uid || !forumRoom) return;
     try {
-      const usersRef = collection(db, "users");
-      const usersSnapshot = await getDocs(usersRef);
-      const topicIdStr = String(topicId);
-      const followers = [];
-      usersSnapshot.forEach((docSnap) => {
-        if (docSnap.id === user.uid) return; // don't notify yourself
-        const userData = docSnap.data();
-        const list = userData.followedTopics;
-        if (!list || !Array.isArray(list)) return;
-        const followsThis = list.some((t) => t && String(t.id) === topicIdStr);
-        if (followsThis) followers.push(docSnap.id);
-      });
+      let followers = [];
+      const topicRef = doc(db, `forums/${forumRoom}/topics`, topicId);
+      const topicSnap = await getDoc(topicRef);
+      const followerIds = topicSnap.exists() ? (topicSnap.data().followerIds || []) : [];
+      if (Array.isArray(followerIds) && followerIds.length > 0) {
+        followers = followerIds.filter((uid) => uid !== user.uid);
+      } else {
+        // Fallback for topics created before followerIds existed
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const topicIdStr = String(topicId);
+        usersSnapshot.forEach((docSnap) => {
+          if (docSnap.id === user.uid) return;
+          const list = docSnap.data().followedTopics;
+          if (!list || !Array.isArray(list)) return;
+          if (list.some((t) => t && String(t.id) === topicIdStr)) followers.push(docSnap.id);
+        });
+      }
 
       const now = Date.now();
       for (const followerId of followers) {
@@ -549,14 +560,8 @@ const Forum = () => {
       // Error auto-following topic
     }
 
-    // Send notifications to users who might be interested in new topics in this forum (skip for private topics)
-    if (!(is18PlusForum && isPrivateTopic)) {
-      try {
-        await sendNotificationToForumFollowers(topicRef.id, newTopicTitle);
-      } catch (error) {
-        // Error sending notifications
-      }
-    }
+    // Skip "new topic" notifications to forum followers to avoid getDocs(users) per new topic.
+    // Reply notifications (topic.followerIds) are sent when someone replies.
 
     setNewTopicTitle("");
     setNewTopicContent("");

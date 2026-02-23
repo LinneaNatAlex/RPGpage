@@ -6,7 +6,6 @@ import {
   where,
   limit,
   getDocs,
-  onSnapshot,
   orderBy,
   updateDoc,
   doc,
@@ -23,6 +22,7 @@ export default function useNotifications(user, userData) {
   const [notifications, setNotifications] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
 
+  // Poll notifications every 60s instead of onSnapshot to reduce reads
   useEffect(() => {
     if (!user?.uid) {
       setNotifications([]);
@@ -48,15 +48,17 @@ export default function useNotifications(user, userData) {
       setNotifications(list);
       cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
     };
-    const unsub = onSnapshot(
-      q,
-      (snap) => applySnapshot(snap),
-      (err) => {
-        console.error("Notifications listener error:", err);
-        setNotifications([]);
-      }
-    );
-    return () => unsub();
+    const fetchNotifs = () => {
+      getDocs(q)
+        .then(applySnapshot)
+        .catch((err) => {
+          console.error("Notifications fetch error:", err);
+          setNotifications([]);
+        });
+    };
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 60 * 1000);
+    return () => clearInterval(interval);
   }, [user?.uid]);
 
   useEffect(() => {
