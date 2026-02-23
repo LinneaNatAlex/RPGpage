@@ -26,6 +26,7 @@ import firebase from "firebase/compat/app";
 import AgeVerificationAdmin from "../Forum/AgeVerificationAdmin";
 import ShopProductAdmin from "./ShopProductAdmin";
 import RulesAdmin from "./RulesAdmin";
+import { classesList } from "../../data/classesList";
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -184,6 +185,7 @@ export default function AdminPanel() {
   const [editRace, setEditRace] = useState("");
   const [editRoles, setEditRoles] = useState([]);
   const [editLeadForRole, setEditLeadForRole] = useState("");
+  const [editTeachesInClasses, setEditTeachesInClasses] = useState([]);
   const [editUserStatus, setEditUserStatus] = useState("");
   const [roleToRemove, setRoleToRemove] = useState("");
   const AVAILABLE_ROLES = [
@@ -391,6 +393,33 @@ export default function AdminPanel() {
       setEditLeadForRole(selected.leadForRole || "");
     }
   }, [selected]);
+
+  // Last hvilke fag denne brukeren er satt som lærer i (for professor/teacher)
+  useEffect(() => {
+    if (!selected?.uid) {
+      setEditTeachesInClasses([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const classIds = [];
+        for (const cls of classesList) {
+          const snap = await getDoc(doc(db, "classDescriptions", cls.id));
+          const teacherIds = snap.exists()
+            ? (snap.data().classInfo?.teacherIds || [])
+            : [];
+          if (teacherIds.includes(selected.uid)) classIds.push(cls.id);
+        }
+        if (!cancelled) setEditTeachesInClasses(classIds);
+      } catch {
+        if (!cancelled) setEditTeachesInClasses([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selected?.uid]);
 
   // Banned users/IPs
   const bannedUsers = users.filter((u) => u.banned || u.bannedIp);
@@ -803,6 +832,24 @@ export default function AdminPanel() {
       };
       await updateDoc(ref, update);
       setSelected({ ...selected, ...update });
+
+      // Oppdater lærer-tildeling per fag (classDescriptions.classInfo.teacherIds)
+      const teachesIn = editTeachesInClasses || [];
+      for (const cls of classesList) {
+        const classRef = doc(db, "classDescriptions", cls.id);
+        const snap = await getDoc(classRef);
+        const data = snap.exists() ? snap.data() : {};
+        const classInfo = data.classInfo || {};
+        let teacherIds = Array.isArray(classInfo.teacherIds) ? classInfo.teacherIds : [];
+        const uid = selected.uid;
+        if (teachesIn.includes(cls.id)) {
+          if (!teacherIds.includes(uid)) teacherIds = [...teacherIds, uid];
+        } else {
+          teacherIds = teacherIds.filter((id) => id !== uid);
+        }
+        await setDoc(classRef, { classInfo: { ...classInfo, teacherIds } }, { merge: true });
+      }
+
       setEditUserStatus("Saved. Changes are in Firestore.");
       setTimeout(() => setEditUserStatus(""), 4000);
       // Oppdater brukerlisten så Graduated vises riktig (ikke cache med gammel «7th year»)
@@ -1724,6 +1771,66 @@ export default function AdminPanel() {
                     Only one professor can be lead per segment. Gives access to
                     segment overview and tasks in Professor Panel.
                   </p>
+                </div>
+              )}
+              {(editRoles.includes("professor") ||
+                editRoles.includes("teacher")) && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ marginBottom: 8 }}>
+                    <span style={{ fontWeight: 600, color: theme.text }}>
+                      Assign to subjects (classes)
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.8rem",
+                      color: theme.secondaryText,
+                      marginBottom: 8,
+                    }}
+                  >
+                    Choose which classes this professor/teacher teaches. They will appear as teacher in that classroom.
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "8px 16px",
+                      maxHeight: 200,
+                      overflowY: "auto",
+                      padding: "8px 0",
+                    }}
+                  >
+                    {classesList.map((cls) => {
+                      const checked = (editTeachesInClasses || []).includes(cls.id);
+                      return (
+                        <label
+                          key={cls.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            color: theme.text,
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => {
+                              setEditTeachesInClasses((prev) =>
+                                checked
+                                  ? prev.filter((id) => id !== cls.id)
+                                  : [...prev, cls.id]
+                              );
+                            }}
+                            style={{ width: 16, height: 16, cursor: "pointer" }}
+                          />
+                          <span>{cls.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
               <button

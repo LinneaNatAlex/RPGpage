@@ -117,16 +117,18 @@ const ClassroomSession = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
   const { users: allUsers = [] } = useUsers();
-  const { users: allUsersList = [] } = useAllUsers();
+  const { users: allUsersList = [], loading: allUsersLoading } = useAllUsers();
   const { wisdomUntil } = useUserData();
   // Users who can be assigned as professor for this class (professor, teacher, admin, headmaster)
-  const teachersList = (allUsersList || []).filter((u) =>
-    (u.roles || []).some((r) =>
+  const teachersList = (allUsersList || []).filter((u) => {
+    const r = u.roles || [];
+    const roles = Array.isArray(r) ? r : r ? [r] : [];
+    return roles.some((role) =>
       ["professor", "teacher", "admin", "headmaster"].includes(
-        (r || "").toLowerCase(),
+        (role || "").toLowerCase(),
       ),
-    ),
-  );
+    );
+  });
   const [students, setStudents] = useState([]);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -154,6 +156,7 @@ const ClassroomSession = () => {
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [availableQuizzes, setAvailableQuizzes] = useState([]);
   const [takenQuizzes, setTakenQuizzes] = useState([]);
+  const [teacherNamesCache, setTeacherNamesCache] = useState({});
   const chatRef = useRef(null);
 
   // For teachers/admins: allow year selection
@@ -192,6 +195,43 @@ const ClassroomSession = () => {
       }
     }
   }, [classInfo, userCurrentYear, user, navigate]);
+
+  // Hent lærernavn fra Firestore for teacherIds som ikke finnes i listene
+  useEffect(() => {
+    const ids = customClassInfo.teacherIds || [];
+    if (ids.length === 0) return;
+    const resolve = (id) => {
+      const fromList = allUsersList.find(
+        (u) => String(u?.id) === String(id) || String(u?.uid) === String(id),
+      );
+      if (fromList?.displayName || fromList?.email) return null;
+      const fromUsers = allUsers.find(
+        (u) => String(u?.uid) === String(id),
+      );
+      if (fromUsers?.displayName || fromUsers?.email) return null;
+      return id;
+    };
+    const toFetch = ids.filter(
+      (id) => resolve(id) !== null && !teacherNamesCache[String(id)],
+    );
+    if (toFetch.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      const next = { ...teacherNamesCache };
+      for (const uid of toFetch) {
+        try {
+          const snap = await getDoc(doc(db, "users", uid));
+          if (cancelled) return;
+          const data = snap.exists() ? snap.data() : {};
+          next[uid] = data.displayName || data.email || uid;
+        } catch {
+          if (!cancelled) next[uid] = uid;
+        }
+      }
+      if (!cancelled) setTeacherNamesCache((prev) => ({ ...prev, ...next }));
+    })();
+    return () => { cancelled = true; };
+  }, [customClassInfo.teacherIds, allUsersList, allUsers, teacherNamesCache]);
 
   // Load custom class description and info if it exists
   useEffect(() => {
@@ -1357,47 +1397,63 @@ const ClassroomSession = () => {
               >
                 Teacher(s):
               </label>
-              <select
-                id="classroom-teachers"
-                multiple
-                size={Math.min(6, Math.max(3, teachersList.length + 1))}
-                value={(customClassInfo.teacherIds || []).slice()}
-                onChange={(e) => {
-                  const selected = Array.from(
-                    e.target.selectedOptions,
-                    (o) => o.value,
-                  );
-                  setCustomClassInfo({
-                    ...customClassInfo,
-                    teacherIds: selected,
-                  });
-                }}
-                style={{
-                  width: "100%",
-                  maxWidth: "400px",
-                  padding: "8px 12px",
-                  borderRadius: 0,
-                  border: "2px solid #D4C4A8",
-                  background: "#F5EFE0",
-                  color: "#2C2C2C",
-                  fontSize: "1rem",
-                }}
-              >
-                {teachersList.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.displayName || t.email || t.id}
-                  </option>
-                ))}
-              </select>
-              <p
-                style={{
-                  color: "#D4C4A8",
-                  fontSize: "0.85rem",
-                  marginTop: "4px",
-                }}
-              >
-                Hold Ctrl (Windows) or Cmd (Mac) to select multiple teachers.
-              </p>
+              {allUsersLoading ? (
+                <p style={{ color: "#D4C4A8", fontSize: "0.9rem", margin: "8px 0" }}>
+                  Loading teachers…
+                </p>
+              ) : teachersList.length === 0 ? (
+                <p style={{ color: "#D4C4A8", fontSize: "0.9rem", margin: "8px 0" }}>
+                  No users with teacher role. In <strong>Admin panel → Users</strong>, select a user and assign the role <strong>professor</strong>, <strong>teacher</strong>, <strong>admin</strong> or <strong>headmaster</strong>. They will then appear here.
+                </p>
+              ) : (
+                <div
+                  style={{
+                    maxWidth: "400px",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                    padding: "8px 12px",
+                    border: "2px solid #D4C4A8",
+                    background: "#F5EFE0",
+                    borderRadius: 0,
+                  }}
+                >
+                  {teachersList.map((t) => {
+                    const uid = t.uid || t.id;
+                    const isChecked = (customClassInfo.teacherIds || []).includes(uid);
+                    return (
+                      <label
+                        key={uid}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "6px 0",
+                          cursor: "pointer",
+                          color: "#2C2C2C",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            const current = customClassInfo.teacherIds || [];
+                            const next = isChecked
+                              ? current.filter((id) => id !== uid)
+                              : [...current, uid];
+                            setCustomClassInfo({
+                              ...customClassInfo,
+                              teacherIds: next,
+                            });
+                          }}
+                          style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                        />
+                        <span>{t.displayName || t.email || uid}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <div style={{ display: "flex", gap: "12px" }}>
@@ -1503,12 +1559,25 @@ const ClassroomSession = () => {
                 Teacher(s):{" "}
                 {(customClassInfo.teacherIds || []).length > 0
                   ? (customClassInfo.teacherIds || [])
-                      .map(
-                        (id) =>
-                          allUsersList.find((u) => u.id === id)?.displayName ||
-                          allUsersList.find((u) => u.uid === id)?.displayName ||
-                          id,
-                      )
+                      .map((id) => {
+                        const uid = String(id);
+                        const fromList = allUsersList.find(
+                          (u) =>
+                            String(u?.id) === uid || String(u?.uid) === uid,
+                        );
+                        const fromUsers = allUsers.find(
+                          (u) => String(u?.uid) === uid,
+                        );
+                        const fromCache = teacherNamesCache[uid];
+                        return (
+                          fromList?.displayName ||
+                          fromList?.email ||
+                          fromUsers?.displayName ||
+                          fromUsers?.email ||
+                          fromCache ||
+                          (allUsersLoading ? "…" : uid)
+                        );
+                      })
                       .filter(Boolean)
                       .join(", ")
                   : "—"}

@@ -11,20 +11,26 @@ const useAllUsers = () => {
       try {
         setLoading(true);
         const snapshot = await getDocs(collection(db, "users"));
-        const usersList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          uid: doc.data().uid,
-          displayName: doc.data().displayName || doc.data().email,
-          email: doc.data().email,
-          profileImageUrl: doc.data().profileImageUrl,
-          roles: doc.data().roles || [],
-        }));
+        const usersList = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          let roles = data.roles;
+          if (!Array.isArray(roles)) roles = roles ? [roles] : [];
+          return {
+            id: doc.id,
+            uid: data.uid || doc.id,
+            displayName: data.displayName || data.email,
+            email: data.email,
+            profileImageUrl: data.profileImageUrl,
+            roles,
+          };
+        });
 
         // Sort users alphabetically by display name
         usersList.sort((a, b) => a.displayName.localeCompare(b.displayName));
 
         setUsers(usersList);
       } catch (error) {
+        setUsers([]);
       } finally {
         setLoading(false);
       }
