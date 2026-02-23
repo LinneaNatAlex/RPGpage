@@ -103,6 +103,7 @@ import {
   deleteDoc,
   writeBatch,
   arrayRemove,
+  arrayUnion,
 } from "firebase/firestore";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
@@ -140,6 +141,9 @@ const PrivateChat = ({ fullPage = false }) => {
   const [newGroupSelectedUids, setNewGroupSelectedUids] = useState([]);
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupMemberSearch, setNewGroupMemberSearch] = useState("");
+  const [showAddMembersModal, setShowAddMembersModal] = useState(false);
+  const [addMembersSelectedUids, setAddMembersSelectedUids] = useState([]);
+  const [addMembersSearch, setAddMembersSearch] = useState("");
 
   // Potion effect states
   const [hairColorUntil, setHairColorUntil] = useState(null);
@@ -806,6 +810,22 @@ const PrivateChat = ({ fullPage = false }) => {
       });
   };
 
+  const addMembersToGroup = async () => {
+    if (!currentUser || !selectedGroup || addMembersSelectedUids.length === 0) return;
+    const group = groupChats.find((g) => g.id === selectedGroup);
+    if (group?.createdBy !== currentUser.uid) return;
+    try {
+      const groupRef = doc(db, "groupChats", selectedGroup);
+      await updateDoc(groupRef, { members: arrayUnion(...addMembersSelectedUids) });
+      setShowAddMembersModal(false);
+      setAddMembersSelectedUids([]);
+      setAddMembersSearch("");
+    } catch (err) {
+      console.error("Add members failed:", err);
+      showSiteAlert(err?.message || "Could not add members to group.");
+    }
+  };
+
   // Calculate per-chat unread messages for the current user
   // Badge skal kun vises for mottaker, ikke for meldinger man selv har sendt
   const getUnreadCount = (chat) => {
@@ -953,7 +973,10 @@ const PrivateChat = ({ fullPage = false }) => {
                     <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                       <button type="button" className={styles.messagesFullPageLeaveGroup} onClick={leaveGroup} title="Leave group">Leave group</button>
                       {group?.createdBy === currentUser.uid && (
-                        <button type="button" className={styles.messagesFullPageDeleteGroup} onClick={deleteGroup} title="Delete group for everyone">Delete group</button>
+                        <>
+                          <button type="button" className={styles.messagesFullPageAddMembers} onClick={() => { setShowAddMembersModal(true); setAddMembersSelectedUids([]); setAddMembersSearch(""); }} title="Add people to group">Add people</button>
+                          <button type="button" className={styles.messagesFullPageDeleteGroup} onClick={deleteGroup} title="Delete group for everyone">Delete group</button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -1014,7 +1037,7 @@ const PrivateChat = ({ fullPage = false }) => {
                               {m.potionEffects && m.potionEffects.love && " 💖"}
                             </div>
                             <div style={{ position: "relative" }}>
-                              {m.from === currentUser?.uid && (
+                              {m.from === currentUser?.uid && isVip && (
                                 <div style={{ position: "absolute", top: -28, right: -10, zIndex: 3 }}>
                                   <MessageMenu message={m} currentUser={currentUser} selectedUser={selectedUser} db={db} onEdit={(msg) => { setEditingMessage(msg); setMessage(msg.text); }} onAlert={showSiteAlert} />
                                 </div>
@@ -1118,6 +1141,72 @@ const PrivateChat = ({ fullPage = false }) => {
             </div>
           </div>
         )}
+        {showAddMembersModal && selectedGroup && (() => {
+          const group = groupChats.find((g) => g.id === selectedGroup);
+          const currentMembers = group?.members || [];
+          const addMembersUserList = (users || [])
+            .filter(
+              (u) =>
+                u.uid !== currentUser.uid &&
+                !currentMembers.includes(u.uid) &&
+                !addMembersSelectedUids.includes(u.uid) &&
+                (u.displayName || u.name || u.uid),
+            )
+            .filter(
+              (u) =>
+                !addMembersSearch.trim() ||
+                (u.displayName || u.name || u.uid)
+                  .toLowerCase()
+                  .includes(addMembersSearch.trim().toLowerCase()),
+            )
+            .slice(0, 80);
+          return (
+            <div className={styles.messagesFullPageModalOverlay} onClick={() => { setShowAddMembersModal(false); setAddMembersSelectedUids([]); setAddMembersSearch(""); }}>
+              <div className={styles.messagesFullPageModal} onClick={(e) => e.stopPropagation()}>
+                <h3 className={styles.messagesFullPageSidebarTitle}>Add people to group</h3>
+                <p className={styles.messagesFullPageSidebarHint}>Search and select users to add. They will be able to see the group and its messages.</p>
+                <label className={styles.messagesFullPageGroupDropdownLabel}>Search user</label>
+                <input
+                  type="text"
+                  placeholder="Type name to search..."
+                  value={addMembersSearch}
+                  onChange={(e) => setAddMembersSearch(e.target.value)}
+                  className={styles.messagesFullPageSidebarSearch}
+                />
+                <div className={styles.messagesFullPageSidebarUserList} style={{ maxHeight: 220, overflowY: "auto", marginTop: 8 }}>
+                  {addMembersUserList.map((u) => (
+                    <button
+                      key={u.uid}
+                      type="button"
+                      className={styles.messagesFullPageSidebarItem}
+                      onClick={() => setAddMembersSelectedUids((prev) => [...prev, u.uid])}
+                    >
+                      <span className={styles.messagesFullPageSidebarItemText}>
+                        {u.displayName || u.name || u.uid}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <div className={styles.messagesFullPageGroupTags}>
+                  {addMembersSelectedUids.map((uid) => {
+                    const u = onlineUsersList.find((o) => o.id === uid) || users?.find((o) => o.uid === uid);
+                    const name = u?.displayName || u?.name || uid;
+                    return (
+                      <span key={uid} className={styles.messagesFullPageGroupTag}>
+                        {name}
+                        <button type="button" className={styles.messagesFullPageGroupTagRemove} onClick={() => setAddMembersSelectedUids((prev) => prev.filter((id) => id !== uid))} aria-label="Remove">×</button>
+                      </span>
+                    );
+                  })}
+                </div>
+                <div className={styles.messagesFullPageModalActions}>
+                  <button type="button" className={styles.chatBtn} onClick={() => { setShowAddMembersModal(false); setAddMembersSelectedUids([]); setAddMembersSearch(""); }}>Cancel</button>
+                  <button type="button" className={styles.chatBtn} onClick={addMembersToGroup} disabled={addMembersSelectedUids.length === 0}>Add to group</button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     );
   }
@@ -1569,7 +1658,7 @@ const PrivateChat = ({ fullPage = false }) => {
                             {m.potionEffects && m.potionEffects.sparkle && " ✨"}
                           </div>
                           <div style={{ position: "relative" }}>
-                            {m.from === currentUser?.uid && (
+                            {m.from === currentUser?.uid && isVip && (
                               <div
                                 style={{
                                   position: "absolute",

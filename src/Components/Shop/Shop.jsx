@@ -532,26 +532,38 @@ const Shop = ({ open = true }) => {
                     {/* Delete button for Firestore items (admin/headmaster/professor) */}
                     {itemWithImage.firestore && canAccessPotionsCategory && (
                       <button
+                        type="button"
                         className={styles.deleteBtn}
                         onClick={async () => {
-                        if (
-                          window.confirm(
-                            `Delete the product "${itemWithImage.name}"?`
-                          )
-                        ) {
-                          // Clear previous messages
+                          if (
+                            !window.confirm(
+                              `Delete the product "${itemWithImage.name}"?`
+                            )
+                          ) {
+                            return;
+                          }
                           setSuccessMessage("");
                           setErrorMessage("");
 
                           try {
-                            const collection =
+                            const collectionName =
                               itemWithImage.type === "book"
                                 ? "books"
                                 : "shopItems";
 
                             await deleteDoc(
-                              doc(db, collection, itemWithImage.id)
+                              doc(db, collectionName, itemWithImage.id)
                             );
+
+                            if (itemWithImage.type === "book") {
+                              setBooks((prev) =>
+                                prev.filter((b) => b.id !== itemWithImage.id)
+                              );
+                            } else {
+                              setFirestoreItems((prev) =>
+                                prev.filter((i) => i.id !== itemWithImage.id)
+                              );
+                            }
 
                             setSuccessMessage(
                               `✅ Product "${itemWithImage.name}" deleted successfully!`
@@ -563,8 +575,7 @@ const Shop = ({ open = true }) => {
                             );
                             setTimeout(() => setErrorMessage(""), 5000);
                           }
-                        }
-                      }}
+                        }}
                       >
                         Delete
                       </button>

@@ -13,7 +13,7 @@ export default function RulesList() {
         Choose a category to read the full rules.
       </p>
       <ul className={styles.list}>
-        <li key="/library" className={styles.item}>
+        <li key="/library" className={styles.itemLibrary}>
           <Link to="/library" className={styles.linkLibrary}>
             Library (tips you should know)
           </Link>

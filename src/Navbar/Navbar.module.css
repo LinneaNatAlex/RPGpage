@@ -121,6 +121,16 @@
   transform: translateX(4px);
 }
 
+/* Library – mørkere i dropdown så den skiller seg fra andre regler */
+.dropdownContent a.dropdownLinkLibrary {
+  background: rgba(0, 0, 0, 0.35);
+  border-left: 3px solid rgba(255, 255, 255, 0.25);
+}
+.dropdownContent a.dropdownLinkLibrary:hover {
+  background: rgba(0, 0, 0, 0.5);
+  border-left-color: rgba(255, 255, 255, 0.4);
+}
+
 .dropdown:hover .dropdownContent {
   display: block !important;
   background-color: #7b6857;
@@ -178,6 +188,15 @@
 :global(html[data-theme="dark"]) .dropdownContent a:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #f0ebe0;
+}
+
+:global(html[data-theme="dark"]) .dropdownContent a.dropdownLinkLibrary {
+  background: rgba(0, 0, 0, 0.5);
+  border-left-color: rgba(255, 255, 255, 0.2);
+}
+:global(html[data-theme="dark"]) .dropdownContent a.dropdownLinkLibrary:hover {
+  background: rgba(0, 0, 0, 0.65);
+  border-left-color: rgba(255, 255, 255, 0.35);
 }
 
 :global(html[data-theme="dark"]) .dropdown:hover .dropdownContent {

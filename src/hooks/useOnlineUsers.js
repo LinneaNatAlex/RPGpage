@@ -1,28 +1,40 @@
-// imports the necessary hooks and firebase functions to get the online users
+// Polling instead of onSnapshot to reduce Firestore reads (one batch per 60s per client)
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { collection, onSnapshot, query, where } from "firebase/firestore"; //where is used to make a query that filters the online users
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-// this costume hook is used to fetch the online users from the firestore in real-time, makin it possible to use it in any part of the app
+const POLL_INTERVAL_MS = 60 * 1000; // 60 seconds
+
 const useOnlineUsers = () => {
   const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
-    // makes a query in firestore to filter online user.
-    const querry = query(collection(db, "users"), where("online", "==", true));
-    const unsubscribe = onSnapshot(querry, (snapshot) => {
-      const now = Date.now();
-      const onlineUsers = snapshot.docs
-        .map((docSnap) => {
-          const data = docSnap.data();
-          return { ...data, id: docSnap.id };
-        })
-        .filter((u) => !u.invisibleUntil || u.invisibleUntil < now);
-      setOnlineUsers(onlineUsers);
-    });
-    // returns list of the online users
-    return () => unsubscribe();
+    const fetchOnline = async () => {
+      try {
+        const q = query(
+          collection(db, "users"),
+          where("online", "==", true),
+        );
+        const snapshot = await getDocs(q);
+        const now = Date.now();
+        const users = snapshot.docs
+          .map((docSnap) => {
+            const data = docSnap.data();
+            return { ...data, id: docSnap.id };
+          })
+          .filter((u) => !u.invisibleUntil || u.invisibleUntil < now);
+        setOnlineUsers(users);
+      } catch (err) {
+        if (process.env.NODE_ENV === "development")
+          console.warn("useOnlineUsers fetch error:", err);
+      }
+    };
+
+    fetchOnline();
+    const interval = setInterval(fetchOnline, POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
   }, []);
+
   return onlineUsers;
 };
 export default useOnlineUsers;

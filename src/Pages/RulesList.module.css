@@ -58,13 +58,18 @@
   background: rgba(205, 192, 180, 0.95);
 }
 
+/* Library – mørkere boks så den skiller seg tydelig fra de andre regelkategoriene */
+.itemLibrary {
+  margin: 0;
+}
+
 .linkLibrary {
   display: block;
   padding: 14px 18px;
-  background: rgba(139, 122, 107, 0.25);
-  border: 2px solid rgba(123, 104, 87, 0.5);
+  background: #4a3f35;
+  border: 2px solid #5c4f43;
   border-radius: 0;
-  color: #2c2c2c;
+  color: #f5efe0;
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
@@ -73,13 +78,13 @@
 
 .linkLibrary:hover,
 .linkLibrary:focus {
-  background: rgba(139, 122, 107, 0.35);
-  border-color: rgba(123, 104, 87, 0.7);
-  color: #2c2c2c;
+  background: #5c4f43;
+  border-color: #6b5d50;
+  color: #f5efe0;
 }
 
 .linkLibrary:active {
-  background: rgba(123, 104, 87, 0.4);
+  background: #3d342c;
 }
 
 /* About / Creator section */
@@ -131,18 +136,27 @@
   margin: 0;
 }
 
-/* Dark mode: fjern bakgrunner på lenker (tekst uten boks) */
-html[data-theme="dark"] .link,
-html[data-theme="dark"] .linkLibrary {
+/* Dark mode: lenker */
+html[data-theme="dark"] .link {
   background: transparent !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
   color: #e8e0d0 !important;
 }
+/* Library: tydelig mørkere i dark mode så den skiller seg fra andre regler */
+html[data-theme="dark"] .linkLibrary {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #f5efe0 !important;
+}
 html[data-theme="dark"] .link:hover,
-html[data-theme="dark"] .link:focus,
+html[data-theme="dark"] .link:focus {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: #f5efe0 !important;
+}
 html[data-theme="dark"] .linkLibrary:hover,
 html[data-theme="dark"] .linkLibrary:focus {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(0, 0, 0, 0.75) !important;
   border-color: rgba(255, 255, 255, 0.35) !important;
   color: #f5efe0 !important;
 }

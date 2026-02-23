@@ -72,7 +72,7 @@ export const classesList = [
   },
   {
     id: "rituals-symbols",
-    name: "Rituals & Symbols",
+    name: "Spells and rituals",
     description:
       "Explore the meaning and power of rituals, symbols, and traditions.",
     points: 2,
@@ -82,13 +82,6 @@ export const classesList = [
     name: "Potions",
     description:
       "Master the art of brewing magical potions, elixirs, and healing draughts.",
-    points: 2,
-  },
-  {
-    id: "alchemy",
-    name: "Alchemy",
-    description:
-      "Transform matter through mystical processes and ancient chemical knowledge.",
     points: 2,
   },
 ];

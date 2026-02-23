@@ -94,73 +94,46 @@ export default function RPGCalendarSidebar() {
     return () => clearInterval(interval);
   }, []);
 
-  // ---------- Effect: Hent brukere som har bursdag i dag (Firestore) ----------
+  // ---------- Effect: Hent bursdager i dag + neste måned med ÉN getDocs (sparer Firestore reads) ----------
   useEffect(() => {
-    const fetchBirthdayUsers = async () => {
+    const fetchBirthdays = async () => {
       try {
         setLoadingBirthdays(true);
+        setLoadingUpcoming(true);
         const now = new Date();
+        const calendar = getRPGCalendar(now);
+        const nextMonth = calendar.rpgMonth === 12 ? 1 : calendar.rpgMonth + 1;
+
         const snapshot = await getDocs(collection(db, "users"));
         const usersWithBirthday = [];
+        const upcoming = [];
 
-        snapshot.forEach((doc) => {
-          const userData = doc.data();
+        snapshot.forEach((docSnap) => {
+          const userData = docSnap.data();
+          if (!userData.birthdayMonth || userData.birthdayDay == null) return;
+
           if (
-            userData.birthdayMonth &&
-            userData.birthdayDay &&
-            isBirthdayToday(userData.birthdayMonth, userData.birthdayDay, now)
+            isBirthdayToday(
+              userData.birthdayMonth,
+              userData.birthdayDay,
+              now,
+            )
           ) {
             usersWithBirthday.push({
-              uid: doc.id,
-              displayName: userData.displayName || userData.email || "Unknown",
+              uid: docSnap.id,
+              displayName:
+                userData.displayName || userData.email || "Unknown",
               profileImageUrl: userData.profileImageUrl,
               roles: userData.roles || [],
               race: userData.race,
             });
           }
-        });
 
-        setBirthdayUsers(usersWithBirthday);
-      } catch (error) {
-        console.error("Error fetching birthday users:", error);
-      } finally {
-        setLoadingBirthdays(false);
-      }
-    };
-
-    fetchBirthdayUsers();
-
-    // Refresh every hour to catch new birthdays
-    const interval = setInterval(fetchBirthdayUsers, 60 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // ---------- Effect: Hent bursdager neste RPG-måned ----------
-  useEffect(() => {
-    const fetchUpcomingBirthdays = async () => {
-      try {
-        setLoadingUpcoming(true);
-        const now = new Date();
-        const calendar = getRPGCalendar(now);
-        const { rpgMonth, rpgYear } = calendar;
-
-        // Calculate next month (wraps around to month 1 if month 12)
-        const nextMonth = rpgMonth === 12 ? 1 : rpgMonth + 1;
-        const nextYear = rpgMonth === 12 ? rpgYear + 1 : rpgYear;
-
-        const snapshot = await getDocs(collection(db, "users"));
-        const upcoming = [];
-
-        snapshot.forEach((doc) => {
-          const userData = doc.data();
-          if (
-            userData.birthdayMonth &&
-            userData.birthdayDay &&
-            Number(userData.birthdayMonth) === nextMonth
-          ) {
+          if (Number(userData.birthdayMonth) === nextMonth) {
             upcoming.push({
-              uid: doc.id,
-              displayName: userData.displayName || userData.email || "Unknown",
+              uid: docSnap.id,
+              displayName:
+                userData.displayName || userData.email || "Unknown",
               profileImageUrl: userData.profileImageUrl,
               birthdayDay: userData.birthdayDay,
               roles: userData.roles || [],
@@ -169,20 +142,19 @@ export default function RPGCalendarSidebar() {
           }
         });
 
-        // Sort by birthday day
         upcoming.sort((a, b) => a.birthdayDay - b.birthdayDay);
+        setBirthdayUsers(usersWithBirthday);
         setUpcomingBirthdays(upcoming);
       } catch (error) {
-        console.error("Error fetching upcoming birthdays:", error);
+        console.error("Error fetching birthday users:", error);
       } finally {
+        setLoadingBirthdays(false);
         setLoadingUpcoming(false);
       }
     };
 
-    fetchUpcomingBirthdays();
-
-    // Refresh every hour
-    const interval = setInterval(fetchUpcomingBirthdays, 60 * 60 * 1000);
+    fetchBirthdays();
+    const interval = setInterval(fetchBirthdays, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
