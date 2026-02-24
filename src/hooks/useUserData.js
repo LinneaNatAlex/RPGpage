@@ -37,9 +37,10 @@ const defaultUserData = {
   detentionReason: null,
   invisibleUntil: null,
   lastHealthUpdate: null,
-  currentPet: null,
   craftedPotions: [],
   vipExpiresAt: null,
+  followedTopics: [],
+  ageVerified: false,
 };
 
 // User data via onSnapshot – live updates (health/inventory/currency update without reload)
@@ -89,10 +90,11 @@ const useUserData = () => {
         detentionReason: data.detentionReason || null,
         invisibleUntil: data.invisibleUntil || null,
         lastHealthUpdate: data.lastHealthUpdate || null,
-        currentPet: data.currentPet || null,
         craftedPotions: data.craftedPotions || [],
         lastSeenNewsAt: data.lastSeenNewsAt ?? null,
         vipExpiresAt: data.vipExpiresAt ?? null,
+        followedTopics: Array.isArray(data.followedTopics) ? data.followedTopics : [],
+        ageVerified: !!data.ageVerified,
       });
     };
 

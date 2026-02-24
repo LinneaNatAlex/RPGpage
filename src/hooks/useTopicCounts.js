@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-// Cache for topic counts
+// Cache for topic counts (longer TTL = fewer reads when navigating between pages)
 let cachedTopicCounts = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 5000; // 5 seconds cache
+const CACHE_DURATION = 60 * 1000; // 60 seconds
 
 const useTopicCounts = () => {
   const [topicCounts, setTopicCounts] = useState({
@@ -106,11 +106,9 @@ const useTopicCounts = () => {
       }
     };
 
-    // Fetch immediately on mount
     fetchTopicCounts();
-    
-    // Update every 30 seconds to keep counts fresh
-    const interval = setInterval(fetchTopicCounts, 30000);
+    // Poll every 60s to reduce reads (counts don't need real-time)
+    const interval = setInterval(fetchTopicCounts, 60 * 1000);
     
     return () => clearInterval(interval);
   }, []);

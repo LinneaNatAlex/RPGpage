@@ -7,41 +7,40 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebaseConfig";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { useAuth } from "../../context/authContext";
 
 const VerifyEmail = () => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState(null);
   const [userDataSaved, setUserDataSaved] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
+  const { refreshAuthState } = useAuth();
 
-  // Get the current user from Firebase Auth
+  // Check verification and send user to main page when verified
   useEffect(() => {
-    // If user is not logged in, check if they came from email verification
     if (!auth.currentUser) {
-      // Check if there's temp user data - if so, they need to sign in again
       const tempUserData = localStorage.getItem("tempUserData");
-      if (tempUserData) {
-        setError("Please sign in again to complete your registration.");
-      }
+      if (tempUserData) setError("Please sign in again to complete your registration.");
       navigate("/sign-in");
       return;
     }
 
     const checkVerificationStatus = async () => {
       await auth.currentUser.reload();
-      setEmailVerified(auth.currentUser.emailVerified);
+      const verified = auth.currentUser.emailVerified;
+      setEmailVerified(verified);
 
-      if (auth.currentUser.emailVerified) {
+      if (verified && !redirecting) {
+        setRedirecting(true);
         const currentUid = auth.currentUser.uid;
         const tempUserData = localStorage.getItem("tempUserData");
         if (tempUserData && !userDataSaved) {
           try {
             const userData = JSON.parse(tempUserData);
-            // Only use tempUserData if it belongs to the user who just verified (same browser, same user)
             if (userData.uid !== currentUid) {
               localStorage.removeItem("tempUserData");
-              // Don't write another user's data to this account; they'll get minimal doc from authContext if needed
             } else {
               await setDoc(doc(db, "users", currentUid), {
                 ...userData,
@@ -52,21 +51,23 @@ const VerifyEmail = () => {
               localStorage.removeItem("tempUserData");
               setUserDataSaved(true);
             }
-          } catch (error) {
-            console.error("Error saving user data:", error);
-            setError(
-              "Failed to complete registration. Please contact support."
-            );
+          } catch (err) {
+            console.error("Error saving user data:", err);
+            setError("Failed to complete registration. Please contact support.");
+            setRedirecting(false);
             return;
           }
         }
-        navigate("/");
+        // Update auth context so main page shows logged-in state, then go to front page
+        await refreshAuthState();
+        navigate("/", { replace: true });
       }
     };
 
-    const interval = setInterval(checkVerificationStatus, 5000);
+    checkVerificationStatus();
+    const interval = setInterval(checkVerificationStatus, 2000);
     return () => clearInterval(interval);
-  }, [userDataSaved, navigate]);
+  }, [userDataSaved, redirecting, navigate, refreshAuthState]);
 
   const handleResendVerification = async () => {
     setError(null);

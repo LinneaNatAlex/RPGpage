@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const SEGMENT_IDS = ["archivist", "shadowpatrol"];
+const POLL_MS = 90 * 1000;
 
 const getDocId = (segmentId) =>
   segmentId === "shadowpatrol" ? "segmentShadowpatrol" : "segmentArchivist";
@@ -24,21 +25,22 @@ export function useSegmentSchedule(segmentId) {
     }
     const ref = doc(db, "config", getDocId(segmentId));
     setLoading(true);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => {
-        const data = snap.exists() ? snap.data() : {};
-        setTasks(Array.isArray(data.tasks) ? data.tasks : []);
-        setError(null);
-        setLoading(false);
-      },
-      (err) => {
-        setError(err.message);
-        setTasks([]);
-        setLoading(false);
-      }
-    );
-    return () => unsub();
+    const fetchTasks = () => {
+      getDoc(ref)
+        .then((snap) => {
+          const data = snap.exists() ? snap.data() : {};
+          setTasks(Array.isArray(data.tasks) ? data.tasks : []);
+          setError(null);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setTasks([]);
+        })
+        .finally(() => setLoading(false));
+    };
+    fetchTasks();
+    const interval = setInterval(fetchTasks, POLL_MS);
+    return () => clearInterval(interval);
   }, [segmentId]);
 
   const addTask = async (title, description, deadline, createdBy) => {

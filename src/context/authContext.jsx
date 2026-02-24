@@ -52,7 +52,7 @@ function BanOverlay({ reason, bannedType }) {
 import SuspendedOverlay from "../Components/SuspendedOverlay";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 const authContext = createContext({
   user: null,
@@ -71,11 +71,42 @@ export const AuthProvider = ({ children }) => {
     until: null,
   });
 
-  // Function to force refresh auth state
+  // Force refresh auth state (e.g. after email verification – reload() alone does not re-fire onAuthStateChanged)
   const refreshAuthState = async () => {
-    if (auth.currentUser) {
-      await auth.currentUser.reload();
-      // Trigger the auth state change manually
+    if (!auth.currentUser) return;
+    await auth.currentUser.reload();
+    const currentUser = auth.currentUser;
+    if (!currentUser.emailVerified) return;
+    try {
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      let userData = userDoc.exists()
+        ? { ...currentUser, ...userDoc.data() }
+        : currentUser;
+      // Repair: if doc has no profile image, try tempUserData else sync from Auth photoURL
+      if (userDoc?.exists()) {
+        const data = userDoc.data();
+        if (!data.profileImageUrl) {
+          try {
+            const tempUserData = typeof localStorage !== "undefined" ? localStorage.getItem("tempUserData") : null;
+            const parsed = tempUserData ? (() => { try { return JSON.parse(tempUserData); } catch { return null; } })() : null;
+            const urlToSave = parsed?.uid === currentUser.uid && parsed?.profileImageUrl
+              ? parsed.profileImageUrl
+              : currentUser.photoURL || null;
+            if (urlToSave) {
+              await updateDoc(doc(db, "users", currentUser.uid), { profileImageUrl: urlToSave });
+              userData = { ...userData, profileImageUrl: urlToSave };
+              if (parsed?.uid === currentUser.uid) localStorage.removeItem("tempUserData");
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+      setUser(userData);
+      setEmailVerified(true);
+    } catch (e) {
+      setUser(currentUser);
+      setEmailVerified(true);
     }
   };
 
@@ -128,31 +159,66 @@ export const AuthProvider = ({ children }) => {
 
           let userData = currentUser;
           if (userDoc && userDoc.exists()) {
-            userData = { ...currentUser, ...userDoc.data() };
+            const data = userDoc.data();
+            userData = { ...currentUser, ...data };
+            // Repair: if doc has no profile image, try tempUserData from registration, else sync from Auth photoURL
+            if (!data.profileImageUrl && currentUser.emailVerified) {
+              try {
+                const tempUserData = typeof localStorage !== "undefined" ? localStorage.getItem("tempUserData") : null;
+                const parsed = tempUserData ? (() => { try { return JSON.parse(tempUserData); } catch { return null; } })() : null;
+                const urlToSave = parsed?.uid === currentUser.uid && parsed?.profileImageUrl
+                  ? parsed.profileImageUrl
+                  : currentUser.photoURL || null;
+                if (urlToSave) {
+                  await updateDoc(doc(db, "users", currentUser.uid), { profileImageUrl: urlToSave });
+                  userData = { ...userData, profileImageUrl: urlToSave };
+                  if (parsed?.uid === currentUser.uid) localStorage.removeItem("tempUserData");
+                }
+              } catch (e) {
+                // ignore repair errors
+              }
+            }
             setUser(userData);
           } else {
             // If user document doesn't exist but email is verified,
-            // create a basic user document and set the user
+            // use tempUserData from registration (includes profileImageUrl) if present, else create basic user document
             if (currentUser.emailVerified) {
               try {
                 const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
-                const basicUserData = {
-                  uid: currentUser.uid,
-                  displayName: currentUser.displayName || currentUser.email,
-                  email: currentUser.email,
-                  roles: ["user"],
-                  race: "Wizard", // Default race if missing
-                  class: "1st year",
-                  currency: 1000,
-                  inventory: [],
-                  createdAt: new Date(),
-                  lastLogin: new Date(),
-                  online: true,
-                  vipExpiresAt: Date.now() + oneMonthMs, // New users get free VIP for 1 month
-                };
+                const tempUserData = typeof localStorage !== "undefined" ? localStorage.getItem("tempUserData") : null;
+                const parsedTemp = tempUserData ? (() => { try { return JSON.parse(tempUserData); } catch { return null; } })() : null;
+                const isTempForThisUser = parsedTemp && parsedTemp.uid === currentUser.uid;
 
-                await setDoc(doc(db, "users", currentUser.uid), basicUserData);
-                setUser({ ...currentUser, ...basicUserData });
+                const dataToSave = isTempForThisUser
+                  ? {
+                      ...parsedTemp,
+                      uid: currentUser.uid,
+                      createdAt: new Date(),
+                      lastLogin: new Date(),
+                      online: true,
+                    }
+                  : (() => {
+                      const now = Date.now();
+                      return {
+                        uid: currentUser.uid,
+                        displayName: currentUser.displayName || currentUser.email,
+                        email: currentUser.email,
+                        roles: ["user"],
+                        race: "Wizard",
+                        class: "1st year",
+                        currency: 1000,
+                        inventory: [],
+                        createdAt: new Date(),
+                        lastLogin: new Date(),
+                        online: true,
+                        vipExpiresAt: now + oneMonthMs,
+                        lastSeenNewsAt: now, // Only show news published after registration
+                      };
+                    })()
+
+                await setDoc(doc(db, "users", currentUser.uid), dataToSave);
+                if (isTempForThisUser) localStorage.removeItem("tempUserData");
+                setUser({ ...currentUser, ...dataToSave });
               } catch (error) {
                 console.error("Failed to create user document:", error);
                 // Set user anyway with basic Firebase auth data

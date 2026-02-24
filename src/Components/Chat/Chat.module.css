@@ -908,6 +908,11 @@
   opacity: 0.9;
   margin-left: 8px;
 }
+.messagesFullPageHeaderActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
 .messagesFullPageLeaveGroup {
   flex-shrink: 0;
   padding: 6px 12px;
@@ -937,6 +942,21 @@
 .messagesFullPageAddMembers:hover {
   background: rgba(123, 104, 87, 0.4);
   border-color: #7b6857;
+}
+.messagesFullPageDeleteGroup {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  background: rgba(255, 77, 79, 0.15);
+  border: 1px solid rgba(255, 77, 79, 0.5);
+  border-radius: 6px;
+  color: #b91c1c;
+  cursor: pointer;
+  font-weight: 600;
+}
+.messagesFullPageDeleteGroup:hover {
+  background: rgba(255, 77, 79, 0.25);
+  border-color: #dc2626;
 }
 .messagesFullPageModalOverlay {
   position: fixed;
@@ -1012,6 +1032,50 @@
   gap: 8px;
   margin-top: 16px;
 }
+
+/* Mobile: group chat / full-page private messages */
+@media (max-width: 900px) {
+  .messagesFullPageSidebar {
+    width: 220px;
+    min-width: 200px;
+    padding: 8px 10px;
+  }
+  .messagesFullPageHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .messagesFullPageHeaderActions {
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  .messagesFullPageLeaveGroup,
+  .messagesFullPageAddMembers,
+  .messagesFullPageDeleteGroup {
+    white-space: normal;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+  .messagesFullPageGroupMembers {
+    display: block;
+    margin-left: 0;
+    margin-top: 4px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+@media (max-width: 600px) {
+  .messagesFullPageSidebar {
+    width: 180px;
+    min-width: 160px;
+  }
+}
+
 /* Dark mode: full-page private chat følger tema */
 :global(html[data-theme="dark"]) .messagesFullPage {
   background: #252525;

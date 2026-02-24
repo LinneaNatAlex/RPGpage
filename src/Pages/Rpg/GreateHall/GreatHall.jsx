@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { db } from "../../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import { cacheHelpers } from "../../../utils/firebaseCache";
 import styles from "./GreatHall.module.css";
 import LiveRP from "../../../Components/LiveRP/LiveRP.jsx";
-// Imports Live chat component for role-playing in the Starshade Hall
 const DESCRIPTION_KEY = "starshadehall";
 
 /** Parse YouTube URL: { videoId, playlistId? }. Single video = loop; playlist = play through. */
@@ -31,27 +31,36 @@ const GreatHall = () => {
 
   useEffect(() => {
     let cancelled = false;
+    const cached = cacheHelpers.getForumDescriptions();
+    if (cached?.descriptions?.[DESCRIPTION_KEY] !== undefined) {
+      setForumDescription(cached.descriptions[DESCRIPTION_KEY] || "");
+      return;
+    }
     getDoc(doc(db, "config", "forumDescriptions"))
       .then((snap) => {
         if (cancelled) return;
         const data = snap.exists() ? snap.data() : {};
         const descriptions = data.descriptions || {};
+        cacheHelpers.setForumDescriptions({ descriptions });
         setForumDescription(descriptions[DESCRIPTION_KEY] || "");
       })
-      .catch(() => {
-        if (!cancelled) setForumDescription("");
-      });
+      .catch(() => { if (!cancelled) setForumDescription(""); });
     return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     let cancelled = false;
+    const cached = cacheHelpers.getConfigStarshadeHall();
+    if (cached && typeof cached.dailyMusicUrl !== "undefined") {
+      setMusicSource(parseYoutubeUrl(cached.dailyMusicUrl || ""));
+      return;
+    }
     getDoc(doc(db, "config", "starshadeHall"))
       .then((snap) => {
         if (cancelled) return;
         const data = snap.exists() ? snap.data() : {};
-        const url = data.dailyMusicUrl || "";
-        setMusicSource(parseYoutubeUrl(url));
+        cacheHelpers.setConfigStarshadeHall(data);
+        setMusicSource(parseYoutubeUrl(data.dailyMusicUrl || ""));
       })
       .catch(() => { if (!cancelled) setMusicSource(null); });
     return () => { cancelled = true; };

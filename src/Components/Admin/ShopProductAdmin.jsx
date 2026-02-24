@@ -17,8 +17,6 @@ const categories = [
   "Ingredients",
   "Equipment",
   "Food",
-  "Pets",
-  "Pet Items",
 ];
 
 export default function ShopProductAdmin({ restrictToBooksOnly = false }) {

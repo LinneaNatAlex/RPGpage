@@ -156,9 +156,13 @@ const SignUp = () => {
       const uploadedImageUrl = formData.profilePicture
         ? await uploadImage(formData.profilePicture)
         : "";
+      if (uploadedImageUrl) {
+        await updateProfile(user, { photoURL: uploadedImageUrl });
+      }
 
       // Store user data in localStorage temporarily until email is verified
       const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
+      const now = Date.now();
       const tempUserData = {
         uid: user.uid,
         displayName: `${formData.firstname} ${formData.middlename} ${formData.lastname}`,
@@ -169,7 +173,8 @@ const SignUp = () => {
         class: formData.class,
         currency: 1000, // Start with 1000 Nits
         inventory: [],
-        vipExpiresAt: Date.now() + oneMonthMs, // New users get free VIP for 1 month
+        vipExpiresAt: now + oneMonthMs, // New users get free VIP for 1 month
+        lastSeenNewsAt: now, // Only show news published after registration
       };
 
       localStorage.setItem("tempUserData", JSON.stringify(tempUserData));
@@ -313,12 +318,14 @@ const SignUp = () => {
               {errors.house && <ErrorMessage message={errors.house} />}
               {/* showing preview url, so you can display it before submitting */}
               {formData.previewUrl && (
-                <div className={styles.imagePreview}>
-                  <img
-                    src={formData.previewUrl}
-                    alt="Preview"
-                    className={styles.styleImagePreview}
-                  />
+                <div className={styles.imagePreviewWrapper}>
+                  <div className={styles.imagePreview}>
+                    <img
+                      src={formData.previewUrl}
+                      alt="Preview"
+                      className={styles.styleImagePreview}
+                    />
+                  </div>
                   <Button
                     type="button"
                     className={styles.removeImageBtn}

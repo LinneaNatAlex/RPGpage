@@ -11,6 +11,7 @@ import {
 } from "../utils/rpgCalendar";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { cacheHelpers } from "../utils/firebaseCache";
 import { Link } from "react-router-dom";
 
 export default function RPGCalendarSidebar() {
@@ -104,12 +105,18 @@ export default function RPGCalendarSidebar() {
         const calendar = getRPGCalendar(now);
         const nextMonth = calendar.rpgMonth === 12 ? 1 : calendar.rpgMonth + 1;
 
-        const snapshot = await getDocs(collection(db, "users"));
+        let allUsers = cacheHelpers.getAllUsers();
+        if (!allUsers || !Array.isArray(allUsers)) {
+          const snapshot = await getDocs(collection(db, "users"));
+          allUsers = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+          cacheHelpers.setAllUsers(allUsers);
+        }
+
         const usersWithBirthday = [];
         const upcoming = [];
-
-        snapshot.forEach((docSnap) => {
-          const userData = docSnap.data();
+        allUsers.forEach((u) => {
+          const userData = u;
+          const uid = u.id;
           if (!userData.birthdayMonth || userData.birthdayDay == null) return;
 
           if (
@@ -120,7 +127,7 @@ export default function RPGCalendarSidebar() {
             )
           ) {
             usersWithBirthday.push({
-              uid: docSnap.id,
+              uid,
               displayName:
                 userData.displayName || userData.email || "Unknown",
               profileImageUrl: userData.profileImageUrl,
@@ -131,7 +138,7 @@ export default function RPGCalendarSidebar() {
 
           if (Number(userData.birthdayMonth) === nextMonth) {
             upcoming.push({
-              uid: docSnap.id,
+              uid,
               displayName:
                 userData.displayName || userData.email || "Unknown",
               profileImageUrl: userData.profileImageUrl,

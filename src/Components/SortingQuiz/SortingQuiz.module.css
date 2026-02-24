@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
+  justify-content: flex-start;
+  gap: 1rem;
   background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
   color: #F5EFE0;
   border-radius: 0;
@@ -12,6 +12,30 @@
   border: 3px solid #7B6857;
   position: relative;
   overflow: hidden;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.resultContainer h3 {
+  color: #F5EFE0;
+  font-family: "Cinzel", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.resultContainer .resultDescription {
+  color: #ebe5d6;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-align: justify;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  margin: 0;
+  max-width: 100%;
+  padding-bottom: 1rem;
 }
 
 .resultContainer::before {

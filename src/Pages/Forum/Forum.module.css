@@ -207,6 +207,27 @@
   font-size: 0.9rem;
 }
 
+.topicViewTitle {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f5efe0;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.topicViewActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.2rem;
+}
+
 .topicsList {
   margin-top: 2rem;
   display: flex;
@@ -395,7 +416,7 @@
     inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
-/* Mobile responsive styles */
+/* Mobile responsive styles – same for all forums including 18+ */
 @media (max-width: 768px) {
   .forumWrapper {
     margin: 0 10px;
@@ -404,6 +425,17 @@
     max-width: calc(100vw - 20px);
     width: 100%;
     box-sizing: border-box;
+    overflow: visible;
+  }
+
+  .topicView {
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .postsList {
+    overflow: visible;
+    min-height: 80px;
   }
 
   .newTopicForm {
@@ -457,6 +489,18 @@
     font-size: 0.8rem;
   }
 
+  .topicViewTitle {
+    font-size: 1.1rem;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.75rem;
+    max-width: 100%;
+  }
+
+  .topicViewActions {
+    gap: 0.4rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+
   .postBox {
     padding: 0.5rem;
     margin-bottom: 1rem;
@@ -487,25 +531,25 @@
   }
 
   .postContent * {
-    color: #2c1810 !important;
+    color: #fcfbfb !important;
   }
 
   .postContent p {
-    color: #ffffff !important;
+    color: #fcfbfb !important;
     margin-bottom: 1rem;
   }
 
   .postContent span {
-    color: #2c1810 !important;
+    color: #fcfbfb !important;
   }
 
   .postContent li {
-    color: #2c1810 !important;
+    color: #fcfbfb !important;
     margin-bottom: 0.5rem;
   }
 
   .postContent ul {
-    color: #2c1810 !important;
+    color: #fcfbfb !important;
     padding-left: 1.5rem;
   }
 

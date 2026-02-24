@@ -1084,7 +1084,7 @@ const PrivateChat = ({ fullPage = false }) => {
                         </span>
                       )}
                     </span>
-                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                    <div className={styles.messagesFullPageHeaderActions}>
                       <button
                         type="button"
                         className={styles.messagesFullPageLeaveGroup}

@@ -375,7 +375,7 @@ const SortingQuiz = ({ onClose, onResult }) => {
                 You have been sorted as:{" "}
                 {raceDescriptions[resultRace]?.title || resultRace}
               </h3>
-              <p>{raceDescriptions[resultRace]?.description}</p>
+              <p className={styles.resultDescription}>{raceDescriptions[resultRace]?.description}</p>
               <Button onClick={onClose} className={styles.ExitButton}>
                 <strong>✕</strong>
               </Button>

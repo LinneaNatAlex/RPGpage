@@ -11,6 +11,7 @@ import LibraryEditor from "../LibraryEditor/LibraryEditor";
 import DeleteConfirmModal from "../DeleteConfirmModal/DeleteConfirmModal";
 import useLibrary from "../../hooks/useLibrary";
 import { forumList } from "../../data/forumList";
+import { cacheHelpers } from "../../utils/firebaseCache";
 
 const LEAD_LABELS = { archivist: "Archivist", shadowpatrol: "Shadow Patrol" };
 
@@ -156,10 +157,20 @@ export default function TeacherPanel() {
     setForumDescLoading(slug);
     setForumDescStatus("");
     try {
+      const cached = cacheHelpers.getForumDescriptions();
+      const descriptions = cached?.descriptions || {};
+      if (Object.keys(descriptions).length > 0) {
+        setForumDescEdits((prev) => ({ ...prev, [slug]: descriptions[slug] || "" }));
+        setForumDescOpenTabs((prev) => (prev.includes(slug) ? prev : [...prev, slug]));
+        setForumDescActiveId(slug);
+        setForumDescLoading(null);
+        return;
+      }
       const snap = await getDoc(forumDescRef);
       const data = snap.exists() ? snap.data() : {};
-      const descriptions = data.descriptions || {};
-      setForumDescEdits((prev) => ({ ...prev, [slug]: descriptions[slug] || "" }));
+      const desc = data.descriptions || {};
+      cacheHelpers.setForumDescriptions({ descriptions: desc });
+      setForumDescEdits((prev) => ({ ...prev, [slug]: desc[slug] || "" }));
       setForumDescOpenTabs((prev) => (prev.includes(slug) ? prev : [...prev, slug]));
       setForumDescActiveId(slug);
     } catch {
@@ -192,14 +203,17 @@ export default function TeacherPanel() {
     setForumDescStatus("");
     setStatus("");
     try {
-      const snap = await getDoc(forumDescRef);
-      const data = snap.exists() ? snap.data() : {};
-      const base = data.descriptions || {};
+      let base = cacheHelpers.getForumDescriptions()?.descriptions || {};
+      if (Object.keys(base).length === 0) {
+        const snap = await getDoc(forumDescRef);
+        base = (snap.exists() ? snap.data() : {}).descriptions || {};
+      }
       const merged = { ...base };
       forumDescOpenTabs.forEach((slug) => {
         merged[slug] = (forumDescEdits[slug] ?? "").trim();
       });
       await setDoc(forumDescRef, { descriptions: merged }, { merge: true });
+      cacheHelpers.setForumDescriptions({ descriptions: merged });
       setForumDescStatus(`Saved ${forumDescOpenTabs.length} forum(s).`);
       setStatus("Forum descriptions saved.");
       setTimeout(() => setForumDescStatus(""), 4000);

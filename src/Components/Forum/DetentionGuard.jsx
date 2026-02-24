@@ -1,49 +1,35 @@
 import { useAuth } from "../../context/authContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import useUserData from "../../hooks/useUserData";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function DetentionGuard({ children }) {
   const { user } = useAuth();
+  const { userData, loading } = useUserData();
   const { forumId } = useParams();
-  const [detentionStatus, setDetentionStatus] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
+  const rawUntil = userData?.detentionUntil ?? null;
+  const detentionUntilMs =
+    rawUntil == null
+      ? null
+      : typeof rawUntil === "number"
+        ? rawUntil
+        : rawUntil?.toMillis?.() ?? null;
+  const now = Date.now();
+  const detentionStatus =
+    !user || loading ? null : detentionUntilMs != null && detentionUntilMs > now;
+
   useEffect(() => {
-    if (!user) return setDetentionStatus(false);
-    
-    getDoc(doc(db, "users", user.uid)).then((snap) => {
-      const userData = snap.data();
-      const detentionUntil = userData?.detentionUntil;
-      
-      if (!detentionUntil) {
-        setDetentionStatus(false);
-        return;
-      }
-      
-      const now = Date.now();
-      if (detentionUntil > now) {
-        setDetentionStatus(true);
-        setTimeLeft(detentionUntil - now);
-        
-        // Update countdown every second
-        const interval = setInterval(() => {
-          const newTimeLeft = detentionUntil - Date.now();
-          if (newTimeLeft <= 0) {
-            setDetentionStatus(false);
-            clearInterval(interval);
-          } else {
-            setTimeLeft(newTimeLeft);
-          }
-        }, 1000);
-        
-        return () => clearInterval(interval);
-      } else {
-        setDetentionStatus(false);
-      }
-    });
-  }, [user]);
+    if (detentionStatus !== true || detentionUntilMs == null) return;
+    setTimeLeft(Math.max(0, detentionUntilMs - Date.now()));
+    const interval = setInterval(() => {
+      const newTimeLeft = detentionUntilMs - Date.now();
+      if (newTimeLeft <= 0) setTimeLeft(0);
+      else setTimeLeft(newTimeLeft);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [detentionStatus, detentionUntilMs]);
 
   // If user is in detention, only allow access to detention classroom
   if (detentionStatus === null) return <div>Checking detention status...</div>;

@@ -9,17 +9,27 @@ import {
   doc,
   serverTimestamp,
 } from "firebase/firestore";
+import { cacheHelpers } from "../utils/firebaseCache";
 
-/** Library (tips). Write access: Firestore rules allow admin, headmaster, professor, archivist. */
+/** Library (tips). Uses 10 min cache to reduce reads. */
 const useLibrary = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchItems = async () => {
+  const fetchItems = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = cacheHelpers.getLibrary();
+        if (cached && Array.isArray(cached) && cached.length >= 0) {
+          setItems(cached);
+          setLoading(false);
+          return;
+        }
+      }
       const snapshot = await getDocs(collection(db, "library"));
       const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       data.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+      cacheHelpers.setLibrary(data);
       setItems(data);
     } catch (err) {
       setItems([]);
@@ -38,7 +48,7 @@ const useLibrary = () => {
       updatedAt: serverTimestamp(),
       createdBy: itemData.createdBy || null,
     });
-    await fetchItems();
+    await fetchItems(true);
     return docRef.id;
   };
 
@@ -50,12 +60,12 @@ const useLibrary = () => {
     if (itemData.category !== undefined) updateData.category = (itemData.category || "").trim() || null;
     if (typeof itemData.order === "number") updateData.order = itemData.order;
     await updateDoc(ref, updateData);
-    await fetchItems();
+    await fetchItems(true);
   };
 
   const deleteItem = async (id) => {
     await deleteDoc(doc(db, "library", id));
-    await fetchItems();
+    await fetchItems(true);
   };
 
   useEffect(() => {

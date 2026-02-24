@@ -13,6 +13,11 @@ class FirebaseCache {
       BOOKS: 15 * 60 * 1000, // 15 minutes for books
       USERS_LIST: 5 * 60 * 1000, // 5 minutes for full users list (reduces reads)
       USER_STATS: 3 * 60 * 1000, // 3 minutes for online/total stats
+      FORUM_DESCRIPTIONS: 5 * 60 * 1000, // 5 minutes for forum descriptions config
+      ALL_USERS: 3 * 60 * 1000, // 3 minutes for full users list (follower/notification fallbacks)
+      CONFIG_STARSHADE_HALL: 5 * 60 * 1000, // 5 minutes
+      PAGE_RULES: 10 * 60 * 1000, // 10 minutes for rules pages
+      LIBRARY: 10 * 60 * 1000, // 10 minutes for library list
     };
   }
 
@@ -111,6 +116,23 @@ export const cacheHelpers = {
   // Cache user stats (online/total)
   getUserStats: () => firebaseCache.get("USER_STATS"),
   setUserStats: (data) => firebaseCache.set("USER_STATS", data),
+
+  // Cache forum descriptions config (one getDoc per 5 min)
+  getForumDescriptions: () => firebaseCache.get("FORUM_DESCRIPTIONS"),
+  setForumDescriptions: (data) => firebaseCache.set("FORUM_DESCRIPTIONS", data),
+
+  // Cache full users list for follower/notification fallbacks (avoid repeated getDocs(users))
+  getAllUsers: () => firebaseCache.get("ALL_USERS"),
+  setAllUsers: (data) => firebaseCache.set("ALL_USERS", data),
+
+  getConfigStarshadeHall: () => firebaseCache.get("CONFIG_STARSHADE_HALL"),
+  setConfigStarshadeHall: (data) => firebaseCache.set("CONFIG_STARSHADE_HALL", data),
+
+  getPageRules: (slug) => firebaseCache.get("PAGE_RULES", null, slug),
+  setPageRules: (slug, data) => firebaseCache.set("PAGE_RULES", data, null, slug),
+
+  getLibrary: () => firebaseCache.get("LIBRARY"),
+  setLibrary: (data) => firebaseCache.set("LIBRARY", data),
 
   // Clear user-specific cache (useful when user logs out or data updates)
   clearUserCache: (userId) => {

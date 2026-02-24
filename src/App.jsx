@@ -25,8 +25,6 @@ import TopBar from "./Components/TopBar/TopBar";
 import { OpenPrivateChatProvider } from "./context/openPrivateChatContext";
 import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
-import "./utils/dailyPetDiscoveryScheduler"; // Daily pet discovery system
-import PetDiscoveryPopupOnly from "./Components/PetDiscovery/PetDiscoveryPopupOnly";
 import DetentionPopup from "./Components/DetentionPopup/DetentionPopup";
 import useLocationTracker from "./hooks/useLocationTracker";
 import RotateDevicePopup from "./Components/RotateDevicePopup";
@@ -529,7 +527,6 @@ function App() {
           {user && <Chat />}
           {user && location.pathname !== "/messages" && <PrivateChat />}
           {/* Pet Discovery Popup Only for logged-in users */}
-          {user && <PetDiscoveryPopupOnly />}
           {user && <DetentionPopup />}
         </div>
       </MobileLayout>

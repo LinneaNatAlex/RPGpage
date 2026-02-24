@@ -1,22 +1,15 @@
 import { useAuth } from "../../context/authContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
-
-import { useEffect, useState } from "react";
+import useUserData from "../../hooks/useUserData";
+import { useState } from "react";
 import AgeVerificationRequest from "./AgeVerificationRequest";
 import Forum18PlusDisclaimer from "./18PlusForumDisclaimer";
 
 export default function AgeRestrictedForum({ children }) {
   const { user } = useAuth();
-  const [allowed, setAllowed] = useState(null);
+  const { userData, loading } = useUserData();
   const [disclaimerConfirmed, setDisclaimerConfirmed] = useState(false);
 
-  useEffect(() => {
-    if (!user) return setAllowed(false);
-    getDoc(doc(db, "users", user.uid)).then((snap) => {
-      setAllowed(!!snap.data()?.ageVerified);
-    });
-  }, [user]);
+  const allowed = user ? (loading ? null : !!userData?.ageVerified) : false;
 
   const [showRequest, setShowRequest] = useState(false);
   if (allowed === null) return <div>Checking access...</div>;

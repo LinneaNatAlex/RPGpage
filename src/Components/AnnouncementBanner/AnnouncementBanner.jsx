@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./AnnouncementBanner.module.css";
 import {
   collection,
-  onSnapshot,
+  getDocs,
   query,
   orderBy,
   deleteDoc,
@@ -10,6 +10,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import useUsers from "../../hooks/useUser";
+
+const ANNOUNCEMENTS_POLL_MS = 3 * 60 * 1000; // 3 min – reduces reads vs onSnapshot
 
 export default function AnnouncementBanner({ user }) {
   const [announcements, setAnnouncements] = useState([]);
@@ -20,17 +22,19 @@ export default function AnnouncementBanner({ user }) {
       collection(db, "announcements"),
       orderBy("createdAt", "desc")
     );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        setAnnouncements(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-      },
-      (err) => {
-        if (err?.code === "permission-denied") return;
-        if (process.env.NODE_ENV === "development") console.warn("AnnouncementBanner snapshot error:", err);
-      }
-    );
-    return () => unsub();
+    const fetchAnnouncements = () => {
+      getDocs(q)
+        .then((snap) => {
+          setAnnouncements(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        })
+        .catch((err) => {
+          if (err?.code === "permission-denied") return;
+          if (process.env.NODE_ENV === "development") console.warn("AnnouncementBanner fetch error:", err);
+        });
+    };
+    fetchAnnouncements();
+    const interval = setInterval(fetchAnnouncements, ANNOUNCEMENTS_POLL_MS);
+    return () => clearInterval(interval);
   }, []);
 
   const handleDelete = async (id) => {

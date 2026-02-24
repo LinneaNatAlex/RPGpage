@@ -30,13 +30,10 @@ const categories = [
   "Ingredients",
   "Equipment",
   "Food",
-  "Pets",
-  "Pet Items",
 ];
 
 const shortCategoryLabels = {
   Equipment: "Equip",
-  "Pet Items": "Pet it.",
   Ingredients: "Ingr.",
 };
 
@@ -57,6 +54,9 @@ const Shop = ({ open = true }) => {
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [lastPurchasedItemKey, setLastPurchasedItemKey] = useState(null);
+  const [lastPurchaseErrorKey, setLastPurchaseErrorKey] = useState(null);
+  const [lastPurchaseErrorMessage, setLastPurchaseErrorMessage] = useState("");
   const [activeCategory, setActiveCategory] = useState("Books");
   const shopCategories = categories;
   useEffect(() => {
@@ -237,44 +237,6 @@ const Shop = ({ open = true }) => {
             inventory.push({ name: ing, qty: 1, type: "ingredient" });
           }
         });
-      } else if (item.category === "Pets") {
-        if (!isVip) {
-          setErrorMessage("Kun VIP kan kjøpe pets. Oppgrader til VIP for å kjøpe dyr.");
-          setTimeout(() => setErrorMessage(""), 5000);
-          return;
-        }
-        // Special handling for pets - user can only have one pet at a time
-        const itemWithImage = addImageToItem(item);
-
-        // Check if user already has a pet
-        const existingPetIdx = inventory.findIndex(
-          (i) => i.category === "Pets"
-        );
-
-        if (existingPetIdx > -1) {
-          setErrorMessage(
-            `You already have a pet: ${inventory[existingPetIdx].name}. You can only have one pet at a time!`
-          );
-          setTimeout(() => setErrorMessage(""), 5000);
-          return;
-        }
-
-        // Add pet to inventory and set as current pet
-        const newPet = { ...itemWithImage, qty: 1 };
-        inventory.push(newPet);
-
-        // Set as current pet in user profile with lastFed timestamp
-        const petWithTimestamp = {
-          ...itemWithImage,
-          lastFed: new Date(), // Pet starts at full HP
-          customName: null, // Will be set later by user
-        };
-
-        await updateDoc(userRef, {
-          currency: newBalance,
-          inventory,
-          currentPet: petWithTimestamp,
-        });
       } else {
         // Finn eksisterende item i inventory basert på id eller navn
         const existingIdx = inventory.findIndex(
@@ -305,15 +267,20 @@ const Shop = ({ open = true }) => {
       cacheHelpers.clearUserCache(user.uid);
 
       setBalance(newBalance);
-      setSuccessMessage(
-        `Successfully bought ${item.name} for ${item.price} Nits!`
-      );
-
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccessMessage(""), 5000);
+      const itemKey = item.id + (item.firestore ? "-fs" : "-static");
+      setLastPurchaseErrorKey(null);
+      setLastPurchaseErrorMessage("");
+      setLastPurchasedItemKey(itemKey);
+      setTimeout(() => setLastPurchasedItemKey(null), 5000);
     } catch (error) {
-      setErrorMessage(`Failed to purchase ${item.name}: ${error.message}`);
-      setTimeout(() => setErrorMessage(""), 5000);
+      const itemKey = item.id + (item.firestore ? "-fs" : "-static");
+      setLastPurchasedItemKey(null);
+      setLastPurchaseErrorKey(itemKey);
+      setLastPurchaseErrorMessage(`Failed to purchase: ${error.message}`);
+      setTimeout(() => {
+        setLastPurchaseErrorKey(null);
+        setLastPurchaseErrorMessage("");
+      }, 5000);
     }
   };
 
@@ -349,7 +316,7 @@ const Shop = ({ open = true }) => {
         ))}
       </div>
 
-      {/* Success and Error Messages - positioned right above product list */}
+      {/* Top banner only for delete success/error (item is gone so we can't show on card) */}
       {successMessage && (
         <div
           style={{
@@ -413,19 +380,17 @@ const Shop = ({ open = true }) => {
             return !isConverted; // Vis kun ikke-konverterte statiske produkter
           })
           .filter((item) => {
-            // First check category
+            if (item.category === "Pets" || item.category === "Pet Items") return false;
             if (item.category !== activeCategory) return false;
-
-            // For potions, show all items (locked if not crafted)
-            if (item.category === "Potions") {
-              return true; // Show all potions, ingredients, and equipment
-            }
-
-            // For other categories, show all items
+            if (item.category === "Potions") return true;
             return true;
           })
           .map((item) => {
             const itemWithImage = addImageToItem(item);
+            const itemKey =
+              itemWithImage.id + (itemWithImage.firestore ? "-fs" : "-static");
+            const showPurchaseSuccess = lastPurchasedItemKey === itemKey;
+            const showPurchaseError = lastPurchaseErrorKey === itemKey;
 
             // Check if potion is locked (not crafted) – kun admin/headmaster/teacher/VIP kan kjøpe uten å ha brygget
             const isPotionLocked =
@@ -434,10 +399,6 @@ const Shop = ({ open = true }) => {
               item.type === "potion" &&
               !craftedPotions.has(item.name);
 
-            // Pets: kun VIP kan kjøpe
-            const isPetLocked =
-              item.category === "Pets" && !isVip;
-
             return (
               <li
                 key={
@@ -445,7 +406,7 @@ const Shop = ({ open = true }) => {
                   (itemWithImage.firestore ? "-fs" : "-static")
                 }
                 className={`${styles.item} ${
-                  isPotionLocked || isPetLocked ? styles.lockedItem : ""
+                  isPotionLocked ? styles.lockedItem : ""
                 }`}
               >
                 <div className={styles.itemInfo}>
@@ -511,19 +472,6 @@ const Shop = ({ open = true }) => {
                       >
                         🔒 Locked - Craft First
                       </button>
-                    ) : isPetLocked ? (
-                      <button
-                        disabled
-                        style={{
-                          background: "#666",
-                          color: "#ccc",
-                          cursor: "not-allowed",
-                          opacity: 0.6,
-                        }}
-                        title="Kun VIP kan kjøpe pets"
-                      >
-                        🔒 VIP required
-                      </button>
                     ) : (
                       <button onClick={() => handleBuy(itemWithImage)}>
                         Buy
@@ -581,6 +529,39 @@ const Shop = ({ open = true }) => {
                       </button>
                     )}
                   </div>
+                  {showPurchaseSuccess && (
+                    <div
+                      className={styles.inlineSuccess}
+                      style={{
+                        marginTop: "8px",
+                        padding: "8px 12px",
+                        background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
+                        color: "#fff",
+                        borderRadius: 0,
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        textAlign: "center",
+                      }}
+                    >
+                      ✓ Successfully bought for {itemWithImage.price} Nits!
+                    </div>
+                  )}
+                  {showPurchaseError && (
+                    <div
+                      className={styles.inlineError}
+                      style={{
+                        marginTop: "8px",
+                        padding: "8px 12px",
+                        background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                        color: "#fff",
+                        borderRadius: 0,
+                        fontSize: "0.9rem",
+                        textAlign: "center",
+                      }}
+                    >
+                      ❌ {lastPurchaseErrorMessage}
+                    </div>
+                  )}
                   {itemWithImage.type === "book" && (
                     <div className={styles.bookLikeRow}>
                       <button

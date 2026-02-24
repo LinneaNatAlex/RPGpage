@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
+import useUserData from "../../hooks/useUserData";
 import useUsers from "../../hooks/useUser";
 import { db } from "../../firebaseConfig";
 import {
@@ -27,6 +28,7 @@ import {
   checkWordCountReward,
   updateUserWordCount,
 } from "../../utils/wordCountReward";
+import { cacheHelpers } from "../../utils/firebaseCache";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -59,6 +61,7 @@ const raceCommons = {
 
 const Forum = () => {
   const { user, loading } = useAuth();
+  const { userData } = useUserData();
   const { users } = useUsers();
   const { roles, rolesLoading } = useUserRoles();
   // Topic/forum state
@@ -166,10 +169,15 @@ const Forum = () => {
     if (!loading && !user) navigate("/login");
   }, [user, loading, navigate]);
 
-  // Hent forum-beskrivelse fra config (vises under tittelen)
+  // Forum description from config (cached 5 min to reduce reads)
   useEffect(() => {
     if (!forumDescriptionKey) {
       setForumDescription("");
+      return;
+    }
+    const cached = cacheHelpers.getForumDescriptions();
+    if (cached?.descriptions?.[forumDescriptionKey] !== undefined) {
+      setForumDescription(cached.descriptions[forumDescriptionKey] || "");
       return;
     }
     let cancelled = false;
@@ -178,6 +186,7 @@ const Forum = () => {
         if (cancelled) return;
         const data = snap.exists() ? snap.data() : {};
         const descriptions = data.descriptions || {};
+        cacheHelpers.setForumDescriptions({ descriptions });
         setForumDescription(descriptions[forumDescriptionKey] || "");
       })
       .catch(() => {
@@ -235,78 +244,59 @@ const Forum = () => {
     }
   }, [forumRoom, searchParams]);
 
-  // Fetch user's followed topics
-  const fetchFollowedTopics = async () => {
-    if (!user) return;
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        const topics = userData.followedTopics || [];
-        setFollowedTopics(topics);
-      }
-    } catch (error) {
-      console.error("Error fetching followed topics:", error);
+  // Use followedTopics from useUserData (avoids extra getDoc read)
+  useEffect(() => {
+    if (!user) {
+      setFollowedTopics([]);
+      return;
     }
+    const list = userData?.followedTopics ?? [];
+    setFollowedTopics(Array.isArray(list) ? list : []);
+  }, [user, userData?.followedTopics]);
+
+  // Cached all-users fetch (3 min TTL) to avoid repeated getDocs(users) for follower counts / notifications
+  const getAllUsersCached = async () => {
+    const cached = cacheHelpers.getAllUsers();
+    if (cached && Array.isArray(cached) && cached.length >= 0) return cached;
+    const usersRef = collection(db, "users");
+    const snap = await getDocs(usersRef);
+    const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    cacheHelpers.setAllUsers(list);
+    return list;
   };
 
-  useEffect(() => {
-    fetchFollowedTopics();
-  }, [user]);
-
-  // Fetch follower counts for all topics
+  // Fetch follower counts for all topics (uses cached users when possible)
   const fetchFollowerCounts = async () => {
     if (!topics.length) return;
-    
     try {
       const counts = {};
-      const usersRef = collection(db, 'users');
-      const allUsersSnapshot = await getDocs(usersRef);
-      
+      const allUsers = await getAllUsersCached();
       for (const topic of topics) {
         let followerCount = 0;
-        
-        allUsersSnapshot.forEach(doc => {
-          const userData = doc.data();
-          const userFollowedTopics = userData.followedTopics || [];
-          const isFollowing = userFollowedTopics.some(t => t.id === topic.id);
-          if (isFollowing) {
-            followerCount++;
-          }
-        });
-        
+        for (const u of allUsers) {
+          const userFollowedTopics = u.followedTopics || [];
+          if (userFollowedTopics.some((t) => t && t.id === topic.id)) followerCount++;
+        }
         counts[topic.id] = followerCount;
       }
-      
       setFollowerCounts(counts);
     } catch (error) {
       console.error("Error fetching follower counts:", error);
     }
   };
 
-  // Fetch followers for a specific topic
+  // Fetch followers for a specific topic (uses cached users when possible)
   const fetchTopicFollowers = async (topicId) => {
     try {
-      const usersRef = collection(db, 'users');
-      const allUsersSnapshot = await getDocs(usersRef);
-      const followers = [];
-      
-      allUsersSnapshot.forEach(doc => {
-        const userData = doc.data();
-        const userFollowedTopics = userData.followedTopics || [];
-        const isFollowing = userFollowedTopics.some(t => t.id === topicId);
-        
-        if (isFollowing) {
-          followers.push({
-            id: doc.id,
-            displayName: userData.displayName,
-            photoURL: userData.photoURL || userData.profileImageUrl,
-            roles: userData.roles || []
-          });
-        }
-      });
-      
+      const allUsers = await getAllUsersCached();
+      const followers = allUsers
+        .filter((u) => (u.followedTopics || []).some((t) => t && t.id === topicId))
+        .map((u) => ({
+          id: u.id,
+          displayName: u.displayName,
+          photoURL: u.photoURL || u.profileImageUrl,
+          roles: u.roles || [],
+        }));
       setSelectedTopicFollowers(followers);
       setShowFollowersModal(true);
     } catch (error) {
@@ -402,26 +392,18 @@ const Forum = () => {
     return !text;
   };
 
-  // Send notifications to users who follow topics in this forum
+  // Send notifications to users who follow topics in this forum (uses cached users when possible)
   const sendNotificationToForumFollowers = async (topicId, topicTitle) => {
     try {
-      // Get all users who have followed any topics in this forum
-      const usersRef = collection(db, "users");
-      const usersSnapshot = await getDocs(usersRef);
-      
-      const forumFollowers = [];
-      usersSnapshot.forEach((doc) => {
-        const userData = doc.data();
-        if (userData.followedTopics && Array.isArray(userData.followedTopics)) {
-          // Check if they follow any topics in this forum
-          const followsTopicsInForum = userData.followedTopics.some(topic => 
-            topic.forumRoom === forumRoom
-          );
-          if (followsTopicsInForum && doc.id !== user.uid) { // Don't notify the person who created
-            forumFollowers.push(doc.id);
-          }
-        }
-      });
+      const allUsers = await getAllUsersCached();
+      const forumFollowers = allUsers
+        .filter((u) => {
+          if (u.id === user.uid) return false;
+          const list = u.followedTopics;
+          if (!list || !Array.isArray(list)) return false;
+          return list.some((t) => t && t.forumRoom === forumRoom);
+        })
+        .map((u) => u.id);
 
       // Send notification to each forum follower
       for (const followerId of forumFollowers) {
@@ -459,14 +441,14 @@ const Forum = () => {
       if (Array.isArray(followerIds) && followerIds.length > 0) {
         followers = followerIds.filter((uid) => uid !== user.uid);
       } else {
-        // Fallback for topics created before followerIds existed
-        const usersSnapshot = await getDocs(collection(db, "users"));
+        // Fallback for topics created before followerIds existed (uses cached users)
         const topicIdStr = String(topicId);
-        usersSnapshot.forEach((docSnap) => {
-          if (docSnap.id === user.uid) return;
-          const list = docSnap.data().followedTopics;
+        const allUsers = await getAllUsersCached();
+        allUsers.forEach((u) => {
+          if (u.id === user.uid) return;
+          const list = u.followedTopics;
           if (!list || !Array.isArray(list)) return;
-          if (list.some((t) => t && String(t.id) === topicIdStr)) followers.push(docSnap.id);
+          if (list.some((t) => t && String(t.id) === topicIdStr)) followers.push(u.id);
         });
       }
 
@@ -769,7 +751,7 @@ const Forum = () => {
   };
 
   return (
-    <div ref={forumContainerRef} className={styles.forumWrapper}>
+    <div ref={forumContainerRef} className={styles.forumWrapper} data-forum={forumRoom}>
       <h2>{forumTitle}</h2>
       {forumDescription && (
         <div
@@ -1199,14 +1181,8 @@ const Forum = () => {
         }
         return (
         <div className={styles.topicView}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1rem",
-              marginBottom: "1.2rem",
-            }}
-          >
+          <h2 className={styles.topicViewTitle}>{currentTopic.title}</h2>
+          <div className={styles.topicViewActions}>
             <Button
               onClick={() => {
                 setSelectedTopic(null);
@@ -1218,7 +1194,6 @@ const Forum = () => {
             </Button>
             {(() => {
               const isTeacherOrAdmin = roles?.includes("professor") || roles?.includes("teacher") || roles?.includes("admin") || roles?.includes("archivist");
-              
               return isTeacherOrAdmin && (
                 <>
                   <Button onClick={handleEditTopic} className={styles.editButton}>
@@ -1227,7 +1202,6 @@ const Forum = () => {
                   <Button
                     onClick={handleDeleteTopic}
                     className={styles.deleteButton}
-                    style={{ marginLeft: "0.5rem" }}
                   >
                     Delete Topic
                   </Button>

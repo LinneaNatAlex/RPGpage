@@ -15,7 +15,6 @@ import {
   query,
   where,
   getDocs,
-  onSnapshot,
   orderBy,
   limit,
 } from "firebase/firestore";
@@ -119,28 +118,15 @@ const TopBar = () => {
     setCurrentPage(page);
   };
 
-  // Listen for changes in followed topics
+  // Use followedTopics from useUserData (single source; avoids extra onSnapshot read)
   useEffect(() => {
-    if (!user) return;
-
-    const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(
-      userRef,
-      (doc) => {
-        if (doc.exists()) {
-          const userData = doc.data();
-          setFollowedTopics(userData.followedTopics || []);
-        }
-      },
-      (err) => {
-        if (err?.code === "permission-denied") return;
-        if (process.env.NODE_ENV === "development")
-          console.warn("TopBar followedTopics snapshot error:", err);
-      },
-    );
-
-    return () => unsubscribe();
-  }, [user]);
+    if (!user) {
+      setFollowedTopics([]);
+      return;
+    }
+    const list = userData?.followedTopics ?? [];
+    setFollowedTopics(Array.isArray(list) ? list : []);
+  }, [user, userData?.followedTopics]);
 
   // Poll for new posts in followed topics (avoids N snapshot listeners per user)
   const followedTopicsPollRef = useRef(Date.now());
@@ -507,25 +493,19 @@ const TopBar = () => {
       cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
     };
 
-    const unsub = onSnapshot(
-      q,
-      (snap) => applySnapshot(snap),
-      (err) => {
-        console.error("Notifications listener error:", err);
-        setNotifications([]);
-      }
-    );
-
-    fetchNotifications.current = async () => {
-      try {
-        const snap = await getDocs(q);
-        applySnapshot(snap);
-      } catch (e) {
-        console.error("Fetch notifications error:", e);
-      }
+    const fetch = () => {
+      getDocs(q)
+        .then(applySnapshot)
+        .catch((e) => {
+          console.error("Notifications fetch error:", e);
+          setNotifications([]);
+        });
     };
 
-    return () => unsub();
+    fetchNotifications.current = fetch;
+    fetch();
+    const interval = setInterval(fetch, 60 * 1000);
+    return () => clearInterval(interval);
   }, [user]);
 
   // Recent news for notification list (newer than lastSeenNewsAt)

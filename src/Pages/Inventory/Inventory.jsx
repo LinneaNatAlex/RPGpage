@@ -42,41 +42,6 @@ const Inventory = () => {
   const [sortBy, setSortBy] = useState("name"); // name, type, category, qty
   const [sortOrder, setSortOrder] = useState("asc"); // asc, desc
 
-  // Calculate pet HP based on time since last fed (1 day = 100% to 0%)
-  const calculatePetHP = (pet) => {
-    if (!pet || !pet.lastFed) {
-      return 100;
-    }
-
-    const now = new Date().getTime();
-    let lastFedTime;
-
-    // Handle different lastFed formats
-    if (pet.lastFed.toMillis) {
-      // Firestore Timestamp
-      lastFedTime = pet.lastFed.toMillis();
-    } else if (pet.lastFed.seconds) {
-      // Firestore Timestamp object
-      lastFedTime = pet.lastFed.seconds * 1000;
-    } else if (typeof pet.lastFed === "number") {
-      // Regular timestamp
-      lastFedTime = pet.lastFed;
-    } else {
-      // Fallback - assume it's recent
-      return 100;
-    }
-
-    const timeSinceFed = now - lastFedTime;
-    const maxStarvationTime = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
-
-    // Pet loses HP gradually over 3 days (72 hours)
-    const hpPercentage = Math.max(
-      0,
-      100 - (timeSinceFed / maxStarvationTime) * 100
-    );
-    return Math.round(hpPercentage);
-  };
-
   // Update infirmary state when userData changes
   useEffect(() => {
     if (userData) {
@@ -190,23 +155,12 @@ const Inventory = () => {
       const invIdx = inv.findIndex((i) => i.name === deleteModal.item.name);
       if (invIdx === -1) return;
 
-      const itemToDelete = inv[invIdx];
-      const isCurrentPet = userData.currentPet?.name === itemToDelete.name;
-
       inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
       if (inv[invIdx].qty <= 0) {
         inv.splice(invIdx, 1);
       }
 
-      // Prepare update data
-      const updateData = { inventory: inv };
-
-      // If deleting the current pet, also remove currentPet
-      if (isCurrentPet && inv[invIdx]?.qty <= 0) {
-        updateData.currentPet = null;
-      }
-
-      await updateDoc(userRef, updateData);
+      await updateDoc(userRef, { inventory: inv });
 
       // Clear cache after inventory update
       cacheHelpers.clearUserCache(user.uid);
@@ -332,13 +286,6 @@ const Inventory = () => {
                         alt={itemWithImage.name}
                         className={styles.itemImage}
                       />
-                      {/* Fainted pet overlay */}
-                      {userData?.currentPet?.name === itemWithImage.name && 
-                       calculatePetHP(userData.currentPet) <= 0 && (
-                        <div className={styles.faintedPetOverlay}>
-                          <span className={styles.faintedText}>FAINTED</span>
-                        </div>
-                      )}
                     </div>
                     <div className={styles.itemTextContent}>
                       <span className={styles.itemName}>
@@ -376,157 +323,6 @@ const Inventory = () => {
                     >
                       ✕
                     </button>
-
-                    {/* Feed Pet button for pet food items */}
-                    {(() => {
-                      const isPetFood =
-                        item.type === "petFood" ||
-                        item.category === "Pet Items" ||
-                        item.name?.toLowerCase().includes("pet food") ||
-                        item.name?.toLowerCase().includes("pet treats") ||
-                        item.name?.toLowerCase().includes("dog food") ||
-                        item.name?.toLowerCase().includes("cat food") ||
-                        item.name?.toLowerCase().includes("pet elixir") ||
-                        item.name?.toLowerCase().includes("pet snack") ||
-                        item.name?.toLowerCase().includes("pet biscuit") ||
-                        (item.description?.toLowerCase().includes("restores") &&
-                          item.description?.toLowerCase().includes("pet")) ||
-                        (item.description?.toLowerCase().includes("feed") &&
-                          item.description?.toLowerCase().includes("pet"));
-                      const hasPet = !!userData?.currentPet;
-
-
-                      return isPetFood && hasPet;
-                    })() && (
-                      <button
-                        className={styles.feedPetBtn}
-                        title={`Feed your pet with ${item.name}`}
-                        onClick={async () => {
-                          if (!user || !userData?.currentPet) return;
-
-                          // Check if Magic Pet Elixir can only be used on fainted pets
-                          const currentPetHP = calculatePetHP(
-                            userData.currentPet
-                          );
-                          if (
-                            item.name === "Magic Pet Elixir" &&
-                            currentPetHP > 0
-                          ) {
-                            alert(
-                              "Magic Pet Elixir can only be used on completely fainted pets (0% HP)!"
-                            );
-                            return;
-                          }
-
-                          try {
-                            const userRef = doc(db, "users", user.uid);
-                            const userDoc = await getDoc(userRef);
-                            if (!userDoc.exists()) return;
-
-                            const data = userDoc.data();
-                            let inv = data.inventory || [];
-
-                            // Find and consume the pet food item
-                            const invIdx = inv.findIndex(
-                              (i) => i.name === item.name
-                            );
-                            if (invIdx === -1) return;
-
-                            inv[invIdx].qty = (inv[invIdx].qty || 1) - 1;
-                            if (inv[invIdx].qty <= 0) inv.splice(invIdx, 1);
-
-                            // Update pet's lastFed timestamp and calculate bonus time
-                            const now = new Date();
-                            const bonusHours = item.bonusTime || 0; // Extra time from Magic Pet Elixir
-                            const newFeedTime = new Date(
-                              now.getTime() + bonusHours * 60 * 60 * 1000
-                            );
-
-                            const updatedPet = {
-                              ...data.currentPet,
-                              lastFed: newFeedTime, // This will restore HP to 100%
-                            };
-
-                            await updateDoc(userRef, {
-                              inventory: inv,
-                              currentPet: updatedPet,
-                            });
-
-                            // Clear cache to refresh UI
-                            cacheHelpers.clearUserCache(user.uid);
-
-                            const restoreAmount = item.petHpRestore || 100;
-                          } catch (error) {
-                            console.error("Error feeding pet:", error);
-                          }
-                        }}
-                        disabled={
-                          item.name === "Magic Pet Elixir" &&
-                          calculatePetHP(userData.currentPet) > 0
-                        }
-                      >
-                        🥘 Feed Pet
-                      </button>
-                    )}
-
-                    {/* Set as Pet button for pet animals */}
-                    {(item.category === "Pets" || item.type === "pet") &&
-                      userData?.currentPet?.name !== item.name && (
-                        <button
-                          className={styles.setPetBtn}
-                          title={`Set ${item.name} as your active pet`}
-                          onClick={async () => {
-                            if (!user) return;
-
-                            try {
-                              // Create simple pet object
-                              const petData = {
-                                name: item.name,
-                                image: item.image || "/icons/magic-school.svg",
-                                lastFed: Date.now(), // Use timestamp instead of Date object
-                                customName: null,
-                              };
-
-                              const userRef = doc(db, "users", user.uid);
-
-                              // Try to update just currentPet field
-                              await updateDoc(userRef, {
-                                currentPet: petData,
-                              });
-
-                              alert(`${item.name} is now your pet!`);
-
-                              // Clear cache and refresh
-                              cacheHelpers.clearUserCache(user.uid);
-                              window.location.reload();
-                            } catch (error) {
-                              console.error("Error setting pet:", error);
-                              alert("Error setting pet: " + error.message);
-                            }
-                          }}
-                        >
-                          🐾 Set as Pet
-                        </button>
-                      )}
-
-                    {/* Active Pet indicator */}
-                    {(item.category === "Pets" || item.type === "pet") &&
-                      userData?.currentPet?.name === item.name && (
-                        <div
-                          style={{
-                            backgroundColor: "#4CAF50",
-                            color: "white",
-                            padding: "4px 8px",
-                            borderRadius: 0,
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            marginTop: "5px",
-                          }}
-                        >
-                          ✅ Active Pet
-                        </div>
-                      )}
 
                     {isEdible && !infirmary && (
                       <button

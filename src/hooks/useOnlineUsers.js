@@ -22,7 +22,12 @@ const useOnlineUsers = () => {
             const data = docSnap.data();
             return { ...data, id: docSnap.id };
           })
-          .filter((u) => !u.invisibleUntil || u.invisibleUntil < now);
+          .filter((u) => !u.invisibleUntil || u.invisibleUntil < now)
+          .filter((u) => {
+            const name = (u.displayName && String(u.displayName).trim()) || "";
+            const email = (u.email && String(u.email).trim()) || "";
+            return name.length > 0 || email.length > 0;
+          });
         setOnlineUsers(users);
       } catch (err) {
         if (process.env.NODE_ENV === "development")
