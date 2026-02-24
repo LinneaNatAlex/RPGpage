@@ -208,31 +208,15 @@ const SignUp = () => {
           />
         )}
         <form className={styles.signUpForm} onSubmit={handleSignUp}>
-          <h1>Sign up</h1>
-          <p
-            style={{
-              textAlign: "center",
-              marginBottom: "1rem",
-              color: "#5d4e37",
-              fontWeight: 600,
-              fontSize: "0.95rem",
-            }}
-          >
-            All new users get free VIP for one month.
-          </p>
+          <div className={styles.signUpFormHeader}>
+            <h1>Sign up</h1>
+            <div className={styles.headerDivider} aria-hidden="true" />
+            <p className={styles.vipBadge}>
+              All new users get free VIP for one month
+            </p>
+          </div>
           {error && (
-            <div
-              style={{
-                background: "#ff2a2a",
-                color: "#fff",
-                padding: "0.7rem 1.2rem",
-                borderRadius: 0,
-                marginBottom: "1rem",
-                fontWeight: "bold",
-                textAlign: "center",
-                boxShadow: "0 2px 8px rgba(255,42,42,0.15)",
-              }}
-            >
+            <div className={styles.errorBox}>
               {error}
             </div>
           )}
