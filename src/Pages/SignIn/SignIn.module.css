@@ -1,8 +1,25 @@
+/* Fullskjerm bakgrunn: fantasy-by (legg login-bg.jpg eller .png i public/) */
 .signUpContainer {
   display: flex;
   justify-content: center;
-  padding: 40px;
-  padding-top: 100px;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  position: relative;
+  background-color: #1a1625;
+  /* Prioritet: eget bilde (jpg/png) hvis det finnes i public/, ellers placeholder SVG */
+  background-image: url("/login-bg.jpg"), url("/login-bg.png"), url("/login-bg.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.signUpContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 12, 25, 0.4) 0%, rgba(25, 20, 40, 0.5) 100%);
+  pointer-events: none;
 }
 
 .signInForm {
@@ -18,6 +35,7 @@
   font-family: "Cinzel", serif;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   position: relative;
+  z-index: 1;
   overflow: hidden;
   max-width: 500px;
   width: 100%;
@@ -133,11 +151,15 @@
   box-shadow: 0 0 16px rgba(123, 104, 87, 0.5) !important;
 }
 
+/* Fallback hvis bildet mangler (dark mode) */
+:global([data-theme="dark"]) .signUpContainer {
+  background-color: #1a1625;
+}
+
 /* Mobile responsiveness */
 @media screen and (max-width: 768px) {
   .signUpContainer {
     padding: 20px;
-    padding-top: 80px;
   }
   
   .signInForm {

@@ -5,6 +5,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
   serverTimestamp,
   collection,
@@ -546,6 +547,30 @@ const ClassroomSession = () => {
     setSelectedExamId(null);
     setShowAllExamsView(false);
     setShowQuizEditing(true);
+  };
+
+  const handleDeleteExam = async () => {
+    if (!selectedExamId || !selectedExamDetails) return;
+    if (!window.confirm("Are you sure you want to delete this exam? This cannot be undone.")) return;
+    try {
+      const examId = selectedExamId;
+      const classIdForExam = selectedExamDetails.classId;
+      await deleteDoc(doc(db, "quizzes", examId));
+      if (classIdForExam) {
+        const classRef = doc(db, "classDescriptions", classIdForExam);
+        const classSnap = await getDoc(classRef);
+        if (classSnap.exists() && classSnap.data().quizzes) {
+          const updatedQuizzes = classSnap.data().quizzes.filter((q) => q.quizId !== examId);
+          await updateDoc(classRef, { quizzes: updatedQuizzes });
+        }
+      }
+      setSelectedExamDetails(null);
+      setSelectedExamId(null);
+      fetchAllExams();
+    } catch (err) {
+      console.error("Error deleting exam:", err);
+      window.alert("Failed to delete exam. Please try again.");
+    }
   };
 
   const handleQuizCreationComplete = async () => {
@@ -1997,6 +2022,25 @@ const ClassroomSession = () => {
                       }}
                     >
                       Edit exam
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteExam();
+                      }}
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)",
+                        color: "#fff",
+                        border: "2px solid rgba(255,255,255,0.3)",
+                        borderRadius: 0,
+                        padding: "8px 16px",
+                        fontSize: "0.95rem",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Delete exam
                     </button>
                     <button
                       onClick={() => setSelectedExamDetails(null)}

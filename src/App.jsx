@@ -27,11 +27,13 @@ import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerifica
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
 import DetentionPopup from "./Components/DetentionPopup/DetentionPopup";
 import useLocationTracker from "./hooks/useLocationTracker";
+import useUserData from "./hooks/useUserData";
 import RotateDevicePopup from "./Components/RotateDevicePopup";
 import "./App.mobile.css";
 
 function App() {
   const { user, loading } = useAuth();
+  const { userData } = useUserData();
   const location = useLocation();
 
   // Track user location for Surveillance Potion
@@ -151,75 +153,48 @@ function App() {
     return () => unsub();
   }, []);
 
-  // Load user's potion effects
+  // Potion effects fra useUserData (én onSnapshot i stedet for to – sparer Firestore reads)
   useEffect(() => {
-    if (!user || !user.uid) return;
-
-    const userRef = doc(db, "users", user.uid);
-    const unsub = onSnapshot(
-      userRef,
-      (userDoc) => {
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          startTransition(() => {
-            setDarkModeUntil(
-              data.darkModeUntil &&
-                typeof data.darkModeUntil === "number" &&
-                data.darkModeUntil > Date.now()
-                ? data.darkModeUntil
-                : null,
-            );
-            setRetroUntil(
-              data.retroUntil &&
-                typeof data.retroUntil === "number" &&
-                data.retroUntil > Date.now()
-                ? data.retroUntil
-                : null,
-            );
-            setMirrorUntil(
-              data.mirrorUntil &&
-                typeof data.mirrorUntil === "number" &&
-                data.mirrorUntil > Date.now()
-                ? data.mirrorUntil
-                : null,
-            );
-            setSpeedUntil(
-              data.speedUntil &&
-                typeof data.speedUntil === "number" &&
-                data.speedUntil > Date.now()
-                ? data.speedUntil
-                : null,
-            );
-            setSlowMotionUntil(
-              data.slowMotionUntil &&
-                typeof data.slowMotionUntil === "number" &&
-                data.slowMotionUntil > Date.now()
-                ? data.slowMotionUntil
-                : null,
-            );
-            setSurveillanceUntil(
-              data.surveillanceUntil &&
-                typeof data.surveillanceUntil === "number" &&
-                data.surveillanceUntil > Date.now()
-                ? data.surveillanceUntil
-                : null,
-            );
-            setSparkleUntil(
-              data.sparkleUntil &&
-                typeof data.sparkleUntil === "number" &&
-                data.sparkleUntil > Date.now()
-                ? data.sparkleUntil
-                : null,
-            );
-          });
-        }
-      },
-      (error) => {
-        // Don't fail the app if potion effects can't be loaded
-      },
-    );
-    return () => unsub();
-  }, [user]);
+    if (!userData) return;
+    const now = Date.now();
+    startTransition(() => {
+      setDarkModeUntil(
+        userData.darkModeUntil && typeof userData.darkModeUntil === "number" && userData.darkModeUntil > now
+          ? userData.darkModeUntil
+          : null,
+      );
+      setRetroUntil(
+        userData.retroUntil && typeof userData.retroUntil === "number" && userData.retroUntil > now
+          ? userData.retroUntil
+          : null,
+      );
+      setMirrorUntil(
+        userData.mirrorUntil && typeof userData.mirrorUntil === "number" && userData.mirrorUntil > now
+          ? userData.mirrorUntil
+          : null,
+      );
+      setSpeedUntil(
+        userData.speedUntil && typeof userData.speedUntil === "number" && userData.speedUntil > now
+          ? userData.speedUntil
+          : null,
+      );
+      setSlowMotionUntil(
+        userData.slowMotionUntil && typeof userData.slowMotionUntil === "number" && userData.slowMotionUntil > now
+          ? userData.slowMotionUntil
+          : null,
+      );
+      setSurveillanceUntil(
+        userData.surveillanceUntil && typeof userData.surveillanceUntil === "number" && userData.surveillanceUntil > now
+          ? userData.surveillanceUntil
+          : null,
+      );
+      setSparkleUntil(
+        userData.sparkleUntil && typeof userData.sparkleUntil === "number" && userData.sparkleUntil > now
+          ? userData.sparkleUntil
+          : null,
+      );
+    });
+  }, [userData]);
 
   if (loading) {
     return (

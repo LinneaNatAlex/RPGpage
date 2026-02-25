@@ -503,9 +503,23 @@ const TopBar = () => {
     };
 
     fetchNotifications.current = fetch;
-    fetch();
-    const interval = setInterval(fetch, 60 * 1000);
-    return () => clearInterval(interval);
+    let interval = null;
+    const runWhenVisible = () => {
+      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
+      fetch();
+      interval = setInterval(fetch, 3 * 60 * 1000);
+    };
+    runWhenVisible();
+    const onVisibility = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+      if (document.visibilityState === "visible") runWhenVisible();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (interval) clearInterval(interval);
+    };
   }, [user]);
 
   // Recent news for notification list (newer than lastSeenNewsAt)

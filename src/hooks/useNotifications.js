@@ -22,7 +22,7 @@ export default function useNotifications(user, userData) {
   const [notifications, setNotifications] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
 
-  // Poll notifications every 60s instead of onSnapshot to reduce reads
+  const NOTIF_POLL_MS = 3 * 60 * 1000; // 3 min, kun når fanen er synlig
   useEffect(() => {
     if (!user?.uid) {
       setNotifications([]);
@@ -56,9 +56,23 @@ export default function useNotifications(user, userData) {
           setNotifications([]);
         });
     };
-    fetchNotifs();
-    const interval = setInterval(fetchNotifs, 60 * 1000);
-    return () => clearInterval(interval);
+    let interval = null;
+    const runWhenVisible = () => {
+      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
+      fetchNotifs();
+      interval = setInterval(fetchNotifs, NOTIF_POLL_MS);
+    };
+    runWhenVisible();
+    const onVisibility = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+      if (document.visibilityState === "visible") runWhenVisible();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (interval) clearInterval(interval);
+    };
   }, [user?.uid]);
 
   useEffect(() => {

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { cacheHelpers } from "../utils/firebaseCache";
+
+const USER_DATA_POLL_MS = 3 * 60 * 1000; // 3 min – leser ikke ved hver lastActive-oppdatering
 
 const defaultUserData = {
   currency: 1000,
@@ -43,7 +45,7 @@ const defaultUserData = {
   ageVerified: false,
 };
 
-// User data via onSnapshot – live updates (health/inventory/currency update without reload)
+// User data via polling – ingen lesing ved lastActive/potion-oppdateringer, kun når vi henter
 const useUserData = () => {
   const { user } = useAuth();
   const [userData, setUserData] = useState(defaultUserData);
@@ -98,7 +100,6 @@ const useUserData = () => {
       });
     };
 
-    // Optional: show cached data immediately for faster first paint
     const cached = cacheHelpers.getUserData(user.uid);
     if (cached) {
       applyData(cached);
@@ -106,9 +107,10 @@ const useUserData = () => {
     }
 
     const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(
-      userRef,
-      (userDoc) => {
+
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await getDoc(userRef);
         if (!userDoc.exists()) return;
         const data = userDoc.data();
         cacheHelpers.setUserData(user.uid, data);
@@ -122,24 +124,37 @@ const useUserData = () => {
             infirmaryEnd: null,
             lastHealthUpdate: now,
           };
-          import("../firebaseConfig").then(({ db: dbRef }) => {
-            import("firebase/firestore").then(({ doc: docFn, updateDoc }) => {
-              const ref = docFn(dbRef, "users", user.uid);
-              updateDoc(ref, {
-                health: 100,
-                infirmaryEnd: null,
-                lastHealthUpdate: now,
-              }).catch(() => {});
-            });
-          });
+          await updateDoc(userRef, {
+            health: 100,
+            infirmaryEnd: null,
+            lastHealthUpdate: now,
+          }).catch(() => {});
         }
         applyData(processedData);
+      } catch (e) {
+        if (cached) applyData(cached);
+      } finally {
         setLoading(false);
-      },
-      () => setLoading(false)
-    );
+      }
+    };
 
-    return () => unsubscribe();
+    let interval = null;
+    const runWhenVisible = () => {
+      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
+      fetchUserData();
+      interval = setInterval(fetchUserData, USER_DATA_POLL_MS);
+    };
+    runWhenVisible();
+    const onVisibility = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+      if (document.visibilityState === "visible") runWhenVisible();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (interval) clearInterval(interval);
+    };
   }, [user]);
 
   const vipExpiresAt = userData?.vipExpiresAt;

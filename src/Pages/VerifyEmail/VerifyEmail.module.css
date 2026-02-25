@@ -1,4 +1,4 @@
-/* ------------------WRAPPER------------------ */
+/* ------------------WRAPPER (samme bakgrunnsbildet som innlogging) ------------------ */
 .verifyWrapper {
   display: flex;
   flex-direction: column;
@@ -7,6 +7,25 @@
   min-height: 100vh;
   position: relative;
   color: white;
+  background-color: #1a1625;
+  background-image: url("/login-bg.jpg"), url("/login-bg.png"), url("/login-bg.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.verifyWrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 12, 25, 0.4) 0%, rgba(25, 20, 40, 0.5) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.verifyWrapper > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ------------------BACKGROUND VIDEO------------------ */

@@ -2,6 +2,13 @@
 
 Dette dokumentet beskriver alle Firebase quota optimaliseringene som er implementert for å redusere quota bruk uten å påvirke brukeropplevelsen.
 
+## Hvorfor mange reads selv med lite trafikk?
+
+- **Firebase Console**: *"Includes Firebase console usage"* – å ha Firebase Console åpen og bla i Firestore/Usage teller med på reads. Lukk fanen eller bruk den mindre for å redusere.
+- **Brukerdokumentet**: Når du er innlogget, oppdateres `lastActive` jevnlig (f.eks. hvert 2. min). Hver oppdatering sender data til alle aktive lyttere (f.ek. `useUserData`). Det er nå kun **én** onSnapshot på brukerdokumentet (potion-effekter i App henter fra useUserData i stedet for egen listener).
+- **Chat**: General chat og Great Hall bruker real-time (onSnapshot) på henholdsvis 30 og 150 dokumenter – hver ny melding utløser lesing av hele settet for alle som har chat åpen.
+- **Andre polling/lyttere**: Notifications, online-liste, osv. kjører med cache/polling for å begrense reads.
+
 ## 📊 Implementerte Optimaliseringer
 
 ### 1. **Query Limits**

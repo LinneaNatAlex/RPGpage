@@ -26,7 +26,7 @@
   font-weight: bold;
   margin-top: 0.5rem;
 }
-/* ------------------SIGN UP CONTAINER------------------ */
+/* ------------------SIGN UP CONTAINER (samme bakgrunnsbildet som innlogging) ------------------ */
 .signUpContainer {
   display: flex;
   justify-content: center;
@@ -34,9 +34,13 @@
   min-height: 100vh;
   padding: 40px 20px 60px;
   padding-top: 100px;
-  background: linear-gradient(160deg, #e8e0d4 0%, #d9cfc1 35%, #c9bfb0 100%);
-  background-attachment: fixed;
   position: relative;
+  background-color: #1a1625;
+  background-image: url("/login-bg.jpg"), url("/login-bg.png"), url("/login-bg.svg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 .signUpContainer::before {
@@ -46,7 +50,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='none' stroke='%237b6857' stroke-width='0.15' opacity='0.08'/%3E%3C/svg%3E");
+  background: linear-gradient(180deg, rgba(15, 12, 25, 0.4) 0%, rgba(25, 20, 40, 0.5) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -523,7 +527,10 @@ input::placeholder {
 }
 
 :global([data-theme="dark"]) .signUpContainer {
-  background: linear-gradient(160deg, #2a2520 0%, #1f1b18 100%);
+  background-color: #1a1625;
+}
+:global([data-theme="dark"]) .signUpContainer::before {
+  background: linear-gradient(180deg, rgba(10, 8, 20, 0.5) 0%, rgba(20, 15, 35, 0.55) 100%);
 }
 :global([data-theme="dark"]) .signUpForm {
   background: linear-gradient(180deg, #3d352d 0%, #322b25 100%);

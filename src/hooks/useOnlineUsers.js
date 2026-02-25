@@ -1,9 +1,9 @@
-// Polling instead of onSnapshot to reduce Firestore reads (one batch per 60s per client)
+// Polling only when tab is visible; 15 min interval – sparer reads når bruker ikke er aktiv
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
-const POLL_INTERVAL_MS = 60 * 1000; // 60 seconds
+const POLL_INTERVAL_MS = 15 * 60 * 1000; // 15 minutter
 
 const useOnlineUsers = () => {
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -35,9 +35,24 @@ const useOnlineUsers = () => {
       }
     };
 
-    fetchOnline();
-    const interval = setInterval(fetchOnline, POLL_INTERVAL_MS);
-    return () => clearInterval(interval);
+    let interval = null;
+    const runWhenVisible = () => {
+      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
+      fetchOnline();
+      interval = setInterval(fetchOnline, POLL_INTERVAL_MS);
+    };
+
+    runWhenVisible();
+    const onVisibility = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+      if (document.visibilityState === "visible") runWhenVisible();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   return onlineUsers;
