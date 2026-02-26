@@ -196,17 +196,7 @@ function App() {
     });
   }, [userData]);
 
-  if (loading) {
-    return (
-      <div className={styles.appLoadingScreen}>
-        <div className={styles.appLoadingInner}>
-          <div className={styles.appLoadingSpinner} />
-          <div>Loading Vayloria...</div>
-        </div>
-      </div>
-    );
-  }
-  // the main app that renders navbar and the main contents
+  // Render app shell immediately; auth/content loads in place (no full-screen "Loading Vayloria" block)
   return (
     <>
       {/* Global Potion Effects CSS */}

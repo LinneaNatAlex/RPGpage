@@ -29,7 +29,7 @@ import { stripEmoji } from "../../utils/stripEmoji";
 const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
-  const { isVip } = useUserData();
+  const { isVip, userData } = useUserData();
   const onlineUsers = useOnlineUsers();
   // Samme logikk som online-listen på forsiden: kun brukere med lastActive innen 10 min
   const now = Date.now();
@@ -283,19 +283,19 @@ const Chat = () => {
     return text;
   };
 
-  // Sjekk om innlogget bruker har admin, professor, headmaster eller shadow patrol-rolle
+  // Sletting: bruk roller fra userData (ikke users-listen) så lærere/shadow patrol/admin/headmaster alltid får slette
+  const canDelete = userData?.roles?.some((r) =>
+    ["admin", "professor", "teacher", "headmaster", "shadowpatrol", "archivist"].includes(
+      (r || "").toLowerCase(),
+    ),
+  );
+
   const currentUserObj = users.find(
     (u) =>
       u.displayName &&
       u.displayName.toLowerCase() ===
         auth.currentUser?.displayName?.toLowerCase(),
   );
-  const canDelete = currentUserObj?.roles?.some((r) =>
-    ["admin", "professor", "teacher", "headmaster", "shadowpatrol", "archivist"].includes(
-      (r || "").toLowerCase(),
-    ),
-  );
-
   const canSendNotification = currentUserObj?.roles?.some(
     (r) => r.toLowerCase() === "admin",
   );

@@ -2,6 +2,7 @@ import style from "./OnlineUsers.module.css";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext";
+import useUserData from "../../hooks/useUserData";
 import { db } from "../../firebaseConfig";
 import { doc, updateDoc, getDoc, deleteField } from "firebase/firestore";
 import { Link } from "react-router-dom";
@@ -18,6 +19,7 @@ function getFirstAndLastName(displayName) {
 const OnlineUsers = () => {
   const users = useOnlineUsers();
   const { user } = useAuth();
+  const { userData } = useUserData();
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeoutMinutes, setTimeoutMinutes] = useState(10);
@@ -53,12 +55,12 @@ const OnlineUsers = () => {
     };
   }, [user]);
 
-  // Sjekk om innlogget bruker har admin, professor, shadowpatrol, archivist eller headmaster rolle
-  const isPrivileged = user?.roles?.some((r) =>
-    ["admin", "professor", "teacher", "shadowpatrol", "headmaster", "archivist"].includes(r.toLowerCase())
+  // Bruk roller fra userData (Firestore) så professor/admin alltid ser merkene (tannhjul m.m.)
+  const roles = userData?.roles || user?.roles || [];
+  const isPrivileged = roles.some((r) =>
+    ["admin", "professor", "teacher", "shadowpatrol", "headmaster", "archivist"].includes((r || "").toLowerCase())
   );
-  // Only admin, professor, shadow patrol, headmaster can assign/clear detention (not archivist)
-  const canAssignDetention = user?.roles?.some((r) =>
+  const canAssignDetention = roles.some((r) =>
     ["admin", "professor", "teacher", "shadowpatrol", "headmaster"].includes((r || "").toLowerCase())
   );
 

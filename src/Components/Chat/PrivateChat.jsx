@@ -1316,7 +1316,7 @@ const PrivateChat = ({ fullPage = false }) => {
                               {m.potionEffects && m.potionEffects.love && " 💖"}
                             </div>
                             <div style={{ position: "relative" }}>
-                              {m.from === currentUser?.uid && isVip && (
+                              {m.from === currentUser?.uid && (
                                 <div
                                   style={{
                                     position: "absolute",
@@ -2092,7 +2092,7 @@ const PrivateChat = ({ fullPage = false }) => {
                   const isLast = i === selectedMessages.length - 1;
                   return (
                     <div
-                      key={i}
+                      key={m.id || i}
                       ref={isLast ? lastMessageRef : undefined}
                       className={
                         styles.privateMessageRow +
@@ -2152,7 +2152,7 @@ const PrivateChat = ({ fullPage = false }) => {
                               " ✨"}
                           </div>
                           <div style={{ position: "relative" }}>
-                            {m.from === currentUser?.uid && isVip && (
+                            {m.from === currentUser?.uid && (
                               <div
                                 style={{
                                   position: "absolute",
@@ -2170,6 +2170,7 @@ const PrivateChat = ({ fullPage = false }) => {
                                     setEditingMessage(msg);
                                     setMessage(msg.text);
                                   }}
+                                  onAlert={showSiteAlert}
                                 />
                               </div>
                             )}
