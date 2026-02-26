@@ -1,14 +1,20 @@
-// Polling only when tab is visible; 15 min interval – sparer reads når bruker ikke er aktiv
+// Henter kun når online-listen er «åpen» (forside-panel eller chat) – spar reads
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { useOnlineListContext } from "../context/onlineListContext";
 
-const POLL_INTERVAL_MS = 15 * 60 * 1000; // 15 minutter
+const POLL_INTERVAL_MS = 15 * 60 * 1000; // 15 min
 
 const useOnlineUsers = () => {
+  const { enabled } = useOnlineListContext();
   const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
+    if (!enabled) {
+      setOnlineUsers([]);
+      return;
+    }
     const fetchOnline = async () => {
       try {
         const q = query(
@@ -41,7 +47,6 @@ const useOnlineUsers = () => {
       fetchOnline();
       interval = setInterval(fetchOnline, POLL_INTERVAL_MS);
     };
-
     runWhenVisible();
     const onVisibility = () => {
       if (interval) clearInterval(interval);
@@ -53,7 +58,7 @@ const useOnlineUsers = () => {
       document.removeEventListener("visibilitychange", onVisibility);
       if (interval) clearInterval(interval);
     };
-  }, []);
+  }, [enabled]);
 
   return onlineUsers;
 };

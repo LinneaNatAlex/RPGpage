@@ -104,6 +104,10 @@ const useUserData = () => {
     if (cached) {
       applyData(cached);
       setLoading(false);
+    } else if (user.roles != null || user.inventory != null || user.currency != null) {
+      // Auth har allerede merger doc inn i user – bruk det og spar 1 getDoc per reload
+      applyData(user);
+      setLoading(false);
     }
 
     const userRef = doc(db, "users", user.uid);
@@ -139,13 +143,17 @@ const useUserData = () => {
     };
 
     let interval = null;
+    let firstDelayId = null;
     const runWhenVisible = () => {
       if (typeof document === "undefined" || document.visibilityState !== "visible") return;
-      fetchUserData();
+      // Forsink første hent 2s ved reload så vi ikke dobler getDoc rett etter auth
+      firstDelayId = setTimeout(fetchUserData, 2000);
       interval = setInterval(fetchUserData, USER_DATA_POLL_MS);
     };
     runWhenVisible();
     const onVisibility = () => {
+      if (firstDelayId) clearTimeout(firstDelayId);
+      firstDelayId = null;
       if (interval) clearInterval(interval);
       interval = null;
       if (document.visibilityState === "visible") runWhenVisible();
@@ -153,6 +161,7 @@ const useUserData = () => {
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
+      if (firstDelayId) clearTimeout(firstDelayId);
       if (interval) clearInterval(interval);
     };
   }, [user]);

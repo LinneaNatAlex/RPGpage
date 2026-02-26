@@ -1,6 +1,6 @@
 .posterName {
   font-weight: bold;
-  color: #B85C4A;
+  color: #b85c4a;
 }
 .headmasterName {
   color: #fff !important;
@@ -24,28 +24,50 @@
 }
 
 /* Dark mode: default (no role) = beige so rector stands out */
-:global(html[data-theme="dark"]) .posterName { color: #B85C4A !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+:global(html[data-theme="dark"]) .posterName {
+  color: #b85c4a !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
 /* Dark mode: keep role colors on names */
-:global(html[data-theme="dark"]) .headmasterName { color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-:global(html[data-theme="dark"]) .professorName { color: gold !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-:global(html[data-theme="dark"]) .shadowPatrolName { color: #1ecb8c !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-:global(html[data-theme="dark"]) .adminName { color: #ff5e5e !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-:global(html[data-theme="dark"]) .archivistName { color: #a084e8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+:global(html[data-theme="dark"]) .headmasterName {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+:global(html[data-theme="dark"]) .professorName {
+  color: gold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+:global(html[data-theme="dark"]) .shadowPatrolName {
+  color: #1ecb8c !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+:global(html[data-theme="dark"]) .adminName {
+  color: #ff5e5e !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+:global(html[data-theme="dark"]) .archivistName {
+  color: #a084e8 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
 
 .newsFeedWrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   margin: 0;
-  gap: 16px;
+  gap: 8px;
   color: #2c2c2c;
   background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 6px;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .newsContainer {
@@ -53,10 +75,11 @@
   flex-direction: column;
   background: #f5efe0;
   border-radius: 0;
-  border: 2px solid #d4c4a8;
+  border: none;
   color: #2c2c2c;
-  padding: 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1),
+  padding: 6px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
     inset 0 1px 3px rgba(255, 255, 255, 0.5);
   width: 100%;
   position: relative;
@@ -66,29 +89,73 @@
 
 .newsContainer:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15),
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.15),
     inset 0 1px 3px rgba(255, 255, 255, 0.5);
 }
-/* -------------------ADMIN TEXT AREA------------------- */
+/* -------------------ADMIN DROPDOWN + TEXT AREA------------------- */
+
+.newsAdminDropdown {
+  width: 100%;
+}
+
+.newsAdminToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d4c4a8;
+  border-radius: 0;
+  background: #f5efe0;
+  color: #2c2c2c;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.newsAdminToggle:hover {
+  background: #e8ddd4;
+  border-color: #7b6857;
+}
+
+.newsAdminToggleIcon {
+  opacity: 0.8;
+  font-size: 0.85em;
+}
+
+.newsAdminFormClosed {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.newsAdminFormOpen {
+  max-height: 800px;
+  opacity: 1;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
 
 .newsAdminContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  border: 2px solid goldenrod;
+  border: none;
   width: 100%;
   gap: 10px;
-  padding: 20px;
+  padding: 12px 14px 14px;
   box-sizing: border-box;
 }
 .textArea {
   height: 200px;
   width: 100%;
-  max-width: 600px;
+  max-width: 100%;
   border-radius: 0;
-  border: 2px solid #d4c4a8;
-  padding: 12px;
+  border: 1px solid #d4c4a8;
+  padding: 10px;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   font-size: 14px;
   resize: vertical;
@@ -98,9 +165,9 @@
 /* Style for title input in news admin */
 .newsAdminContainer input[type="text"] {
   width: 100%;
-  max-width: 600px;
-  padding: 12px;
-  border: 2px solid #d4c4a8;
+  max-width: 100%;
+  padding: 6px;
+  border: 1px solid #d4c4a8;
   border-radius: 0;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   font-size: 14px;
@@ -133,7 +200,7 @@ iframe {
   width: 100%;
 }
 .newsInfo {
-  padding: 1rem;
+  padding: 0.25rem 0;
 }
 
 .authorDateInfo {
@@ -147,8 +214,11 @@ iframe {
 .likeRow {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-left: auto;
+  gap: 6px;
+  margin-top: 0.5rem;
+  margin-left: 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(212, 196, 168, 0.4);
 }
 
 .likeButton {
@@ -176,20 +246,20 @@ iframe {
   font-weight: normal;
 }
 .textBlock {
-  padding: 2rem;
+  padding: 0.25rem 0;
 }
 
 .newsContent {
   background: #f5efe0;
   border-radius: 0;
-  border: 2px solid #d4c4a8;
+  border: none;
   color: #2c2c2c;
   min-height: 200px;
-  max-height: 900px;
+  max-height: none;
   height: auto;
-  overflow-y: auto;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  overflow-y: visible;
+  box-shadow: none;
+  padding: 4px;
   font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
   line-height: 1.6;
   scrollbar-width: thin;
@@ -216,7 +286,7 @@ iframe {
 
 .handlePostSubmit {
   width: 100%;
-  max-width: 600px;
+  max-width: 100%;
   padding: 12px;
   margin: 0;
   border-radius: 0;
@@ -314,6 +384,93 @@ iframe {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Inline full content for {{code}} posts */
+.codePostInline {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.codePostIframe {
+  width: 100%;
+  min-height: 200px;
+  border: none;
+  border-radius: 0;
+  background: #f5efe0;
+  display: block;
+}
+
+.fullScreenLink {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: #7b6857;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.fullScreenLink:hover {
+  color: #5a4a37;
+}
+
+/* News pagination (rendered under calendar via portal) */
+.newsPagination {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
+  border: 2px solid #d4c4a8;
+  border-radius: 0;
+  color: #2c2c2c;
+}
+
+.newsPaginationInfo {
+  display: block;
+  font-size: 0.9rem;
+  color: #7b6857;
+  margin-bottom: 0.75rem;
+}
+
+.newsPaginationButtons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.newsPageBtn {
+  min-width: 2.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 2px solid #d4c4a8;
+  background: #f5efe0;
+  color: #2c2c2c;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.newsPageBtn:hover:not(:disabled) {
+  background: #e8ddd4;
+  border-color: #7b6857;
+}
+
+.newsPageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.newsPageBtnActive {
+  min-width: 2.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 2px solid #7b6857;
+  background: #7b6857;
+  color: #f5efe0;
+  font-size: 0.9rem;
+  cursor: default;
+  border-radius: 0;
+}
+
 /* Popup overlay styling */
 .popupOverlay {
   position: fixed;
@@ -385,7 +542,6 @@ iframe {
 :global([data-theme="dark"]) .popupIframe {
   background: #252525;
 }
-
 
 /* Popup container og content skal aldri legge på bakgrunn – kun iframe-dokumentet styrer */
 .popupContainer,
@@ -541,7 +697,7 @@ iframe {
   color: #e0e0e0 !important;
 }
 :global(html[data-theme="dark"]) .posterName {
-  color: #B85C4A !important;
+  color: #b85c4a !important;
 }
 :global(html[data-theme="dark"]) .otherNewsSidebar {
   border-color: #444 !important;

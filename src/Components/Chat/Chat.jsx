@@ -5,6 +5,7 @@ import useChatMessages from "../../hooks/useChatMessages";
 import useUsers from "../../hooks/useUser";
 import useUserData from "../../hooks/useUserData";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
+import { useOnlineListContext } from "../../context/onlineListContext";
 import { db, auth } from "../../firebaseConfig";
 import styles from "./Chat.module.css";
 import {
@@ -30,6 +31,7 @@ const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
   const { isVip, userData } = useUserData();
+  const { requestOpen } = useOnlineListContext();
   const onlineUsers = useOnlineUsers();
   // Samme logikk som online-listen på forsiden: kun brukere med lastActive innen 10 min
   const now = Date.now();
@@ -91,6 +93,12 @@ const Chat = () => {
   useEffect(() => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
   }, [isCollapsed]);
+
+  // Be om online-liste kun når chat er åpen (spar reads)
+  useEffect(() => {
+    requestOpen("chat", !isCollapsed);
+    return () => requestOpen("chat", false);
+  }, [isCollapsed, requestOpen]);
 
   useEffect(() => {
     localStorage.setItem("mainChatAutoScroll", String(autoScrollToBottom));
@@ -832,9 +840,6 @@ const Chat = () => {
                       {message.potionEffects &&
                         message.potionEffects.sparkle &&
                         " ✨"}
-                      {userObj && onlineUids.has(userObj.uid || userObj.id) && (
-                        <span className={styles.mainChatOnlineDot} aria-hidden title="Online" />
-                      )}
                     </strong>
                   </span>
                   {/* Uthev @mentions og @all i meldingen */}

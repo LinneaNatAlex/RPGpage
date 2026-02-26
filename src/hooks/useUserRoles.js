@@ -11,37 +11,32 @@ const useUserRoles = () => {
   const [rolesLoading, setRolesLoading] = useState(true);
 
   useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      setRoles([]);
+      setRolesLoading(false);
+      return;
+    }
+    // Auth context merger doc data into user – bruk det og spar 1 getDoc per reload
+    const fromAuth = Array.isArray(user.roles) ? user.roles : [];
+    if (fromAuth.length > 0 || (user.roles !== undefined && user.roles !== null)) {
+      setRoles(Array.isArray(user.roles) ? user.roles : []);
+      setRolesLoading(false);
+      return;
+    }
     const fetchRoles = async () => {
-      // wait until user is shown and avalible , and aut has finished loading
-      if (loading) {
-        return; // Still loading auth, wait
-      }
-
-      if (!user) {
-        setRoles([]);
-        setRolesLoading(false);
-        return;
-      }
-
       try {
-        const docRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(docRef);
-
+        const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           const data = userDoc.data();
-          const userRoles = data?.roles || [];
-          setRoles(userRoles);
-        } else {
-          setRoles([]);
-        }
-      } catch (error) {
-        // Set empty roles on error to prevent app from hanging
+          setRoles(data?.roles || []);
+        } else setRoles([]);
+      } catch {
         setRoles([]);
       } finally {
         setRolesLoading(false);
       }
     };
-
     fetchRoles();
   }, [user, loading]);
   // returns the roles and loading status

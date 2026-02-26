@@ -16,7 +16,7 @@ function getFirstAndLastName(displayName) {
   return `${parts[0]} ${parts[parts.length - 1]}`;
 }
 
-const OnlineUsers = () => {
+const OnlineUsers = ({ variant }) => {
   const users = useOnlineUsers();
   const { user } = useAuth();
   const { userData } = useUserData();
@@ -155,7 +155,7 @@ const OnlineUsers = () => {
   );
 
   return (
-    <div className={style.onlineUsersContainer}>
+    <div className={`${style.onlineUsersContainer} ${variant === "popup" ? style.onlineUsersContainerPopup : ""}`}>
       <h2>Online</h2>
       <ul className={style.onlineUsersList}>
         {filteredUsers.map((u) => {

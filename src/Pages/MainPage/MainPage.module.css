@@ -58,21 +58,20 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  max-width: 1400px;
+  max-width: min(1600px, 95vw);
   margin: 0 auto;
   padding: 2rem;
-}
-
-.onlineUsersContainer {
-  order: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .newsFeedContainer {
-  order: 2;
+  order: 1;
+  min-width: 0;
 }
 
 .rpgCalendarSidebarContainer {
-  order: 3;
+  order: 2;
 }
 
 /* Floating action button for chat (mobile) */
@@ -266,19 +265,35 @@
 .mainContentHome {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 3fr 1.2fr;
+  grid-template-columns: 2.5fr 1fr;
   background-color: transparent;
   border-radius: 0;
   box-shadow: none;
-  gap: 1.5rem;
+  gap: 1rem;
   padding: 0;
+  align-items: start;
 }
 
 .rpgCalendarSidebarContainer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: stretch;
   align-items: flex-start;
   padding: 0;
+  min-width: 0;
+}
+
+.rpgCalendarSidebarContainer > * {
+  width: 100%;
+}
+
+.rpgCalendarSidebarContainer {
+  flex-direction: column;
+  gap: 0;
+}
+
+.newsPaginationSlot {
+  width: 100%;
+  display: block;
 }
 
 .newsFeedContainer {
@@ -286,17 +301,16 @@
   flex-direction: column;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
 }
 
 @media screen and (max-width: 1000px) {
   .rpgCalendarSidebarContainer {
     display: none;
   }
-  /* Keep Online + News side-by-side on tablet: 2 columns that can shrink */
   .mainContentHome {
-    grid-template-columns: minmax(160px, 1fr) minmax(280px, 2fr);
+    grid-template-columns: 1fr;
   }
-  .onlineUsersContainer,
   .newsFeedContainer {
     min-width: 0;
   }
@@ -589,10 +603,6 @@
     align-items: stretch;
   }
 
-  .onlineUsersContainer {
-    display: flex;
-  }
-
   .ctaBtnContainer {
     width: 100%;
     justify-content: center;
@@ -660,7 +670,6 @@
   }
 
   /* Hide desktop components on mobile */
-  .onlineUsersContainer,
   .newsFeedContainer,
   .rpgCalendarSidebarContainer {
     display: none !important;

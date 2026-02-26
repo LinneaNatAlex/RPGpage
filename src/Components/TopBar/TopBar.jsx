@@ -6,6 +6,7 @@ import { useAuth } from "../../context/authContext";
 import { db } from "../../firebaseConfig";
 import {
   doc,
+  setDoc,
   getDoc,
   updateDoc,
   deleteDoc,
@@ -25,6 +26,8 @@ import useUserData from "../../hooks/useUserData";
 import useUserRoles from "../../hooks/useUserRoles";
 import { cacheHelpers } from "../../utils/firebaseCache";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
+import { useOnlineListContext } from "../../context/onlineListContext";
+import OnlineUsers from "../OnlineUsers/OnlineUsers";
 
 import styles from "./TopBar.module.css";
 import { forumNames } from "../../data/forumList";
@@ -89,6 +92,9 @@ const TopBar = () => {
   const [followedTopics, setFollowedTopics] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const topicsPerPage = 10;
+  const { requestOpen } = useOnlineListContext();
+  const [showOnlinePanel, setShowOnlinePanel] = useState(false);
+  const onlinePanelRef = useRef(null);
 
   // Fetch user's followed topics
   const fetchFollowedTopics = async () => {
@@ -574,6 +580,31 @@ const TopBar = () => {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [showNotificationsPanel]);
+
+  const closeOnlinePanel = async () => {
+    if (user?.uid) {
+      try {
+        await setDoc(doc(db, "users", user.uid), { online: false }, { merge: true });
+      } catch (e) {
+        if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
+      }
+    }
+    setShowOnlinePanel(false);
+    requestOpen("topbar", false);
+  };
+
+  // Lukk online-panel ved Escape; oppdater context når panel lukkes
+  useEffect(() => {
+    if (!showOnlinePanel) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") closeOnlinePanel();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showOnlinePanel]);
+  useEffect(() => {
+    return () => requestOpen("topbar", false);
+  }, [requestOpen]);
 
   return (
     <>
@@ -1155,6 +1186,51 @@ const TopBar = () => {
             )}
           </div>
         )}
+        {/* Online-liste: knapp som åpner listen i popup */}
+        {user && (
+          <div className={styles.onlineListWrap} ref={onlinePanelRef}>
+            <button
+              type="button"
+              className={styles.inventoryIconBtn}
+              onClick={async () => {
+                const next = !showOnlinePanel;
+                setShowOnlinePanel(next);
+                requestOpen("topbar", next);
+                if (user?.uid) {
+                  try {
+                    if (next) {
+                      await setDoc(
+                        doc(db, "users", user.uid),
+                        { online: true, lastLogin: serverTimestamp() },
+                        { merge: true }
+                      );
+                    } else {
+                      await setDoc(
+                        doc(db, "users", user.uid),
+                        { online: false },
+                        { merge: true }
+                      );
+                    }
+                  } catch (e) {
+                    if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
+                  }
+                }
+              }}
+              title="Hvem er online"
+              aria-label="Hvem er online"
+              aria-expanded={showOnlinePanel}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+              </svg>
+            </button>
+            {showOnlinePanel && (
+              <div className={styles.onlineListPopup}>
+                <OnlineUsers variant="popup" />
+              </div>
+            )}
+          </div>
+        )}
         <button
           className={styles.inventoryIconBtn}
           onClick={() => {
@@ -1350,6 +1426,19 @@ const TopBar = () => {
               zIndex: 998,
             }}
             onClick={() => setShowNotificationsPanel(false)}
+          />
+        )}
+
+        {/* Close online panel on outside click */}
+        {showOnlinePanel && (
+          <div
+            role="presentation"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 998,
+            }}
+            onClick={() => closeOnlinePanel()}
           />
         )}
 

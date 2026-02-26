@@ -110,6 +110,12 @@
   border: 1px solid #D4C4A8;
   color: #2C2C2C;
 }
+
+.onlineUsersContainerPopup {
+  max-height: 70vh;
+  height: auto;
+  padding: 1rem;
+}
 /* ---------------Online users list styles -------------------*/
 
 .onlineUsersContainer h2 {

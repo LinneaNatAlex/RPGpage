@@ -5,7 +5,7 @@ import styles from "./App.module.css";
 import { useState, useEffect, startTransition } from "react";
 import {
   doc,
-  onSnapshot,
+  getDoc,
   collection,
   query,
   orderBy,
@@ -23,6 +23,7 @@ import PrivateChat from "./Components/Chat/PrivateChat";
 import Chat from "./Components/Chat/Chat";
 import TopBar from "./Components/TopBar/TopBar";
 import { OpenPrivateChatProvider } from "./context/openPrivateChatContext";
+import { OnlineListProvider } from "./context/onlineListContext";
 import AdminGlobalAgeVerificationModal from "./Components/AdminGlobalAgeVerificationModal";
 import MobileLayout from "./Components/MobileLayout/MobileLayout";
 import DetentionPopup from "./Components/DetentionPopup/DetentionPopup";
@@ -156,23 +157,25 @@ function App() {
     }
   }, [isDark, globalPinkMode]);
 
-  // Load global site config (dark mode, pink mode – leses for alle så tema lastes med en gang)
+  // Site config: getDoc + poll 5 min (sparer onSnapshot-read ved reload)
+  const CONFIG_POLL_MS = 5 * 60 * 1000;
   useEffect(() => {
     const configRef = doc(db, "config", "site");
-    const unsub = onSnapshot(
-      configRef,
-      (snap) => {
+    const fetchConfig = async () => {
+      try {
+        const snap = await getDoc(configRef);
         const data = snap.exists() ? snap.data() : {};
         setGlobalDarkMode(data.globalDarkMode === true);
         setGlobalPinkMode(data.globalPinkMode === true);
-      },
-      (err) => {
+      } catch (err) {
         console.warn("Config/site kunne ikke lastes:", err?.message);
         setGlobalDarkMode(false);
         setGlobalPinkMode(false);
-      },
-    );
-    return () => unsub();
+      }
+    };
+    fetchConfig();
+    const t = setInterval(fetchConfig, CONFIG_POLL_MS);
+    return () => clearInterval(t);
   }, []);
 
   // Potion effects fra useUserData (én onSnapshot i stedet for to – sparer Firestore reads)
@@ -530,6 +533,7 @@ function App() {
 
       <RotateDevicePopup />
       <OpenPrivateChatProvider>
+        <OnlineListProvider>
         <MobileLayout>
           <div
             className={styles.rootContainer}
@@ -562,6 +566,7 @@ function App() {
             {user && <DetentionPopup />}
           </div>
         </MobileLayout>
+        </OnlineListProvider>
       </OpenPrivateChatProvider>
     </>
   );

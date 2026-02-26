@@ -20,13 +20,14 @@ const useLocationTracker = () => {
       }
     };
 
-    // Update location on mount and route changes
-    updateLocation();
-
-    // Update location every 30 seconds
+    // Ikke skriv ved mount/reload – vent til første intervall (sparer writes ved reload)
     const interval = setInterval(updateLocation, 30000);
+    const firstDelay = setTimeout(updateLocation, 5000); // Første oppdatering etter 5 s
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(firstDelay);
+    };
   }, [user]);
 };
 

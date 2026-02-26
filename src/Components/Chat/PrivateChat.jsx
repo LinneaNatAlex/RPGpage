@@ -118,6 +118,7 @@ import useUserData from "../../hooks/useUserData";
 import useOnlineUsers from "../../hooks/useOnlineUsers";
 import { preparePrivateChatSound } from "./ping_alt";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
+import { useOnlineListContext } from "../../context/onlineListContext";
 import { useNavigate, Link } from "react-router-dom";
 import SiteModal from "./SiteModal";
 import { stripEmoji } from "../../utils/stripEmoji";
@@ -129,6 +130,7 @@ import {
 
 const PrivateChat = ({ fullPage = false }) => {
   const navigate = useNavigate();
+  const { requestOpen } = useOnlineListContext();
   const [editingMessage, setEditingMessage] = useState(null);
   const [selectedMessages, setSelectedMessages] = useState([]);
   // Husk om chatten var lukket eller åpen (default: lukket)
@@ -140,6 +142,12 @@ const PrivateChat = ({ fullPage = false }) => {
   useEffect(() => {
     isCollapsedRef.current = isCollapsed;
   }, [isCollapsed]);
+
+  // Be om online-liste kun når privat chat er åpen (spar reads)
+  useEffect(() => {
+    requestOpen("private", !isCollapsed);
+    return () => requestOpen("private", false);
+  }, [isCollapsed, requestOpen]);
   const [search, setSearch] = useState("");
   const [activeChats, setActiveChats] = useState([]); // [{user, messages: []}]
   const [selectedGroup, setSelectedGroup] = useState(null); // groupId

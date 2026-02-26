@@ -2,7 +2,6 @@
 import styles from "./MainPage.module.css";
 import { Link } from "react-router-dom";
 import NewsFeed from "../../Components/NewsFeed/NewsFeed";
-import OnlineUsers from "../../Components/OnlineUsers/OnlineUsers";
 import { useAuth } from "../../context/authContext";
 import RPGCalendarSidebar from "../../Components/RPGCalendarSidebar";
 import AnnouncementBanner from "../../Components/AnnouncementBanner/AnnouncementBanner";
@@ -261,14 +260,11 @@ const MainPage = () => {
         <HeaderContent />
       </header>
       <main className={styles.mainContentHome}>
-        <div className={styles.onlineUsersContainer}>
-          {user && <OnlineUsers />}
-        </div>
         <div className={styles.newsFeedContainer}>{user && <NewsFeed />}</div>
-        {/* RPG calendar */}
         {user && (
           <div className={styles.rpgCalendarSidebarContainer}>
             <RPGCalendarSidebar />
+            <div id="news-pagination-portal" className={styles.newsPaginationSlot} />
           </div>
         )}
       </main>

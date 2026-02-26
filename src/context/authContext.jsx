@@ -276,49 +276,7 @@ export const AuthProvider = ({ children }) => {
           }
           setBlocked({ blocked, reason, until, description, bannedType });
 
-          // Update online status with error handling (only for verified users with Firestore data)
-          try {
-            if (currentUser.emailVerified && userDoc && userDoc.exists()) {
-              // Use a timeout to prevent this from blocking the auth process
-              // Only update online + lastLogin; do not overwrite displayName (admin may have edited it in Firestore)
-              const updateOnlinePromise = setDoc(
-                doc(db, "users", currentUser.uid),
-                {
-                  online: true,
-                  lastLogin: new Date(),
-                },
-                { merge: true }
-              );
-
-              // Don't wait more than 3 seconds for online status update
-              Promise.race([
-                updateOnlinePromise,
-                new Promise((resolve) => setTimeout(resolve, 3000)),
-              ]).catch((onlineError) => {
-                console.warn("Failed to update online status:", onlineError);
-              });
-            }
-          } catch (onlineError) {
-            console.warn("Failed to update online status:", onlineError);
-          }
-
-          // Handle offline status
-          const handleUnload = async () => {
-            try {
-              if (currentUser.emailVerified && userDoc && userDoc.exists()) {
-                await setDoc(
-                  doc(db, "users", currentUser.uid),
-                  {
-                    online: false,
-                  },
-                  { merge: true }
-                );
-              }
-            } catch (error) {
-              console.warn("Failed to update offline status:", error);
-            }
-          };
-          window.addEventListener("beforeunload", handleUnload);
+          // Online/lastLogin skrives ikke her – kun når bruker åpner online-popup (TopBar)
         } else {
           setUser(null);
           setEmailVerified(false);
