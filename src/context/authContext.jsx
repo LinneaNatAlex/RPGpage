@@ -118,12 +118,21 @@ export const AuthProvider = ({ children }) => {
 
     window.addEventListener("focus", handleFocus);
 
+    const authStart = Date.now();
+    const MIN_LOAD_MS = 500; // Min tid loading vises ved reload (unngår blink når auth er cachet)
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      // Set a timeout to prevent infinite loading
       const timeoutId = setTimeout(() => {
         console.warn("Auth loading timeout - forcing loading to false");
         setLoading(false);
-      }, 10000); // 10 second timeout
+      }, 10000);
+
+      const setLoadingWhenReady = () => {
+        const elapsed = Date.now() - authStart;
+        const delay = Math.max(0, MIN_LOAD_MS - elapsed);
+        if (delay > 0) setTimeout(() => setLoading(false), delay);
+        else setLoading(false);
+      };
 
       try {
         if (currentUser) {
@@ -149,7 +158,6 @@ export const AuthProvider = ({ children }) => {
                   until: null,
                   bannedType: null,
                 });
-                setLoading(false);
                 return;
               }
               // Reduce wait time between retries
@@ -234,7 +242,6 @@ export const AuthProvider = ({ children }) => {
                 until: null,
                 bannedType: null,
               });
-              setLoading(false);
               return;
             }
           }
@@ -324,11 +331,9 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error in auth state change:", error);
-        // Set loading to false even on error to prevent infinite loading
-        setLoading(false);
       } finally {
-        clearTimeout(timeoutId); // Clear timeout when auth process completes
-        setLoading(false);
+        clearTimeout(timeoutId);
+        setLoadingWhenReady();
       }
     });
 

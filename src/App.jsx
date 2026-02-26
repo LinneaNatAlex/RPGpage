@@ -41,7 +41,10 @@ function App() {
 
   // Spinner vises minst AUTH_LOADING_MIN_MS slik at den ikke bare blinker ved rask auth
   useEffect(() => {
-    const t = setTimeout(() => setMinLoadTimeElapsed(true), AUTH_LOADING_MIN_MS);
+    const t = setTimeout(
+      () => setMinLoadTimeElapsed(true),
+      AUTH_LOADING_MIN_MS,
+    );
     return () => clearTimeout(t);
   }, []);
 
@@ -128,18 +131,28 @@ function App() {
   }, [user, lastPrivateMessageId, lastPingTime]);
 
   // Sync data-theme to <html> so IE/Edge/all browsers get same dark/pink styles (og lagre for reload)
-  const isDark = globalDarkMode || (darkModeUntil && typeof darkModeUntil === "number" && darkModeUntil > Date.now());
+  const isDark =
+    globalDarkMode ||
+    (darkModeUntil &&
+      typeof darkModeUntil === "number" &&
+      darkModeUntil > Date.now());
   useEffect(() => {
     const html = document.documentElement;
     if (globalPinkMode) {
       html.setAttribute("data-theme", "pink");
-      try { localStorage.setItem("vayloria-theme", "pink"); } catch (_) {}
+      try {
+        localStorage.setItem("vayloria-theme", "pink");
+      } catch (_) {}
     } else if (isDark) {
       html.setAttribute("data-theme", "dark");
-      try { localStorage.setItem("vayloria-theme", "dark"); } catch (_) {}
+      try {
+        localStorage.setItem("vayloria-theme", "dark");
+      } catch (_) {}
     } else {
       html.removeAttribute("data-theme");
-      try { localStorage.setItem("vayloria-theme", "light"); } catch (_) {}
+      try {
+        localStorage.setItem("vayloria-theme", "light");
+      } catch (_) {}
     }
   }, [isDark, globalPinkMode]);
 
@@ -157,7 +170,7 @@ function App() {
         console.warn("Config/site kunne ikke lastes:", err?.message);
         setGlobalDarkMode(false);
         setGlobalPinkMode(false);
-      }
+      },
     );
     return () => unsub();
   }, []);
@@ -168,37 +181,51 @@ function App() {
     const now = Date.now();
     startTransition(() => {
       setDarkModeUntil(
-        userData.darkModeUntil && typeof userData.darkModeUntil === "number" && userData.darkModeUntil > now
+        userData.darkModeUntil &&
+          typeof userData.darkModeUntil === "number" &&
+          userData.darkModeUntil > now
           ? userData.darkModeUntil
           : null,
       );
       setRetroUntil(
-        userData.retroUntil && typeof userData.retroUntil === "number" && userData.retroUntil > now
+        userData.retroUntil &&
+          typeof userData.retroUntil === "number" &&
+          userData.retroUntil > now
           ? userData.retroUntil
           : null,
       );
       setMirrorUntil(
-        userData.mirrorUntil && typeof userData.mirrorUntil === "number" && userData.mirrorUntil > now
+        userData.mirrorUntil &&
+          typeof userData.mirrorUntil === "number" &&
+          userData.mirrorUntil > now
           ? userData.mirrorUntil
           : null,
       );
       setSpeedUntil(
-        userData.speedUntil && typeof userData.speedUntil === "number" && userData.speedUntil > now
+        userData.speedUntil &&
+          typeof userData.speedUntil === "number" &&
+          userData.speedUntil > now
           ? userData.speedUntil
           : null,
       );
       setSlowMotionUntil(
-        userData.slowMotionUntil && typeof userData.slowMotionUntil === "number" && userData.slowMotionUntil > now
+        userData.slowMotionUntil &&
+          typeof userData.slowMotionUntil === "number" &&
+          userData.slowMotionUntil > now
           ? userData.slowMotionUntil
           : null,
       );
       setSurveillanceUntil(
-        userData.surveillanceUntil && typeof userData.surveillanceUntil === "number" && userData.surveillanceUntil > now
+        userData.surveillanceUntil &&
+          typeof userData.surveillanceUntil === "number" &&
+          userData.surveillanceUntil > now
           ? userData.surveillanceUntil
           : null,
       );
       setSparkleUntil(
-        userData.sparkleUntil && typeof userData.sparkleUntil === "number" && userData.sparkleUntil > now
+        userData.sparkleUntil &&
+          typeof userData.sparkleUntil === "number" &&
+          userData.sparkleUntil > now
           ? userData.sparkleUntil
           : null,
       );
@@ -503,38 +530,38 @@ function App() {
 
       <RotateDevicePopup />
       <OpenPrivateChatProvider>
-      <MobileLayout>
-        <div
-          className={styles.rootContainer}
-          data-theme={
-            globalPinkMode
-              ? "pink"
-              : globalDarkMode ||
-                (darkModeUntil &&
-                  typeof darkModeUntil === "number" &&
-                  darkModeUntil > Date.now())
-              ? "dark"
-              : undefined
-          }
-        >
-          {/* Navbar and TopBar always visible */}
-          <header className={styles.header}>
-            <Navbar />
-          </header>
-          {/* Global admin popup for age verification requests (only for logged-in users) */}
-          {user && <AdminGlobalAgeVerificationModal />}
-          <main className={styles.main}>
-            {/* TopBar for logged-in users */}
-            {user && <TopBar />}
-            <Outlet />
-          </main>
-          {/* Main chat and PrivateChat only for logged-in users */}
-          {user && <Chat />}
-          {user && location.pathname !== "/messages" && <PrivateChat />}
-          {/* Pet Discovery Popup Only for logged-in users */}
-          {user && <DetentionPopup />}
-        </div>
-      </MobileLayout>
+        <MobileLayout>
+          <div
+            className={styles.rootContainer}
+            data-theme={
+              globalPinkMode
+                ? "pink"
+                : globalDarkMode ||
+                    (darkModeUntil &&
+                      typeof darkModeUntil === "number" &&
+                      darkModeUntil > Date.now())
+                  ? "dark"
+                  : undefined
+            }
+          >
+            {/* Navbar and TopBar always visible */}
+            <header className={styles.header}>
+              <Navbar />
+            </header>
+            {/* Global admin popup for age verification requests (only for logged-in users) */}
+            {user && <AdminGlobalAgeVerificationModal />}
+            <main className={styles.main}>
+              {/* TopBar for logged-in users */}
+              {user && <TopBar />}
+              <Outlet />
+            </main>
+            {/* Main chat and PrivateChat only for logged-in users */}
+            {user && <Chat />}
+            {user && location.pathname !== "/messages" && <PrivateChat />}
+            {/* Pet Discovery Popup Only for logged-in users */}
+            {user && <DetentionPopup />}
+          </div>
+        </MobileLayout>
       </OpenPrivateChatProvider>
     </>
   );
