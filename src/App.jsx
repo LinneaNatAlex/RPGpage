@@ -196,7 +196,15 @@ function App() {
     });
   }, [userData]);
 
-  // Render app shell immediately; auth/content loads in place (no full-screen "Loading Vayloria" block)
+  // Ved reload: vis kun spinner til auth er klar, så bruker ikke ser gjestesiden blinke
+  if (loading) {
+    return (
+      <div className={styles.appAuthLoading} aria-busy="true" aria-label="Loading">
+        <div className={styles.appAuthLoadingSpinner} />
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Global Potion Effects CSS */}
