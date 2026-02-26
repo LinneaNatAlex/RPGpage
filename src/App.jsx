@@ -196,11 +196,33 @@ function App() {
     });
   }, [userData]);
 
-  // Ved reload: vis kun spinner til auth er klar, så bruker ikke ser gjestesiden blinke
+  // Ved reload: vis kun spinner til auth er klar (inline + global keyframes så det fungerer likt på localhost og produksjon)
   if (loading) {
     return (
-      <div className={styles.appAuthLoading} aria-busy="true" aria-label="Loading">
-        <div className={styles.appAuthLoadingSpinner} />
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "#E8DDD4",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 99999,
+        }}
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <style>{`@keyframes appAuthSpin{to{transform:rotate(360deg);}}`}</style>
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            border: "4px solid rgba(123,104,87,0.3)",
+            borderTopColor: "#7B6857",
+            borderRadius: "50%",
+            animation: "appAuthSpin 0.9s linear infinite",
+          }}
+        />
       </div>
     );
   }
