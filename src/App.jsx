@@ -31,10 +31,19 @@ import useUserData from "./hooks/useUserData";
 import RotateDevicePopup from "./Components/RotateDevicePopup";
 import "./App.mobile.css";
 
+const AUTH_LOADING_MIN_MS = 500; // Minimum tid spinner vises, unngår blink/twitch ved rask reload
+
 function App() {
   const { user, loading } = useAuth();
   const { userData } = useUserData();
   const location = useLocation();
+  const [minLoadTimeElapsed, setMinLoadTimeElapsed] = useState(false);
+
+  // Spinner vises minst AUTH_LOADING_MIN_MS slik at den ikke bare blinker ved rask auth
+  useEffect(() => {
+    const t = setTimeout(() => setMinLoadTimeElapsed(true), AUTH_LOADING_MIN_MS);
+    return () => clearTimeout(t);
+  }, []);
 
   // Track user location for Surveillance Potion
   useLocationTracker();
@@ -196,8 +205,9 @@ function App() {
     });
   }, [userData]);
 
-  // Ved reload: vis kun spinner til auth er klar (inline + global keyframes så det fungerer likt på localhost og produksjon)
-  if (loading) {
+  // Ved reload: vis spinner til auth er klar OG minst 500ms har gått (unngår twitch)
+  const showAuthLoading = loading || !minLoadTimeElapsed;
+  if (showAuthLoading) {
     return (
       <div
         style={{
