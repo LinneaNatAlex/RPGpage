@@ -6,6 +6,7 @@ import {
   where,
   limit,
   getDocs,
+  onSnapshot,
   orderBy,
   updateDoc,
   doc,
@@ -22,7 +23,7 @@ export default function useNotifications(user, userData) {
   const [notifications, setNotifications] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
 
-  const NOTIF_POLL_MS = 3 * 60 * 1000; // 3 min, kun når fanen er synlig
+  // Sanntidslytter så nye varsler (f.eks. private_chat) vises med en gang
   useEffect(() => {
     if (!user?.uid) {
       setNotifications([]);
@@ -48,31 +49,15 @@ export default function useNotifications(user, userData) {
       setNotifications(list);
       cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
     };
-    const fetchNotifs = () => {
-      getDocs(q)
-        .then(applySnapshot)
-        .catch((err) => {
-          console.error("Notifications fetch error:", err);
-          setNotifications([]);
-        });
-    };
-    let interval = null;
-    const runWhenVisible = () => {
-      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
-      fetchNotifs();
-      interval = setInterval(fetchNotifs, NOTIF_POLL_MS);
-    };
-    runWhenVisible();
-    const onVisibility = () => {
-      if (interval) clearInterval(interval);
-      interval = null;
-      if (document.visibilityState === "visible") runWhenVisible();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      if (interval) clearInterval(interval);
-    };
+    const unsub = onSnapshot(
+      q,
+      applySnapshot,
+      (err) => {
+        if (process.env.NODE_ENV === "development") console.warn("Notifications listener error:", err?.message);
+        setNotifications([]);
+      }
+    );
+    return () => unsub();
   }, [user?.uid]);
 
   useEffect(() => {

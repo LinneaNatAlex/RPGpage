@@ -16,6 +16,7 @@ import {
   query,
   where,
   getDocs,
+  onSnapshot,
   orderBy,
   limit,
 } from "firebase/firestore";
@@ -472,7 +473,7 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [invisibleUntil]);
 
-  // Notifications: real-time listener so badge and list update when new notifications arrive
+  // Notifications: sanntidslytter så nye varsler (f.eks. private_chat) vises med en gang
   const fetchNotifications = useRef(null);
   useEffect(() => {
     if (!user) return;
@@ -499,33 +500,16 @@ const TopBar = () => {
       cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
     };
 
-    const fetch = () => {
-      getDocs(q)
-        .then(applySnapshot)
-        .catch((e) => {
-          console.error("Notifications fetch error:", e);
-          setNotifications([]);
-        });
-    };
-
-    fetchNotifications.current = fetch;
-    let interval = null;
-    const runWhenVisible = () => {
-      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
-      fetch();
-      interval = setInterval(fetch, 3 * 60 * 1000);
-    };
-    runWhenVisible();
-    const onVisibility = () => {
-      if (interval) clearInterval(interval);
-      interval = null;
-      if (document.visibilityState === "visible") runWhenVisible();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      if (interval) clearInterval(interval);
-    };
+    const unsub = onSnapshot(
+      q,
+      applySnapshot,
+      (e) => {
+        console.error("Notifications listener error:", e);
+        setNotifications([]);
+      }
+    );
+    fetchNotifications.current = () => getDocs(q).then(applySnapshot).catch(() => setNotifications([]));
+    return () => unsub();
   }, [user]);
 
   // Recent news for notification list (newer than lastSeenNewsAt)
