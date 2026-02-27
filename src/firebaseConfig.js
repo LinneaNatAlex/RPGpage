@@ -18,10 +18,8 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Standard Firestore (default persistence). memoryLocalCache() can cause
-// "INTERNAL ASSERTION FAILED: Unexpected state" with many listeners – avoid it.
+// Standard Firestore (default persistence)
 export const db = getFirestore(app);
-
 export const storage = getStorage(app);
 
 // Suppress emulator warnings in development

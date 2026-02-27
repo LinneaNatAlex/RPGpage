@@ -1180,23 +1180,26 @@ const TopBar = () => {
               className={styles.inventoryIconBtn}
               onClick={async () => {
                 const next = !showOnlinePanel;
+                if (next && user?.uid) {
+                  try {
+                    await setDoc(
+                      doc(db, "users", user.uid),
+                      { online: true, lastLogin: serverTimestamp() },
+                      { merge: true }
+                    );
+                  } catch (e) {
+                    if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
+                  }
+                }
                 setShowOnlinePanel(next);
                 requestOpen("topbar", next);
-                if (user?.uid) {
+                if (!next && user?.uid) {
                   try {
-                    if (next) {
-                      await setDoc(
-                        doc(db, "users", user.uid),
-                        { online: true, lastLogin: serverTimestamp() },
-                        { merge: true }
-                      );
-                    } else {
-                      await setDoc(
-                        doc(db, "users", user.uid),
-                        { online: false },
-                        { merge: true }
-                      );
-                    }
+                    await setDoc(
+                      doc(db, "users", user.uid),
+                      { online: false },
+                      { merge: true }
+                    );
                   } catch (e) {
                     if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
                   }

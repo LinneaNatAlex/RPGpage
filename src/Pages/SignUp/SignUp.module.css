@@ -306,12 +306,17 @@
   color: #d4c4a8;
   font-size: 0.95rem;
 }
-/* Stjerne-checkbox: outline når uavkrysset, fylt når avkrysset */
+/* Stjerne-checkbox: outline når uavkrysset, fylt når avkrysset (samme på PC og mobil) */
 .terms input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   width: 1.75rem;
   height: 1.75rem;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0;
+  box-sizing: border-box;
   flex-shrink: 0;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.15);
@@ -332,6 +337,9 @@
 .terms input[type="checkbox"]:checked {
   background-color: rgba(123, 104, 87, 0.4);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='%23e8dcc8' stroke='%238b7a6b' stroke-width='0.6' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 85%;
+  background-position: center;
+  background-repeat: no-repeat;
   border-color: #a08b6e;
 }
 .terms input[type="checkbox"]:focus {
@@ -476,6 +484,45 @@ input::placeholder {
     padding: 10px 14px;
     font-size: 0.9rem;
   }
+
+  /* Samme stjerne-checkbox på mobil: tving custom utseende, større touch-område */
+  .terms {
+    gap: 0.6rem;
+    margin: 1rem 0;
+    align-items: center;
+  }
+  .terms input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.15);
+    background-size: 85%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='none' stroke='%23c9b896' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+    border: 1px solid rgba(201, 184, 150, 0.5);
+    border-radius: 2px;
+  }
+  .terms input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='%23e8dcc8' stroke='%238b7a6b' stroke-width='0.6' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: 85%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .terms label {
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+    line-height: 1.4;
+  }
+  .terms .termsLink {
+    font-size: 0.95rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -509,6 +556,39 @@ input::placeholder {
   
   .formGroupTitle {
     font-size: 1.2rem;
+  }
+
+  /* Ekstra små skjermer: stjerne-checkbox like tydelig, god touch-størrelse */
+  .terms {
+    gap: 0.5rem;
+    margin: 0.9rem 0;
+  }
+  .terms input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: 0;
+    box-sizing: border-box;
+    background-size: 85%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='none' stroke='%23c9b896' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .terms input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='%23e8dcc8' stroke='%238b7a6b' stroke-width='0.6' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: 85%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .terms label {
+    font-size: 0.9rem;
+  }
+  .terms .termsLink {
+    font-size: 0.9rem;
   }
 }
 

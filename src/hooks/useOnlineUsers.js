@@ -42,21 +42,26 @@ const useOnlineUsers = () => {
     };
 
     let interval = null;
+    let refetchTimeout = null;
     const runWhenVisible = () => {
       if (typeof document === "undefined" || document.visibilityState !== "visible") return;
       fetchOnline();
+      refetchTimeout = setTimeout(fetchOnline, 800);
       interval = setInterval(fetchOnline, POLL_INTERVAL_MS);
     };
     runWhenVisible();
     const onVisibility = () => {
       if (interval) clearInterval(interval);
+      if (refetchTimeout) clearTimeout(refetchTimeout);
       interval = null;
+      refetchTimeout = null;
       if (document.visibilityState === "visible") runWhenVisible();
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       if (interval) clearInterval(interval);
+      if (refetchTimeout) clearTimeout(refetchTimeout);
     };
   }, [enabled]);
 
