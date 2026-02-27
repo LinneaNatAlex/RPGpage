@@ -42,12 +42,16 @@ const VerifyEmail = () => {
             if (userData.uid !== currentUid) {
               localStorage.removeItem("tempUserData");
             } else {
-              await setDoc(doc(db, "users", currentUid), {
-                ...userData,
-                createdAt: serverTimestamp(),
-                lastLogin: serverTimestamp(),
-                online: true,
-              });
+              await setDoc(
+                doc(db, "users", currentUid),
+                {
+                  ...userData,
+                  createdAt: serverTimestamp(),
+                  lastLogin: serverTimestamp(),
+                  online: true,
+                },
+                { merge: true }
+              );
               localStorage.removeItem("tempUserData");
               setUserDataSaved(true);
             }

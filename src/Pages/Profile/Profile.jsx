@@ -1,7 +1,7 @@
 import styles from "./Profile.module.css";
 import { useEffect, useState, Suspense, startTransition } from "react";
 import { flushSync } from "react-dom";
-import { getDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { getDoc, getDocFromServer, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useAuth } from "../../context/authContext";
@@ -36,7 +36,7 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
+        const userDoc = await getDocFromServer(userDocRef);
         if (userDoc.exists()) {
           const data = userDoc.data();
           setUserData(data);
@@ -559,7 +559,7 @@ const Profile = () => {
                           flushSync(() => {});
                           try {
                             const userDocRef = doc(db, "users", user.uid);
-                            const userDoc = await getDoc(userDocRef);
+                            const userDoc = await getDocFromServer(userDocRef);
                             if (userDoc.exists()) {
                               const data = userDoc.data();
                               setUserData((prev) => ({ ...prev, ...data }));

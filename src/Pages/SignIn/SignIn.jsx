@@ -76,13 +76,17 @@ const SignIn = () => {
         try {
           const userData = JSON.parse(tempUserData);
           if (userData.uid === user.uid) {
-            await setDoc(doc(db, "users", user.uid), {
-              ...userData,
-              uid: user.uid,
-              createdAt: serverTimestamp(),
-              lastLogin: serverTimestamp(),
-              online: true,
-            });
+            await setDoc(
+              doc(db, "users", user.uid),
+              {
+                ...userData,
+                uid: user.uid,
+                createdAt: serverTimestamp(),
+                lastLogin: serverTimestamp(),
+                online: true,
+              },
+              { merge: true }
+            );
           }
           localStorage.removeItem("tempUserData");
         } catch (firestoreError) {

@@ -241,7 +241,7 @@ export const AuthProvider = ({ children }) => {
                       };
                     })()
 
-                await setDoc(doc(db, "users", currentUser.uid), dataToSave);
+                await setDoc(doc(db, "users", currentUser.uid), dataToSave, { merge: true });
                 if (isTempForThisUser) localStorage.removeItem("tempUserData");
                 setUser({ ...currentUser, ...dataToSave });
               } catch (error) {
