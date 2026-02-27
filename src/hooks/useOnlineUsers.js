@@ -1,4 +1,5 @@
-// Henter kun når online-listen er «åpen» (forside-panel eller chat) – spar reads
+// Henter kun når online-boksen er synlig – ingen reads når boksen er lukket.
+// Listen beholdes når boksen lukkes, så brukere vises som online til de logger av/bytter fane.
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -12,7 +13,6 @@ const useOnlineUsers = () => {
 
   useEffect(() => {
     if (!enabled) {
-      setOnlineUsers([]);
       return;
     }
     const fetchOnline = async () => {
