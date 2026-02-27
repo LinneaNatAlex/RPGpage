@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { initializeFirestore, memoryLocalCache, getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { collection, getDocs } from "firebase/firestore";
 
@@ -18,25 +18,9 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Use memory cache to avoid Chrome IndexedDB persistence issues.
-// Single Firestore instance – avoid duplicate init (e.g. HMR / Strict Mode).
-let db;
-try {
-  db = initializeFirestore(app, {
-    localCache: memoryLocalCache(),
-  });
-} catch (error) {
-  const msg = error?.message || "";
-  if (msg.includes("already been called") || msg.includes("already been initialized")) {
-    db = getFirestore(app);
-  } else {
-    throw error;
-  }
-}
-if (!db) {
-  db = getFirestore(app);
-}
-export { db };
+// Standard Firestore (default persistence). memoryLocalCache() can cause
+// "INTERNAL ASSERTION FAILED: Unexpected state" with many listeners – avoid it.
+export const db = getFirestore(app);
 
 export const storage = getStorage(app);
 

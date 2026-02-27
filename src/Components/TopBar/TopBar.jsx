@@ -504,8 +504,10 @@ const TopBar = () => {
       q,
       applySnapshot,
       (e) => {
-        console.error("Notifications listener error:", e);
-        setNotifications([]);
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Notifications listener error:", e?.message || e);
+        }
+        // Ikke tøm listen ved feil – behold eksisterende varsler
       }
     );
     fetchNotifications.current = () => getDocs(q).then(applySnapshot).catch(() => setNotifications([]));

@@ -53,8 +53,10 @@ export default function useNotifications(user, userData) {
       q,
       applySnapshot,
       (err) => {
-        if (process.env.NODE_ENV === "development") console.warn("Notifications listener error:", err?.message);
-        setNotifications([]);
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Notifications listener error:", err?.message);
+        }
+        // Ikke tøm listen ved feil – behold eksisterende varsler
       }
     );
     return () => unsub();

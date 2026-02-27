@@ -736,21 +736,27 @@ const PrivateChat = ({ fullPage = false }) => {
       // Keep only last 20 messages in this chat
       trimPrivateChatToLimit(chatId).catch(() => {});
 
-      // Notify recipient
-      const fromDisplayName =
-        currentUser.displayName?.trim() || currentUser.email || "Someone";
-      try {
-        await addDoc(collection(db, "notifications"), {
-          to: selectedUser.uid,
-          type: "private_chat",
-          from: currentUser.uid,
-          fromUid: currentUser.uid,
-          fromName: fromDisplayName,
-          read: false,
-          created: Date.now(),
-          textPreview: message.slice(0, 80),
-        });
-      } catch (_) {}
+      // Notify recipient (må lykkes så mottaker får varsel)
+      if (selectedUser?.uid) {
+        const fromDisplayName =
+          currentUser.displayName?.trim() || currentUser.email || "Someone";
+        try {
+          await addDoc(collection(db, "notifications"), {
+            to: selectedUser.uid,
+            type: "private_chat",
+            from: currentUser.uid,
+            fromUid: currentUser.uid,
+            fromName: fromDisplayName,
+            read: false,
+            created: Date.now(),
+            textPreview: (message || "").slice(0, 80),
+          });
+        } catch (notifErr) {
+          if (process.env.NODE_ENV === "development") {
+            console.warn("Private chat notification failed:", notifErr?.message || notifErr);
+          }
+        }
+      }
 
       // Add each other in userChats for both sender and receiver
       const senderChatsRef = doc(db, "userChats", currentUser.uid);

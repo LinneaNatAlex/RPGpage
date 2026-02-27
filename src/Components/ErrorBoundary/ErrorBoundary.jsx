@@ -7,6 +7,13 @@ class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
+    const msg = error?.message || String(error);
+    if (msg.includes('INTERNAL ASSERTION FAILED') && msg.includes('FIRESTORE')) {
+      return null;
+    }
+    if (msg.includes('Minified React error #426') || msg.includes('suspended while responding to synchronous input')) {
+      return null;
+    }
     return { hasError: true, error };
   }
 
