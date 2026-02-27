@@ -1,5 +1,5 @@
 // Imports necessary libraries and hooks, to handle live updates of chat messages from Firebase Firestore.
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../firebaseConfig";
 import {
   collection,
@@ -9,52 +9,70 @@ import {
   limit,
 } from "firebase/firestore";
 
+const onSnapshotError = (err) => {
+  if (process.env.NODE_ENV === "development") {
+    console.warn("Firestore onSnapshot error:", err?.message || err);
+  }
+};
+
 // making this custom hook to fetch messages from the db, can be used in any part of the app!
 
 const useChatMessages = () => {
   const [messages, setMessages] = useState([]);
   const [rpgGrateHall, setRpgGrateHall] = useState([]);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // ---------------------------Live Chat---------------------------
   useEffect(() => {
-    // Listen to the "messages" collection stored in firestore, in real-time.
-    // General chat is trimmed to 30 messages; only listen to recent 30
     const querry = query(
       collection(db, "messages"),
       orderBy("timestamp", "desc"),
       limit(30)
     );
-    // onSnapshot used to make real-time uppdates in firestore. Making it possible for messages to be sendt back and fourth in real-time
-    const unsubscribe = onSnapshot(querry, (snapshot) => {
-      const message = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      // Reverse to show oldest first in UI
-      setMessages(message.reverse());
-    });
+    const unsubscribe = onSnapshot(
+      querry,
+      (snapshot) => {
+        if (!mountedRef.current) return;
+        const message = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMessages(message.reverse());
+      },
+      onSnapshotError
+    );
     return () => unsubscribe();
   }, []);
-  // Sort messages after  timestamp.
+
   // -------------------------RPG Grate Hall-------------------------
   useEffect(() => {
-    // Listen to the "rpgGrateHall" collection stored in firestore, in real-time.
-    // QUOTA OPTIMIZATION: Limit to recent 150 messages to reduce Firebase reads
     const querry = query(
       collection(db, "rpgGrateHall"),
       orderBy("timestamp", "desc"),
       limit(150)
     );
-    const unsubscribe = onSnapshot(querry, (snapshot) => {
-      const rpgGrateHallMsgs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      // Reverse to show oldest first in UI
-      setRpgGrateHall(rpgGrateHallMsgs.reverse());
-    });
+    const unsubscribe = onSnapshot(
+      querry,
+      (snapshot) => {
+        if (!mountedRef.current) return;
+        const rpgGrateHallMsgs = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setRpgGrateHall(rpgGrateHallMsgs.reverse());
+      },
+      onSnapshotError
+    );
     return () => unsubscribe();
   }, []);
+
   return { messages, rpgGrateHall };
 };
 // Sort messages after timestamp.

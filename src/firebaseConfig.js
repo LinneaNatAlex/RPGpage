@@ -18,20 +18,23 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Use memory cache to avoid Chrome IndexedDB persistence issues
-// Check if Firestore is already initialized to avoid duplicate initialization
+// Use memory cache to avoid Chrome IndexedDB persistence issues.
+// Single Firestore instance – avoid duplicate init (e.g. HMR / Strict Mode).
 let db;
 try {
   db = initializeFirestore(app, {
     localCache: memoryLocalCache(),
   });
 } catch (error) {
-  // If already initialized, get the existing instance
-  if (error.message.includes("already been called")) {
+  const msg = error?.message || "";
+  if (msg.includes("already been called") || msg.includes("already been initialized")) {
     db = getFirestore(app);
   } else {
     throw error;
   }
+}
+if (!db) {
+  db = getFirestore(app);
 }
 export { db };
 

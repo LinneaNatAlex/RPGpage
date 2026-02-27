@@ -128,9 +128,16 @@ import {
   MAX_PRIVATE_MESSAGES_PER_DAY,
 } from "../../utils/privateChatDailyLimit";
 
+const onSnapshotErr = (err) => {
+  if (process.env.NODE_ENV === "development") {
+    console.warn("Firestore onSnapshot error:", err?.message || err);
+  }
+};
+
 const PrivateChat = ({ fullPage = false }) => {
   const navigate = useNavigate();
   const { requestOpen } = useOnlineListContext();
+  const mountedRef = useRef(true);
   const [editingMessage, setEditingMessage] = useState(null);
   const [selectedMessages, setSelectedMessages] = useState([]);
   // Husk om chatten var lukket eller åpen (default: lukket)
@@ -142,6 +149,13 @@ const PrivateChat = ({ fullPage = false }) => {
   useEffect(() => {
     isCollapsedRef.current = isCollapsed;
   }, [isCollapsed]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Be om online-liste kun når privat chat er åpen (spar reads)
   useEffect(() => {
@@ -401,15 +415,11 @@ const PrivateChat = ({ fullPage = false }) => {
       orderBy("created", "desc"),
       limit(1),
     );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        const doc = snap.docs[0];
-        if (!doc) return;
-        lastSeenPrivateNotifIdRef.current = doc.id;
-      },
-      () => {},
-    );
+    const unsub = onSnapshot(q, (snap) => {
+      const doc = snap.docs[0];
+      if (!doc) return;
+      lastSeenPrivateNotifIdRef.current = doc.id;
+    }, onSnapshotErr);
     return () => unsub();
   }, [currentUser, isCollapsed]);
 
@@ -441,7 +451,8 @@ const PrivateChat = ({ fullPage = false }) => {
       orderBy("timestamp", "desc"),
       limit(MAX_PRIVATE_CHAT_MESSAGES),
     );
-    return onSnapshot(q, (snapshot) => {
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (!mountedRef.current) return;
       const messages = snapshot.docs
         .map((doc) => ({
           id: doc.id,
@@ -449,7 +460,8 @@ const PrivateChat = ({ fullPage = false }) => {
         }))
         .reverse(); // show oldest first
       setSelectedMessages(messages);
-    });
+    }, onSnapshotErr);
+    return () => unsub();
   }, [currentUser, selectedUser, isCollapsed, isPcForSubscription, fullPage]);
 
   // Load group chats where current user is member
@@ -459,9 +471,11 @@ const PrivateChat = ({ fullPage = false }) => {
       collection(db, "groupChats"),
       where("members", "array-contains", currentUser.uid),
     );
-    return onSnapshot(q, (snapshot) => {
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (!mountedRef.current) return;
       setGroupChats(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-    });
+    }, onSnapshotErr);
+    return () => unsub();
   }, [currentUser]);
 
   // Subscribe to selected group messages
@@ -475,11 +489,13 @@ const PrivateChat = ({ fullPage = false }) => {
       orderBy("timestamp", "desc"),
       limit(MAX_PRIVATE_CHAT_MESSAGES),
     );
-    return onSnapshot(q, (snapshot) => {
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (!mountedRef.current) return;
       setGroupMessages(
         snapshot.docs.map((d) => ({ id: d.id, ...d.data() })).reverse(),
       );
-    });
+    }, onSnapshotErr);
+    return () => unsub();
   }, [currentUser, selectedGroup]);
 
   // Alltid scroll til siste melding (bruk scrollTop så det alltid er på bunnen)
