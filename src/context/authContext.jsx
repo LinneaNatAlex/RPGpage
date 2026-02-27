@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 // BanOverlay: shows ban message and a back arrow to main page
 function BanOverlay({ reason, bannedType }) {
@@ -52,7 +52,7 @@ function BanOverlay({ reason, bannedType }) {
 import SuspendedOverlay from "../Components/SuspendedOverlay";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 const authContext = createContext({
   user: null,
@@ -70,6 +70,10 @@ export const AuthProvider = ({ children }) => {
     reason: "",
     until: null,
   });
+  const lastOnlineUidRef = useRef(null);
+  const beforeUnloadRef = useRef(null);
+  const lastOnlineWriteAtRef = useRef(0);
+  const ONLINE_WRITE_THROTTLE_MS = 60 * 1000; // max én skriv per minutt ved focus
 
   // Force refresh auth state (e.g. after email verification – reload() alone does not re-fire onAuthStateChanged)
   const refreshAuthState = async () => {
@@ -111,9 +115,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Add focus listener to refresh auth when user returns to tab
+    // Add focus listener: refresh auth og oppdater online/lastLogin når brukeren kommer tilbake til fanen
     const handleFocus = () => {
       refreshAuthState();
+      const u = auth.currentUser;
+      if (u?.uid && Date.now() - lastOnlineWriteAtRef.current > ONLINE_WRITE_THROTTLE_MS) {
+        lastOnlineWriteAtRef.current = Date.now();
+        setDoc(doc(db, "users", u.uid), { online: true, lastLogin: serverTimestamp() }, { merge: true }).catch(() => {});
+      }
     };
 
     window.addEventListener("focus", handleFocus);
@@ -158,6 +167,14 @@ export const AuthProvider = ({ children }) => {
                   until: null,
                   bannedType: null,
                 });
+                try {
+                  await setDoc(doc(db, "users", currentUser.uid), { online: true, lastLogin: serverTimestamp() }, { merge: true });
+                } catch (e) { /* ignore */ }
+                lastOnlineUidRef.current = currentUser.uid;
+                lastOnlineWriteAtRef.current = Date.now();
+                if (beforeUnloadRef.current) window.removeEventListener("beforeunload", beforeUnloadRef.current);
+                beforeUnloadRef.current = () => { setDoc(doc(db, "users", currentUser.uid), { online: false }, { merge: true }); };
+                window.addEventListener("beforeunload", beforeUnloadRef.current);
                 return;
               }
               // Reduce wait time between retries
@@ -276,8 +293,27 @@ export const AuthProvider = ({ children }) => {
           }
           setBlocked({ blocked, reason, until, description, bannedType });
 
-          // Online/lastLogin skrives ikke her – kun når bruker åpner online-popup (TopBar)
+          // Vis som online når innlogget (så alle med siden åpen dukker opp i online-listen)
+          try {
+            await setDoc(doc(db, "users", currentUser.uid), { online: true, lastLogin: serverTimestamp() }, { merge: true });
+          } catch (e) { /* ignore */ }
+          lastOnlineUidRef.current = currentUser.uid;
+          lastOnlineWriteAtRef.current = Date.now();
+          if (beforeUnloadRef.current) window.removeEventListener("beforeunload", beforeUnloadRef.current);
+          beforeUnloadRef.current = () => { setDoc(doc(db, "users", currentUser.uid), { online: false }, { merge: true }); };
+          window.addEventListener("beforeunload", beforeUnloadRef.current);
         } else {
+          if (lastOnlineUidRef.current) {
+            const uidToClear = lastOnlineUidRef.current;
+            lastOnlineUidRef.current = null;
+            try {
+              await setDoc(doc(db, "users", uidToClear), { online: false }, { merge: true });
+            } catch (e) { /* ignore */ }
+          }
+          if (beforeUnloadRef.current) {
+            window.removeEventListener("beforeunload", beforeUnloadRef.current);
+            beforeUnloadRef.current = null;
+          }
           setUser(null);
           setEmailVerified(false);
           setBlocked({
@@ -298,6 +334,10 @@ export const AuthProvider = ({ children }) => {
     return () => {
       unsubscribe();
       window.removeEventListener("focus", handleFocus);
+      if (beforeUnloadRef.current) {
+        window.removeEventListener("beforeunload", beforeUnloadRef.current);
+        beforeUnloadRef.current = null;
+      }
     };
   }, []);
 

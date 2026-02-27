@@ -567,14 +567,7 @@ const TopBar = () => {
     return () => document.removeEventListener("keydown", onKey);
   }, [showNotificationsPanel]);
 
-  const closeOnlinePanel = async () => {
-    if (user?.uid) {
-      try {
-        await setDoc(doc(db, "users", user.uid), { online: false }, { merge: true });
-      } catch (e) {
-        if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
-      }
-    }
+  const closeOnlinePanel = () => {
     setShowOnlinePanel(false);
     requestOpen("topbar", false);
   };
@@ -1178,31 +1171,12 @@ const TopBar = () => {
             <button
               type="button"
               className={styles.inventoryIconBtn}
-              onClick={async () => {
+              onClick={() => {
                 const next = !showOnlinePanel;
-                if (next && user?.uid) {
-                  try {
-                    await setDoc(
-                      doc(db, "users", user.uid),
-                      { online: true, lastLogin: serverTimestamp() },
-                      { merge: true }
-                    );
-                  } catch (e) {
-                    if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
-                  }
-                }
                 setShowOnlinePanel(next);
                 requestOpen("topbar", next);
-                if (!next && user?.uid) {
-                  try {
-                    await setDoc(
-                      doc(db, "users", user.uid),
-                      { online: false },
-                      { merge: true }
-                    );
-                  } catch (e) {
-                    if (process.env.NODE_ENV === "development") console.warn("Online status write:", e);
-                  }
+                if (next && user?.uid) {
+                  setDoc(doc(db, "users", user.uid), { lastLogin: serverTimestamp() }, { merge: true }).catch(() => {});
                 }
               }}
               title="Hvem er online"
