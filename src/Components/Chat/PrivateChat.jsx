@@ -163,6 +163,9 @@ const PrivateChat = ({ fullPage = false }) => {
     return () => requestOpen("private", false);
   }, [isCollapsed, requestOpen]);
   const [search, setSearch] = useState("");
+  const [searchResultUsers, setSearchResultUsers] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const searchDebounceRef = useRef(null);
   const [activeChats, setActiveChats] = useState([]); // [{user, messages: []}]
   const [selectedGroup, setSelectedGroup] = useState(null); // groupId
   const [groupChats, setGroupChats] = useState([]); // [{ id, name, members }]
@@ -340,7 +343,7 @@ const PrivateChat = ({ fullPage = false }) => {
   const currentUser = auth.currentUser;
   const { users, loading } = useUsers();
   const { isVip } = useUserData();
-  const onlineUsersList = useOnlineUsers();
+  const { onlineUsers: onlineUsersList } = useOnlineUsers();
   // Samme logikk som online-listen på forsiden: kun brukere med lastActive innen 10 min
   const now = Date.now();
   const activeOnlineUsers = onlineUsersList.filter((u) => {
@@ -403,6 +406,51 @@ const PrivateChat = ({ fullPage = false }) => {
     };
     fetchChats();
   }, [currentUser, users]);
+
+  // Søk alle brukere fra Firestore (useUsers er kun race-filtert) – debounce 300 ms
+  useEffect(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) {
+      setSearchResultUsers([]);
+      setSearchLoading(false);
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+        searchDebounceRef.current = null;
+      }
+      return;
+    }
+    setSearchLoading(true);
+    searchDebounceRef.current = setTimeout(async () => {
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        const list = snap.docs
+          .map((d) => ({ uid: d.id, id: d.id, ...d.data() }))
+          .filter(
+            (u) =>
+              u.uid !== currentUser?.uid &&
+              (u.displayName || u.name || u.email || u.uid),
+          )
+          .filter(
+            (u) =>
+              (u.displayName || u.name || u.email || u.uid)
+                .toLowerCase()
+                .includes(term),
+          )
+          .slice(0, 50);
+        setSearchResultUsers(list);
+      } catch (err) {
+        if (process.env.NODE_ENV === "development")
+          console.warn("PrivateChat user search error:", err);
+        setSearchResultUsers([]);
+      } finally {
+        setSearchLoading(false);
+      }
+      searchDebounceRef.current = null;
+    }, 300);
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, [search, currentUser?.uid]);
 
   // When chat is collapsed: track new private_chat notifications (no sound – lydnotifikasjon er av i privat chat)
   const lastSeenPrivateNotifIdRef = useRef(null);
@@ -581,28 +629,45 @@ const PrivateChat = ({ fullPage = false }) => {
 
   // NOW conditional returns after ALL hooks
   if (!currentUser) return null;
-  if (loading) return <div>Loading...</div>;
+  // Full-page: ikke blokkér på useUsers loading (søk bruker Firestore direkte)
+  if (!fullPage && loading) return <div>Loading...</div>;
 
   // Find the current user's full data from users array
   const currentUserData = users
     ? users.find((u) => u.uid === currentUser.uid)
     : null;
 
-  // Filter users for search: kun aktive (online) brukere, ekskluder self og allerede synlige chats
-  const filteredUsers =
+  // Søk: bruk useUsers (race-filtert) ELLER direkte Firestore-hent når brukeren skriver
+  const filteredUsersFromStore =
     search && users
-      ? users.filter(
+      ? users
+          .filter(
+            (u) =>
+              u.uid !== currentUser.uid &&
+              (u.displayName || u.name || u.uid) &&
+              (u.displayName || u.name || u.uid)
+                .toLowerCase()
+                .includes(search.trim().toLowerCase()),
+          )
+          .filter(
+            (u) =>
+              !activeChats.some(
+                (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid),
+              ),
+          )
+          .slice(0, 50)
+      : [];
+
+  // Ved søk: vis resultater fra Firestore-hent (alle brukere), filtrer bort åpne chatter
+  const filteredUsers =
+    search.trim().length > 0
+      ? searchResultUsers.filter(
           (u) =>
-            u.uid !== currentUser.uid &&
-            onlineUids.has(u.uid) &&
-            (u.displayName || u.name || u.uid)
-              .toLowerCase()
-              .includes(search.toLowerCase()) &&
             !activeChats.some(
               (c) => c.user.uid === u.uid && !hiddenChats.includes(u.uid),
             ),
         )
-      : [];
+      : filteredUsersFromStore;
 
   // Trim private chat to max N messages (delete oldest). Runs after send.
   const trimPrivateChatToLimit = async (
@@ -981,10 +1046,20 @@ const PrivateChat = ({ fullPage = false }) => {
             placeholder="Search user..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            autoComplete="off"
             className={styles.messagesFullPageSidebarSearch}
           />
           {search.trim() ? (
-            <div className={styles.messagesFullPageSidebarUserList}>
+            <div
+              className={styles.messagesFullPageSidebarUserList}
+              style={{ minHeight: 80, maxHeight: "min(420px, 50vh)" }}
+            >
+              {searchLoading ? (
+                <span className={styles.messagesFullPageSidebarHint}>
+                  Searching...
+                </span>
+              ) : (
+                <>
               {filteredUsers.map((u) => (
                 <button
                   key={u.uid}
@@ -1031,10 +1106,12 @@ const PrivateChat = ({ fullPage = false }) => {
                   No users found
                 </span>
               )}
+                </>
+              )}
             </div>
           ) : (
             <p className={styles.messagesFullPageSidebarHint}>
-              Type to search for an online user
+              Type to search for a user
             </p>
           )}
           <h3 className={styles.messagesFullPageSidebarTitle}>Group chats</h3>
@@ -1245,6 +1322,7 @@ const PrivateChat = ({ fullPage = false }) => {
                           type="text"
                           placeholder="Message group..."
                           maxLength={1500}
+                          autoComplete="off"
                           className={styles.chatInput}
                           style={{ flex: 1, minWidth: 0 }}
                         />
@@ -1260,7 +1338,7 @@ const PrivateChat = ({ fullPage = false }) => {
           ) : !selectedUser ? (
             <div className={styles.messagesFullPageEmpty}>
               <p>
-                Select a conversation or group, or search for an online user to
+                Select a conversation or group, or search for a user to
                 start a new chat.
               </p>
               <Link to="/" className={styles.messagesFullPageEmptyLink}>
@@ -1456,6 +1534,7 @@ const PrivateChat = ({ fullPage = false }) => {
                           : `Message ${selectedUser.displayName || selectedUser.name || selectedUser.uid}...`
                       }
                       maxLength={1500}
+                      autoComplete="off"
                       className={styles.chatInput}
                       style={{ flex: 1, minWidth: 0 }}
                     />
@@ -1910,6 +1989,7 @@ const PrivateChat = ({ fullPage = false }) => {
               placeholder="Search user..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              autoComplete="off"
               style={{
                 width: "100%",
                 boxSizing: "border-box",
@@ -1924,6 +2004,11 @@ const PrivateChat = ({ fullPage = false }) => {
                 fontSize: "1rem",
               }}
             />
+            {searchLoading && search.trim() && (
+              <div style={{ padding: 8, color: "rgba(245,239,224,0.8)", fontSize: "0.9rem" }}>
+                Searching...
+              </div>
+            )}
             {filteredUsers.length > 0 && (
               <div
                 style={{
@@ -2304,6 +2389,7 @@ const PrivateChat = ({ fullPage = false }) => {
                           }...`
                     }
                     maxLength={200}
+                    autoComplete="off"
                     className={styles.chatInput}
                     style={{ flex: 1, minWidth: 0, width: 0 }}
                   />

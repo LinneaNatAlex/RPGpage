@@ -32,7 +32,7 @@ const Chat = () => {
   const { users } = useUsers();
   const { isVip, userData } = useUserData();
   const { requestOpen } = useOnlineListContext();
-  const onlineUsers = useOnlineUsers();
+  const { onlineUsers } = useOnlineUsers();
   // Samme logikk som online-listen på forsiden: kun brukere med lastActive innen 10 min
   const now = Date.now();
   const activeOnlineUsers = onlineUsers.filter((u) => {
@@ -940,6 +940,7 @@ const Chat = () => {
                   type="text"
                   placeholder="YOUR MESSAGES..."
                   maxLength={200}
+                  autoComplete="off"
                   className={`${styles.chatInput} ${styles.textArea}`}
                   style={{ width: "100%", minWidth: 0 }}
                   spellCheck

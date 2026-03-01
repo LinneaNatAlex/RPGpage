@@ -1193,8 +1193,10 @@ const Forum = () => {
               Back to topics
             </Button>
             {(() => {
-              const isTeacherOrAdmin = roles?.includes("professor") || roles?.includes("teacher") || roles?.includes("admin") || roles?.includes("archivist");
-              return isTeacherOrAdmin && (
+              const canModerateForum = roles?.some((r) =>
+                ["admin", "shadowpatrol", "professor", "teacher", "headmaster"].includes((r || "").toLowerCase())
+              );
+              return canModerateForum && (
                 <>
                   <Button onClick={handleEditTopic} className={styles.editButton}>
                     Edit Topic
@@ -1331,8 +1333,9 @@ const Forum = () => {
                       </span>
                     )}
                     {(post.uid === user.uid ||
-                      (roles?.includes("professor") || roles?.includes("teacher")) ||
-                      roles?.includes("admin")) && (
+                      roles?.some((r) =>
+                        ["admin", "shadowpatrol", "professor", "teacher", "headmaster"].includes((r || "").toLowerCase())
+                      )) && (
                       <>
                         <Button
                           onClick={() => {

@@ -581,9 +581,11 @@ const TopBar = () => {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [showOnlinePanel]);
+  const requestOpenRef = useRef(requestOpen);
+  requestOpenRef.current = requestOpen;
   useEffect(() => {
-    return () => requestOpen("topbar", false);
-  }, [requestOpen]);
+    return () => requestOpenRef.current("topbar", false);
+  }, []);
 
   return (
     <>
@@ -1173,14 +1175,18 @@ const TopBar = () => {
               className={styles.inventoryIconBtn}
               onClick={() => {
                 const next = !showOnlinePanel;
-                setShowOnlinePanel(next);
                 requestOpen("topbar", next);
                 if (next && user?.uid) {
                   setDoc(doc(db, "users", user.uid), { lastLogin: serverTimestamp() }, { merge: true }).catch(() => {});
                 }
+                if (next) {
+                  requestAnimationFrame(() => setShowOnlinePanel(true));
+                } else {
+                  setShowOnlinePanel(false);
+                }
               }}
-              title="Hvem er online"
-              aria-label="Hvem er online"
+              title="Who is online"
+              aria-label="Who is online"
               aria-expanded={showOnlinePanel}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>

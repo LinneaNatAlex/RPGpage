@@ -17,7 +17,7 @@ function getFirstAndLastName(displayName) {
 }
 
 const OnlineUsers = ({ variant }) => {
-  const users = useOnlineUsers();
+  const { onlineUsers: users, loading } = useOnlineUsers();
   const { user } = useAuth();
   const { userData } = useUserData();
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
@@ -145,18 +145,16 @@ const OnlineUsers = ({ variant }) => {
     }
   };
 
-  if (!users.length) return null;
-  // this is where users 'online' are displayed
-
-  // Vis kun brukere som har vært aktive siste 2 minutter
-  const now = Date.now();
-  const filteredUsers = users.filter(
-    (u) => u.lastActive && now - u.lastActive < 10 * 60 * 1000
-  );
+  const filteredUsers = users;
 
   return (
     <div className={`${style.onlineUsersContainer} ${variant === "popup" ? style.onlineUsersContainerPopup : ""}`}>
       <h2>Online</h2>
+      {loading ? (
+        <p className={style.onlineUsersList}>Loading...</p>
+      ) : filteredUsers.length === 0 ? (
+        <p className={style.onlineUsersList}>No one online right now</p>
+      ) : (
       <ul className={style.onlineUsersList}>
         {filteredUsers.map((u) => {
           let roleClass = style.userAvatar;
@@ -297,6 +295,7 @@ const OnlineUsers = ({ variant }) => {
           );
         })}
       </ul>
+      )}
       {showTimeoutModal && (
         <div className={style.timeoutModalOverlay}>
           <div className={style.timeoutModal}>

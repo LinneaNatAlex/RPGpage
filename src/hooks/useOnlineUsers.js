@@ -1,70 +1,86 @@
-// Henter kun når online-boksen er synlig – ingen reads når boksen er lukket.
-// Listen beholdes når boksen lukkes, så brukere vises som online til de logger av/bytter fane.
+// Første hent med getDocs (viser med en gang), deretter onSnapshot for live-oppdateringer.
+// Ingen lesing når online-boksen er lukket.
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { useOnlineListContext } from "../context/onlineListContext";
 
-const POLL_INTERVAL_MS = 15 * 60 * 1000; // 15 min
+const RECENT_MS = 3 * 60 * 1000; // 3 min – kun brukere som har vært aktive akkurat nå
+
+const toMillis = (v) => {
+  if (v == null) return 0;
+  if (typeof v === "number") return v;
+  if (v && typeof v.toMillis === "function") return v.toMillis();
+  if (v && typeof v.toDate === "function") return v.toDate().getTime();
+  return 0;
+};
+
+const processSnapshot = (snapshot) => {
+  const now = Date.now();
+  const cutoff = now - RECENT_MS;
+  const docs = snapshot.docs || [];
+  return docs
+    .map((docSnap) => {
+      const data = docSnap.data();
+      return { ...data, id: docSnap.id };
+    })
+    .filter((u) => !u.invisibleUntil || u.invisibleUntil < now)
+    .filter((u) => {
+      const lastActive = toMillis(u.lastActive) || 0;
+      const lastLogin = toMillis(u.lastLogin) || 0;
+      const lastSeen = Math.max(lastActive, lastLogin);
+      return lastSeen >= cutoff;
+    })
+    .filter((u) => {
+      const name = (u.displayName && String(u.displayName).trim()) || "";
+      const email = (u.email && String(u.email).trim()) || "";
+      return name.length > 0 || email.length > 0;
+    });
+};
 
 const useOnlineUsers = () => {
   const { enabled } = useOnlineListContext();
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!enabled) {
+      setLoading(false);
       return;
     }
-    const fetchOnline = async () => {
+    setLoading(true);
+    const q = query(
+      collection(db, "users"),
+      where("online", "==", true),
+    );
+
+    let unsubSnapshot = () => {};
+
+    const run = async () => {
       try {
-        const q = query(
-          collection(db, "users"),
-          where("online", "==", true),
-        );
         const snapshot = await getDocs(q);
-        const now = Date.now();
-        const users = snapshot.docs
-          .map((docSnap) => {
-            const data = docSnap.data();
-            return { ...data, id: docSnap.id };
-          })
-          .filter((u) => !u.invisibleUntil || u.invisibleUntil < now)
-          .filter((u) => {
-            const name = (u.displayName && String(u.displayName).trim()) || "";
-            const email = (u.email && String(u.email).trim()) || "";
-            return name.length > 0 || email.length > 0;
-          });
-        setOnlineUsers(users);
+        setOnlineUsers(processSnapshot(snapshot));
       } catch (err) {
         if (process.env.NODE_ENV === "development")
-          console.warn("useOnlineUsers fetch error:", err);
+          console.warn("useOnlineUsers getDocs error:", err);
+      } finally {
+        setLoading(false);
       }
     };
+    run();
 
-    let interval = null;
-    let refetchTimeout = null;
-    const runWhenVisible = () => {
-      if (typeof document === "undefined" || document.visibilityState !== "visible") return;
-      fetchOnline();
-      refetchTimeout = setTimeout(fetchOnline, 800);
-      interval = setInterval(fetchOnline, POLL_INTERVAL_MS);
-    };
-    runWhenVisible();
-    const onVisibility = () => {
-      if (interval) clearInterval(interval);
-      if (refetchTimeout) clearTimeout(refetchTimeout);
-      interval = null;
-      refetchTimeout = null;
-      if (document.visibilityState === "visible") runWhenVisible();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      if (interval) clearInterval(interval);
-      if (refetchTimeout) clearTimeout(refetchTimeout);
-    };
+    unsubSnapshot = onSnapshot(
+      q,
+      (snapshot) => setOnlineUsers(processSnapshot(snapshot)),
+      (err) => {
+        if (process.env.NODE_ENV === "development")
+          console.warn("useOnlineUsers onSnapshot error:", err);
+      }
+    );
+
+    return () => unsubSnapshot();
   }, [enabled]);
 
-  return onlineUsers;
+  return { onlineUsers, loading };
 };
 export default useOnlineUsers;
