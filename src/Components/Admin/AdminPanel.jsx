@@ -27,6 +27,10 @@ import AgeVerificationAdmin from "../Forum/AgeVerificationAdmin";
 import ShopProductAdmin from "./ShopProductAdmin";
 import RulesAdmin from "./RulesAdmin";
 import { classesList } from "../../data/classesList";
+import {
+  getStatusOptionsForRace,
+  getDefaultCharacterStatus,
+} from "../../utils/characterStatus";
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -186,8 +190,14 @@ export default function AdminPanel() {
   const [editRoles, setEditRoles] = useState([]);
   const [editLeadForRole, setEditLeadForRole] = useState("");
   const [editTeachesInClasses, setEditTeachesInClasses] = useState([]);
+  const [editCharacterStatus, setEditCharacterStatus] = useState("");
   const [editUserStatus, setEditUserStatus] = useState("");
   const [roleToRemove, setRoleToRemove] = useState("");
+  // Character statuses config (per race) from Firestore config/characterStatuses
+  const [characterStatusesConfig, setCharacterStatusesConfig] = useState({});
+  const [characterStatusesConfigStatus, setCharacterStatusesConfigStatus] = useState("");
+  const [newStatusRace, setNewStatusRace] = useState("vampire");
+  const [newStatusLabel, setNewStatusLabel] = useState("");
   const AVAILABLE_ROLES = [
     "user",
     "admin",
@@ -295,6 +305,16 @@ export default function AdminPanel() {
       .catch(() => setStarshadeMusicUrl(""));
   }, [roles]);
 
+  // Load character statuses config (per-race options for profile "Status")
+  useEffect(() => {
+    if (!roles.includes("admin")) return;
+    getDoc(doc(db, "config", "characterStatuses"))
+      .then((snap) => {
+        setCharacterStatusesConfig(snap.exists() ? snap.data() : {});
+      })
+      .catch(() => setCharacterStatusesConfig({}));
+  }, [roles]);
+
   // Load classes + assigned teachers for Admin overview
   useEffect(() => {
     if (
@@ -360,6 +380,30 @@ export default function AdminPanel() {
     }
   }
 
+  const CONFIG_RACE_KEYS = ["vampire", "werewolf", "elf", "wizard", "witch", "human"];
+
+  async function handleAddCharacterStatus() {
+    if (!roles.includes("admin")) return;
+    const label = (newStatusLabel || "").trim();
+    if (!label) {
+      setCharacterStatusesConfigStatus("Enter a status label.");
+      return;
+    }
+    setCharacterStatusesConfigStatus("Saving...");
+    try {
+      const key = newStatusRace;
+      const arr = [...(characterStatusesConfig[key] || []), label];
+      const next = { ...characterStatusesConfig, [key]: arr };
+      await setDoc(doc(db, "config", "characterStatuses"), next, { merge: true });
+      setCharacterStatusesConfig(next);
+      setNewStatusLabel("");
+      setCharacterStatusesConfigStatus(`Added "${label}" to ${key}.`);
+      setTimeout(() => setCharacterStatusesConfigStatus(""), 3000);
+    } catch (err) {
+      setCharacterStatusesConfigStatus(`Error: ${err.message}`);
+    }
+  }
+
   const filtered = users.filter(
     (u) =>
       (u.displayName || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -377,6 +421,7 @@ export default function AdminPanel() {
           : selected.class || "1st year",
       );
       setEditRace(selected.race || "");
+      setEditCharacterStatus(selected.characterStatus ?? "");
       setEditRoles(
         Array.isArray(selected.roles)
           ? Array.from(
@@ -829,6 +874,7 @@ export default function AdminPanel() {
         race: editRace || selected.race,
         roles: Array.from(new Set([...editRoles, "user"])),
         leadForRole: isProfessor && editLeadForRole ? editLeadForRole : null,
+        characterStatus: (editCharacterStatus || "").trim() || null,
       };
       await updateDoc(ref, update);
       setSelected({ ...selected, ...update });
@@ -1246,6 +1292,64 @@ export default function AdminPanel() {
         </div>
       )}
 
+      {/* Manage character statuses (per-race options for profile Status) */}
+      {roles.includes("admin") && (
+        <div style={sectionBox}>
+          {sectionTitle(
+            "Manage character statuses",
+            "Add status options per race (e.g. Nightwalker, Incubus, Full Shapeshifter). These appear in the user edit form and on profiles. Defaults (Nightwalker, Werewolf, Elf, etc.) are always available.",
+          )}
+          <div style={{ marginBottom: 12 }}>
+            <span style={{ fontWeight: 600, color: theme.text }}>Current statuses per race</span>
+            <ul style={{ margin: "8px 0 0 0", paddingLeft: 20, color: theme.secondaryText, fontSize: "0.9rem" }}>
+              {CONFIG_RACE_KEYS.map((key) => (
+                <li key={key}>
+                  <strong style={{ color: theme.text }}>{key}</strong>: {(characterStatusesConfig[key] || []).length ? (characterStatusesConfig[key] || []).join(", ") : "(default only)"}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <select
+              value={newStatusRace}
+              onChange={(e) => setNewStatusRace(e.target.value)}
+              style={inputStyle}
+            >
+              {CONFIG_RACE_KEYS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              value={newStatusLabel}
+              onChange={(e) => setNewStatusLabel(e.target.value)}
+              placeholder="New status label (e.g. Warulver)"
+              style={{ ...inputStyle, minWidth: 180 }}
+            />
+            <button
+              type="button"
+              onClick={handleAddCharacterStatus}
+              style={{
+                padding: "8px 16px",
+                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                color: "#F5EFE0",
+                border: `2px solid ${theme.border}`,
+                borderRadius: 8,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Add status
+            </button>
+          </div>
+          {characterStatusesConfigStatus && (
+            <div style={{ marginTop: 8, fontSize: "0.9rem", color: theme.secondaryText }}>
+              {characterStatusesConfigStatus}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* 2. Rules & shop */}
       {roles.includes("admin") && (
         <div style={sectionBox}>
@@ -1623,6 +1727,21 @@ export default function AdminPanel() {
                   {RACE_OPTIONS.map((r) => (
                     <option key={r} value={r}>
                       {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <label style={labelStyle}>Character status (in-world, e.g. Nightwalker, Full Shapeshifter)</label>
+                <select
+                  value={editCharacterStatus}
+                  onChange={(e) => setEditCharacterStatus(e.target.value)}
+                  style={inputStyle}
+                >
+                  <option value="">— Use default for race —</option>
+                  {getStatusOptionsForRace(editRace || selected?.race, characterStatusesConfig).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
                     </option>
                   ))}
                 </select>

@@ -21,6 +21,7 @@ import FriendsList from "../../Components/FriendsList/FriendsList";
 import { useAuth } from "../../context/authContext";
 import { getRaceDisplayName } from "../../utils/raceColors";
 import { isProfileOwnerVip, getProfileDisplayBody } from "../../utils/profileCodeAccess";
+import { getCharacterStatusDisplay } from "../../utils/characterStatus";
 import ErrorBoundary from "../../Components/ErrorBoundary/ErrorBoundary";
 import { Suspense } from "react";
 
@@ -429,6 +430,27 @@ const UserProfile = () => {
                 Class:
               </strong>{" "}
               {userData.class}
+            </p>
+            <p
+              style={{
+                color: "#FFFFFF",
+                fontSize: "1.1rem",
+                margin: "0.5rem 0",
+                textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <strong
+                style={{
+                  color: "#FFE4B5",
+                  fontWeight: 700,
+                  marginRight: "0.5rem",
+                }}
+              >
+                Status:
+              </strong>{" "}
+              <span style={{ color: "#ffe084", fontWeight: 600 }}>
+                {getCharacterStatusDisplay(userData)}
+              </span>
             </p>
             {/* Bursdag kun i Character Details, med valgskjema hvis ikke satt */}
             {userData.birthdayMonth && userData.birthdayDay ? (

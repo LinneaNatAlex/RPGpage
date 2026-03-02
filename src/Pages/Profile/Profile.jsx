@@ -16,6 +16,7 @@ import {
   isProfileOwnerVip,
   getProfileDisplayBody,
 } from "../../utils/profileCodeAccess";
+import { getCharacterStatusDisplay } from "../../utils/characterStatus";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -299,12 +300,17 @@ const Profile = () => {
                     {userData.race}
                   </div>
 
-                  {/* Status Display */}
+                  {/* Status: in-world character status (Nightwalker, Full Shapeshifter, etc.). Admin can grant; default per race. */}
                   <div className={styles.caracterDetails}>
-                    <p>
-                      <strong>Status:</strong>
-                    </p>{" "}
-                    <span style={{ color: "#cccccc" }}>Regular User</span>
+                    <p style={{ margin: 0 }}>
+                      <strong>Status:</strong>{" "}
+                      <span className={styles.characterStatusLabel}>
+                        {getCharacterStatusDisplay(userData)}
+                      </span>
+                    </p>
+                    <p style={{ margin: "4px 0 0 0", fontSize: "0.8rem", color: "#999", fontStyle: "italic" }}>
+                      Character status in the world (e.g. Nightwalker, Full Shapeshifter). Granted by admin.
+                    </p>
                   </div>
 
                   {/* Bursdag: vis og la brukeren velge hvis ikke satt */}
