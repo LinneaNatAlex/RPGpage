@@ -69,7 +69,7 @@ const Forum = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [posts, setPosts] = useState([]);
   const [postPage, setPostPage] = useState(1);
-  const POSTS_PER_PAGE = 5;
+  const POSTS_PER_PAGE = 10;
   // New topic state
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
