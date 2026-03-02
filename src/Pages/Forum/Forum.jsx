@@ -69,7 +69,7 @@ const Forum = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [posts, setPosts] = useState([]);
   const [postPage, setPostPage] = useState(1);
-  const POSTS_PER_PAGE = 10;
+  const POSTS_PER_PAGE = 5;
   // New topic state
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [newTopicContent, setNewTopicContent] = useState("");
@@ -1315,8 +1315,54 @@ const Forum = () => {
               </div>
             </div>
           )}
+          {/* Reply box at top – write without scrolling to bottom */}
+          <div className={styles.replyBox} style={{ marginBottom: "1.5rem" }}>
+            <ReactQuill
+              id="forum-reply-content"
+              name="replyContent"
+              value={replyContent}
+              onChange={(val) => {
+                setReplyContent(val);
+                const wordCount = countWords(val);
+                setReplyWordCount(wordCount);
+              }}
+              className={styles.quill}
+            />
+            <RepetitionWarningComponent text={replyContent} />
+            <div
+              style={{
+                color: !wordCountInRange(replyWordCount) ? "#ff6b6b" : "#ffd86b",
+                margin: "8px 0 12px 0",
+                fontWeight: 600,
+              }}
+            >
+              {wordConfig.maxWords != null
+                ? `Words: ${replyWordCount} / ${wordConfig.minWords}–${wordConfig.maxWords}`
+                : `Words: ${replyWordCount} / ${wordConfig.minWords}`}
+              {!wordCountInRange(replyWordCount) &&
+                (replyWordCount < wordConfig.minWords
+                  ? ` (minimum ${wordConfig.minWords} words to post)`
+                  : ` (maximum ${wordConfig.maxWords} words)`)}
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#8B7A6B",
+                  marginTop: "4px",
+                }}
+              >
+                {wordConfig.rewardText}
+              </div>
+            </div>
+            <Button
+              onClick={handleReply}
+              className={styles.postButton}
+              disabled={isContentEmpty(replyContent) || !wordCountInRange(replyWordCount)}
+            >
+              Reply
+            </Button>
+          </div>
           <div className={styles.postsList}>
-            {posts
+            {([...posts].reverse())
               .slice((postPage - 1) * POSTS_PER_PAGE, postPage * POSTS_PER_PAGE)
               .map((post, indexInPage) => {
                 const postCreatedAt = post.createdAt;
@@ -1335,7 +1381,7 @@ const Forum = () => {
                       minute: "2-digit",
                     })
                   : "";
-                const replyNumber = (postPage - 1) * POSTS_PER_PAGE + indexInPage + 1;
+                const replyNumber = posts.length - ((postPage - 1) * POSTS_PER_PAGE + indexInPage);
                 return (
                 <div key={post.id} className={styles.postBox}>
                   <div className={styles.postHeader}>
@@ -1436,52 +1482,6 @@ const Forum = () => {
               </Button>
             </div>
           )}
-          {/* Reply box */}
-          <div className={styles.replyBox}>
-            <ReactQuill
-              id="forum-reply-content"
-              name="replyContent"
-              value={replyContent}
-              onChange={(val) => {
-                setReplyContent(val);
-                const wordCount = countWords(val);
-                setReplyWordCount(wordCount);
-              }}
-              className={styles.quill}
-            />
-            <RepetitionWarningComponent text={replyContent} />
-            <div
-              style={{
-                color: !wordCountInRange(replyWordCount) ? "#ff6b6b" : "#ffd86b",
-                margin: "8px 0 12px 0",
-                fontWeight: 600,
-              }}
-            >
-              {wordConfig.maxWords != null
-                ? `Words: ${replyWordCount} / ${wordConfig.minWords}–${wordConfig.maxWords}`
-                : `Words: ${replyWordCount} / ${wordConfig.minWords}`}
-              {!wordCountInRange(replyWordCount) &&
-                (replyWordCount < wordConfig.minWords
-                  ? ` (minimum ${wordConfig.minWords} words to post)`
-                  : ` (maximum ${wordConfig.maxWords} words)`)}
-              <div
-                style={{
-                  fontSize: "0.8rem",
-                  color: "#8B7A6B",
-                  marginTop: "4px",
-                }}
-              >
-                {wordConfig.rewardText}
-              </div>
-            </div>
-            <Button
-              onClick={handleReply}
-              className={styles.postButton}
-              disabled={isContentEmpty(replyContent) || !wordCountInRange(replyWordCount)}
-            >
-              Reply
-            </Button>
-          </div>
         </div>
         );
       })()}

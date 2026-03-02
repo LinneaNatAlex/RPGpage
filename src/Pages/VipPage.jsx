@@ -43,10 +43,12 @@ export default function VipPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>VIP benefits</h2>
           <ul className={styles.benefitsList}>
-            <li>Unlimited private messages</li>
-            <li>Create and manage group chats</li>
-            <li>Use emojis in chat</li>
-            <li>Exclusive perks and recognition in the community</li>
+            <li><strong>Unlimited private messages</strong> — non-VIP users are limited to 30 per day</li>
+            <li><strong>Create and manage group chats</strong> — only VIP can create group conversations</li>
+            <li><strong>Use emojis in chat</strong> — in both main chat and private messages</li>
+            <li><strong>Custom HTML/CSS on your profile</strong> — use the code editor to style your character profile your way</li>
+            <li><strong>Buy potions in the shop</strong> — access the potions category without having to craft them first</li>
+            <li><strong>VIP badge</strong> — your profile shows a VIP label so the community can see your support</li>
             <li>Support the continued development of Arcane School</li>
           </ul>
         </section>
