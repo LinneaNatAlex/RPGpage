@@ -79,6 +79,7 @@ import HousePointsPage from "../Pages/HousePoints.jsx";
 import ClassroomSession from "../Components/Classrooms/ClassroomSession.jsx";
 import Inventory from "../Pages/Inventory/Inventory.jsx";
 import MessagesPage from "../Pages/MessagesPage.jsx";
+import VipPage from "../Pages/VipPage.jsx";
 
 const RouteGuard = ({ children }) => {
   const { user, loading } = useAuth();
@@ -168,6 +169,7 @@ export const router = createBrowserRouter(
           </RouteGuard>
         }
       />
+      <Route path="vip" element={<VipPage />} />
       <Route path="forumrules" element={<ForumRules />} />
       <Route path="generalrules" element={<GeneralRules />} />
       <Route path="siterolesrules" element={<SiteRolesRules />} />

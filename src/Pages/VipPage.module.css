@@ -1,0 +1,114 @@
+.wrapper {
+  min-height: 60vh;
+  background: linear-gradient(180deg, #e8ddd4 0%, #d4c4a8 100%);
+  padding: 2rem 1rem 3rem;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-block;
+  color: #7b6857;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  color: #2c2c2c;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  color: #4a4a4a;
+  margin: 0 0 2rem;
+  font-size: 1rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin: 0 0 0.5rem;
+}
+
+.benefitsList {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #3a3a3a;
+  line-height: 1.6;
+}
+
+.benefitsList li {
+  margin-bottom: 0.35rem;
+}
+
+.disclaimer {
+  margin: 0;
+  color: #3a3a3a;
+  line-height: 1.6;
+}
+
+.noticeBox,
+.characterNameNotice {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  border-radius: 0;
+  border: 2px solid #7b6857;
+  background: rgba(123, 104, 87, 0.12);
+  color: #2c2c2c;
+  line-height: 1.5;
+}
+
+.noticeBox {
+  font-size: 1.25rem;
+}
+
+.characterNameNotice {
+  font-size: 1.1rem;
+}
+
+.stripeWrapper {
+  margin-top: 2rem;
+  min-height: 400px;
+}
+
+:global(html[data-theme="dark"]) .wrapper {
+  background: linear-gradient(180deg, #1a1a1a 0%, #2e2e2e 100%);
+}
+
+:global(html[data-theme="dark"]) .title,
+:global(html[data-theme="dark"]) .sectionTitle {
+  color: #e8e0d0;
+}
+
+:global(html[data-theme="dark"]) .subtitle,
+:global(html[data-theme="dark"]) .benefitsList,
+:global(html[data-theme="dark"]) .disclaimer,
+:global(html[data-theme="dark"]) .noticeBox,
+:global(html[data-theme="dark"]) .characterNameNotice {
+  color: #d4c4a8;
+}
+
+:global(html[data-theme="dark"]) .backLink {
+  color: #c4b5fd;
+}
+
+:global(html[data-theme="dark"]) .noticeBox,
+:global(html[data-theme="dark"]) .characterNameNotice {
+  border-color: #7b6857;
+  background: rgba(123, 104, 87, 0.2);
+}

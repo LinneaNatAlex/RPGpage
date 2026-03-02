@@ -810,6 +810,16 @@ const TopBar = () => {
             className={styles.chestIcon}
           />
         </button>
+        <Link
+          to="/vip"
+          className={styles.inventoryIconBtn}
+          title="VIP Membership"
+          aria-label="VIP Membership"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z" />
+          </svg>
+        </Link>
         {/* Notifications button + panel */}
         {user && (
           <div
