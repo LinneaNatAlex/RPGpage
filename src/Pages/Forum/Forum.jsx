@@ -442,13 +442,21 @@ const Forum = () => {
         followers = followerIds.filter((uid) => uid !== user.uid);
       } else {
         // Fallback for topics created before followerIds existed (uses cached users)
+        // Match by topic id AND forum (so 18+ and other forums are correct)
         const topicIdStr = String(topicId);
+        const forumRoomNorm = String(forumRoom || "").trim().toLowerCase();
         const allUsers = await getAllUsersCached();
         allUsers.forEach((u) => {
           if (u.id === user.uid) return;
           const list = u.followedTopics;
           if (!list || !Array.isArray(list)) return;
-          if (list.some((t) => t && String(t.id) === topicIdStr)) followers.push(u.id);
+          const followsThisTopicInThisForum = list.some(
+            (t) =>
+              t &&
+              String(t.id) === topicIdStr &&
+              String(t.forumRoom || t.forum || "").trim().toLowerCase() === forumRoomNorm
+          );
+          if (followsThisTopicInThisForum) followers.push(u.id);
         });
       }
 
@@ -514,6 +522,13 @@ const Forum = () => {
         uid: user.uid,
       }
     );
+
+    // Set followerIds so reply notifications work (incl. 18+); creator is first follower
+    try {
+      await updateDoc(doc(db, `forums/${forumRoom}/topics`, topicRef.id), {
+        followerIds: arrayUnion(user.uid),
+      });
+    } catch (_) {}
 
     // Nits reward: Short but long = 2 nits per 100 words (max 10; 480+ = 10); others = global milestone
     if (isShortButLong) {

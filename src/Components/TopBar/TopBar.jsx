@@ -178,10 +178,13 @@ const TopBar = () => {
           ) {
             await addDoc(collection(db, "notifications"), {
               to: user.uid,
+              from: post.uid || null,
+              fromName: post.author || "",
               type: "topic_reply",
               topicId: topic.id,
               topicTitle: topic.title,
               forum: topic.forum,
+              forumRoom: roomId,
               author: post.author,
               content: post.content,
               createdAt: serverTimestamp(),
