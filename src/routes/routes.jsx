@@ -31,6 +31,7 @@ import LibraryPage from "../Pages/LibraryPage.jsx";
 import Profile from "../Pages/Profile/Profile.jsx";
 import SignIn from "../Pages/SignIn/SignIn.jsx";
 import SignUp from "../Pages/SignUp/SignUp.jsx";
+import ForgotPassword from "../Pages/ForgotPassword/ForgotPassword.jsx";
 import MainPage from "../Pages/MainPage/MainPage.jsx";
 import VerifyEmail from "../Pages/VerifyEmail/VerifyEmail.jsx";
 import UserProfile from "../Pages/UserProfile/UserProfile.jsx";
@@ -106,6 +107,7 @@ export const router = createBrowserRouter(
       {/*----------------------------- Public routes -----------------------------*/}
       <Route index element={<MainPage />} />
       <Route path="sign-in" element={<SignIn />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="sign-up" element={<SignUp />} />
       <Route path="race-info/:race" element={<RaceInfo />} />
       <Route path="verify-email" element={<VerifyEmail />} />

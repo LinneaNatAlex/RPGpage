@@ -131,7 +131,12 @@ const SignIn = () => {
           <input type="email" id="email" name="email" onChange={handleChange} />
         </div>
         <div className={styles.inputGroup}>
-          <label htmlFor="password">Password</label>
+          <div className={styles.passwordLabelRow}>
+            <label htmlFor="password">Password</label>
+            <NavLink to="/forgot-password" className={styles.signInLink}>
+              Forgot password?
+            </NavLink>
+          </div>
           <input
             type="password"
             id="password"
