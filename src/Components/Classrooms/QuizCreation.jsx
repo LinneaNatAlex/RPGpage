@@ -5,9 +5,14 @@ import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 import styles from "./QuizCreation.module.css";
 
+const teacherRole = (r) =>
+  ["professor", "teacher", "admin", "headmaster"].includes(
+    String(r || "").toLowerCase(),
+  );
+
 const QuizCreation = ({ classId, onClose, onComplete }) => {
-  const { user } = useAuth();
-  const { roles } = useUserRoles();
+  const { user, loading: authLoading } = useAuth();
+  const { roles, rolesLoading } = useUserRoles();
   const [quizData, setQuizData] = useState({
     title: "",
     description: "",
@@ -22,8 +27,24 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // Check if user has permission
-  const canCreateQuiz = roles.includes("professor") || roles.includes("teacher") || roles.includes("admin");
+  const canCreateQuiz = (roles || []).some(teacherRole);
+
+  // Ikke vis «Access denied» mens roller eller auth lastes (unngår blink / «kicked out» ved fokus/refresh)
+  if (authLoading || rolesLoading) {
+    return (
+      <div
+        className={styles.quizCreationOverlay}
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
+        <div
+          className={styles.quizCreationContent}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <p className={styles.loadingHint}>Loading…</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!canCreateQuiz) {
     return (
@@ -137,7 +158,10 @@ const QuizCreation = ({ classId, onClose, onComplete }) => {
   };
 
   return (
-    <div className={styles.quizCreationOverlay} onClick={onClose}>
+    <div
+      className={styles.quizCreationOverlay}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
       <div className={styles.quizCreationContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.quizHeader}>
           <h2>Create Quiz for {classId} - Grade {quizData.gradeLevel}</h2>

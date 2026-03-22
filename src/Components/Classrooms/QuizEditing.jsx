@@ -5,9 +5,14 @@ import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 import styles from "./QuizEditing.module.css";
 
+const teacherRole = (r) =>
+  ["professor", "teacher", "admin", "headmaster"].includes(
+    String(r || "").toLowerCase(),
+  );
+
 const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
-  const { user } = useAuth();
-  const { roles } = useUserRoles();
+  const { user, loading: authLoading } = useAuth();
+  const { roles, rolesLoading } = useUserRoles();
   const [quizData, setQuizData] = useState({
     title: "",
     description: "",
@@ -23,8 +28,7 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Check if user has permission
-  const canEditQuiz = roles.includes("professor") || roles.includes("teacher") || roles.includes("admin");
+  const canEditQuiz = (roles || []).some(teacherRole);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -74,6 +78,22 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
     }
   }, [quiz]);
 
+  if (authLoading || rolesLoading) {
+    return (
+      <div
+        className={styles.quizEditingOverlay}
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
+        <div
+          className={styles.quizEditingContent}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={styles.loading}>Loading…</div>
+        </div>
+      </div>
+    );
+  }
+
   if (!canEditQuiz) {
     return (
       <div className={styles.permissionDenied}>
@@ -88,8 +108,14 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
 
   if (loading) {
     return (
-      <div className={styles.quizEditingOverlay}>
-        <div className={styles.quizEditingContent}>
+      <div
+        className={styles.quizEditingOverlay}
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
+        <div
+          className={styles.quizEditingContent}
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className={styles.loading}>Loading quiz...</div>
         </div>
       </div>
@@ -181,7 +207,10 @@ const QuizEditing = ({ classId, quiz, onClose, onComplete }) => {
   };
 
   return (
-    <div className={styles.quizEditingOverlay} onClick={onClose}>
+    <div
+      className={styles.quizEditingOverlay}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
       <div className={styles.quizEditingContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.quizHeader}>
           <h2>Edit Quiz: {quiz?.title || "Unknown Quiz"}</h2>

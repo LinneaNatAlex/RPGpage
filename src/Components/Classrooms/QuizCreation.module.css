@@ -35,6 +35,13 @@
   border-radius: 0;
 }
 
+.loadingHint {
+  padding: 2rem;
+  color: #f5efe0;
+  text-align: center;
+  font-family: "Cinzel", serif;
+}
+
 .quizHeader {
   display: flex;
   align-items: center;
