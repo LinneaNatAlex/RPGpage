@@ -112,6 +112,8 @@ export default function useNotifications(user, userData) {
   return {
     notifications,
     recentNews,
+    setNotifications,
+    setRecentNews,
     markAllAsRead,
     unreadCount,
   };

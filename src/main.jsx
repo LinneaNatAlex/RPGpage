@@ -3,6 +3,7 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/routes.jsx";
 import { AuthProvider } from "./context/authContext.jsx";
+import { NotificationsProvider } from "./context/notificationsContext.jsx";
 import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.jsx";
 
 function isSuppressedError(err) {
@@ -47,7 +48,9 @@ console.error = (...args) => {
 createRoot(document.getElementById("root")).render(
   <ErrorBoundary>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <NotificationsProvider>
+        <RouterProvider router={router} />
+      </NotificationsProvider>
     </AuthProvider>
   </ErrorBoundary>
 );

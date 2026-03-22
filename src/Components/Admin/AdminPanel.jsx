@@ -404,6 +404,21 @@ export default function AdminPanel() {
     }
   }
 
+  async function handleRemoveCharacterStatus(raceKey, label) {
+    if (!roles.includes("admin")) return;
+    setCharacterStatusesConfigStatus("Removing...");
+    try {
+      const arr = (characterStatusesConfig[raceKey] || []).filter((s) => s !== label);
+      const next = { ...characterStatusesConfig, [raceKey]: arr };
+      await setDoc(doc(db, "config", "characterStatuses"), next, { merge: true });
+      setCharacterStatusesConfig(next);
+      setCharacterStatusesConfigStatus(`Removed "${label}" from ${raceKey}.`);
+      setTimeout(() => setCharacterStatusesConfigStatus(""), 3000);
+    } catch (err) {
+      setCharacterStatusesConfigStatus(`Error: ${err.message}`);
+    }
+  }
+
   const filtered = users.filter(
     (u) =>
       (u.displayName || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -1300,13 +1315,41 @@ export default function AdminPanel() {
             "Add status options per race (e.g. Nightwalker, Incubus, Full Shapeshifter). These appear in the user edit form and on profiles. Defaults (Nightwalker, Werewolf, Elf, etc.) are always available.",
           )}
           <div style={{ marginBottom: 12 }}>
-            <span style={{ fontWeight: 600, color: theme.text }}>Current statuses per race</span>
-            <ul style={{ margin: "8px 0 0 0", paddingLeft: 20, color: theme.secondaryText, fontSize: "0.9rem" }}>
-              {CONFIG_RACE_KEYS.map((key) => (
-                <li key={key}>
-                  <strong style={{ color: theme.text }}>{key}</strong>: {(characterStatusesConfig[key] || []).length ? (characterStatusesConfig[key] || []).join(", ") : "(default only)"}
-                </li>
-              ))}
+            <span style={{ fontWeight: 600, color: theme.text }}>Current statuses per race (click Remove to delete)</span>
+            <ul style={{ margin: "8px 0 0 0", paddingLeft: 20, color: theme.secondaryText, fontSize: "0.9rem", listStyle: "none" }}>
+              {CONFIG_RACE_KEYS.map((key) => {
+                const statuses = characterStatusesConfig[key] || [];
+                return (
+                  <li key={key} style={{ marginBottom: 6 }}>
+                    <strong style={{ color: theme.text }}>{key}</strong>:
+                    {statuses.length ? (
+                      statuses.map((s) => (
+                        <span key={s} style={{ display: "inline-flex", alignItems: "center", gap: 4, marginRight: 8, marginTop: 2 }}>
+                          <span>{s}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCharacterStatus(key, s)}
+                            title={`Remove ${s} from ${key}`}
+                            style={{
+                              padding: "2px 6px",
+                              fontSize: "0.75rem",
+                              background: theme.background,
+                              color: theme.text,
+                              border: `1px solid ${theme.border}`,
+                              borderRadius: 4,
+                              cursor: "pointer",
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </span>
+                      ))
+                    ) : (
+                      " (default only)"
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginBottom: 8 }}>

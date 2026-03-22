@@ -43,7 +43,7 @@ const MainPage = () => {
     <>
       <h1 className={styles.introductionTitle}>
         {user ? (
-          <>Welcome {displayName || "Werewolf/Witch/Vampire/Elf"}</>
+          <>Welcome {displayName || "Werewolf/Wizard/Vampire/Elf"}</>
         ) : (
           <>Welcome to Vayloria Arcane School</>
         )}
@@ -61,7 +61,7 @@ const MainPage = () => {
             Vayloria Arcane School is a text-based roleplaying community where 
             writers become students of the mystical arts. Create your character, 
             discover your magical race, and weave your story alongside fellow 
-            werewolves, witches, vampires, and elves.
+            werewolves, wizards, vampires, and elves.
           </>
         )}
       </p>
@@ -126,7 +126,7 @@ const MainPage = () => {
                 <h3 className={styles.featureCardTitle}>Discover Your Race</h3>
                 <p className={styles.featureCardText}>
                   Through our sorting quiz, discover whether you are a Werewolf, 
-                  Witch, Vampire, or Elf. Each race has its own unique traits, 
+                  Wizard, Vampire, or Elf. Each race has its own unique traits, 
                   history, and magical abilities. Your race shapes your journey.
                 </p>
               </div>
@@ -174,7 +174,7 @@ const MainPage = () => {
                 <h3 className={styles.stepTitle}>Take the Sorting Quiz</h3>
                 <p className={styles.stepText}>
                   Complete our sorting quiz to discover whether you're a Werewolf, 
-                  Witch, Vampire, or Elf. Your race determines your magical path.
+                  Wizard, Vampire, or Elf. Your race determines your magical path.
                 </p>
               </div>
               <div className={styles.stepCard}>
@@ -250,7 +250,7 @@ const MainPage = () => {
 
   return (
     <section className={styles.introductionPage}>
-      <AnnouncementBanner user={user} />
+      {user && <AnnouncementBanner user={user} />}
       {user?.roles?.includes("admin") ||
       (user?.roles?.includes("professor") || user?.roles?.includes("teacher")) ||
       user?.roles?.includes("archivist") ? (

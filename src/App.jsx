@@ -38,6 +38,13 @@ function App() {
   const { user, loading } = useAuth();
   const { userData } = useUserData();
   const location = useLocation();
+  const authRoutePaths = [
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/verify-email",
+  ];
+  const isAuthRoute = authRoutePaths.includes(location.pathname);
   const [minLoadTimeElapsed, setMinLoadTimeElapsed] = useState(false);
 
   // Spinner vises minst AUTH_LOADING_MIN_MS slik at den ikke bare blinker ved rask auth
@@ -156,6 +163,23 @@ function App() {
       } catch (_) {}
     }
   }, [isDark, globalPinkMode]);
+
+  // Unngå melkebeige body/html bak innlogging/registrering (synlig som stripe ved main-padding)
+  useEffect(() => {
+    const body = document.body;
+    const html = document.documentElement;
+    if (isAuthRoute) {
+      body.classList.add("auth-page-bg");
+      html.style.backgroundColor = "#120f0c";
+    } else {
+      body.classList.remove("auth-page-bg");
+      html.style.backgroundColor = "";
+    }
+    return () => {
+      body.classList.remove("auth-page-bg");
+      html.style.backgroundColor = "";
+    };
+  }, [isAuthRoute]);
 
   // Site config: getDoc + poll 5 min (sparer onSnapshot-read ved reload)
   const CONFIG_POLL_MS = 5 * 60 * 1000;
@@ -536,7 +560,7 @@ function App() {
         <OnlineListProvider>
         <MobileLayout>
           <div
-            className={styles.rootContainer}
+            className={`${styles.rootContainer}${isAuthRoute ? ` ${styles.authShell}` : ""}`}
             data-theme={
               globalPinkMode
                 ? "pink"

@@ -35,7 +35,7 @@
   padding: 40px 20px 60px;
   padding-top: 100px;
   position: relative;
-  background-color: #1a1625;
+  background-color: #120f0c;
   background-image: url("/login-bg.jpg"), url("/login-bg.png"), url("/login-bg.svg");
   background-size: cover;
   background-position: center;
@@ -50,7 +50,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, rgba(15, 12, 25, 0.4) 0%, rgba(25, 20, 40, 0.5) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 6, 4, 0.45) 0%,
+    rgba(22, 17, 12, 0.58) 100%
+  );
   pointer-events: none;
   z-index: 0;
 }
@@ -426,6 +430,16 @@ input:focus {
   box-shadow: 0 0 16px rgba(123, 104, 87, 0.4);
   transform: translateY(-1px);
 }
+
+.signUpForm input:-webkit-autofill,
+.signUpForm input:-webkit-autofill:hover,
+.signUpForm input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #f5efe0 inset;
+  box-shadow: 0 0 0 1000px #f5efe0 inset;
+  -webkit-text-fill-color: #2c2c2c;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 input::placeholder {
   color: #7B6857;
   text-transform: none;

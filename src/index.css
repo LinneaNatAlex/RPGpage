@@ -33,6 +33,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Synk med App authShell – overscroll / kant skal ikke vise beige */
+body.auth-page-bg {
+  background-color: #120f0c !important;
+}
+
 /* Classroom section – skarpe hjørner, skjul scrollbar */
 .classroom-messages-container,
 .classroom-textarea {

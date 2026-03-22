@@ -14,9 +14,7 @@ import {
   collection,
   addDoc,
   query,
-  where,
   getDocs,
-  onSnapshot,
   orderBy,
   limit,
 } from "firebase/firestore";
@@ -28,6 +26,7 @@ import useUserRoles from "../../hooks/useUserRoles";
 import { cacheHelpers } from "../../utils/firebaseCache";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 import { useOnlineListContext } from "../../context/onlineListContext";
+import { useNotificationsContext } from "../../context/notificationsContext.jsx";
 import OnlineUsers from "../OnlineUsers/OnlineUsers";
 
 import styles from "./TopBar.module.css";
@@ -71,6 +70,13 @@ function HealthBar({ health = 100, maxHealth = 100 }) {
 const TopBar = () => {
   const { user } = useAuth();
   const { userData, loading: userDataLoading } = useUserData();
+  const {
+    notifications,
+    recentNews,
+    setNotifications,
+    setRecentNews,
+    markAllAsRead,
+  } = useNotificationsContext();
   const { roles } = useUserRoles();
   const navigate = useNavigate();
   const { setOpenWithUid, setOpenWithGroupId } = useOpenPrivateChat();
@@ -82,8 +88,6 @@ const TopBar = () => {
   const [invisibleUntil, setInvisibleUntil] = useState(null);
   const [invisibleCountdown, setInvisibleCountdown] = useState(0);
   const [giftModal, setGiftModal] = useState({ open: false, item: null });
-  const [notifications, setNotifications] = useState([]);
-  const [recentNews, setRecentNews] = useState([]);
   const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
   const notificationsPanelRef = useRef(null);
   const [inLoveWith, setInLoveWith] = useState(null);
@@ -476,90 +480,6 @@ const TopBar = () => {
     return () => clearInterval(timer);
   }, [invisibleUntil]);
 
-  // Notifications: sanntidslytter så nye varsler (f.eks. private_chat) vises med en gang
-  const fetchNotifications = useRef(null);
-  useEffect(() => {
-    if (!user) return;
-
-    const notifRef = collection(db, "notifications");
-    const q = query(
-      notifRef,
-      where("to", "==", user.uid),
-      limit(80)
-    );
-
-    const applySnapshot = (snap) => {
-      const byTo = (snap.docs || []).map((d) => {
-        const data = d.data();
-        return {
-          id: d.id,
-          ...data,
-          _sort: data.created ?? data.createdAt?.toMillis?.() ?? 0,
-        };
-      });
-      byTo.sort((a, b) => (b._sort || 0) - (a._sort || 0));
-      const list = byTo.slice(0, 50).map(({ _sort, ...n }) => n);
-      setNotifications(list);
-      cacheHelpers.setNotifications(user.uid, list.filter((n) => !n.read));
-    };
-
-    const unsub = onSnapshot(
-      q,
-      applySnapshot,
-      (e) => {
-        if (process.env.NODE_ENV === "development") {
-          console.warn("Notifications listener error:", e?.message || e);
-        }
-        // Ikke tøm listen ved feil – behold eksisterende varsler
-      }
-    );
-    fetchNotifications.current = () => getDocs(q).then(applySnapshot).catch(() => setNotifications([]));
-    return () => unsub();
-  }, [user]);
-
-  // Recent news for notification list (newer than lastSeenNewsAt)
-  useEffect(() => {
-    if (!user || !userData) return;
-    const lastSeen = userData.lastSeenNewsAt ?? 0;
-    const q = query(
-      collection(db, "news"),
-      orderBy("createdAt", "desc"),
-      limit(10),
-    );
-    getDocs(q)
-      .then((snap) => {
-        const list = snap.docs
-          .map((d) => ({ id: d.id, ...d.data() }))
-          .filter((item) => item.type === "nyhet")
-          .filter((item) => {
-            const t = item.createdAt?.toMillis?.() ?? item.createdAt ?? 0;
-            return t > lastSeen;
-          });
-        setRecentNews(list);
-      })
-      .catch(() => setRecentNews([]));
-  }, [user, userData?.lastSeenNewsAt]);
-
-  // Mark all notifications as read
-  const markAllNotificationsAsRead = async () => {
-    if (!user) return;
-    const unread = notifications.filter((n) => !n.read);
-    if (unread.length === 0) return;
-    try {
-      await Promise.all(
-        unread.map((n) =>
-          updateDoc(doc(db, "notifications", n.id), { read: true })
-        )
-      );
-      setNotifications((prev) =>
-        prev.map((n) => ({ ...n, read: true }))
-      );
-      cacheHelpers.setNotifications(user.uid, []);
-    } catch (err) {
-      console.error("Error marking all as read:", err);
-    }
-  };
-
   // Close notifications panel on Escape
   useEffect(() => {
     if (!showNotificationsPanel) return;
@@ -829,12 +749,9 @@ const TopBar = () => {
             <button
               type="button"
               className={styles.inventoryIconBtn}
-              onClick={() => {
-                setShowNotificationsPanel((v) => {
-                  if (!v) fetchNotifications.current?.(); // refresh when opening panel (no polling)
-                  return !v;
-                });
-              }}
+              onClick={() =>
+                setShowNotificationsPanel((v) => !v)
+              }
               title="Notifications"
               aria-label="Notifications"
               style={{ position: "relative" }}
@@ -868,7 +785,7 @@ const TopBar = () => {
                     {notifications.filter((n) => !n.read).length > 0 && (
                       <button
                         type="button"
-                        onClick={markAllNotificationsAsRead}
+                        onClick={markAllAsRead}
                         style={{
                           fontSize: "0.85rem",
                           padding: "4px 10px",

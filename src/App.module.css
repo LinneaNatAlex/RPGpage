@@ -6,6 +6,18 @@
   flex-direction: column;
 }
 
+/* Innlogging / registrering / e-postbekreftelse – ikke vis appens beige rundt skjemaet */
+.authShell {
+  background-color: #120f0c;
+}
+
+.authShell .main {
+  padding: 0;
+  max-width: none;
+  margin: 0;
+  width: 100%;
+}
+
 .header {
   width: 100%;
   z-index: 10003;

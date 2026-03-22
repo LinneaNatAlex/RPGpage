@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/authContext.jsx";
 import useUserRoles from "../../hooks/useUserRoles";
 import useUserData from "../../hooks/useUserData";
-import useNotifications from "../../hooks/useNotifications";
+import { useNotificationsContext } from "../../context/notificationsContext.jsx";
 import { useOpenPrivateChat } from "../../context/openPrivateChatContext";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -87,7 +87,8 @@ const MobileLayout = ({ children }) => {
   };
   const { user, loading: authLoading } = useAuth();
   const { userData } = useUserData();
-  const { notifications, recentNews, markAllAsRead, unreadCount } = useNotifications(user, userData);
+  const { notifications, recentNews, markAllAsRead, unreadCount } =
+    useNotificationsContext();
   const { setOpenWithUid } = useOpenPrivateChat();
   const navigate = useNavigate();
   const location = useLocation();
