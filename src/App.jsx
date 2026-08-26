@@ -394,6 +394,16 @@ function App() {
             background: transparent !important;
             border-color: transparent !important;
           }
+          html[data-theme="dark"] .mobile-app,
+          html[data-theme="dark"] .mobile-app-light {
+            background: #221a16 !important;
+          }
+          html[data-theme="dark"] .mobile-app .app-topbar,
+          html[data-theme="dark"] .mobile-app-light .app-topbar,
+          html[data-theme="dark"] .mobile-app .app-tabbar,
+          html[data-theme="dark"] .mobile-app-light .app-tabbar {
+            background: #2c241c !important;
+          }
         `
             : ""
         }
@@ -462,6 +472,17 @@ function App() {
           [data-theme="pink"] .ql-toolbar button:hover { background: #ffe4ec !important; }
           [data-theme="pink"] ::-webkit-scrollbar-thumb { background: #e8a0b0 !important; }
           [data-theme="pink"] * { scrollbar-color: #e8a0b0 #fff0f5 !important; }
+          .mobile-app, .mobile-app-light,
+          .mobile-app .app-topbar, .mobile-app-light .app-topbar,
+          .mobile-app .app-tabbar, .mobile-app-light .app-tabbar,
+          .mobile-app .mobile-main, .mobile-app-light .mobile-main {
+            background: #221a16 !important;
+            color: #f3eadc !important;
+          }
+          .mobile-app .app-topbar, .mobile-app-light .app-topbar,
+          .mobile-app .app-tabbar, .mobile-app-light .app-tabbar {
+            background: #2c241c !important;
+          }
         `
             : ""
         }

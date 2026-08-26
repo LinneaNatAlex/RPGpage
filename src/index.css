@@ -95,6 +95,9 @@ body.mobile-app-shell #root {
   background-color: #221a16 !important;
   background-image: none !important;
   overscroll-behavior: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
 }
 
 @media (max-width: 768px) {
