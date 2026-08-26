@@ -707,9 +707,9 @@
   }
 
   .introductionHeader {
-    padding: 0.9rem 0.9rem;
-    margin: 0;
-    border-radius: 0;
+    padding: 1rem 1rem;
+    margin-bottom: 0;
+    border-radius: 14px;
   }
 
   /* Mobile statistics */

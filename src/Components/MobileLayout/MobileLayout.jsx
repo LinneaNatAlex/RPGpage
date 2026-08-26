@@ -226,9 +226,21 @@ const MobileLayout = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (isMobile) document.body.classList.add("mobile-app-shell");
-    else document.body.classList.remove("mobile-app-shell");
-    return () => document.body.classList.remove("mobile-app-shell");
+    const html = document.documentElement;
+    if (isMobile) {
+      document.body.classList.add("mobile-app-shell");
+      html.style.colorScheme = "dark";
+      html.style.backgroundColor = "#1c1410";
+    } else {
+      document.body.classList.remove("mobile-app-shell");
+      html.style.colorScheme = "";
+      html.style.backgroundColor = "";
+    }
+    return () => {
+      document.body.classList.remove("mobile-app-shell");
+      html.style.colorScheme = "";
+      html.style.backgroundColor = "";
+    };
   }, [isMobile]);
 
   // Update active tab based on current route

@@ -78,33 +78,37 @@ body.auth-page-bg {
   display: none !important; /* Chrome, Safari, Opera */
 }
 
-/* Mobil-skall: ingen pergament/hvit stripe bak header (Samsung/Chrome safe-area) */
+/* Chrome on Android paints unfilled viewport (edge-to-edge / cutout) using color-scheme.
+   Light OS + "light dark" = white stripe. Force dark canvas on the app shell. */
 html:has(body.mobile-app-shell),
 html:has(.mobile-app),
-html:has(.mobile-app-light) {
+html:has(.mobile-app-light),
+body.mobile-app-shell {
+  color-scheme: dark;
   background: #1c1410 !important;
+  background-color: #1c1410 !important;
+  background-image: none !important;
 }
 
 body.mobile-app-shell,
 body.mobile-app-shell #root {
   background-color: #1c1410 !important;
   background-image: none !important;
-  overflow: hidden !important;
-  height: 100%;
-  max-width: 100%;
+  overscroll-behavior: none;
 }
 
 @media (max-width: 768px) {
   html,
   body {
     height: 100%;
-    overflow: hidden;
     background-color: #1c1410 !important;
     background-image: none !important;
+    color-scheme: dark;
   }
 
   :root {
     background: #1c1410 !important;
+    color-scheme: dark;
   }
 
   body.mobile-app-shell {
@@ -114,8 +118,7 @@ body.mobile-app-shell #root {
 
   #root {
     background-color: #1c1410;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
   }
 
   .classroom-messages-container {
