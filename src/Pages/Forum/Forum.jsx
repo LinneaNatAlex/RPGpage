@@ -815,7 +815,7 @@ const Forum = () => {
         <>
           <div className={styles.newTopicForm}>
             {is18PlusForum && (
-              <p style={{ marginBottom: 14, padding: "8px 12px", background: "rgba(160, 132, 232, 0.2)", border: "1px solid #a084e8", borderRadius: 12, fontSize: "0.9rem" }}>
+              <p style={{ marginBottom: 0, padding: "8px 12px", background: "rgba(160, 132, 232, 0.2)", border: "1px solid #a084e8", borderRadius: 12, fontSize: "0.9rem" }}>
                 When you create the first post below, you can choose if the topic is private and who can see it (only 18+ verified users).
               </p>
             )}

@@ -171,6 +171,9 @@ td .userName[style*="color"] {
 .profileLink:hover {
   color: #3d3228;
 }
+.profileLinkShort {
+  display: none;
+}
 
 .pointsCell {
   font-weight: bold;
@@ -454,7 +457,7 @@ td:first-child .archivistName {
   }
 
   .raceChampionship {
-    padding: 0.7rem 0.75rem 0.8rem;
+    padding: 0.55rem 0.7rem 0.65rem;
   }
 
   .championshipTitle {
@@ -545,19 +548,22 @@ td:first-child .archivistName {
 
   .userListContainer th:nth-child(5),
   .userListContainer td:nth-child(5) {
-    width: 14%;
-    font-size: 0.85rem;
-  } /* Points – mindre font på mobil */
+    width: 16%;
+    font-size: 0.7rem;
+    padding: 4px 2px;
+    text-align: center;
+    white-space: nowrap;
+  } /* Points */
 
   .userListContainer th:nth-child(6),
   .userListContainer td:nth-child(6) {
-    width: 24%;
+    width: 18%;
   } /* Profile */
 
   .userListContainer th {
-    padding: 4px 2px;
-    font-size: 0.6rem;
-    white-space: normal;
+    padding: 6px 4px;
+    font-size: 0.68rem;
+    white-space: nowrap;
     text-align: left;
   }
 
@@ -576,18 +582,26 @@ td:first-child .archivistName {
 
   .profileLink {
     display: inline-block;
-    padding: 0.35rem 0.55rem;
+    padding: 0.4rem 0.6rem;
     background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
     color: #1a1410 !important;
     text-decoration: none;
     border-radius: 8px;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 700;
     white-space: nowrap;
     line-height: 1.2;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .profileLinkLong {
+    display: none;
+  }
+
+  .profileLinkShort {
+    display: inline;
   }
 
   .profileLink:hover {
@@ -596,10 +610,10 @@ td:first-child .archivistName {
 
   /* Race points mobile styles */
   .racePointsContainer {
-    margin: 20px 10px !important;
-    padding: 20px !important;
+    margin: 0 !important;
+    padding: 12px 10px !important;
     max-width: 100% !important;
-    border-radius: 10px !important;
+    border-radius: 0 !important;
   }
 
   .racePointsContainer h3 {

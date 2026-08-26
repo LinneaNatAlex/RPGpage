@@ -390,11 +390,13 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .inventoryPage {
-    padding: 1rem;
+    padding: 0;
   }
 
   .inventoryContainer {
-    padding: 1rem;
+    padding: 0.9rem 0.85rem 1.1rem;
+    border-radius: 0;
+    max-width: 100%;
   }
 
   .inventoryTitle {

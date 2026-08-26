@@ -98,9 +98,9 @@
 
 @media screen and (max-width: 768px) {
   .hallPage {
-    border-radius: 10px;
+    border-radius: 0;
     width: 100%;
-    height: calc(100dvh - 122px);
+    height: calc(100dvh - 118px);
     min-height: 0;
   }
 

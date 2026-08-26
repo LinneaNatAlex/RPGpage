@@ -22,9 +22,9 @@
 
   /* Mobile Main Content */
   .main {
-    margin-top: 60px; /* Space for fixed header */
+    margin-top: 0;
     margin-bottom: 80px; /* Space for mobile bottom nav */
-    padding: 10px;
+    padding: 0;
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;

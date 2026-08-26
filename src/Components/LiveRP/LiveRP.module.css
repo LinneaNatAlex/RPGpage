@@ -617,7 +617,12 @@
   }
 
   .chatMessages {
-    padding: 0.75rem 0.8rem 1rem;
+    padding: 0.55rem 0.7rem 0.75rem;
+  }
+
+  .infoDropdown {
+    margin: 0;
+    border-radius: 0;
   }
 
   .composerRow {

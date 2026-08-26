@@ -123,12 +123,13 @@
   max-width: 100%;
   overflow: hidden;
   background: #1c1410;
-  color: #f3eadc !important;
+  color: #f3eadc;
   font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
   cursor: default !important;
   align-items: stretch;
   justify-content: flex-start;
-  padding-top: env(safe-area-inset-top);
+  padding: 0;
+  margin: 0;
 }
 
 /* Force dark mode for all mobile content */
@@ -150,7 +151,6 @@
   justify-content: flex-start;
   margin: 0;
   padding: 0;
-  padding-top: env(safe-area-inset-top);
 }
 
 /* Ensure all mobile containers stretch to full width */
@@ -178,15 +178,13 @@
   display: none !important;
 }
 
-/* Mobile Status Bar */
+/* Mobile Status Bar – leftover chrome, never show */
 .mobile-status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 20px;
-  background: rgba(26, 11, 8, 0.9);
-  font-size: 0.8rem;
-  font-weight: 600;
+  display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
 }
 
 .mobile-status-left {
@@ -291,13 +289,15 @@
 .mobile-main {
   flex: 1;
   min-height: 0;
-  padding: 12px 12px calc(72px + env(safe-area-inset-bottom));
+  padding: 0 0 calc(64px + env(safe-area-inset-bottom, 0px));
+  margin: 0;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  background: #1c1410;
 }
 
 .mobile-main::-webkit-scrollbar {
@@ -1385,11 +1385,11 @@
   background: transparent;
   backdrop-filter: none;
   border-radius: 0;
-  padding: 8px 10px 16px;
-  margin: 0 auto;
+  padding: 0;
+  margin: 0;
   border: none;
   min-height: auto;
-  overflow-y: auto;
+  overflow-y: visible;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -1456,8 +1456,8 @@
   padding: 28px 22px;
   border: 1px solid rgba(201, 168, 108, 0.28);
   text-align: center;
-  margin: 20px auto;
-  max-width: calc(100vw - 40px);
+  margin: 8px auto;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -2001,7 +2001,6 @@
   .mobile-page-content h4,
   .mobile-page-content h5,
   .mobile-page-content h6 {
-    color: inherit;
     font-family: inherit;
     word-break: normal;
     overflow-wrap: anywhere;
@@ -2716,8 +2715,10 @@ html[data-theme="dark"] .mobile-dashboard-close:active {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 16px 12px;
-  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  padding: max(8px, env(safe-area-inset-top, 0px)) 12px 10px;
+  margin: 0;
+  background: #322820;
+  background-image: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   border-bottom: 1px solid rgba(201, 168, 108, 0.28);
   z-index: 40;
 }
@@ -2892,7 +2893,11 @@ html[data-theme="dark"] .mobile-dashboard-close:active {
 
 .mobile-page-content > * {
   max-width: 100% !important;
+  width: 100% !important;
   box-sizing: border-box;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
 }
 
 .mobile-chat-overlay {
@@ -2904,4 +2909,25 @@ html[data-theme="dark"] .mobile-dashboard-close:active {
 
 .mobile-main-chat-open {
   overflow: hidden;
+}
+
+/* Edge-to-edge pages on phones (incl. wide flagships like S25 Ultra) */
+.mobile-app .ql-toolbar.ql-snow,
+.mobile-app-light .ql-toolbar.ql-snow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 6px 8px;
+}
+
+.mobile-app .ql-toolbar.ql-snow .ql-formats,
+.mobile-app-light .ql-toolbar.ql-snow .ql-formats {
+  margin-right: 8px;
+}
+
+.mobile-app .ql-container.ql-snow,
+.mobile-app-light .ql-container.ql-snow {
+  width: 100%;
 }

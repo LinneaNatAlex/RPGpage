@@ -276,7 +276,8 @@ const UserList = ({ userQuery }) => {
                   <span className={styles.youHere}>—</span>
                 ) : (
                   <Link to={`/user/${user.uid}`} className={styles.profileLink}>
-                    View Profile
+                    <span className={styles.profileLinkLong}>View Profile</span>
+                    <span className={styles.profileLinkShort}>View</span>
                   </Link>
                 )}
               </td>

@@ -58,7 +58,8 @@
 
 @media (max-width: 768px) {
   .bannerWrapper {
-    padding: 0 0 0.65rem;
+    padding: 0;
+    margin: 0;
   }
 
   .bannerContent,
