@@ -210,7 +210,6 @@
 /* --------------------TEXTBOXES ETC------------ */
 iframe {
   width: 100%;
-  height: auto;
   min-height: 200px;
   max-height: 1200px;
   overflow: hidden;
@@ -394,12 +393,23 @@ iframe::-webkit-scrollbar {
     max-width: 100%;
   }
 
-  .newsContent img,
+  .newsContent img {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto;
+  }
+
   .newsContent iframe,
   iframe {
     max-width: 100% !important;
     width: 100% !important;
-    height: auto;
+    background: transparent !important;
+  }
+
+  .codePostIframe {
+    width: 100% !important;
+    min-width: 0;
+    background: transparent !important;
   }
 
   .iframeWrapper {

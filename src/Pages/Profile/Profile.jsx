@@ -498,12 +498,15 @@ const Profile = () => {
                       const isDark =
                         typeof document !== "undefined" &&
                         !!document.querySelector('[data-theme="dark"]');
+                      const isMobile =
+                        typeof window !== "undefined" && window.innerWidth <= 768;
                       const fg = isDark ? "#e0e0e0" : "#2c2c2c";
+                      const scheme = isMobile ? "dark" : "normal";
                       return `<!DOCTYPE html>
-<html style="background:transparent">
-<head><meta charset="utf-8"/>
+<html style="background:transparent;color-scheme:${scheme}">
+<head><meta charset="utf-8"/>${isMobile ? '<meta name="color-scheme" content="dark"/>' : ""}
 <style>
-html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:transparent!important;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:transparent!important;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;${isMobile ? "color-scheme:dark;" : ""}}
 *{box-sizing:inherit;scrollbar-width:none!important;-ms-overflow-style:none!important;}
 html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
 [style*="overflow-y: auto"],[style*="overflow-y:auto"],[style*="overflow: auto"],[style*="overflow:auto"],[style*="overflow-y: scroll"],[style*="overflow-y:scroll"]{background:transparent!important;background-color:transparent!important;}
@@ -519,10 +522,15 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:non
                       border: "none",
                       borderRadius: 12,
                       background: "transparent",
+                      colorScheme:
+                        typeof window !== "undefined" && window.innerWidth <= 768
+                          ? "dark"
+                          : undefined,
                       overflow: "hidden",
                       scrollbarWidth: "none",
                       msOverflowStyle: "none",
                     }}
+                    allowTransparency="true"
                     title="Profile Text"
                   />
                   <button

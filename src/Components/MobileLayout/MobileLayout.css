@@ -168,10 +168,35 @@ html body .mobile-app-light .mobile-main {
 
 .mobile-page-content img,
 .mobile-page-content video,
-.mobile-page-content iframe,
 .mobile-page-content canvas {
-  max-width: 100% !important;
-  height: auto;
+  max-width: 100%;
+}
+
+/* Never force height:auto on iframes — Chrome paints a white canvas and
+   squashes HTML news / profile text. Keep them transparent instead. */
+.mobile-page-content iframe {
+  max-width: 100%;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.mobile-app [class*="profileTextContainer"] iframe,
+.mobile-app-light [class*="profileTextContainer"] iframe {
+  color-scheme: dark;
+}
+
+/* Avatars must stay a circle. height:auto + a portrait photo = oval. */
+.mobile-app img[class*="profileImage"],
+.mobile-app-light img[class*="profileImage"],
+.mobile-app [class*="vipAvatarGlowWrap"] img,
+.mobile-app-light [class*="vipAvatarGlowWrap"] img {
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
 }
 
 .mobile-page-content table {

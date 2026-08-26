@@ -191,22 +191,76 @@ const NewsFeed = () => {
     const isDark =
       typeof document !== "undefined" &&
       !!document.querySelector('[data-theme="dark"]');
+    const isMobile =
+      typeof window !== "undefined" && window.innerWidth <= 768;
     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
     const idEsc = JSON.stringify(String(itemId || ""));
-    const reportHeight = itemId != null && itemId !== ""
-      ? `<script>(function(){try{var h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);window.parent.postMessage({type:'newsIframeHeight',id:${idEsc},height:h},'*');}catch(e){}})();<\/script>`
+    const shouldReport = itemId != null && itemId !== "";
+    const mobileFitCss = isMobile
+      ? `html,body{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;}
+img,svg,video,canvas{max-width:100%!important;}`
       : "";
+    const fitAndReport = `<script>(function(){
+      function fit(){
+        try{
+          if(${isMobile ? "true" : "false"}){
+            var avail=document.documentElement.clientWidth||window.innerWidth;
+            if(avail<50)return;
+            var el=document.body.firstElementChild;
+            while(el&&(el.tagName==='SCRIPT'||el.tagName==='STYLE'))el=el.nextElementSibling;
+            if(!el)return;
+            el.style.transform='none';
+            for(var c=0;c<el.children.length;c++)el.children[c].style.transform='none';
+            var target=el;
+            var elW=el.getBoundingClientRect().width;
+            if(elW>=avail*0.92){
+              var kids=el.children,best=null,bestW=0;
+              for(var i=0;i<kids.length;i++){
+                var cw=kids[i].getBoundingClientRect().width;
+                if(cw>80&&cw<avail*0.92&&cw>bestW){best=kids[i];bestW=cw;}
+              }
+              if(best)target=best;
+            }
+            var rect=target.getBoundingClientRect();
+            var w=rect.width;
+            if(w>=80&&w<avail*0.94){
+              var s=Math.min(avail/w,2.4);
+              var left=rect.left;
+              target.style.transformOrigin='top left';
+              target.style.marginLeft='0';
+              target.style.marginRight='0';
+              target.style.transform='translateX('+(-left)+'px) scale('+s+')';
+              var h=Math.ceil(target.getBoundingClientRect().height);
+              document.body.style.overflow='hidden';
+              document.body.style.height=h+'px';
+              document.documentElement.style.height=h+'px';
+            }
+          }
+        }catch(e){}
+      }
+      function report(){
+        try{
+          ${shouldReport ? `var h=Math.ceil(Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.body.getBoundingClientRect().height));window.parent.postMessage({type:'newsIframeHeight',id:${idEsc},height:h},'*');` : ""}
+        }catch(e){}
+      }
+      function run(){fit();report();}
+      if(document.readyState==='complete')run();
+      else window.addEventListener('load',run);
+      setTimeout(run,50);
+      setTimeout(run,300);
+    })();<\/script>`;
     return `<!DOCTYPE html>
 <html style="background:transparent">
-<head><meta charset="utf-8"/>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
 html,body{margin:0;padding:0;background:transparent!important;color:${fg};box-sizing:border-box;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;}
 *{box-sizing:inherit;scrollbar-width:none!important;-ms-overflow-style:none!important;}
 html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
 [style*="overflow-y: auto"],[style*="overflow-y:auto"],[style*="overflow: auto"],[style*="overflow:auto"],[style*="overflow-y: scroll"],[style*="overflow-y:scroll"]{background:transparent!important;background-color:transparent!important;}
+${mobileFitCss}
 </style>
 </head>
-<body style="background:transparent">${raw}${reportHeight}</body>
+<body style="background:transparent">${raw}${fitAndReport}</body>
 </html>`;
   };
 
@@ -361,6 +415,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:non
                         style={{
                           minHeight: 200,
                           height: codeIframeHeights[item.id] || 480,
+                          background: "transparent",
                         }}
                         srcDoc={getCodePostHtml(item.content, item.id)}
                       />

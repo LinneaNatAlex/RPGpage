@@ -133,8 +133,8 @@
 
 /* Overstyr Safari/default lys iframe-bakgrunn (f.eks. rgba(255,255,255,0.7)) */
 .profileTextContainer iframe {
-  background-color: transparent !important;
   background: transparent !important;
+  background-color: transparent !important;
   overflow: hidden !important;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -1069,13 +1069,30 @@
   }
 
   .profileImage {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
+    width: 150px !important;
+    height: 150px !important;
+    max-width: 150px !important;
+    max-height: 150px !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
     border: 1px solid rgba(201, 168, 108, 0.32);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     margin-bottom: 0.5rem;
+  }
+
+  .vipAvatarGlowWrap {
+    width: 150px;
+    height: 150px;
+    max-width: 150px;
+    flex-shrink: 0;
+  }
+
+  .vipAvatarGlowWrap img {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
   }
 
   .characterDetailsContainer {
@@ -1180,10 +1197,18 @@
     width: 100%;
     max-width: 100%;
     padding: 0.75rem 0.6rem;
-    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    background: transparent;
+    border: none;
     border-radius: 10px;
     margin: 0 auto;
     box-sizing: border-box;
+    box-shadow: none;
+  }
+
+  .profileTextContainer iframe {
+    background: transparent !important;
+    background-color: transparent !important;
+    color-scheme: dark;
   }
 
   .profileText h2 {
