@@ -222,43 +222,45 @@ export default function RPGCalendarSidebar() {
     ? {
         background: "#252525",
         color: "#f5f5f5",
-        borderRadius: 0,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+        borderRadius: 16,
+        boxShadow: "0 10px 28px rgba(26, 20, 16, 0.28)",
         border: "1px solid #444",
-        padding: "1.5rem",
+        padding: "1.25rem 1.15rem",
         margin: 0,
-        minWidth: 280,
-        maxWidth: 320,
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
         fontFamily: "inherit",
         fontSize: 16,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "stretch",
       }
     : {
-        background: "#E8DDD4",
-        color: "#2C2C2C",
-        borderRadius: 0,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-        border: "1px solid #D4C4A8",
-        padding: "1.5rem",
+        background: "#f3eadc",
+        color: "#2c241c",
+        borderRadius: 16,
+        boxShadow: "0 10px 28px rgba(26, 20, 16, 0.08)",
+        border: "1px solid rgba(201, 168, 108, 0.32)",
+        padding: "1.25rem 1.15rem",
         margin: 0,
-        minWidth: 280,
-        maxWidth: 320,
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
         fontFamily: "inherit",
         fontSize: 16,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "stretch",
       };
 
-  const titleColor = isDark ? "#f5f5f5" : "#D4C4A8";
-  const mutedColor = isDark ? "#d0d0d0" : "#D4C4A8";
-  const subColor = isDark ? "#b0b0b0" : "#B8A082";
-  const boxBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(212, 196, 168, 0.2)";
-  const boxBorder = isDark ? "#444" : "#D4C4A8";
-  const cellBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(212, 196, 168, 0.15)";
-  const todayBg = isDark ? "rgba(255,255,255,0.15)" : "rgba(212, 196, 168, 0.35)";
+  const titleColor = isDark ? "#f5f5f5" : "#2c241c";
+  const mutedColor = isDark ? "#d0d0d0" : "#5c4e3e";
+  const subColor = isDark ? "#b0b0b0" : "#6b5d4d";
+  const boxBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(201, 168, 108, 0.16)";
+  const boxBorder = isDark ? "#444" : "rgba(201, 168, 108, 0.4)";
+  const cellBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(201, 168, 108, 0.12)";
+  const todayBg = isDark ? "rgba(201, 168, 108, 0.35)" : "#c9a86c";
   const linkBg = isDark ? "rgba(255,255,255,0.06)" : "rgba(212, 196, 168, 0.1)";
   const linkBgHover = isDark ? "rgba(255,255,255,0.12)" : "rgba(212, 196, 168, 0.2)";
   const borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(212, 196, 168, 0.3)";
@@ -270,10 +272,12 @@ export default function RPGCalendarSidebar() {
       <h3
         style={{
           color: titleColor,
-          marginBottom: 8,
+          margin: "0 0 10px",
           fontSize: 18,
           letterSpacing: 0.5,
           fontWeight: "bold",
+          fontFamily: "Cinzel, Palatino, serif",
+          width: "100%",
         }}
       >
         School Calendar
@@ -283,7 +287,7 @@ export default function RPGCalendarSidebar() {
       <div
         style={{
           background: boxBg,
-          borderRadius: 0,
+          borderRadius: 12,
           padding: "12px",
           marginBottom: "16px",
           border: `1px solid ${boxBorder}`,
@@ -303,11 +307,10 @@ export default function RPGCalendarSidebar() {
         </div>
         <div
           style={{
-            color: isDark ? "#f5f5f5" : "#F5EFE0",
+            color: isDark ? "#f5f5f5" : "#1a1410",
             fontSize: 20,
             fontWeight: 700,
             marginBottom: 4,
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
           }}
         >
           {formatTime(rpgTime.rpgHour, rpgTime.rpgMinute)}
@@ -398,11 +401,11 @@ export default function RPGCalendarSidebar() {
               style={{
                 textAlign: "center",
                 padding: 5,
-                borderRadius: 0,
+                borderRadius: 12,
                 background: isToday ? todayBg : cellBg,
-                color: isToday ? (isDark ? "#f5f5f5" : "#F5EFE0") : mutedColor,
+                color: isToday ? "#1a1410" : mutedColor,
                 fontWeight: isToday ? 700 : 400,
-                border: isToday ? `2px solid ${boxBorder}` : `1px solid ${isDark ? "#555" : "#E0D5C7"}`,
+                border: isToday ? `2px solid ${isDark ? "#c9a86c" : "#8b7355"}` : `1px solid ${isDark ? "#555" : "#E0D5C7"}`,
                 fontSize: 10,
                 minWidth: 0,
                 boxShadow: isToday ? "0 0 8px rgba(0, 0, 0, 0.2)" : undefined,
@@ -411,7 +414,7 @@ export default function RPGCalendarSidebar() {
               {date.getDate()}
               <br />
               <span
-                style={{ fontSize: 8, color: isToday ? (isDark ? "#f5f5f5" : "#F5EFE0") : subColor }}
+                style={{ fontSize: 8, color: isToday ? "#1a1410" : subColor }}
               >
                 Days {rpgRange.start}
                 {rpgRange.start !== rpgRange.end ? `–${rpgRange.end}` : ""}
@@ -440,13 +443,7 @@ export default function RPGCalendarSidebar() {
           lineHeight: 1.4,
         }}
       >
-        Each RPG month has 30 or 31 days, distributed evenly across the real
-        week.
-        <br />
-        The calendar always starts at Year 1, Month 1, Day 1.
-        <br />
-        The highlighted day shows today. The numbers below each day show which
-        RPG days are covered by that real day.
+        Highlighted day is today. Numbers under each date are RPG days for that real day.
       </div>
 
       {/* ----- Bursdager i dag (liste med lenker til brukerprofiler) ----- */}
@@ -512,7 +509,7 @@ export default function RPGCalendarSidebar() {
                     alignItems: "center",
                     gap: 8,
                     padding: 6,
-                    borderRadius: 0,
+                    borderRadius: 12,
                     background: linkBg,
                     textDecoration: "none",
                     color: isDark ? "#f5f5f5" : "#F5EFE0",
@@ -619,7 +616,7 @@ export default function RPGCalendarSidebar() {
                     alignItems: "center",
                     gap: 8,
                     padding: 6,
-                    borderRadius: 0,
+                    borderRadius: 12,
                     background: linkBg,
                     textDecoration: "none",
                     color: isDark ? "#f5f5f5" : "#F5EFE0",

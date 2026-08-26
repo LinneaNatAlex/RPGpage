@@ -27,7 +27,7 @@ export const RULES_DEFAULTS = {
       "Professor: Runs classrooms, can edit class info, post news. Names appear in gold.",
       "Admin: Full site management. Names appear in red.",
       "Archivist: Curates content, can post/delete news. Names appear in purple.",
-      "Shadow Patrol: Moderation and safety. Names appear in mint green.",
+      "Shadow Patrol: Moderation and safety. Can lock, pin, edit, and delete forum topics. Names appear in mint green.",
     ],
   },
   aiusagerules: {

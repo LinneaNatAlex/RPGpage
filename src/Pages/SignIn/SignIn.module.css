@@ -1,14 +1,12 @@
-/* Fullskjerm bakgrunn: fantasy-by (legg login-bg.jpg eller .png i public/) */
+/* Auth pages – forum-style entry */
 .signUpContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 68px);
   padding: 40px 20px;
   position: relative;
-  /* Varm mørk brun/sort – unngår kald blå/lilla undertone */
   background-color: #120f0c;
-  /* Prioritet: eget bilde (jpg/png) hvis det finnes i public/, ellers placeholder SVG */
   background-image: url("/login-bg.jpg"), url("/login-bg.png"), url("/login-bg.svg");
   background-size: cover;
   background-position: center;
@@ -16,14 +14,12 @@
 }
 
 .signUpContainer::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(8, 6, 4, 0.45) 0%,
-    rgba(22, 17, 12, 0.58) 100%
-  );
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(201, 168, 108, 0.12), transparent 55%),
+    linear-gradient(180deg, rgba(8, 6, 4, 0.5) 0%, rgba(18, 14, 10, 0.72) 100%);
   pointer-events: none;
 }
 
@@ -31,45 +27,80 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
-  border-radius: 0;
-  border: 3px solid #7B6857;
-  padding: 40px;
-  gap: 20px;
-  color: #F5EFE0;
-  font-family: "Cinzel", serif;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(165deg, rgba(58, 47, 38, 0.94) 0%, rgba(36, 28, 22, 0.96) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  padding: 40px 36px 32px;
+  gap: 18px;
+  color: #f3eadc;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 rgba(232, 213, 163, 0.22) inset;
   position: relative;
   z-index: 1;
   overflow: hidden;
-  max-width: 500px;
+  max-width: 440px;
   width: 100%;
+  backdrop-filter: blur(12px);
 }
 
 .signInForm::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.brandKicker {
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #c9a86c;
+  margin: 0 0 0.35rem;
+}
+
+.brandTitle {
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #faf6ee;
+  letter-spacing: 0.12em;
+  margin: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+.brandTagline {
+  margin: 0.55rem 0 0;
+  font-size: 0.95rem;
+  color: #c4b8a4;
+  font-style: italic;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  color: #F5EFE0;
-  margin: 0.5rem;
+  color: #f3eadc;
+  margin: 0;
   gap: 8px;
+  width: 100%;
 }
 
 .inputGroup label {
-  color: #D4C4A8;
+  color: #e8d5a3;
   font-weight: 600;
-  font-size: 1rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
 }
 
 .passwordLabelRow {
@@ -82,30 +113,29 @@
 }
 
 .passwordLabelRow .signInLink {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   margin-left: 0;
 }
 
 .signUpBtn {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
-  font-weight: 600;
-  font-family: "Cinzel", serif;
-  letter-spacing: 1px;
-  padding: 12px 24px;
-  margin: 1rem 0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
+  color: #1a1410;
+  font-weight: 700;
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.08em;
+  padding: 13px 24px;
+  margin: 0.4rem 0 0.2rem;
+  width: 100%;
+  border: 1px solid rgba(255, 236, 190, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  font-size: 1.05rem;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
 .signUpBtn:hover {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
 .formGroupTitle {
@@ -113,104 +143,114 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #F5EFE0;
-  text-transform: uppercase;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 1px;
-}
-.signInLink {
-  color: #D4C4A8;
-  text-decoration: underline;
-  margin-left: 0.2rem;
-  transition: color 0.3s ease;
-}
-.signInLink:hover {
-  color: #F5EFE0;
+  color: #f3eadc;
+  text-transform: none;
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.04em;
 }
 
-/* Input styling */
+.signInLink {
+  color: #e8d5a3;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-left: 0.2rem;
+  transition: color 0.2s ease;
+}
+.signInLink:hover {
+  color: #faf6ee;
+}
+
+.signInForm > p {
+  text-align: center;
+  color: #c4b8a4;
+  font-size: 0.95rem;
+}
+
 .inputGroup input {
-  color: #2C2C2C;
-  border: 2px solid #D4C4A8;
-  border-radius: 0;
+  color: #2c241c;
+  border: 1px solid #c9b896;
+  border-radius: 8px;
   padding: 12px 16px;
-  background-color: #F5EFE0;
+  background-color: #faf6ee;
   font-size: 1rem;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   outline: none;
-  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .inputGroup input:focus {
-  border-color: #7B6857;
-  box-shadow: 0 0 16px rgba(123, 104, 87, 0.4);
-  transform: translateY(-1px);
+  border-color: #c9a86c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 108, 0.28);
 }
 
-/* Nettleser-autofill (blå bakgrunn) → samme kremfarge som feltet */
 .inputGroup input:-webkit-autofill,
 .inputGroup input:-webkit-autofill:hover,
 .inputGroup input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #f5efe0 inset;
-  box-shadow: 0 0 0 1000px #f5efe0 inset;
-  -webkit-text-fill-color: #2c2c2c;
+  -webkit-box-shadow: 0 0 0 1000px #faf6ee inset;
+  box-shadow: 0 0 0 1000px #faf6ee inset;
+  -webkit-text-fill-color: #2c241c;
   transition: background-color 5000s ease-in-out 0s;
 }
 
 .inputGroup input::placeholder {
-  color: #7B6857;
-  text-transform: none;
+  color: #8b7355;
   font-style: italic;
 }
 
-/* Dark mode – input felt og skjema når sidetema er dark */
 :global([data-theme="dark"]) .inputGroup input {
-  background-color: #2a2a2a !important;
-  color: #e0e0e0 !important;
-  border-color: #555 !important;
+  background-color: #2a241e !important;
+  color: #f3eadc !important;
+  border-color: #5c5044 !important;
 }
 :global([data-theme="dark"]) .inputGroup input::placeholder {
-  color: #999 !important;
+  color: #9a8c7a !important;
 }
 :global([data-theme="dark"]) .inputGroup input:focus {
-  border-color: #7B6857 !important;
-  box-shadow: 0 0 16px rgba(123, 104, 87, 0.5) !important;
+  border-color: #c9a86c !important;
+  box-shadow: 0 0 0 3px rgba(201, 168, 108, 0.28) !important;
 }
 
 :global([data-theme="dark"]) .inputGroup input:-webkit-autofill,
 :global([data-theme="dark"]) .inputGroup input:-webkit-autofill:hover,
 :global([data-theme="dark"]) .inputGroup input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #2a2a2a inset !important;
-  box-shadow: 0 0 0 1000px #2a2a2a inset !important;
-  -webkit-text-fill-color: #e0e0e0 !important;
+  -webkit-box-shadow: 0 0 0 1000px #2a241e inset !important;
+  box-shadow: 0 0 0 1000px #2a241e inset !important;
+  -webkit-text-fill-color: #f3eadc !important;
 }
 
-/* Fallback hvis bildet mangler (dark mode) */
 :global([data-theme="dark"]) .signUpContainer {
   background-color: #120f0c;
 }
 
-/* Mobile responsiveness */
 @media screen and (max-width: 768px) {
   .signUpContainer {
-    padding: 20px;
+    padding: 24px 16px;
+    align-items: flex-start;
+    padding-top: 48px;
   }
-  
+
   .signInForm {
-    padding: 30px 20px;
+    padding: 28px 20px 24px;
     max-width: 100%;
-    margin: 0 10px;
+    border-radius: 14px;
   }
-  
+
+  .brandTitle {
+    font-size: 1.55rem;
+  }
+
   .formGroupTitle {
-    font-size: 1.3rem;
+    font-size: 1.05rem;
   }
-  
+
   .signUpBtn {
-    padding: 10px 20px;
+    padding: 12px 20px;
     font-size: 1rem;
+    width: 100%;
   }
 }

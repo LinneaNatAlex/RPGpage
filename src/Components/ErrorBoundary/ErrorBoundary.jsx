@@ -35,15 +35,15 @@ class ErrorBoundary extends React.Component {
           justifyContent: 'center',
           minHeight: '50vh',
           padding: '1rem',
-          background: 'linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%)',
-          borderRadius: 0,
-          border: '2px solid #7B6857',
+          background: 'linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%)',
+          borderRadius: 12,
+          border: '2px solid #8b7355',
           textAlign: 'center',
           width: '100%',
           maxWidth: '500px',
           margin: '1rem auto'
         }}>
-          <h2 style={{ color: '#7B6857', marginBottom: '1rem', fontSize: '1.5rem' }}>
+          <h2 style={{ color: '#8b7355', marginBottom: '1rem', fontSize: '1.5rem' }}>
             Oops! Something went wrong
           </h2>
           <p style={{ color: '#2C2C2C', marginBottom: '1rem', fontSize: '0.9rem' }}>
@@ -53,10 +53,10 @@ class ErrorBoundary extends React.Component {
             <button
               onClick={this.handleRetry}
               style={{
-                background: 'linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)',
+                background: 'linear-gradient(180deg, #d4b978 0%, #b8944e 100%)',
                 color: '#F5EFE0',
                 border: 'none',
-                borderRadius: 0,
+                borderRadius: 12,
                 padding: '0.5rem 1rem',
                 cursor: 'pointer',
                 fontSize: '0.9rem',
@@ -68,10 +68,10 @@ class ErrorBoundary extends React.Component {
             <button
               onClick={() => window.location.reload()}
               style={{
-                background: 'linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%)',
+                background: 'linear-gradient(135deg, #9a8060 0%, #9B8A7B 100%)',
                 color: '#F5EFE0',
                 border: 'none',
-                borderRadius: 0,
+                borderRadius: 12,
                 padding: '0.5rem 1rem',
                 cursor: 'pointer',
                 fontSize: '0.9rem',

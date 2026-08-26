@@ -9,6 +9,7 @@ import {
   onSnapshot,
   orderBy,
   updateDoc,
+  deleteDoc,
   doc,
 } from "firebase/firestore";
 import { cacheHelpers } from "../utils/firebaseCache";
@@ -106,6 +107,23 @@ export default function useNotifications(user, userData) {
     }
   };
 
+  const clearAllNotifications = async () => {
+    if (!user?.uid) return;
+    try {
+      await Promise.all(
+        notifications.map((n) => deleteDoc(doc(db, "notifications", n.id))),
+      );
+      setNotifications([]);
+      cacheHelpers.setNotifications(user.uid, []);
+      setRecentNews([]);
+      await updateDoc(doc(db, "users", user.uid), {
+        lastSeenNewsAt: Date.now(),
+      });
+    } catch (err) {
+      console.error("Error clearing notifications:", err);
+    }
+  };
+
   const unreadCount =
     notifications.filter((n) => !n.read).length + recentNews.length;
 
@@ -115,6 +133,7 @@ export default function useNotifications(user, userData) {
     setNotifications,
     setRecentNews,
     markAllAsRead,
+    clearAllNotifications,
     unreadCount,
   };
 }

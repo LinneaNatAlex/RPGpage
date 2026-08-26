@@ -13,10 +13,10 @@
 }
 
 .bookContent {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border-radius: 0;
-  border: 3px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
   max-width: min(1100px, 95vw);
   max-height: 95vh;
@@ -33,8 +33,8 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 0.6rem 1rem;
-  border-bottom: 2px solid rgba(123, 104, 87, 0.3);
-  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
+  border-bottom: 2px solid rgba(201, 168, 108, 0.3);
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
   flex-shrink: 0;
 }
 
@@ -104,9 +104,9 @@
   width: 48px;
   height: 72px;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(123, 104, 87, 0.5);
+  border: 1px solid rgba(201, 168, 108, 0.5);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -128,7 +128,7 @@
   flex-shrink: 0;
   padding: 0.25rem 1rem;
   background: rgba(245, 239, 224, 0.05);
-  border-bottom: 1px solid rgba(123, 104, 87, 0.3);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.3);
   text-align: center;
 }
 
@@ -150,8 +150,8 @@
   font-size: 1.05rem;
   background: rgba(248, 245, 238, 0.95);
   color: #2c2c2c;
-  border-radius: 0;
-  box-shadow: inset 0 0 0 1px rgba(123, 104, 87, 0.15);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(201, 168, 108, 0.15);
 }
 
 .pageText p {
@@ -181,15 +181,15 @@
   align-items: center;
   padding: 0.5rem 1rem;
   background: rgba(245, 239, 224, 0.1);
-  border-top: 2px solid rgba(123, 104, 87, 0.3);
+  border-top: 2px solid rgba(201, 168, 108, 0.3);
 }
 
 .navBtn {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 2px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   padding: 0.6rem 1.2rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -197,10 +197,10 @@
 }
 
 .navBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  border-color: #8b7a6b;
+  border-color: #9a8060;
 }
 
 .navBtn:disabled {
@@ -216,8 +216,8 @@
   font-size: 1rem;
   padding: 0.5rem 1rem;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
-  border: 1px solid rgba(123, 104, 87, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.3);
 }
 
 /* Responsive design */
@@ -273,8 +273,8 @@
   margin-top: 0.3rem;
   padding: 0.4rem;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
-  border: 1px solid rgba(123, 104, 87, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.3);
 }
 
 .audioControls {
@@ -285,10 +285,10 @@
 }
 
 .audioBtn {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   padding: 0.4rem 0.7rem;
   font-size: 1rem;
   cursor: pointer;
@@ -302,10 +302,10 @@
 }
 
 .audioBtn:hover {
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%);
   transform: translateY(-2px);
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
-  border-color: #8b7a6b;
+  border-color: #9a8060;
 }
 
 .audioBtn:active {
@@ -326,8 +326,8 @@
 .volumeSlider {
   width: 80px;
   height: 6px;
-  background: rgba(123, 104, 87, 0.3);
-  border-radius: 0;
+  background: rgba(201, 168, 108, 0.3);
+  border-radius: 10px;
   outline: none;
   cursor: pointer;
 }
@@ -336,12 +336,12 @@
   appearance: none;
   width: 16px;
   height: 16px;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
-  border: 1px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.35);
 }
 
 .volumeSlider::-webkit-slider-thumb:hover {
@@ -352,7 +352,7 @@
 .volumeSlider::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   border-radius: 50%;
   cursor: pointer;
   border: none;
@@ -380,9 +380,9 @@
   max-height: 90vh;
   width: auto;
   height: auto;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-  border: 3px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   cursor: default;
 }
 
@@ -390,9 +390,9 @@
   position: absolute;
   top: 2rem;
   right: 2rem;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 2px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -407,7 +407,7 @@
 }
 
 .imageModalClose:hover {
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%);
   transform: scale(1.1);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
 }
@@ -496,7 +496,7 @@
 :global(html[data-theme="dark"]) .pageText {
   background: #f8f5ee !important;
   color: #2c2c2c !important;
-  box-shadow: inset 0 0 0 1px rgba(123, 104, 87, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(201, 168, 108, 0.2);
 }
 :global(html[data-theme="dark"]) .pageText *,
 :global(html[data-theme="dark"]) .pageText p,
@@ -519,5 +519,5 @@
 :global(html[data-theme="dark"]) .pageText code {
   background: rgba(44, 44, 44, 0.08) !important;
   color: #2c2c2c !important;
-  border: 1px solid rgba(123, 104, 87, 0.25);
+  border: 1px solid rgba(201, 168, 108, 0.25);
 }

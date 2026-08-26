@@ -93,7 +93,7 @@ const UserList = ({ userQuery }) => {
           style={{
             textAlign: "center",
             padding: "2rem",
-            color: "#7b6857",
+            color: "#8b7355",
             fontSize: "1.2rem",
           }}
         >
@@ -111,7 +111,7 @@ const UserList = ({ userQuery }) => {
           style={{
             textAlign: "center",
             padding: "2rem",
-            color: "#7b6857",
+            color: "#8b7355",
             fontSize: "1.1rem",
           }}
         >
@@ -124,6 +124,53 @@ const UserList = ({ userQuery }) => {
 
   return (
     <div className={styles.userListWrapper}>
+      <div className={styles.raceChampionship}>
+        <h3 className={styles.championshipTitle}>Race Championship</h3>
+        <div className={styles.leaderboard}>
+          {sortedRacePoints.map(([race, points], i) => {
+            const displayRace = [
+              "Witch",
+              "witch",
+              "witches",
+              "Witches",
+            ].includes(race)
+              ? "Wizard"
+              : race;
+
+            const isFirst = i === 0;
+            const isSecond = i === 1;
+            const isThird = i === 2;
+
+            return (
+              <div
+                key={race}
+                className={`${styles.leaderboardItem} ${
+                  isFirst ? styles.first : isSecond ? styles.second : isThird ? styles.third : styles.other
+                }`}
+              >
+                <div className={styles.raceInfo}>
+                  {isFirst && <span className={styles.medal}>🥇</span>}
+                  {isSecond && <span className={styles.medal}>🥈</span>}
+                  {isThird && <span className={styles.medal}>🥉</span>}
+                  <span 
+                    className={styles.raceName}
+                    data-race={(race || "").toLowerCase()}
+                    style={{ 
+                      color: getRaceColor(race),
+                      fontWeight: "bold",
+                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
+                    }}
+                  >
+                    {displayRace}
+                  </span>
+                </div>
+                <span className={styles.points}>{points.toLocaleString()} PTS</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       <table className={styles.userListContainer}>
         <thead>
           <tr className={styles.tableHeader}>
@@ -150,8 +197,8 @@ const UserList = ({ userQuery }) => {
                     }
                   : isCurrentUser
                   ? {
-                      background: "rgba(123, 104, 87, 0.25)",
-                      borderLeft: "4px solid #7b6857",
+                      background: "rgba(201, 168, 108, 0.25)",
+                      borderLeft: "4px solid #8b7355",
                       fontWeight: "bold",
                     }
                   : {}
@@ -266,54 +313,6 @@ const UserList = ({ userQuery }) => {
           </button>
         </div>
       )}
-      
-      {/* Race Championship - Clean Design */}
-      <div className={styles.raceChampionship}>
-        <h3 className={styles.championshipTitle}>Race Championship</h3>
-        <div className={styles.leaderboard}>
-          {sortedRacePoints.map(([race, points], i) => {
-            const displayRace = [
-              "Witch",
-              "witch",
-              "witches",
-              "Witches",
-            ].includes(race)
-              ? "Wizard"
-              : race;
-
-            const isFirst = i === 0;
-            const isSecond = i === 1;
-            const isThird = i === 2;
-
-            return (
-              <div
-                key={race}
-                className={`${styles.leaderboardItem} ${
-                  isFirst ? styles.first : isSecond ? styles.second : isThird ? styles.third : styles.other
-                }`}
-              >
-                <div className={styles.raceInfo}>
-                  {isFirst && <span className={styles.medal}>🥇</span>}
-                  {isSecond && <span className={styles.medal}>🥈</span>}
-                  {isThird && <span className={styles.medal}>🥉</span>}
-                  <span 
-                    className={styles.raceName}
-                    data-race={(race || "").toLowerCase()}
-                    style={{ 
-                      color: getRaceColor(race),
-                      fontWeight: "bold",
-                      textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
-                    }}
-                  >
-                    {displayRace}
-                  </span>
-                </div>
-                <span className={styles.points}>{points.toLocaleString()} PTS</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 };

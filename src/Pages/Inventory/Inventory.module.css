@@ -1,19 +1,19 @@
 .inventoryPage {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 50%, #7b6857 100%);
-  padding: 2rem;
+  min-height: auto;
+  background: transparent;
+  padding: 1.25rem 0 2rem;
   color: #f5efe0;
 }
 
 .inventoryContainer {
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border-radius: 0;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border-radius: 16px;
   padding: 2rem;
-  backdrop-filter: blur(10px);
-  border: 3px solid #7b6857;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  box-shadow: 0 20px 50px rgba(26, 20, 16, 0.28);
+  box-sizing: border-box;
 }
 
 .inventoryTitle {
@@ -34,8 +34,8 @@
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
-  border: 2px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   backdrop-filter: blur(5px);
 }
 
@@ -47,10 +47,10 @@
 .searchInput {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.9);
-  color: #5d4e37;
+  color: #3d3228;
   font-size: 1rem;
   transition: all 0.3s ease;
 }
@@ -68,10 +68,10 @@
 .categorySelect {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.9);
-  color: #5d4e37;
+  color: #3d3228;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -91,10 +91,10 @@
 
 .sortSelect {
   padding: 0.75rem;
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.9);
-  color: #5d4e37;
+  color: #3d3228;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -108,10 +108,10 @@
 
 .sortOrderButton {
   padding: 0.75rem;
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.9);
-  color: #5d4e37;
+  color: #3d3228;
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
@@ -159,8 +159,8 @@
 
 .inventoryItem {
   background: rgba(245, 239, 224, 0.1);
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   padding: 1.5rem;
   transition: all 0.3s ease;
   backdrop-filter: blur(5px);
@@ -178,7 +178,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #d4c4a8 0%, #8b7a6b 50%, #d4c4a8 100%);
+  background: linear-gradient(90deg, #d4c4a8 0%, #9a8060 50%, #d4c4a8 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -186,7 +186,7 @@
 .inventoryItem:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  border-color: #8b7a6b;
+  border-color: #9a8060;
   background: rgba(245, 239, 224, 0.15);
 }
 
@@ -207,9 +207,9 @@
   flex-shrink: 0;
   width: 80px;
   height: 80px;
-  border-radius: 0;
+  border-radius: 10px;
   overflow: hidden;
-  border: 2px solid rgba(123, 104, 87, 0.5);
+  border: 2px solid rgba(201, 168, 108, 0.5);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -217,7 +217,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .itemTextContent {
@@ -251,7 +251,7 @@
 .readBtn {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -260,16 +260,16 @@
 }
 
 .giftBtn {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 2px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .giftBtn:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
-  border-color: #8b7a6b;
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%);
+  border-color: #9a8060;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -288,16 +288,16 @@
 }
 
 .eatBtn {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 2px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .eatBtn:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
-  border-color: #8b7a6b;
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%);
+  border-color: #9a8060;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -337,16 +337,16 @@
 }
 
 .readBtn {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 2px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 .readBtn:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%);
-  border-color: #8b7a6b;
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%);
+  border-color: #9a8060;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -354,8 +354,8 @@
   text-align: center;
   padding: 4rem 2rem;
   background: rgba(245, 239, 224, 0.05);
-  border-radius: 0;
-  border: 2px dashed rgba(123, 104, 87, 0.5);
+  border-radius: 10px;
+  border: 2px dashed rgba(201, 168, 108, 0.5);
 }
 
 .emptyText {
@@ -428,7 +428,7 @@
 
 /* Special item type styling */
 .inventoryItem[data-item-type="book"] {
-  border-color: rgba(123, 104, 87, 0.7);
+  border-color: rgba(201, 168, 108, 0.7);
   background: linear-gradient(
     135deg,
     rgba(93, 78, 55, 0.15),
@@ -440,7 +440,7 @@
   border-color: rgba(139, 115, 85, 0.7);
   background: linear-gradient(
     135deg,
-    rgba(123, 104, 87, 0.15),
+    rgba(201, 168, 108, 0.15),
     rgba(139, 122, 107, 0.15)
   );
 }
@@ -463,15 +463,15 @@
   margin: 2rem 0;
   padding: 1rem;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .paginationButton {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
   color: #F5EFE0;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
+  border-radius: 10px;
   padding: 8px 16px;
   font-weight: 600;
   font-size: 0.9rem;
@@ -482,14 +482,14 @@
 }
 
 .paginationButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
+  background: linear-gradient(135deg, #9a8060 0%, #9B8A7B 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .paginationButton:disabled {
-  background: #6B5B47;
-  color: #8B7A6B;
+  background: #3d3228;
+  color: #9a8060;
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -540,7 +540,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 10px;
   z-index: 10;
 }
 

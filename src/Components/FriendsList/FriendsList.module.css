@@ -1,12 +1,12 @@
 .friendsBox {
-  background: #23232b;
+  background: #2c241c;
   border: 2px solid #a084e8;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 1rem;
   margin-top: 1.5rem;
   width: 100%;
   max-width: 340px;
-  color: #b0aac2;
+  color: #c4b8a4;
   box-shadow: 0 2px 12px rgba(160, 132, 232, 0.1);
 }
 .friendsList {
@@ -36,9 +36,9 @@
 }
 .addFriendBtn {
   background: #a084e8;
-  color: #23232b;
+  color: #2c241c;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 0.5rem 1.2rem;
   font-weight: bold;
   font-size: 1rem;
@@ -46,7 +46,7 @@
   margin-top: 0.5rem;
 }
 .requestSent {
-  color: #b0aac2;
+  color: #c4b8a4;
   font-size: 0.95rem;
   margin-top: 0.5rem;
 }

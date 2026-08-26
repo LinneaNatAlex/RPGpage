@@ -1,9 +1,9 @@
 .bookEditor {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
   padding: 2rem;
-  border-radius: 0;
-  border: 2px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   max-width: 800px;
   margin: 0 auto;
@@ -35,8 +35,8 @@
 .select {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.1);
   color: #f5efe0;
   font-size: 1rem;
@@ -70,7 +70,7 @@
 }
 
 .select option {
-  background: #5d4e37;
+  background: #3d3228;
   color: #f5efe0;
   padding: 0.5rem;
 }
@@ -84,7 +84,7 @@
 
 .pagesSection {
   margin-top: 2rem;
-  border-top: 2px solid rgba(123, 104, 87, 0.3);
+  border-top: 2px solid rgba(201, 168, 108, 0.3);
   padding-top: 1.5rem;
 }
 
@@ -102,18 +102,18 @@
 }
 
 .addPageBtn {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
   color: #f5efe0;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .addPageBtn:hover {
-  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
+  background: linear-gradient(135deg, #9a8060 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -132,8 +132,8 @@
 .coverImage {
   max-width: 200px;
   max-height: 300px;
-  border-radius: 0;
-  border: 2px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   object-fit: cover;
 }
@@ -143,7 +143,7 @@
   color: white;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -161,8 +161,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 2rem;
-  border: 2px dashed #7b6857;
-  border-radius: 0;
+  border: 2px dashed #8b7355;
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.05);
   transition: all 0.3s ease;
 }
@@ -178,11 +178,11 @@
 
 .uploadButton {
   display: inline-block;
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
   color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -191,7 +191,7 @@
 }
 
 .uploadButton:hover {
-  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
+  background: linear-gradient(135deg, #9a8060 0%, #9b8a7b 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
@@ -212,8 +212,8 @@
 
 .pageEditor {
   background: rgba(245, 239, 224, 0.05);
-  border: 1px solid rgba(123, 104, 87, 0.3);
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.3);
+  border-radius: 10px;
   padding: 1rem;
   margin-bottom: 1rem;
 }
@@ -236,7 +236,7 @@
   color: #f5efe0;
   border: none;
   padding: 0.3rem 0.8rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -251,8 +251,8 @@
   width: 100%;
   min-height: 200px;
   padding: 0.75rem;
-  border: 1px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.35);
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.1);
   color: #f5efe0;
   font-size: 1rem;
@@ -274,7 +274,7 @@
   justify-content: flex-end;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 2px solid rgba(123, 104, 87, 0.3);
+  border-top: 2px solid rgba(201, 168, 108, 0.3);
 }
 
 .cancelBtn {
@@ -282,7 +282,7 @@
   color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -295,18 +295,18 @@
 }
 
 .saveBtn {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
   color: #f5efe0;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
+  background: linear-gradient(135deg, #9a8060 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -322,8 +322,8 @@
   margin: 1rem 0;
   padding: 1rem;
   background: rgba(245, 239, 224, 0.05);
-  border: 1px solid rgba(123, 104, 87, 0.3);
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.3);
+  border-radius: 10px;
 }
 
 .audioUploadSection label {
@@ -342,7 +342,7 @@
 .audioPreview {
   padding: 1rem;
   background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -353,11 +353,11 @@
   flex: 1;
   min-width: 200px;
   background: transparent;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .audioPlayer::-webkit-media-controls-panel {
-  background-color: rgba(123, 104, 87, 0.8);
+  background-color: rgba(201, 168, 108, 0.8);
 }
 
 .removeAudioBtn {
@@ -365,7 +365,7 @@
   color: #f5efe0;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;

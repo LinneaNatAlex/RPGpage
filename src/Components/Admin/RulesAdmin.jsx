@@ -7,7 +7,7 @@ import { getRulesDefaults } from "../../data/rulesDefaults";
 const theme = {
   background: "#F5EFE0",
   text: "#2C2C2C",
-  secondaryText: "#7B6857",
+  secondaryText: "#8b7355",
   border: "#D4C4A8",
 };
 
@@ -141,9 +141,9 @@ export default function RulesAdmin() {
       style={{
         marginBottom: 24,
         padding: 20,
-        background: "rgba(123, 104, 87, 0.1)",
+        background: "rgba(201, 168, 108, 0.1)",
         border: `2px solid ${theme.border}`,
-        borderRadius: 0,
+        borderRadius: 12,
       }}
     >
       <h3 style={{ color: theme.secondaryText, fontSize: "1.2rem", marginBottom: 12, fontFamily: '"Cinzel", serif' }}>
@@ -162,7 +162,7 @@ export default function RulesAdmin() {
             width: "100%",
             maxWidth: 320,
             padding: "10px 12px",
-            borderRadius: 0,
+            borderRadius: 12,
             border: `2px solid ${theme.border}`,
             background: theme.background,
             color: theme.text,
@@ -181,10 +181,10 @@ export default function RulesAdmin() {
           onClick={openPage}
           disabled={!selectedSlug || loadingSlug !== null}
           style={{
-            background: selectedSlug && !loadingSlug ? "linear-gradient(135deg, #5D4E37 0%, #4a3d2a 100%)" : "#999",
+            background: selectedSlug && !loadingSlug ? "linear-gradient(135deg, #3d3228 0%, #4a3d2a 100%)" : "#999",
             color: "#F5EFE0",
             border: `2px solid ${theme.border}`,
-            borderRadius: 0,
+            borderRadius: 12,
             padding: "10px 16px",
             fontSize: "0.95rem",
             fontWeight: 600,
@@ -219,9 +219,9 @@ export default function RulesAdmin() {
                     alignItems: "center",
                     gap: 4,
                     padding: "6px 10px",
-                    background: isActive ? theme.background : "rgba(123, 104, 87, 0.2)",
+                    background: isActive ? theme.background : "rgba(201, 168, 108, 0.2)",
                     border: `2px solid ${isActive ? theme.secondaryText : theme.border}`,
-                    borderRadius: 0,
+                    borderRadius: 12,
                     cursor: "pointer",
                   }}
                 >
@@ -265,7 +265,7 @@ export default function RulesAdmin() {
                   width: "100%",
                   maxWidth: 400,
                   padding: "10px 12px",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: `2px solid ${theme.border}`,
                   background: theme.background,
                   color: theme.text,
@@ -284,7 +284,7 @@ export default function RulesAdmin() {
                     background: "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
                     color: "#fff",
                     border: "none",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     fontWeight: 600,
@@ -306,7 +306,7 @@ export default function RulesAdmin() {
                       style={{
                         flex: 1,
                         padding: "10px 12px",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         border: `2px solid ${theme.border}`,
                         background: theme.background,
                         color: theme.text,
@@ -321,7 +321,7 @@ export default function RulesAdmin() {
                         background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                         color: "#fff",
                         border: "none",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 12px",
                         fontSize: "0.9rem",
                         cursor: "pointer",
@@ -339,10 +339,10 @@ export default function RulesAdmin() {
                 onClick={handleSaveAll}
                 disabled={saving}
                 style={{
-                  background: saving ? "#999" : "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+                  background: saving ? "#999" : "linear-gradient(135deg, #8b7355 0%, #3d3228 100%)",
                   color: "#F5EFE0",
                   border: "2px solid #D4C4A8",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "10px 24px",
                   fontSize: "1rem",
                   fontWeight: 600,

@@ -68,9 +68,9 @@ export default function AdminGlobalAgeVerificationModal() {
     >
       <div
         style={{
-          background: "#23232b",
+          background: "#2c241c",
           padding: 32,
-          borderRadius: 0,
+          borderRadius: 12,
           maxWidth: 400,
           color: "#fff",
           textAlign: "center",
@@ -99,7 +99,7 @@ export default function AdminGlobalAgeVerificationModal() {
               maxHeight: 240,
               margin: "1rem auto",
               display: "block",
-              borderRadius: 0,
+              borderRadius: 12,
             }}
           />
         )}
@@ -118,7 +118,7 @@ export default function AdminGlobalAgeVerificationModal() {
               color: "#fff",
               padding: "8px 20px",
               border: "none",
-              borderRadius: 0,
+              borderRadius: 12,
               fontWeight: 700,
             }}
           >
@@ -131,7 +131,7 @@ export default function AdminGlobalAgeVerificationModal() {
               color: "#fff",
               padding: "8px 20px",
               border: "none",
-              borderRadius: 0,
+              borderRadius: 12,
               fontWeight: 700,
             }}
           >

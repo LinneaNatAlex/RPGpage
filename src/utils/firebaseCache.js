@@ -23,9 +23,10 @@ class FirebaseCache {
 
   // Generate cache key
   getCacheKey(type, userId = null, extra = null) {
-    if (userId && extra) return `${type}_${userId}_${extra}`;
-    if (userId) return `${type}_${userId}`;
-    return type;
+    const parts = [type];
+    if (userId) parts.push(userId);
+    if (extra) parts.push(extra);
+    return parts.join("_");
   }
 
   // Check if cache is valid
@@ -127,6 +128,7 @@ export const cacheHelpers = {
 
   getConfigStarshadeHall: () => firebaseCache.get("CONFIG_STARSHADE_HALL"),
   setConfigStarshadeHall: (data) => firebaseCache.set("CONFIG_STARSHADE_HALL", data),
+  clearConfigStarshadeHall: () => firebaseCache.clear("CONFIG_STARSHADE_HALL"),
 
   getPageRules: (slug) => firebaseCache.get("PAGE_RULES", null, slug),
   setPageRules: (slug, data) => firebaseCache.set("PAGE_RULES", data, null, slug),

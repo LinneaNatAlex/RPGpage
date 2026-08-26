@@ -55,6 +55,10 @@ const ForgotPassword = () => {
   return (
     <div className={styles.signUpContainer}>
       <form className={styles.signInForm} onSubmit={handleSubmit}>
+        <div className={styles.brand}>
+          <p className={styles.brandKicker}>Vayloria</p>
+          <h1 className={styles.brandTitle}>Arcane School</h1>
+        </div>
         <h2 className={styles.formGroupTitle}>Reset your password</h2>
         {sent ? (
           <>

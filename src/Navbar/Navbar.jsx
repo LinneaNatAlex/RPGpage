@@ -77,7 +77,7 @@ const Navbar = () => {
                 style={{
                   cursor: "pointer",
                   fontWeight: "bold",
-                  color: "#b0aac2",
+                  color: "#c4b8a4",
                 }}
               >
                 Roleplay
@@ -143,7 +143,7 @@ const Navbar = () => {
                 style={{
                   cursor: "pointer",
                   fontWeight: "bold",
-                  color: "#b0aac2",
+                  color: "#c4b8a4",
                 }}
               >
                 Page Rules
@@ -151,38 +151,6 @@ const Navbar = () => {
               <div className={styles.dropdownContent} style={{ zIndex: 10000 }}>
                 <NavLink to="/rules">Rules overview & About</NavLink>
                 <NavLink to="/library" className={styles.dropdownLinkLibrary}>Library (tips you should know)</NavLink>
-                <NavLink to="/generalrules">General Rules</NavLink>
-                <NavLink to="/siterolesrules">Roles on the Site (Staff & Colours)</NavLink>
-                <NavLink to="/aiusagerules">AI Usage Rules</NavLink>
-                <NavLink to="/contentmediarules">Content & Media Rules</NavLink>
-                <NavLink to="/privacysafetyrules">
-                  Privacy & Safety Rules
-                </NavLink>
-                <NavLink to="/accountidentityrules">
-                  Account & Identity Rules
-                </NavLink>
-                <NavLink to="/communitybehaviorrules">
-                  Community & Behavior Rules
-                </NavLink>
-                <NavLink to="/technicalsiterules">
-                  Technical & Site Rules
-                </NavLink>
-                <NavLink to="/forumrules">Forum Rules</NavLink>
-                <NavLink to="/chatrules">Chat Rules</NavLink>
-                <NavLink to="/profilecontentrules">
-                  Profile Content Rules
-                </NavLink>
-                <NavLink to="/roleplaycharacterrules">
-                  Roleplay & Character Rules
-                </NavLink>
-                <NavLink to="/rpgrules">RPG Rules</NavLink>
-                <NavLink to="/livechatrpgrules">Live Chat RPG Rules</NavLink>
-                <NavLink to="/magicspellrules">Magic & Spell Rules</NavLink>
-                <NavLink to="/raceschoolrules">Race & School Rules</NavLink>
-                <NavLink to="/datingrelationshiprules">
-                  Dating & Relationship Rules
-                </NavLink>
-                <NavLink to="/18forumrules">18+ Forum Rules</NavLink>
               </div>
             </div>
             <div className={styles.dropdown}>
@@ -202,9 +170,14 @@ const Navbar = () => {
           </div>
         </>
       ) : (
-        //Shows if the user is not logged in!
         <>
-          <span>Welcome new student!</span>
+          <div className={styles.menuItems}>
+            <NavLink to="/sign-in" className={styles.siteTitle}>
+              Vayloria Arcane School
+            </NavLink>
+            <NavLink to="/sign-in">Sign in</NavLink>
+            <NavLink to="/sign-up">Register</NavLink>
+          </div>
         </>
       )}
     </nav>

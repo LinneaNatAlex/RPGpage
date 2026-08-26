@@ -1,8 +1,8 @@
 .trigger {
   padding: 6px 12px;
-  border-radius: 0;
-  border: 2px solid rgba(123, 104, 87, 0.5);
-  background: rgba(123, 104, 87, 0.2);
+  border-radius: 10px;
+  border: 2px solid rgba(201, 168, 108, 0.5);
+  background: rgba(201, 168, 108, 0.2);
   color: #f5efe0;
   font-size: 0.9rem;
   font-weight: 600;
@@ -12,8 +12,8 @@
 }
 
 .trigger:hover {
-  background: rgba(123, 104, 87, 0.4);
-  border-color: #7b6857;
+  background: rgba(201, 168, 108, 0.4);
+  border-color: #8b7355;
 }
 
 .overlay {
@@ -28,10 +28,10 @@
 }
 
 .modal {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
-  border: 3px solid #7b6857;
-  border-radius: 0;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   max-width: 480px;
   width: 100%;
   max-height: 85vh;
@@ -94,8 +94,8 @@
   padding: 12px;
   margin-bottom: 10px;
   background: rgba(0, 0, 0, 0.2);
-  border-left: 4px solid #7b6857;
-  border-radius: 0;
+  border-left: 4px solid #8b7355;
+  border-radius: 10px;
 }
 
 .taskTitle {

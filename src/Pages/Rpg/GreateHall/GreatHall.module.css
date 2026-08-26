@@ -1,117 +1,129 @@
-html,
-body {
-  width: 100%;
-}
-/* ------------------TITLE-text------------------ */
-.title {
-  color: #b0aac2;
-}
-/* ------------------GREAT HALL Rules------------------ */
-.GreatHallClass {
+.hallPage {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  border-radius: 0;
-  border: 2px solid #b0aac2;
-  background-color: #23232b;
-  padding: 5rem;
-  min-height: 80vh;
+  background: #2c241c;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 44px rgba(26, 20, 16, 0.18);
 }
 
-.headerRow {
+.hallStage {
+  display: flex;
+  flex-direction: column;
+}
+
+.hallHeader {
+  flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  max-width: 1200px;
-  margin-bottom: 1rem;
-}
-.headerRow .title {
-  margin: 0;
+  gap: 0.75rem 1.25rem;
+  padding: 0.7rem 1.25rem;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.28);
 }
 
-/* ------------------MUSIC WIDGET (right side; background only, no video shown) ------------------ */
+.hallKicker {
+  margin: 0 0 0.15rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(201, 168, 108, 0.9);
+  font-family: "Cinzel", Palatino, serif;
+}
+
+.title {
+  margin: 0;
+  color: #f3eadc;
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
 .musicWidget {
   position: relative;
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
-  width: 100%;
-  max-width: 300px;
-  margin-left: auto;
-  border: 1px solid rgba(176, 170, 194, 0.4);
-  border-radius: 8px;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.2);
 }
+
 .musicWidgetBar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
-}
-.musicWidgetLabel {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #e8e0d0;
-}
-.musicWidgetBtn {
-  padding: 6px 14px;
-  background: rgba(123, 104, 87, 0.6);
-  border: 1px solid rgba(176, 170, 194, 0.5);
-  border-radius: 6px;
-  color: #e8e0d0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-.musicWidgetBtn:hover {
-  background: rgba(123, 104, 87, 0.8);
-}
-.musicWidgetVolume {
-  display: flex;
-  align-items: center;
   gap: 10px;
-  padding: 8px 14px;
-  border-top: 1px solid rgba(176, 170, 194, 0.2);
-}
-.musicWidgetVolumeLabel {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: rgba(232, 224, 208, 0.9);
-}
-.musicWidgetVolumeSlider {
-  flex: 1;
-  min-width: 0;
-  height: 6px;
-  accent-color: #7b6857;
-  cursor: pointer;
-}
-.musicWidgetVolumeValue {
-  font-size: 0.8rem;
-  color: rgba(232, 224, 208, 0.85);
-  min-width: 2.5rem;
-}
-.musicWidgetHint {
-  margin: 0;
-  padding: 0 14px 10px;
-  font-size: 0.8rem;
-  color: rgba(232, 224, 208, 0.85);
-}
-/* iframe hidden off-screen so only audio plays; video never visible */
-.musicIframeHidden {
-  position: fixed;
-  left: -9999px;
-  top: 0;
-  width: 1px;
-  height: 1px;
-  border: none;
-  pointer-events: none;
-  z-index: -1;
+  padding: 0;
+  background: transparent;
 }
 
-/* ------------------BUTTON STYLES------------------ */
-button {
-  background-color: #444455;
+.musicWidgetLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e8dcc8;
+}
+
+.musicWidgetBtn {
+  padding: 5px 12px;
+  background: rgba(201, 168, 108, 0.22);
+  border: 1px solid rgba(201, 168, 108, 0.45);
+  border-radius: 999px;
+  color: #f3eadc;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.musicWidgetBtn:hover {
+  background: rgba(201, 168, 108, 0.4);
+}
+
+.musicPlayerHost {
+  position: absolute;
+  width: 120px;
+  height: 68px;
+  right: 0;
+  top: 0;
+  overflow: hidden;
+  opacity: 0.02;
+  pointer-events: none;
+}
+
+:global(html[data-theme="dark"]) .hallPage {
+  background: #2c241c;
+  border-color: rgba(201, 168, 108, 0.22);
+}
+
+@media screen and (max-width: 768px) {
+  .hallPage {
+    border-radius: 10px;
+    width: 100%;
+    height: calc(100dvh - 122px);
+    min-height: 0;
+  }
+
+  .hallStage {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .hallStage > * {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .hallHeader {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .title {
+    font-size: 1.15rem;
+  }
+
+  .musicWidgetLabel {
+    display: none;
+  }
 }

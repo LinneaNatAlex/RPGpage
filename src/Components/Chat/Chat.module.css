@@ -17,21 +17,21 @@
   font-size: 18px;
   cursor: pointer;
   padding: 0 4px;
-  border-radius: 0;
+  border-radius: 10px;
   transition: background 0.15s;
 }
 .privateMessageMenuBtn:hover,
 .privateMessageMenuBtn:focus {
-  background: #5d4e37;
-  color: #7b6857;
+  background: #3d3228;
+  color: #8b7355;
 }
 .privateMessageMenuDropdown {
   position: absolute;
   top: 24px;
   right: 0;
-  background: #5d4e37;
-  border: 1px solid #7b6857;
-  border-radius: 0;
+  background: #3d3228;
+  border: 1px solid rgba(201, 168, 108, 0.35);
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   min-width: 90px;
   z-index: 10;
@@ -46,15 +46,15 @@
   padding: 8px 12px;
   text-align: left;
   cursor: pointer;
-  border-radius: 0;
+  border-radius: 10px;
   transition:
     background 0.15s,
     color 0.15s;
 }
 .privateMessageMenuDropdownBtn:hover,
 .privateMessageMenuDropdownBtn:focus {
-  background: #7b6857;
-  color: #23232b;
+  background: #8b7355;
+  color: #2c241c;
 }
 .activeChatsRow {
   display: flex;
@@ -87,7 +87,7 @@
 .privateMessageRow {
   display: flex;
   align-items: flex-end;
-  margin: 12px 0;
+  margin: 6px 0;
   width: 100%;
 }
 .privateMessageRow.me {
@@ -98,28 +98,30 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  background: #5d4e37;
-  color: #f5efe0;
-  border-radius: 0;
-  padding: 10px 12px;
-  font-size: 14px;
-  line-height: 1.4;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  max-width: 75%;
-  min-width: 100px;
+  background: #3d3228;
+  color: #f3eadc;
+  border-radius: 14px 14px 14px 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  box-shadow: 0 4px 14px rgba(26, 20, 16, 0.18);
+  max-width: 82%;
+  min-width: 80px;
   width: fit-content;
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   position: relative;
   gap: 8px;
+  border: 1px solid rgba(201, 168, 108, 0.22);
 }
 .privateMessageRow.me .privateMessageBubble {
-  background: linear-gradient(135deg, #7b6857 60%, #8b7a6b 100%);
-  color: #f5efe0;
-  border-radius: 0;
+  background: linear-gradient(180deg, #4a3d30 0%, #3d3228 100%);
+  color: #f3eadc;
+  border-radius: 14px 14px 4px 14px;
   align-items: flex-start;
   flex-direction: row-reverse;
+  border-color: rgba(201, 168, 108, 0.4);
 }
 .privateMessageSender {
   font-size: 11px;
@@ -167,35 +169,39 @@
   margin-right: 0.3rem;
 }
 .gearButton {
-  background: #5d4e37;
-  border: 1px solid #ff5e5e;
-  color: #ff5e5e;
-  border-radius: 50%;
-  width: 1.6rem;
-  height: 1.6rem;
+  background: transparent;
+  border: none;
+  color: #6b5d4d;
+  border-radius: 6px;
+  width: auto;
+  min-width: 1.25rem;
+  height: 1.35rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 0;
-  margin-right: 0.2rem;
-  transition:
-    border 0.18s,
-    background 0.18s;
+  padding: 0 4px;
+  margin-right: 0.15rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
   z-index: 11;
 }
 .gearButton:hover,
 .gearButton:focus {
-  background: #2a2a36;
-  border-color: #ff8e8e;
+  background: rgba(61, 50, 40, 0.1);
+  border-color: transparent;
+  color: #2c241c;
 }
 .optionsMenu {
   position: absolute;
   left: 0;
   top: 2.1rem;
-  background: #5d4e37;
+  background: #3d3228;
   border: 1px solid #ff5e5e;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   z-index: 20;
   min-width: 70px;
@@ -212,7 +218,7 @@
   padding: 0.3rem 1rem;
   text-align: left;
   cursor: pointer;
-  border-radius: 0;
+  border-radius: 10px;
   transition: background 0.15s;
 }
 .deleteOption:hover,
@@ -226,12 +232,12 @@
 }
 .deleteButtonText {
   margin-left: 0.5rem;
-  background: #5d4e37;
+  background: #3d3228;
   border: 1px solid #ff5e5e;
   color: #ff5e5e;
   font-weight: 600;
   font-size: 0.95rem;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 0.1rem 0.7rem;
   cursor: pointer;
   opacity: 0;
@@ -251,21 +257,152 @@
   pointer-events: auto;
 }
 .messageText {
-  margin-left: 0.2rem;
+  display: block;
+  margin: 0.12rem 0 0;
   word-break: break-word;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: #2c241c;
 }
 
-/* Desktop: panel klistret til topp og bunn – bruk inset for å strekke høyden */
+.chatMessages {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.45rem 0.55rem 0.7rem;
+  word-wrap: break-word;
+  scrollbar-width: thin;
+  scrollbar-color: #8b7355 transparent;
+  color: #2c241c;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  background: #f7f0e4;
+}
+
+.message {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  word-break: break-word;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.message:hover {
+  background: rgba(44, 36, 28, 0.06);
+}
+
+.messageMentioned {
+  background: none;
+  border-left: none;
+}
+
+.messageAvatar,
+.messageAvatarFallback {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+  object-fit: cover;
+}
+
+.messageAvatarFallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #3d3228;
+  color: #e8d5a3;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: "Cinzel", Palatino, serif;
+}
+
+.messageBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.senderNameWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.messageTime {
+  font-size: 0.7rem;
+  color: #8b7355;
+  font-weight: 500;
+}
+
+.chatForm {
+  display: flex;
+  justify-content: stretch;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.75rem 0.8rem;
+  border-radius: 0;
+  background: #efe6d6;
+  border-top: 1px solid rgba(201, 168, 108, 0.32);
+}
+
+.mentionHighlight,
+.mentionAll {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-weight: 700;
+}
+
+/* Desktop: panel klistret under navbar, langs høyre kant */
 .chatPanelSticky {
   position: fixed !important;
-  top: 0 !important;
+  top: 68px !important;
   bottom: 0 !important;
   right: 0 !important;
-  width: 350px !important;
+  width: 340px !important;
   height: auto !important;
-  min-height: 100vh !important;
+  min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
+  pointer-events: auto;
+  box-shadow: -12px 0 40px rgba(26, 20, 16, 0.35);
+  overflow: hidden;
+  border-radius: 12px 0 0 0;
+  background: #322820;
+}
+
+.chatDockShell {
+  overflow: hidden;
+  border-radius: 12px 0 0 0;
+  background: #322820;
+  box-shadow: -12px 0 40px rgba(26, 20, 16, 0.35);
+  box-sizing: border-box;
+}
+
+.chatDockHeader {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  border: none;
+  border-bottom: 1px solid rgba(201, 168, 108, 0.28);
+  border-radius: 0;
+  color: #f3eadc;
+  font-family: "Cinzel", Palatino, serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
 }
 
 .chatContainer {
@@ -274,9 +411,10 @@
   height: 15vh;
   border: none;
   border-radius: 0;
-  background: #d5c2b2;
-  color: #2c2c2c;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #efe4d4;
+  color: #2c241c;
+  box-shadow: none;
+  border-top: none;
 }
 
 /* PC: fyller fra topp til bunn – klistret til bunn */
@@ -291,39 +429,73 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0.45rem 0.55rem 0.7rem;
   word-wrap: break-word;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  color: #2c2c2c;
+  scrollbar-width: thin;
+  scrollbar-color: #8b7355 transparent;
+  color: #2c241c;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  background: #f7f0e4;
 }
 
 .chatMessages::-webkit-scrollbar {
   display: none;
 }
 
-/* Vanlige radioknapper med synlig bullet (prikk) når valgt */
-.autoScrollRadio {
-  appearance: radio;
-  -webkit-appearance: radio;
-  margin: 0 4px 0 0;
-  cursor: pointer;
-  accent-color: #5d4e37;
+.autoScrollRow {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  color: #6b5d4d;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(201, 168, 108, 0.3);
 }
 
-.autoScrollLabel {
+.autoScrollToggle {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  user-select: none;
+  color: inherit;
+  font: inherit;
 }
 
-.autoScrollRow .autoScrollLabel + .autoScrollLabel {
-  margin-left: 8px;
+.autoScrollSwitch {
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: #c4b8a8;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.autoScrollToggleOn .autoScrollSwitch {
+  background: #3d3228;
+}
+
+.autoScrollSwitch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #faf6ee;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.autoScrollToggleOn .autoScrollSwitch::after {
+  transform: translateX(14px);
 }
 
 /* Mention dropdown styling */
@@ -332,9 +504,9 @@
   bottom: 100%;
   left: 0;
   right: 0;
-  background: #5d4e37;
-  border: 1px solid #7b6857;
-  border-radius: 0;
+  background: #3d3228;
+  border: 1px solid rgba(201, 168, 108, 0.35);
+  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   max-height: 200px;
   overflow-y: auto;
@@ -349,7 +521,7 @@
   padding: 8px 12px;
   cursor: pointer;
   color: #f5efe0;
-  border-bottom: 1px solid #7b6857;
+  border-bottom: 1px solid #8b7355;
   transition: background 0.2s;
   display: flex;
   flex-direction: column;
@@ -362,7 +534,7 @@
 
 .mentionDropdownItem:hover,
 .mentionDropdownItemActive {
-  background: #7b6857;
+  background: #8b7355;
   color: #f5efe0;
 }
 
@@ -379,20 +551,13 @@
 }
 
 /* Mention highlighting in messages */
-.mentionHighlight {
-  background: #7b6857;
-  color: #f5efe0;
-  padding: 2px 4px;
-  border-radius: 0;
-  font-weight: bold;
-}
-
+.mentionHighlight,
 .mentionAll {
-  background: #ff5e5e;
-  color: #f5efe0;
-  padding: 2px 4px;
+  background: none;
+  color: inherit;
+  padding: 0;
   border-radius: 0;
-  font-weight: bold;
+  font-weight: 700;
 }
 .messageSender {
   font-weight: bold;
@@ -400,7 +565,10 @@
 }
 
 .headmasterSender {
-  color: #f5efe0 !important;
+  color: #fff !important;
+  background: #2c241c;
+  padding: 0 0.35rem;
+  border-radius: 999px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .professorSender {
@@ -448,15 +616,42 @@
 }
 
 .message {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
   word-break: break-word;
 }
 
 .chatForm {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
+  justify-content: stretch;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.75rem 0.8rem;
   border-radius: 0;
+  background: #efe6d6;
+  border-top: 1px solid rgba(201, 168, 108, 0.32);
+}
+
+.chatFormRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+}
+
+.chatInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .privateChatForm {
@@ -466,25 +661,32 @@
 }
 
 .chatInput {
-  border: none;
-  border-radius: 0;
-  background: #e8ddd4;
-  color: #2c2c2c;
-  width: 100%;
+  border: 1px solid rgba(201, 168, 108, 0.35);
+  border-radius: 8px;
+  background: #faf6ee;
+  color: #2c241c;
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  padding: 0.55rem 0.85rem;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
 }
 
 .chatBtn {
-  background: #7b6857;
-  color: #f5efe0;
-  border: none;
-  border-radius: 0;
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
+  color: #1a1410;
+  border: 1px solid rgba(255, 236, 190, 0.3);
+  border-radius: 8px;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  font-weight: 700;
+  font-family: "Cinzel", Palatino, serif;
+  flex-shrink: 0;
 }
 
 .chatBtn:hover {
-  background: #8b7a6b;
-  color: #f5efe0;
+  filter: brightness(1.06);
+  color: #1a1410;
 }
 
 .emojiBtn {
@@ -493,8 +695,9 @@
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 
 .emojiBtn:hover {
@@ -511,7 +714,7 @@
   transform-origin: bottom right;
   max-height: 55vh;
   overflow: hidden;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -530,7 +733,7 @@
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   margin-right: 0.25rem;
-  border-radius: 0;
+  border-radius: 10px;
   transition: background 0.2s;
 }
 .notificationBtn:hover,
@@ -542,9 +745,9 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   border: 1px solid #d4c4a8;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 8px 12px;
   margin: 8px 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -571,9 +774,9 @@
   z-index: 10020;
 }
 .notificationModal {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   padding: 1.5rem;
   max-width: 400px;
   width: 90%;
@@ -599,8 +802,8 @@
 .notificationModalInput {
   width: 100%;
   padding: 10px 12px;
-  border-radius: 0;
-  border: 2px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   background: #f5efe0;
   color: #2c2c2c;
   font-size: 1rem;
@@ -620,7 +823,7 @@
   justify-content: flex-end;
 }
 .notificationModalCancel {
-  background: #4a3f35 !important;
+  background: #322820 !important;
   color: #d4c4a8 !important;
 }
 
@@ -635,9 +838,9 @@
   z-index: 10030;
 }
 .siteModal {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border: 2px solid #7b6857;
-  border-radius: 0;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   padding: 1.5rem;
   max-width: 380px;
   width: 90%;
@@ -657,43 +860,43 @@
 }
 .siteModalBtn {
   padding: 8px 16px;
-  border: 2px solid #7b6857;
-  background: #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  background: #8b7355;
   color: #f5efe0;
   font-size: 1rem;
   font-family: inherit;
   cursor: pointer;
-  border-radius: 0;
+  border-radius: 10px;
 }
 .siteModalBtn:hover {
   background: #8a7866;
   border-color: #8a7866;
 }
 .siteModalBtnSecondary {
-  background: #4a3f35;
+  background: #322820;
   color: #d4c4a8;
-  border-color: #5d4e37;
+  border-color: #3d3228;
 }
 .siteModalBtnSecondary:hover {
-  background: #5d4e37;
-  border-color: #6b5b47;
+  background: #3d3228;
+  border-color: #3d3228;
   color: #f5efe0;
 }
 :global(html[data-theme="dark"]) .siteModal {
   background: linear-gradient(135deg, #3d3529 0%, #4a4035 100%);
-  border-color: #5d4e37;
+  border-color: #3d3228;
 }
 :global(html[data-theme="dark"]) .siteModalMessage {
   color: #e8e0d0;
 }
 :global(html[data-theme="dark"]) .siteModalBtn {
-  background: #5d4e37;
-  border-color: #7b6857;
+  background: #3d3228;
+  border-color: #8b7355;
   color: #f5efe0;
 }
 :global(html[data-theme="dark"]) .siteModalBtnSecondary {
   background: #2e2a24;
-  border-color: #4a3f35;
+  border-color: #322820;
   color: #d4c4a8;
 }
 
@@ -711,8 +914,8 @@
 .messagesFullPageSidebar {
   width: 300px;
   flex-shrink: 0;
-  background: #e8ddd4;
-  border-right: 1px solid rgba(123, 104, 87, 0.35);
+  background: #f4ead8;
+  border-right: 1px solid rgba(201, 168, 108, 0.35);
   overflow-y: auto;
   padding: 12px;
   display: flex;
@@ -725,7 +928,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #e8ddd4;
+  background: #f4ead8;
   /* Avstand nederst så inputfeltet ikke skjules av General Chat-baren */
   padding-bottom: 30px;
 }
@@ -734,10 +937,10 @@
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #5d4e37;
+  color: #3d3228;
   margin: 0 0 8px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(123, 104, 87, 0.4);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.4);
 }
 .messagesFullPageSidebarItem {
   display: flex;
@@ -748,7 +951,7 @@
   margin-bottom: 6px;
   text-align: left;
   background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(123, 104, 87, 0.3);
+  border: 1px solid rgba(201, 168, 108, 0.3);
   color: #2c2c2c;
   cursor: pointer;
   font-size: 0.95rem;
@@ -781,7 +984,7 @@
   height: 12px;
   border-radius: 50%;
   background: #22c55e;
-  border: 2px solid #e8ddd4;
+  border: 2px solid #f4ead8;
   box-sizing: border-box;
 }
 .messagesFullPageSidebarItemText {
@@ -793,11 +996,11 @@
 }
 .messagesFullPageSidebarItem:hover {
   background: rgba(255, 255, 255, 0.6);
-  border-color: rgba(123, 104, 87, 0.5);
+  border-color: rgba(201, 168, 108, 0.5);
 }
 .messagesFullPageSidebarItem.selected {
-  background: #7b6857;
-  border-color: #8b7a6b;
+  background: #8b7355;
+  border-color: #9a8060;
   color: #f5efe0;
 }
 .messagesFullPageSidebarItem.unread {
@@ -808,7 +1011,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 1px solid rgba(123, 104, 87, 0.4);
+  border: 1px solid rgba(201, 168, 108, 0.4);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.5);
   color: #2c2c2c;
@@ -820,7 +1023,7 @@
   color: rgba(44, 44, 44, 0.6);
 }
 .messagesFullPageSidebarSearch:focus {
-  border-color: #7b6857;
+  border-color: #8b7355;
 }
 .messagesFullPageSidebarUserList {
   display: flex;
@@ -839,18 +1042,18 @@
   align-items: center;
   gap: 16px;
   padding: 12px 20px;
-  border-bottom: 1px solid rgba(123, 104, 87, 0.35);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.35);
   background: #e0d5c8;
   flex-shrink: 0;
 }
 .messagesFullPageBackLink {
-  color: #7b6857;
+  color: #8b7355;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s;
 }
 .messagesFullPageBackLink:hover {
-  color: #5d4e37;
+  color: #3d3228;
 }
 .messagesFullPagePageTitle {
   margin: 0;
@@ -869,7 +1072,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: #5d4e37;
+  color: #3d3228;
 }
 .messagesFullPageEmpty p {
   margin: 0;
@@ -878,7 +1081,7 @@
 }
 .messagesFullPageEmpty a,
 .messagesFullPageEmptyLink {
-  color: #7b6857;
+  color: #8b7355;
   font-weight: 600;
   text-decoration: none;
 }
@@ -888,7 +1091,7 @@
 }
 .messagesFullPageHeader {
   padding: 8px 12px;
-  border-bottom: 1px solid rgba(123, 104, 87, 0.35);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.35);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -918,30 +1121,30 @@
   padding: 6px 12px;
   font-size: 0.85rem;
   background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(123, 104, 87, 0.5);
+  border: 1px solid rgba(201, 168, 108, 0.5);
   border-radius: 6px;
-  color: #5d4e37;
+  color: #3d3228;
   cursor: pointer;
   font-weight: 600;
 }
 .messagesFullPageLeaveGroup:hover {
   background: rgba(255, 255, 255, 0.7);
-  border-color: #7b6857;
+  border-color: #8b7355;
 }
 .messagesFullPageAddMembers {
   flex-shrink: 0;
   padding: 6px 12px;
   font-size: 0.85rem;
-  background: rgba(123, 104, 87, 0.25);
-  border: 1px solid rgba(123, 104, 87, 0.5);
+  background: rgba(201, 168, 108, 0.25);
+  border: 1px solid rgba(201, 168, 108, 0.5);
   border-radius: 6px;
-  color: #5d4e37;
+  color: #3d3228;
   cursor: pointer;
   font-weight: 600;
 }
 .messagesFullPageAddMembers:hover {
-  background: rgba(123, 104, 87, 0.4);
-  border-color: #7b6857;
+  background: rgba(201, 168, 108, 0.4);
+  border-color: #8b7355;
 }
 .messagesFullPageDeleteGroup {
   flex-shrink: 0;
@@ -968,27 +1171,27 @@
   z-index: 10010;
 }
 .messagesFullPageModal {
-  background: #e8ddd4;
+  background: #f4ead8;
   padding: 16px;
   border-radius: 8px;
   max-width: 360px;
   width: 90%;
   max-height: 85vh;
   overflow-y: auto;
-  border: 1px solid rgba(123, 104, 87, 0.4);
+  border: 1px solid rgba(201, 168, 108, 0.4);
 }
 .messagesFullPageGroupDropdownLabel {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #5d4e37;
+  color: #3d3228;
   margin: 12px 0 6px 0;
 }
 .messagesFullPageGroupDropdown {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 1px solid rgba(123, 104, 87, 0.4);
+  border: 1px solid rgba(201, 168, 108, 0.4);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.6);
   color: #2c2c2c;
@@ -1007,8 +1210,8 @@
   align-items: center;
   gap: 6px;
   padding: 4px 8px;
-  background: rgba(123, 104, 87, 0.35);
-  border: 1px solid rgba(123, 104, 87, 0.5);
+  background: rgba(201, 168, 108, 0.35);
+  border: 1px solid rgba(201, 168, 108, 0.5);
   border-radius: 6px;
   font-size: 0.9rem;
   color: #2c2c2c;
@@ -1021,11 +1224,11 @@
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
-  color: #5d4e37;
+  color: #3d3228;
   font-weight: 700;
 }
 .messagesFullPageGroupTagRemove:hover {
-  color: #7b6857;
+  color: #8b7355;
 }
 .messagesFullPageModalActions {
   display: flex;
@@ -1102,8 +1305,8 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 :global(html[data-theme="dark"]) .messagesFullPageSidebarItem.selected {
-  background: #5d4e37;
-  border-color: #7b6857;
+  background: #3d3228;
+  border-color: #8b7355;
   color: #f5efe0;
 }
 :global(html[data-theme="dark"]) .messagesFullPageEmpty {
@@ -1139,7 +1342,7 @@
   color: rgba(232, 224, 208, 0.5);
 }
 :global(html[data-theme="dark"]) .messagesFullPageSidebarSearch:focus {
-  border-color: #7b6857;
+  border-color: #8b7355;
 }
 :global(html[data-theme="dark"]) .messagesFullPageSidebarHint {
   color: rgba(232, 224, 208, 0.65);
@@ -1183,12 +1386,12 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 :global(html[data-theme="dark"]) .messagesFullPageAddMembers {
-  background: rgba(123, 104, 87, 0.3);
+  background: rgba(201, 168, 108, 0.3);
   border-color: rgba(255, 255, 255, 0.2);
   color: #d4c4a8;
 }
 :global(html[data-theme="dark"]) .messagesFullPageAddMembers:hover {
-  background: rgba(123, 104, 87, 0.45);
+  background: rgba(201, 168, 108, 0.45);
   border-color: rgba(255, 255, 255, 0.3);
 }
 :global(html[data-theme="dark"]) .messagesFullPageDeleteGroup {

@@ -57,10 +57,10 @@
   justify-content: center;
 }
 .timeoutModal {
-  background: #23232b;
-  border-radius: 0;
-  border: 2px solid #7B6857;
-  color: #b0aac2;
+  background: #2c241c;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  color: #c4b8a4;
   padding: 2rem 2.5rem 1.5rem 2.5rem;
   box-shadow: 0 4px 32px rgba(160, 132, 232, 0.25);
   min-width: 260px;
@@ -68,10 +68,10 @@
   text-align: center;
 }
 .timeoutBtn {
-  background: linear-gradient(90deg, #7B6857 60%, #8B7A6B 100%);
+  background: linear-gradient(90deg, #8b7355 60%, #9a8060 100%);
   color: #fff;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 0.5rem 1.2rem;
   font-weight: bold;
   font-size: 1rem;
@@ -80,7 +80,7 @@
   transition: background 0.2s, color 0.2s;
 }
 .timeoutBtn:hover {
-  background: linear-gradient(90deg, #8B7A6B 60%, #7B6857 100%);
+  background: linear-gradient(90deg, #9a8060 60%, #8b7355 100%);
 }
 .headmasterAvatar {
   border: 3px solid #fff !important;
@@ -95,20 +95,20 @@
   box-shadow: none !important;
 }
 .onlineUsersContainer {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 28px rgba(26, 20, 16, 0.1);
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
   margin: 0;
   max-height: 100vh;
   height: 100vh;
-  background-color: #E8DDD4;
+  background-color: #faf6ee;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #7B6857 #E8DDD4;
-  border-radius: 0;
-  border: 1px solid #D4C4A8;
-  color: #2C2C2C;
+  scrollbar-color: #8b7355 #faf6ee;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 168, 108, 0.28);
+  color: #2c241c;
 }
 
 .onlineUsersContainerPopup {
@@ -143,9 +143,9 @@
   height: 48px;
   margin-right: 12px;
   border-radius: 50%;
-  border: 3px solid #7B6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   box-shadow: none;
-  background: linear-gradient(135deg, #E8DDD4 60%, #7B6857 100%);
+  background: linear-gradient(135deg, #f4ead8 60%, #8b7355 100%);
   object-fit: cover;
   aspect-ratio: 1/1;
   display: block;
@@ -165,7 +165,7 @@
   .onlineUsersContainer {
     padding: 1rem;
     margin: 0.5rem;
-    border-radius: 0;
+    border-radius: 10px;
     max-height: 80vh;
     height: auto;
     overflow-y: auto;

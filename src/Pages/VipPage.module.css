@@ -1,6 +1,6 @@
 .wrapper {
   min-height: 60vh;
-  background: linear-gradient(180deg, #e8ddd4 0%, #d4c4a8 100%);
+  background: linear-gradient(180deg, #f4ead8 0%, #d4c4a8 100%);
   padding: 2rem 1rem 3rem;
 }
 
@@ -11,7 +11,7 @@
 
 .backLink {
   display: inline-block;
-  color: #7b6857;
+  color: #8b7355;
   text-decoration: none;
   font-weight: 600;
   margin-bottom: 1.5rem;
@@ -66,9 +66,9 @@
 .characterNameNotice {
   padding: 1rem 1.25rem;
   margin-bottom: 1.25rem;
-  border-radius: 0;
-  border: 2px solid #7b6857;
-  background: rgba(123, 104, 87, 0.12);
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  background: rgba(201, 168, 108, 0.12);
   color: #2c2c2c;
   line-height: 1.5;
 }
@@ -109,6 +109,6 @@
 
 :global(html[data-theme="dark"]) .noticeBox,
 :global(html[data-theme="dark"]) .characterNameNotice {
-  border-color: #7b6857;
-  background: rgba(123, 104, 87, 0.2);
+  border-color: #8b7355;
+  background: rgba(201, 168, 108, 0.2);
 }

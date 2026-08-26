@@ -43,12 +43,12 @@ export default function DetentionGuard({ children }) {
       <div style={{ 
         marginTop: 32, 
         textAlign: "center",
-        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+        background: "linear-gradient(180deg, #3d3228 0%, #322820 100%)",
         color: "#F5EFE0",
-        borderRadius: 0,
+        borderRadius: 12,
         padding: 40,
         boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-        border: "3px solid #7B6857",
+        border: "1px solid rgba(201, 168, 108, 0.32)",
         maxWidth: 600,
         margin: "40px auto"
       }}>
@@ -68,7 +68,7 @@ export default function DetentionGuard({ children }) {
         
         <div style={{ 
           background: "rgba(255, 255, 255, 0.1)",
-          borderRadius: 0,
+          borderRadius: 12,
           padding: 20,
           marginBottom: "1.5rem"
         }}>
@@ -96,7 +96,7 @@ export default function DetentionGuard({ children }) {
             color: "#F5EFE0",
             fontWeight: 700,
             border: "2px solid rgba(255, 255, 255, 0.2)",
-            borderRadius: 0,
+            borderRadius: 12,
             padding: "12px 24px",
             cursor: "pointer",
             fontSize: "1rem",

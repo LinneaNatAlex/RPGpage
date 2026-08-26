@@ -1,19 +1,34 @@
-/* Global styles for Arcane School theme */
+/* Global styles – Vayloria forum theme */
 :root {
-  /* Support both light and dark mode */
   color-scheme: light dark;
-  background: #e8ddd4;
+  --font-display: "Cinzel", Palatino, serif;
+  --font-ui: "Source Sans 3", "Segoe UI", Roboto, sans-serif;
+  --font-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --ink: #1a1410;
+  --walnut: #2c221c;
+  --bark: #3d3228;
+  --bronze: #8b7355;
+  --gold: #c9a86c;
+  --gold-bright: #e8d5a3;
+  --parchment: #f4ead8;
+  --parchment-deep: #e7d8c2;
+  --cream: #faf6ee;
+  --text-on-dark: #f3eadc;
+  --text-muted: #c4b8a4;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 18px 48px rgba(26, 20, 16, 0.28), 0 2px 8px rgba(26, 20, 16, 0.12);
+  background: #e9ddcc;
 }
 
-/* Dark mode support for mobile */
 @media (prefers-color-scheme: dark) {
   :root {
-    background: #1a0b08;
+    background: #16110e;
   }
 
   body {
-    background-color: #1a0b08;
-    color: #f5efe0;
+    background-color: #16110e;
+    color: #f3eadc;
   }
 }
 
@@ -24,13 +39,25 @@
 }
 
 body {
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
-  background-color: #e8ddd4;
-  color: #2c2c2c;
-  line-height: 1.6;
+  font-family: var(--font-ui);
+  background-color: #e9ddcc;
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(201, 168, 108, 0.16), transparent 55%),
+    linear-gradient(180deg, #f3eadc 0%, #e4d4be 100%);
+  background-attachment: fixed;
+  color: #2c241c;
+  line-height: 1.65;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-theme="dark"] body {
+  background-color: #16110e;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 168, 108, 0.08), transparent 50%),
+    linear-gradient(180deg, #1c1612 0%, #14100d 100%);
+  color: #f3eadc;
 }
 
 /* Synk med App authShell – overscroll / kant skal ikke vise beige */
@@ -41,7 +68,7 @@ body.auth-page-bg {
 /* Classroom section – skarpe hjørner, skjul scrollbar */
 .classroom-messages-container,
 .classroom-textarea {
-  border-radius: 0 !important;
+  border-radius: 10px !important;
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE and Edge */
 }
@@ -51,8 +78,23 @@ body.auth-page-bg {
   display: none !important; /* Chrome, Safari, Opera */
 }
 
-/* Mobile responsive for classroom */
 @media (max-width: 768px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: #1c1410 !important;
+    background-image: none !important;
+  }
+
+  body.mobile-app-shell {
+    background-color: #1c1410 !important;
+    background-image: none !important;
+  }
+
   .classroom-messages-container {
     width: 100% !important;
     padding: 12px !important;
@@ -70,7 +112,7 @@ body.auth-page-bg {
 body,
 * {
   scrollbar-width: thin;
-  scrollbar-color: #7b6857 transparent;
+  scrollbar-color: #8b7355 transparent;
 }
 
 /* For Webkit-browsers – kun thumb synlig */
@@ -81,8 +123,8 @@ body::-webkit-scrollbar,
 }
 body::-webkit-scrollbar-thumb,
 *::-webkit-scrollbar-thumb {
-  background: #7b6857;
-  border-radius: 0;
+  background: #8b7355;
+  border-radius: 10px;
 }
 body::-webkit-scrollbar-track,
 *::-webkit-scrollbar-track {
@@ -91,14 +133,14 @@ body::-webkit-scrollbar-track,
 
 /* ReactQuill Editor Overrides - Force Light Theme with Dark Text */
 .ql-editor {
-  background-color: #f5efe0 !important;
-  color: #2c2c2c !important;
-  border: 2px solid #d4c4a8 !important;
-  border-radius: 0 !important;
+  background-color: #faf6ee !important;
+  color: #2c241c !important;
+  border: 1px solid #d4c4a8 !important;
+  border-radius: 0 0 8px 8px !important;
   padding: 16px !important;
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif !important;
-  font-size: 1rem !important;
-  line-height: 1.6 !important;
+  font-family: "Source Serif 4", Georgia, serif !important;
+  font-size: 1.05rem !important;
+  line-height: 1.7 !important;
   min-height: 120px !important;
 }
 
@@ -141,18 +183,18 @@ body::-webkit-scrollbar-track,
 }
 
 .ql-toolbar {
-  background-color: #f5efe0 !important;
-  border: 2px solid #d4c4a8 !important;
+  background-color: #f4ead8 !important;
+  border: 1px solid #d4c4a8 !important;
   border-bottom: none !important;
-  border-radius: 0 !important;
-  padding: 12px !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 10px 12px !important;
 }
 
 .ql-container {
-  border: 2px solid #d4c4a8 !important;
+  border: 1px solid #d4c4a8 !important;
   border-top: none !important;
-  border-radius: 0 !important;
-  background-color: #f5efe0 !important;
+  border-radius: 0 0 8px 8px !important;
+  background-color: #faf6ee !important;
 }
 
 .ql-toolbar .ql-stroke {
@@ -167,7 +209,7 @@ body::-webkit-scrollbar-track,
   color: #2c2c2c !important;
   background-color: transparent !important;
   border: 1px solid #d4c4a8 !important;
-  border-radius: 0 !important;
+  border-radius: 6px !important;
   margin: 2px !important;
   padding: 6px !important;
 }
@@ -178,7 +220,7 @@ body::-webkit-scrollbar-track,
 }
 
 .ql-toolbar button.ql-active {
-  background-color: #7b6857 !important;
+  background-color: #8b7355 !important;
   color: #f5efe0 !important;
 }
 
@@ -188,8 +230,8 @@ body::-webkit-scrollbar-track,
 
 .ql-toolbar .ql-picker-options {
   background-color: #f5efe0 !important;
-  border: 2px solid #d4c4a8 !important;
-  border-radius: 0 !important;
+  border: 1px solid rgba(201, 168, 108, 0.4) !important;
+  border-radius: 10px !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -203,7 +245,7 @@ body::-webkit-scrollbar-track,
 }
 
 .ql-editor.ql-blank::before {
-  color: #7b6857 !important;
+  color: #8b7355 !important;
   font-style: italic !important;
 }
 
@@ -231,7 +273,7 @@ body::-webkit-scrollbar-track,
 
 /* Ensure placeholder text is visible */
 .ql-editor.ql-blank::before {
-  color: #7b6857 !important;
+  color: #8b7355 !important;
   opacity: 0.7 !important;
 }
 
@@ -302,7 +344,7 @@ input[type="checkbox"]:hover {
   border-color: rgba(212, 196, 168, 0.8);
 }
 input[type="checkbox"]:checked {
-  background-color: rgba(123, 104, 87, 0.4);
+  background-color: rgba(201, 168, 108, 0.4);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='%23e8dcc8' stroke='%238b7a6b' stroke-width='0.6' stroke-linejoin='round'/%3E%3C/svg%3E");
   border-color: #a08b6e;
 }
@@ -312,4 +354,11 @@ input[type="checkbox"]:focus {
 input[type="checkbox"]:focus-visible {
   outline: 2px solid #d4c4a8;
   outline-offset: 2px;
+}
+
+/* Leftover form controls: same rounded, aligned look */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+textarea,
+select {
+  border-radius: 8px;
 }

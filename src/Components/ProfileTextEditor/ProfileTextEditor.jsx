@@ -232,7 +232,6 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
                     const isPink =
                       typeof document !== "undefined" &&
                       !!document.querySelector('[data-theme="pink"]');
-                    const bg = isDark ? "#1a1a1a" : isPink ? "#fff0f5" : "#EBE1D7";
                     const fg = isDark ? "#e0e0e0" : isPink ? "#5a2c3a" : "#2c2c2c";
                     let body =
                       mode === "code"
@@ -252,19 +251,27 @@ const ProfileTextEditor = ({ initialText, autoEdit, onSave }) => {
 .ql-align-center img,.ql-align-right img{display:inline-block !important;vertical-align:middle;}
 img{max-width:100% !important;height:auto !important;}`;
                     return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html style="background:transparent">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:${bg};}*{box-sizing:inherit;}${quillColors}</style>
+<style>
+html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:transparent!important;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+*{box-sizing:inherit;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
+${quillColors}
+</style>
 </head>
-<body style="background:${bg}">${body}</body>
+<body style="background:transparent">${body}</body>
 </html>`;
                   })()}
                   style={{
                     width: "100%",
                     minHeight: "200px",
                     border: "none",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     background: "transparent",
+                    overflow: "hidden",
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
                   }}
                 />
               </div>
@@ -299,16 +306,20 @@ img{max-width:100% !important;height:auto !important;}`;
                 const isDark =
                   typeof document !== "undefined" &&
                   !!document.querySelector('[data-theme="dark"]');
-                const bg = isDark ? "#1a1a1a" : "#EBE1D7";
                 const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                 const imgCss =
                   ".ql-align-center img,.ql-align-right img{display:inline-block;vertical-align:middle;} img{max-width:100%;height:auto;} p img{vertical-align:middle;}";
                 return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html style="background:transparent">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:${bg};}*{box-sizing:inherit;}${imgCss}</style>
+<style>
+html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:transparent!important;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+*{box-sizing:inherit;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
+${imgCss}
+</style>
 </head>
-<body style="background:${bg}">${displayBody}</body>
+<body style="background:transparent">${displayBody}</body>
 </html>`;
               })()}
               style={{
@@ -316,8 +327,9 @@ img{max-width:100% !important;height:auto !important;}`;
                 minHeight: "80vh",
                 height: "1000vh",
                 border: "none",
-                borderRadius: 0,
+                borderRadius: 12,
                 background: "transparent",
+                overflow: "hidden",
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
               }}

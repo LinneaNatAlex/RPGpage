@@ -27,7 +27,7 @@ function buildLibraryPopupDoc(content) {
   const isDark =
     typeof document !== "undefined" &&
     !!document.querySelector('[data-theme="dark"]');
-  const bg = isDark ? "#252525" : "#e8ddd4";
+  const bg = isDark ? "#252525" : "#f4ead8";
   const fg = isDark ? "#e0e0e0" : "#2c2c2c";
   const scrollbarHide = "scrollbar-width:none;-ms-overflow-style:none;} html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}";
   return `<!DOCTYPE html>

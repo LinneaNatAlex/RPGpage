@@ -51,9 +51,7 @@ const MainPage = () => {
       <p className={styles.introductionText}>
         {user ? (
           <>
-            Your mystical journey continues. Check the notice board for updates,
-            attend classes and quests, and keep an eye on your magical race points.
-            Remember: magic is shaped by the choices you make.
+            Your mystical journey continues.
           </>
         ) : (
           <>
@@ -251,23 +249,28 @@ const MainPage = () => {
   return (
     <section className={styles.introductionPage}>
       {user && <AnnouncementBanner user={user} />}
-      {user?.roles?.includes("admin") ||
-      (user?.roles?.includes("professor") || user?.roles?.includes("teacher")) ||
-      user?.roles?.includes("archivist") ? (
-        <AnnouncementAdmin user={user} />
-      ) : null}
       <header className={styles.introductionHeader}>
         <HeaderContent />
-      </header>
-      <main className={styles.mainContentHome}>
-        <div className={styles.newsFeedContainer}>{user && <NewsFeed />}</div>
-        {user && (
-          <div className={styles.rpgCalendarSidebarContainer}>
-            <RPGCalendarSidebar />
-            <div id="news-pagination-portal" className={styles.newsPaginationSlot} />
+        {(user?.roles?.includes("admin") ||
+          user?.roles?.includes("professor") ||
+          user?.roles?.includes("teacher") ||
+          user?.roles?.includes("archivist")) && (
+          <div className={styles.headerAnnouncement}>
+            <AnnouncementAdmin user={user} />
           </div>
         )}
-      </main>
+      </header>
+      {user && (
+        <div className={styles.mainContentHome}>
+          <div className={styles.newsFeedContainer}>
+            <NewsFeed />
+            <div id="news-pagination-portal" className={styles.newsPaginationSlot} />
+          </div>
+          <div className={styles.rpgCalendarSidebarContainer}>
+            <RPGCalendarSidebar />
+          </div>
+        </div>
+      )}
     </section>
   );
 };

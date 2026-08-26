@@ -209,7 +209,8 @@ const SignUp = () => {
         )}
         <form className={styles.signUpForm} onSubmit={handleSignUp}>
           <div className={styles.signUpFormHeader}>
-            <h1>Sign up</h1>
+            <p className={styles.brandKicker}>Join Vayloria</p>
+            <h1>Create your character</h1>
             <div className={styles.headerDivider} aria-hidden="true" />
             <p className={styles.vipBadge}>
               All new users get free VIP for one month

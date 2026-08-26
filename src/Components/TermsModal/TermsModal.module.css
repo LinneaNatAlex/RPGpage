@@ -11,9 +11,9 @@
   justify-content: center;
 }
 .modalContent {
-  background: #23232b;
-  color: #b0aac2;
-  border-radius: 0;
+  background: #2c241c;
+  color: #c4b8a4;
+  border-radius: 10px;
   padding: 0;
   max-width: 420px;
   width: 90vw;
@@ -37,20 +37,20 @@
 .modalContent h2 {
   padding: 1.2rem 2rem 0.5rem 2rem;
   margin: 0;
-  background: #23232b;
+  background: #2c241c;
   position: sticky;
   top: 0;
   z-index: 2;
 }
 .closeBtn {
   background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
-  color: #23232b;
+  color: #2c241c;
   font-weight: bold;
   font-family: "Cinzel", serif;
   letter-spacing: 1px;
   padding: 0.6rem 1.3rem;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
   font-size: 1rem;
   transition: background 0.2s, color 0.2s;
@@ -68,13 +68,13 @@
 }
 .closeBtn {
   background: linear-gradient(90deg, #a084e8 0%, #f7c873 100%);
-  color: #23232b;
+  color: #2c241c;
   font-weight: bold;
   font-family: "Cinzel", serif;
   letter-spacing: 1px;
   padding: 0.6rem 1.3rem;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(124, 94, 191, 0.1);
   font-size: 1rem;
   transition: background 0.2s, color 0.2s;

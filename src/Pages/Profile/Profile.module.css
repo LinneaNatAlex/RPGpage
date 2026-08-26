@@ -2,19 +2,19 @@
   border: 4px solid #fff !important;
   box-shadow:
     0 0 18px 4px #fff,
-    0 0 12px #b0aac2 !important;
+    0 0 12px #c4b8a4 !important;
 }
 .professorAvatar {
   border: 4px solid gold !important;
   box-shadow:
     0 0 18px 4px gold,
-    0 0 12px #b0aac2 !important;
+    0 0 12px #c4b8a4 !important;
 }
 .shadowPatrolAvatar {
   border: 4px solid #1ecb8c !important;
   box-shadow:
     0 0 18px 4px #1ecb8c,
-    0 0 12px #b0aac2 !important;
+    0 0 12px #c4b8a4 !important;
 }
 body,
 #root {
@@ -23,7 +23,7 @@ body,
 }
 
 .profileWrapper {
-  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
+  background: transparent;
   width: 100%;
   min-height: 100vh;
   margin: 0;
@@ -51,14 +51,13 @@ body,
   justify-content: center;
   height: auto;
   min-height: auto;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   margin: 0 auto;
   padding: 1.5rem;
   overflow-x: hidden;
-  border-radius: 0;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(26, 20, 16, 0.22);
+  border: 1px solid rgba(201, 168, 108, 0.28);
   position: relative;
   max-width: none;
   width: 100%;
@@ -96,7 +95,7 @@ body,
   margin-right: 0;
   gap: 20px;
   background: transparent;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 0;
   box-shadow: none;
 }
@@ -142,6 +141,15 @@ body,
 .profileTextContainer iframe {
   background-color: transparent !important;
   background: transparent !important;
+  overflow: hidden !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.profileTextContainer iframe::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 :global([data-theme="dark"]) .profileTextContainer iframe {
@@ -155,7 +163,7 @@ body,
 }
 
 .profileTextContainer h2 {
-  color: #7b6857;
+  color: #8b7355;
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 1.5rem 0;
@@ -178,7 +186,7 @@ body,
   max-width: none;
   margin: 0 auto;
   background: transparent;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 2rem;
   position: relative;
   word-break: break-word;
@@ -198,7 +206,7 @@ body,
 .profileTextContent h4,
 .profileTextContent h5,
 .profileTextContent h6 {
-  color: #7b6857;
+  color: #8b7355;
   margin: 1rem 0 0.5rem 0;
   font-weight: 700;
 }
@@ -222,7 +230,7 @@ body,
 .profileTextContent blockquote {
   padding-left: 1rem;
   margin: 0.5rem 0;
-  background: rgba(123, 104, 87, 0.05);
+  background: rgba(201, 168, 108, 0.05);
   border-radius: 0 4px 4px 0;
 }
 
@@ -236,18 +244,18 @@ body,
 }
 
 .profileTextContent a {
-  color: #7b6857;
+  color: #8b7355;
   text-decoration: underline;
 }
 
 .profileTextContent a:hover {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 .profileTextContent img {
   max-width: 100%;
   height: auto;
-  border-radius: 0;
+  border-radius: 10px;
   display: block;
   margin: 0.5rem auto;
 }
@@ -280,9 +288,9 @@ body,
 }
 
 .profileText pre {
-  background: rgba(123, 104, 87, 0.1);
+  background: rgba(201, 168, 108, 0.1);
   padding: 0.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-family: monospace;
 }
 
@@ -296,18 +304,18 @@ body,
 }
 
 .profileText a {
-  color: #7b6857;
+  color: #8b7355;
   text-decoration: underline;
 }
 
 .profileText a:hover {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 .profileText img {
   max-width: 100%;
   height: auto;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 /* Allow BBCode alignment to override - maximum specificity */
@@ -365,15 +373,15 @@ body,
 }
 
 .profileText .bbcode-table th {
-  background-color: rgba(123, 104, 87, 0.1);
+  background-color: rgba(201, 168, 108, 0.1);
   font-weight: bold;
 }
 
 .profileText .bbcode-plain {
   font-family: monospace;
-  background-color: rgba(123, 104, 87, 0.1);
+  background-color: rgba(201, 168, 108, 0.1);
   padding: 0.2rem 0.4rem;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 /* Fjern linja – ::before skal ikke vises (overstyrer eventuell cache) */
@@ -418,7 +426,7 @@ body,
   height: 300px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #7b6857;
+  border: 4px solid #8b7355;
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.2),
     0 4px 12px rgba(0, 0, 0, 0.1);
@@ -428,14 +436,14 @@ body,
   border: 4px solid #ff2a2a;
   box-shadow:
     0 0 18px 4px #ff2a2a,
-    0 0 12px #b0aac2;
+    0 0 12px #c4b8a4;
 }
 
 .archivistAvatar {
   border: 4px solid #a084e8;
   box-shadow:
     0 0 18px 4px #a084e8,
-    0 0 12px #b0aac2;
+    0 0 12px #c4b8a4;
 }
 
 /* VIP: outer gold glow only; inner ring stays role color */
@@ -546,7 +554,7 @@ body,
   padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(212, 196, 168, 0.35);
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .profileLikesOverviewIcon {
@@ -567,8 +575,8 @@ body,
   margin-top: 0.5rem;
   padding: 1rem;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 0;
-  border: 1px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.35);
 }
 
 .petImageContainer {
@@ -581,7 +589,7 @@ body,
 .petImage {
   width: 120px;
   height: 120px;
-  border-radius: 0;
+  border-radius: 10px;
   border: 3px solid #ffe4b5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   object-fit: cover;
@@ -607,7 +615,7 @@ body,
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.4rem 0.6rem;
-  border-radius: 0;
+  border-radius: 10px;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
@@ -656,8 +664,8 @@ body,
 
 .petInteractionModalContent {
   background: #f5efe0;
-  border: 2px solid #5d4e37;
-  border-radius: 0;
+  border: 2px solid #3d3228;
+  border-radius: 10px;
   padding: 20px;
   max-width: 300px;
   width: 90%;
@@ -672,7 +680,7 @@ body,
 }
 
 .petInteractionHeader h3 {
-  color: #5d4e37;
+  color: #3d3228;
   margin: 0;
   font-size: 1.2rem;
 }
@@ -682,7 +690,7 @@ body,
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #5d4e37;
+  color: #3d3228;
   padding: 0;
   width: 24px;
   height: 24px;
@@ -692,7 +700,7 @@ body,
 }
 
 .closeButton:hover {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 .petModalPetDisplay {
@@ -709,12 +717,12 @@ body,
   width: 100px;
   height: 100px;
   object-fit: contain;
-  border: 2px solid #5d4e37;
+  border: 2px solid #3d3228;
 }
 
 .petModalName {
   font-weight: 700;
-  color: #5d4e37;
+  color: #3d3228;
   font-size: 1rem;
 }
 
@@ -730,20 +738,20 @@ body,
   flex: 1;
   height: 10px;
   background: rgba(93, 78, 55, 0.2);
-  border-radius: 0;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .petModalHpFill {
   height: 100%;
-  background: #7b6857;
-  border-radius: 0;
+  background: #8b7355;
+  border-radius: 10px;
   transition: width 0.2s ease;
 }
 
 .petModalHpText {
   font-size: 0.85rem;
-  color: #5d4e37;
+  color: #3d3228;
   flex-shrink: 0;
 }
 
@@ -755,20 +763,20 @@ body,
 
 .petInteractionBtn {
   padding: 10px 20px;
-  border: 1px solid #5d4e37;
-  border-radius: 0;
+  border: 1px solid #3d3228;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
   transition: all 0.2s ease;
   background: #f5efe0;
-  color: #5d4e37;
+  color: #3d3228;
   font-family: "Cinzel", serif;
   min-width: 80px;
 }
 
 .petInteractionBtn:hover {
-  background: #5d4e37;
+  background: #3d3228;
   color: #f5efe0;
 }
 
@@ -779,9 +787,9 @@ body,
   font-weight: bold;
   margin-top: 10px;
   padding: 6px 12px;
-  background: #5d4e37;
-  border-radius: 0;
-  border: 1px solid #8b7a6b;
+  background: #3d3228;
+  border-radius: 10px;
+  border: 1px solid #9a8060;
 }
 
 .petMoodDisplay {
@@ -791,18 +799,18 @@ body,
   margin-top: 15px;
   padding: 8px 12px;
   background: rgba(93, 78, 55, 0.1);
-  border-radius: 0;
-  border: 1px solid #5d4e37;
+  border-radius: 10px;
+  border: 1px solid #3d3228;
 }
 
 .moodLabel {
-  color: #5d4e37;
+  color: #3d3228;
   font-weight: bold;
   font-size: 0.9rem;
 }
 
 .moodValue {
-  color: #8b7a6b;
+  color: #9a8060;
   font-weight: bold;
   font-size: 0.9rem;
 }
@@ -819,8 +827,8 @@ body,
   margin-top: 15px;
   padding: 8px 12px;
   background: rgba(93, 78, 55, 0.1);
-  border-radius: 0;
-  border: 1px solid #5d4e37;
+  border-radius: 10px;
+  border: 1px solid #3d3228;
 }
 
 .petStatItem {
@@ -830,13 +838,13 @@ body,
 }
 
 .statLabel {
-  color: #5d4e37;
+  color: #3d3228;
   font-weight: bold;
   font-size: 0.85rem;
 }
 
 .statValue {
-  color: #8b7a6b;
+  color: #9a8060;
   font-weight: bold;
   font-size: 0.85rem;
 }
@@ -861,16 +869,16 @@ body,
   width: 100px;
   height: 8px;
   background: rgba(0, 0, 0, 0.4);
-  border-radius: 0;
+  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.35);
 }
 
 .petHpFill {
   height: 100%;
   background: linear-gradient(90deg, #ff4444 0%, #ffaa44 50%, #44ff44 100%);
   transition: width 0.3s ease;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .petHpText {
@@ -888,11 +896,11 @@ body,
 }
 
 .editPetNameBtn {
-  background: linear-gradient(135deg, #6b5b47, #5d4e37);
+  background: linear-gradient(135deg, #3d3228, #3d3228);
   color: #ffe4b5;
-  border: 1px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.35);
   padding: 0.5rem 1rem;
-  border-radius: 0;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
@@ -900,7 +908,7 @@ body,
 }
 
 .editPetNameBtn:hover {
-  background: linear-gradient(135deg, #7b6857, #6b5b47);
+  background: linear-gradient(135deg, #8b7355, #3d3228);
   transform: translateY(-1px);
 }
 
@@ -913,10 +921,10 @@ body,
 
 .petNameInput {
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.35);
   color: #ffe4b5;
   padding: 0.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   text-align: center;
   font-size: 0.9rem;
   width: 150px;
@@ -933,11 +941,11 @@ body,
 
 .savePetNameBtn,
 .cancelPetNameBtn {
-  background: linear-gradient(135deg, #6b5b47, #5d4e37);
+  background: linear-gradient(135deg, #3d3228, #3d3228);
   color: #ffe4b5;
-  border: 1px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.35);
   padding: 0.4rem 0.8rem;
-  border-radius: 0;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.8rem;
   transition: all 0.2s ease;
@@ -964,13 +972,13 @@ body,
   align-items: flex-start;
   justify-content: center;
   height: auto;
-  border: 2px solid #7b6857;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #f5efe0;
   gap: 2rem;
   max-width: 1000px;
   width: 100%;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05);
@@ -996,7 +1004,7 @@ body,
   overflow-y: visible;
   display: block;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   background: transparent;
   margin: 0 auto;
 }
@@ -1037,8 +1045,8 @@ body,
 @media screen and (max-width: 768px) {
   .profileWrapper {
     padding: 0.35rem;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    min-height: 100vh;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    min-height: 0;
     width: 100%;
     max-width: 100%;
     display: flex;
@@ -1052,8 +1060,8 @@ body,
     max-width: 100%;
     padding: 0.3rem;
     margin: 0 auto;
-    border-radius: 0;
-    background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+    border-radius: 10px;
+    background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
     color: #f5efe0;
   }
 
@@ -1071,7 +1079,7 @@ body,
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #7b6857;
+    border: 1px solid rgba(201, 168, 108, 0.32);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     margin-bottom: 0.5rem;
   }
@@ -1083,8 +1091,8 @@ body,
     flex-direction: column;
     gap: 0.2rem;
     padding: 0.5rem;
-    background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-    border-radius: 0;
+    background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+    border-radius: 10px;
     /* Make it more compact on mobile */
     min-height: auto;
     height: auto;
@@ -1124,7 +1132,7 @@ body,
     margin-bottom: 0.25rem !important;
     padding: 0.3rem !important;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 0;
+    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 0.85rem !important;
     line-height: 1.2 !important;
@@ -1179,15 +1187,15 @@ body,
     width: 100%;
     max-width: 100%;
     padding: 0.75rem 0.6rem;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border-radius: 0;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    border-radius: 10px;
     margin: 0 auto;
     box-sizing: border-box;
   }
 
   .profileText h2 {
     font-size: 1.5rem;
-    color: #7b6857;
+    color: #8b7355;
     text-align: center;
     margin-bottom: 1rem;
   }
@@ -1224,16 +1232,16 @@ body,
   .profileHtmlContainer {
     width: 100%;
     max-width: 100%;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border: 2px solid #d4c4a8;
-    border-radius: 0;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    border: 1px solid rgba(201, 168, 108, 0.4);
+    border-radius: 10px;
     padding: 1rem;
     margin: 0 auto;
   }
 
   .profileHtmlContainer h2 {
     font-size: 1.5rem;
-    color: #7b6857;
+    color: #8b7355;
     text-align: center;
     margin-bottom: 1rem;
   }
@@ -1255,7 +1263,7 @@ body,
     overflow-y: visible;
     display: block;
     border: none;
-    border-radius: 0;
+    border-radius: 10px;
     background: #f5efe0;
   }
 
@@ -1277,15 +1285,15 @@ body,
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    border-radius: 0;
+    border-radius: 10px;
     padding: 0.3rem;
   }
 
   .caracterDetails form button {
-    background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+    background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 0;
+    border-radius: 10px;
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
     cursor: pointer;

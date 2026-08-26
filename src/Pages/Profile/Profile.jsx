@@ -99,9 +99,9 @@ const Profile = () => {
               justifyContent: "center",
               minHeight: "50vh",
               padding: "2rem",
-              background: "linear-gradient(135deg, #E8DDD4 0%, #F5EFE0 100%)",
-              borderRadius: 0,
-              border: "2px solid #7B6857",
+              background: "linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%)",
+              borderRadius: 12,
+              border: "1px solid rgba(201, 168, 108, 0.32)",
               margin: "2rem auto",
               textAlign: "center",
               maxWidth: "500px",
@@ -111,14 +111,14 @@ const Profile = () => {
               style={{
                 width: "40px",
                 height: "40px",
-                border: "3px solid #7B6857",
+                border: "1px solid rgba(201, 168, 108, 0.32)",
                 borderTop: "3px solid transparent",
                 borderRadius: "50%",
                 animation: "spin 1s linear infinite",
                 margin: "0 auto 20px",
               }}
             ></div>
-            <h2 style={{ color: "#7B6857", marginBottom: "1rem" }}>
+            <h2 style={{ color: "#8b7355", marginBottom: "1rem" }}>
               Loading Profile...
             </h2>
             <style>{`
@@ -210,9 +210,9 @@ const Profile = () => {
                             display: "inline-block",
                             background: uploading
                               ? "#ccc"
-                              : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                              : "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                             color: uploading ? "#888" : "#FFFFFF",
-                            borderRadius: 0,
+                            borderRadius: 12,
                             padding: "8px 20px",
                             fontWeight: 600,
                             fontSize: 15,
@@ -498,22 +498,28 @@ const Profile = () => {
                       const isDark =
                         typeof document !== "undefined" &&
                         !!document.querySelector('[data-theme="dark"]');
-                      const bg = isDark ? "#252525" : "#EBE1D7";
                       const fg = isDark ? "#e0e0e0" : "#2c2c2c";
                       return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html style="background:transparent">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:${bg};}*{box-sizing:inherit;}</style>
+<style>
+html,body{margin:0;padding:1rem;color:${fg};box-sizing:border-box;background:transparent!important;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+*{box-sizing:inherit;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
+[style*="overflow-y: auto"],[style*="overflow-y:auto"],[style*="overflow: auto"],[style*="overflow:auto"],[style*="overflow-y: scroll"],[style*="overflow-y:scroll"]{background:transparent!important;background-color:transparent!important;}
+</style>
 </head>
-<body style="background:${bg}">${raw}</body>
+<body style="background:transparent">${raw}</body>
 </html>`;
                     })()}
+                    scrolling="no"
                     style={{
                       width: "100%",
                       height: "1000vh",
                       border: "none",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       background: "transparent",
+                      overflow: "hidden",
                       scrollbarWidth: "none",
                       msOverflowStyle: "none",
                     }}
@@ -525,10 +531,10 @@ const Profile = () => {
                       marginTop: "1rem",
                       padding: "0.5rem 1rem",
                       background:
-                        "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                        "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                       color: "#FFFFFF",
                       border: "none",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       cursor: "pointer",
                       fontSize: "0.9rem",
                       fontWeight: "600",
@@ -585,10 +591,10 @@ const Profile = () => {
                       marginTop: "1rem",
                       padding: "0.5rem 1rem",
                       background:
-                        "linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%)",
+                        "linear-gradient(135deg, #9a8060 0%, #9B8A7B 100%)",
                       color: "#F5EFE0",
                       border: "none",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       cursor: "pointer",
                       fontSize: "0.9rem",
                       fontWeight: "600",

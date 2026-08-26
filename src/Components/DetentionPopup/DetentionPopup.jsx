@@ -60,7 +60,7 @@ const DetentionPopup = () => {
         style={{
           background: "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
           border: "3px solid #ff6b6b",
-          borderRadius: 0,
+          borderRadius: 12,
           maxWidth: 420,
           width: "100%",
           padding: 28,
@@ -95,10 +95,10 @@ const DetentionPopup = () => {
           onClick={handleClose}
           style={{
             width: "100%",
-            background: "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+            background: "linear-gradient(135deg, #8b7355 0%, #3d3228 100%)",
             color: "#F5EFE0",
             border: "2px solid #D4C4A8",
-            borderRadius: 0,
+            borderRadius: 12,
             padding: "12px 20px",
             fontSize: "1rem",
             fontWeight: 600,

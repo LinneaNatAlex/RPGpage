@@ -1,41 +1,39 @@
 /* New topic form layout improvements */
 .newTopicForm {
-  margin-bottom: 2.5rem;
-  padding: 2rem;
-  background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.75rem;
+  padding: 1.5rem 1.6rem;
+  background: rgba(250, 246, 238, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(201, 168, 108, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .newTopicInput {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   padding: 12px 16px;
-  border-radius: 0;
-  border: 2px solid #d4c4a8;
-  background: #f5efe0;
-  color: #2c2c2c;
+  border-radius: 8px;
+  border: 1px solid #d4c4a8;
+  background: #faf6ee;
+  color: #2c241c;
   margin-bottom: 0.7rem;
   outline: none;
-  transition: all 0.3s ease;
-  font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
 }
 .newTopicInput:focus {
-  border: 2px solid #7b6857;
-  box-shadow: 0 0 16px rgba(123, 104, 87, 0.4);
-  transform: translateY(-1px);
+  border: 1px solid #c9a86c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 108, 0.25);
 }
 
 .newTopicEditor {
   margin-bottom: 0.7rem;
-  border-radius: 0;
+  border-radius: 10px;
   overflow: hidden;
   background: #f5efe0;
-  border: 2px solid #d4c4a8;
+  border: 1px solid rgba(201, 168, 108, 0.4);
 }
 
 .newTopicButton {
@@ -44,17 +42,16 @@
 }
 .forumWrapper {
   width: 100%;
-  max-width: 1000px;
-  margin: 2rem auto;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border-radius: 0;
+  max-width: 1040px;
+  margin: 1.25rem auto 2rem;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border-radius: 16px;
   position: relative;
   z-index: 1;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7b6857;
-  padding: 40px;
-  color: #f5efe0;
-  position: relative;
+  box-shadow: 0 20px 50px rgba(26, 20, 16, 0.28);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  padding: 32px 36px 36px;
+  color: #f3eadc;
   overflow: hidden;
 }
 
@@ -64,124 +61,160 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
-  border-radius: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
 }
 
 .topicsList {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .topicBox {
-  background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
-  margin-bottom: 2rem;
+  background: rgba(250, 246, 238, 0.07);
+  border-radius: 10px;
+  margin-bottom: 0;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   padding: 0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  border: 1px solid rgba(201, 168, 108, 0.18);
+  box-shadow: none;
+  overflow: hidden;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .topicContent {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  min-width: 0;
 }
 
 .topicBox:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  background: rgba(250, 246, 238, 0.12);
+  border-color: rgba(201, 168, 108, 0.4);
 }
 
-.followButton {
-  background: rgba(93, 78, 55, 0.1);
-  border: 1px solid #5d4e37;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #5d4e37;
-  padding: 6px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  margin-left: 15px;
-  margin-right: 15px;
-  flex-shrink: 0;
-  z-index: 100;
-  position: relative;
-  pointer-events: auto;
-  user-select: none;
-  font-weight: bold;
-}
-
-.followButton:hover {
-  background: rgba(93, 78, 55, 0.1);
-  color: #5d4e37;
-  transform: scale(1.1);
-}
 .topicLinkButton {
   width: 100%;
   background: none;
   border: none;
   text-align: left;
-  padding: 1.5rem 2rem;
-  border-radius: 0;
+  padding: 0.9rem 1.1rem;
+  border-radius: 10px;
   cursor: pointer;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title dates"
+    "author dates";
   align-items: center;
-  justify-content: flex-start;
-  transition: all 0.3s ease;
-  font-size: 1.1rem;
-  gap: 1.5rem;
+  column-gap: 1rem;
+  row-gap: 4px;
+  font-size: 1.05rem;
   outline: none;
   position: relative;
   min-width: 0;
+  color: inherit;
 }
 .topicLinkButton:hover,
 .topicLinkButton:focus {
-  background: rgba(245, 239, 224, 0.2);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  background: rgba(245, 239, 224, 0.08);
 }
-.topicTitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #f5efe0;
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  font-family: '"Cinzel", serif';
+.topicTitleWrap {
+  grid-area: title;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
 }
-
 .topicAuthor {
-  font-size: 1rem;
+  grid-area: author;
+  font-size: 0.92rem;
   color: #d4c4a8;
-  margin-left: 1.5rem;
+  margin-left: 0;
   font-style: italic;
 }
-.topicTime {
-  font-size: 1rem;
-  color: #d4c4a8;
-  font-style: normal;
-  letter-spacing: 0.5px;
-  margin-left: auto;
-  padding-left: 1.5rem;
-}
 .topicDates {
+  grid-area: dates;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-left: auto;
-  padding-left: 1.5rem;
+  margin-left: 0;
+  padding-left: 0;
   gap: 2px;
+  flex-shrink: 0;
+}
+
+.followButton {
+  background: rgba(201, 168, 108, 0.12);
+  border: 1px solid rgba(201, 168, 108, 0.3);
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #e8d5a3;
+  padding: 0;
+  border-radius: 8px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.followButton:hover {
+  background: rgba(201, 168, 108, 0.22);
+  color: #faf6ee;
+  transform: none;
+  border-color: rgba(201, 168, 108, 0.5);
+}
+.topicTitle {
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: #f5efe0;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: "Cinzel", Palatino, serif;
+}
+.topicBadgePinned,
+.topicBadgeLocked {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.topicBadgePinned {
+  color: #ffd86b;
+}
+.topicBadgeLocked {
+  color: #ff8a80;
+}
+.topicViewTitle .topicBadgePinned,
+.topicViewTitle .topicBadgeLocked {
+  margin-left: 10px;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+}
+.topicLockedNotice {
+  margin-bottom: 1.2rem;
+  padding: 10px 14px;
+  background: rgba(255, 138, 128, 0.12);
+  border: 1px solid #ff8a80;
+  border-radius: 8px;
+  color: #ffd6d3;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.topicTime {
+  font-size: 0.95rem;
+  color: #d4c4a8;
+  font-style: normal;
+  letter-spacing: 0.3px;
 }
 .topicTimeOutOfGame {
   font-size: 1rem;
@@ -192,7 +225,7 @@
 }
 .topicTimeInGame {
   font-size: 0.85rem;
-  color: #b0aac2;
+  color: #c4b8a4;
   font-style: normal;
 }
 .topicViewDates {
@@ -209,13 +242,14 @@
 
 .topicViewTitle {
   margin: 0 0 1rem;
-  padding: 0.75rem 1rem;
-  font-size: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  font-size: 1.28rem;
   font-weight: 600;
-  color: #f5efe0;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
+  font-family: "Cinzel", Palatino, serif;
+  color: #faf6ee;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(201, 168, 108, 0.22);
+  border-radius: 10px;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -224,32 +258,31 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
+  gap: 8px;
   margin-bottom: 1.2rem;
 }
 
 .topicsList {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .postBox {
-  background: rgba(245, 239, 224, 0.1);
-  border-radius: 0;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  background: rgba(250, 246, 238, 0.07);
+  border-radius: 12px;
+  padding: 1.35rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(201, 168, 108, 0.18);
+  box-shadow: none;
+  transition: border-color 0.2s ease;
 }
 
 .postBox:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  transform: none;
+  border-color: rgba(201, 168, 108, 0.35);
+  box-shadow: none;
 }
 .postHeader {
   display: flex;
@@ -260,7 +293,7 @@
 }
 .postTime {
   font-size: 0.9rem;
-  color: #b0aac2;
+  color: #c4b8a4;
   margin-left: auto;
 }
 .postTitle {
@@ -305,11 +338,11 @@
 :global(html[data-theme="dark"]) .archivistName { color: #a084e8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
 .postContent {
-  background: #fff;
-  color: #23232b;
-  border-radius: 0;
-  padding: 1rem;
-  min-height: 100px;
+  background: #faf6ee;
+  color: #2c241c;
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  min-height: 80px;
 }
 
 /* Forum action buttons styling */
@@ -318,21 +351,23 @@
 .deleteButton,
 .saveButton,
 .cancelButton {
-  display: inline-block;
-  margin: 0.3rem 0.8rem 0.3rem 0;
-  padding: 0.6rem 1.4rem;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.5rem 1.05rem;
+  min-height: 40px;
+  font-size: 0.88rem;
   font-weight: 600;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
   outline: none;
-  font-family: '"Cinzel", serif';
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.03em;
+  line-height: 1;
 }
 .backButton {
   background: linear-gradient(135deg, #d4c4a8 0%, #b8a082 100%);
@@ -340,21 +375,17 @@
 }
 .backButton:hover,
 .backButton:focus {
-  background: linear-gradient(135deg, #e8ddd4 0%, #d4c4a8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #f4ead8 0%, #d4c4a8 100%);
+  filter: brightness(1.04);
 }
 .editButton {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
   color: #f5efe0;
 }
 .editButton:hover,
 .editButton:focus {
-  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #9a8060 0%, #9b8a7b 100%);
+  filter: brightness(1.04);
 }
 .deleteButton {
   background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
@@ -363,9 +394,7 @@
 .deleteButton:hover,
 .deleteButton:focus {
   background: linear-gradient(135deg, #ff5722 0%, #e53935 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  filter: brightness(1.04);
 }
 .saveButton {
   background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
@@ -374,9 +403,7 @@
 .saveButton:hover,
 .saveButton:focus {
   background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  filter: brightness(1.04);
 }
 .cancelButton {
   background: linear-gradient(135deg, #d4c4a8 0%, #b8a082 100%);
@@ -384,45 +411,38 @@
 }
 .cancelButton:hover,
 .cancelButton:focus {
-  background: linear-gradient(135deg, #e8ddd4 0%, #d4c4a8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #f4ead8 0%, #d4c4a8 100%);
+  filter: brightness(1.04);
 }
 
 .postButton {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
-  color: #f5efe0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
-  padding: 0.8rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 1.5rem;
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
+  color: #1a1410;
+  border: 1px solid rgba(255, 236, 190, 0.3);
+  border-radius: 10px;
+  padding: 0.7rem 1.6rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-top: 1.1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
   outline: none;
-  font-family: '"Cinzel", serif';
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.05em;
 }
 .postButton:hover,
 .postButton:focus {
-  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  filter: brightness(1.06);
 }
 
 /* Mobile responsive styles – same for all forums including 18+ */
 @media (max-width: 768px) {
   .forumWrapper {
-    margin: 0 10px;
-    padding: 15px;
-    border-radius: 0;
-    max-width: calc(100vw - 20px);
+    margin: 0;
+    padding: 14px 12px 18px;
+    border-radius: 14px;
+    max-width: 100%;
     width: 100%;
     box-sizing: border-box;
     overflow: visible;
@@ -456,37 +476,44 @@
   }
 
   .topicLinkButton {
-    overflow: hidden;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 0.85rem 1rem;
   }
 
   .topicTitle {
-    overflow: visible;
+    max-width: 100%;
+    flex: none;
     white-space: normal;
-    max-width: 70%;
-    flex: 1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.3;
   }
 
   .topicAuthor {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 25%;
-    min-width: 80px;
+    max-width: 100%;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .topicDates {
+    align-items: flex-start;
+    width: 100%;
   }
 
   .topicTime {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 15%;
-    min-width: 60px;
+    max-width: 100%;
+    min-width: 0;
     font-size: 0.8rem;
+  }
+
+  .postBox {
+    padding: 0.85rem;
+    margin-bottom: 0.85rem;
+    background: rgba(250, 246, 238, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .topicViewTitle {
@@ -497,121 +524,51 @@
   }
 
   .topicViewActions {
-    gap: 0.4rem 0.75rem;
+    gap: 8px;
     margin-bottom: 1rem;
-  }
-
-  .postBox {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    background: #f5efe0;
-    border-radius: 0;
-    overflow: hidden;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
   }
 
   .postContent {
-    background: #1a1a1a !important;
-    color: #fcfbfb !important;
-    padding: 2rem !important;
-    min-height: 200px;
-    border-radius: 0;
-    line-height: 1.8;
-    font-size: 1.1rem;
+    background: #faf6ee !important;
+    color: #2c241c !important;
+    padding: 0.9rem 1rem !important;
+    min-height: 80px;
+    border-radius: 8px;
+    line-height: 1.55;
+    font-size: 1rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: "Georgia", "Times New Roman", "Book Antiqua", serif;
+    font-family: "Source Serif 4", Georgia, serif;
     text-align: left;
-    letter-spacing: 0.3px;
     max-width: 100%;
     width: 100%;
     margin: 0;
     box-sizing: border-box;
   }
 
-  .postContent * {
-    color: #fcfbfb !important;
-  }
-
-  .postContent p {
-    color: #fcfbfb !important;
-    margin-bottom: 1rem;
-  }
-
+  .postContent p,
+  .postContent li,
   .postContent span {
-    color: #fcfbfb !important;
+    color: #2c241c !important;
   }
 
-  .postContent li {
-    color: #fcfbfb !important;
-    margin-bottom: 0.5rem;
-  }
-
-  .postContent ul {
-    color: #fcfbfb !important;
-    padding-left: 1.5rem;
-  }
-
-  /* Mobile button sizing */
-  .backButton,
-  .editButton,
-  .deleteButton,
-  .saveButton,
-  .cancelButton {
-    padding: 0.4rem 0.8rem !important;
-    font-size: 0.8rem !important;
-    margin: 0.2rem 0.3rem 0.2rem 0 !important;
-    min-width: auto !important;
-    height: auto !important;
-  }
-
-  .postButton {
-    padding: 0.6rem 1.2rem !important;
-    font-size: 0.9rem !important;
-    margin-top: 1rem !important;
-  }
-
-  /* Mobile button styling to match .mobile-page-content button */
   .backButton,
   .newTopicButton,
   .editButton,
-  .deleteButton,
   .saveButton,
   .cancelButton,
   .postButton {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
-    border-radius: 0 !important;
-    padding: 0.75rem 1.5rem !important;
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-    text-decoration: none !important;
+    background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%) !important;
+    border: 1px solid rgba(255, 236, 190, 0.3) !important;
+    color: #1a1410 !important;
+    border-radius: 8px !important;
+    font-family: "Cinzel", Palatino, serif !important;
   }
 
-  .backButton:hover,
-  .newTopicButton:hover,
-  .editButton:hover,
-  .deleteButton:hover,
-  .saveButton:hover,
-  .cancelButton:hover,
-  .postButton:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-  }
-
-  /* Special styling for delete button */
   .deleteButton {
-    background: rgba(220, 38, 38, 0.3) !important;
-    border: 1px solid rgba(220, 38, 38, 0.5) !important;
-  }
-
-  .deleteButton:hover {
-    background: rgba(220, 38, 38, 0.4) !important;
+    background: #8b3a3a !important;
+    border: 1px solid rgba(255, 180, 180, 0.25) !important;
+    color: #f5efe0 !important;
   }
 }
 
@@ -620,18 +577,19 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-right: 15px;
+  padding: 0 12px 0 0;
+  margin: 0;
 }
 
 /* Follower Count Button */
 .followerCountButton {
   background: rgba(93, 78, 55, 0.1);
-  border: 1px solid #5d4e37;
+  border: 1px solid #3d3228;
   font-size: 0.9rem;
   cursor: pointer;
-  color: #5d4e37;
+  color: #3d3228;
   padding: 4px 8px;
-  border-radius: 0;
+  border-radius: 10px;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -648,7 +606,7 @@
 
 .followerCountButton:hover {
   background: rgba(93, 78, 55, 0.2);
-  color: #5d4e37;
+  color: #3d3228;
   transform: scale(1.05);
 }
 
@@ -668,10 +626,10 @@
 }
 
 .followersModalContent {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border-radius: 0;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border-radius: 10px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   max-width: 500px;
   width: 100%;
   max-height: 80vh;
@@ -686,8 +644,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
-  border-radius: 0;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
+  border-radius: 10px;
 }
 
 .followersModalHeader {
@@ -709,8 +667,8 @@
 
 .closeButton {
   background: rgba(245, 239, 224, 0.1);
-  border: 1px solid #5d4e37;
-  color: #5d4e37;
+  border: 1px solid #3d3228;
+  color: #3d3228;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -751,7 +709,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   flex-shrink: 0;
 }
 

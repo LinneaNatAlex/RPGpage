@@ -487,7 +487,7 @@ const Inventory = () => {
                             color: "white",
                             border: "2px solid #D4C4A8",
                             padding: "4px 8px",
-                            borderRadius: 0,
+                            borderRadius: 12,
                             cursor: "pointer",
                           }}
                         >

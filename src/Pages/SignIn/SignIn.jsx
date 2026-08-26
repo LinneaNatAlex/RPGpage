@@ -123,12 +123,22 @@ const SignIn = () => {
     // -----------------------------SIGN IN PAGE-----------------------------
     <div className={styles.signUpContainer}>
       <form className={styles.signInForm}>
-        <h2 className={styles.formGroupTitle}>
-          Sign in to your magical account
-        </h2>
+        <div className={styles.brand}>
+          <p className={styles.brandKicker}>Vayloria</p>
+          <h1 className={styles.brandTitle}>Arcane School</h1>
+          <p className={styles.brandTagline}>A living roleplay forum</p>
+        </div>
+        <h2 className={styles.formGroupTitle}>Sign in to your account</h2>
         <div className={styles.inputGroup}>
           <label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" onChange={handleChange} />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@email.com"
+            autoComplete="email"
+            onChange={handleChange}
+          />
         </div>
         <div className={styles.inputGroup}>
           <div className={styles.passwordLabelRow}>
@@ -141,6 +151,8 @@ const SignIn = () => {
             type="password"
             id="password"
             name="password"
+            placeholder="Your password"
+            autoComplete="current-password"
             onChange={handleChange}
           />
         </div>
@@ -149,7 +161,7 @@ const SignIn = () => {
         </button>
         {error && <ErrorMessage message={error} />}
         <p>
-          Don't have an account? Create one{" "}
+          New here? Create an account{" "}
           <NavLink to="/sign-up" className={styles.signInLink}>
             here
           </NavLink>

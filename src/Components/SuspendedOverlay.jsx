@@ -61,12 +61,12 @@ export default function SuspendedOverlay({ until, reason, description }) {
         <p style={{ fontSize: 16 }}>
           Suspension ends in: <b>{formatCountdown(countdown)}</b>
           <br />
-          <span style={{ fontSize: 13, color: "#b0aac2" }}>
+          <span style={{ fontSize: 13, color: "#c4b8a4" }}>
             ({new Date(until).toLocaleString()})
           </span>
         </p>
       )}
-      <p style={{ marginTop: 32, color: "#b0aac2", fontSize: 14 }}>
+      <p style={{ marginTop: 32, color: "#c4b8a4", fontSize: 14 }}>
         If you believe this is a mistake, please contact an administrator.
       </p>
     </div>

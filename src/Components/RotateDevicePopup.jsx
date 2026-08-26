@@ -70,7 +70,7 @@ const popupStyles = {
   },
   popup: {
     background: "#f5efe0",
-    border: "2px solid #7b6857",
+    border: "1px solid rgba(201, 168, 108, 0.32)",
     borderRadius: 8,
     padding: "2rem 1.5rem 1.5rem 1.5rem",
     boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
@@ -87,7 +87,7 @@ const popupStyles = {
     background: "none",
     border: "none",
     fontSize: 24,
-    color: "#7b6857",
+    color: "#8b7355",
     cursor: "pointer",
     fontWeight: "bold",
   },
@@ -96,13 +96,13 @@ const popupStyles = {
     marginBottom: 12,
   },
   text: {
-    color: "#7b6857",
+    color: "#8b7355",
     fontSize: 18,
     fontWeight: 500,
     marginBottom: 8,
   },
   hint: {
-    color: "#8b7a6b",
+    color: "#9a8060",
     fontSize: 13,
     fontWeight: 400,
     marginTop: 4,

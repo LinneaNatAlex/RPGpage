@@ -59,11 +59,16 @@ const raceCommons = {
   werewolf: "Werewolf Commons",
 };
 
+const FORUM_MOD_ROLES = ["admin", "shadowpatrol", "professor", "teacher", "headmaster"];
+const isForumModerator = (roles) =>
+  (roles || []).some((r) => FORUM_MOD_ROLES.includes((r || "").toLowerCase()));
+
 const Forum = () => {
   const { user, loading } = useAuth();
   const { userData } = useUserData();
   const { users } = useUsers();
   const { roles, rolesLoading } = useUserRoles();
+  const canModerateForum = isForumModerator(roles);
   // Topic/forum state
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState(null);
@@ -214,6 +219,7 @@ const Forum = () => {
             (t.allowedUserIds && t.allowedUserIds.includes(user.uid))
         );
       }
+      list.sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
       setTopics(list);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -572,6 +578,24 @@ const Forum = () => {
     await fetchTopics();
   };
 
+  const handleToggleTopicLock = async () => {
+    if (!selectedTopic || !canModerateForum) return;
+    const currentTopic = topics.find((t) => t.id === selectedTopic);
+    await updateDoc(doc(db, `forums/${forumRoom}/topics`, selectedTopic), {
+      locked: !currentTopic?.locked,
+    });
+    await fetchTopics();
+  };
+
+  const handleToggleTopicPin = async () => {
+    if (!selectedTopic || !canModerateForum) return;
+    const currentTopic = topics.find((t) => t.id === selectedTopic);
+    await updateDoc(doc(db, `forums/${forumRoom}/topics`, selectedTopic), {
+      pinned: !currentTopic?.pinned,
+    });
+    await fetchTopics();
+  };
+
   // Delete entire topic (and all its posts)
   const handleDeleteTopic = async () => {
     if (!selectedTopic) return;
@@ -658,6 +682,8 @@ const Forum = () => {
   // Post reply in topic
   const handleReply = async () => {
     if (!selectedTopic || isContentEmpty(replyContent)) return;
+    const replyTopic = topics.find((t) => t.id === selectedTopic);
+    if (replyTopic?.locked && !canModerateForum) return;
 
     const wordCount = countWords(replyContent);
     if (!wordCountInRange(wordCount)) return;
@@ -774,7 +800,7 @@ const Forum = () => {
             marginBottom: 16,
             padding: "12px 16px",
             background: "rgba(245, 239, 224, 0.06)",
-            borderLeft: "4px solid rgba(123, 104, 87, 0.6)",
+            borderLeft: "4px solid rgba(201, 168, 108, 0.6)",
             color: "rgba(212, 196, 168, 0.95)",
             fontSize: "0.95rem",
             lineHeight: 1.5,
@@ -789,7 +815,7 @@ const Forum = () => {
         <>
           <div className={styles.newTopicForm}>
             {is18PlusForum && (
-              <p style={{ marginBottom: 14, padding: "8px 12px", background: "rgba(160, 132, 232, 0.2)", border: "1px solid #a084e8", borderRadius: 0, fontSize: "0.9rem" }}>
+              <p style={{ marginBottom: 14, padding: "8px 12px", background: "rgba(160, 132, 232, 0.2)", border: "1px solid #a084e8", borderRadius: 12, fontSize: "0.9rem" }}>
                 When you create the first post below, you can choose if the topic is private and who can see it (only 18+ verified users).
               </p>
             )}
@@ -839,7 +865,7 @@ const Forum = () => {
               <div
                 style={{
                   fontSize: "0.8rem",
-                  color: "#8B7A6B",
+                  color: "#9a8060",
                   marginTop: "4px",
                 }}
               >
@@ -867,7 +893,7 @@ const Forum = () => {
                   marginBottom: 16,
                   padding: 14,
                   background: "#2a2a32",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid #a084e8",
                 }}
               >
@@ -907,10 +933,10 @@ const Forum = () => {
                         }}
                         style={{
                           padding: "10px 18px",
-                          background: "#5d4e37",
+                          background: "#3d3228",
                           color: "#f5efe0",
                           border: "2px solid #a084e8",
-                          borderRadius: 0,
+                          borderRadius: 12,
                           cursor: "pointer",
                           fontSize: "1rem",
                           fontWeight: 700,
@@ -944,7 +970,7 @@ const Forum = () => {
                       marginBottom: 10,
                       background: "#1a1a22",
                       border: "1px solid #444",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       color: "#fff",
                       fontSize: "0.9rem",
                     }}
@@ -1023,10 +1049,10 @@ const Forum = () => {
                                 disabled={privateTopicUserPage === 0}
                                 style={{
                                   padding: "6px 12px",
-                                  background: privateTopicUserPage === 0 ? "#444" : "#5d4e37",
+                                  background: privateTopicUserPage === 0 ? "#444" : "#3d3228",
                                   color: "#f5efe0",
-                                  border: "1px solid #7b6857",
-                                  borderRadius: 0,
+                                  border: "1px solid rgba(201, 168, 108, 0.35)",
+                                  borderRadius: 12,
                                   cursor: privateTopicUserPage === 0 ? "not-allowed" : "pointer",
                                   fontSize: "0.9rem",
                                 }}
@@ -1042,10 +1068,10 @@ const Forum = () => {
                                 disabled={privateTopicUserPage >= totalPages - 1}
                                 style={{
                                   padding: "6px 12px",
-                                  background: privateTopicUserPage >= totalPages - 1 ? "#444" : "#5d4e37",
+                                  background: privateTopicUserPage >= totalPages - 1 ? "#444" : "#3d3228",
                                   color: "#f5efe0",
-                                  border: "1px solid #7b6857",
-                                  borderRadius: 0,
+                                  border: "1px solid rgba(201, 168, 108, 0.35)",
+                                  borderRadius: 12,
                                   cursor: privateTopicUserPage >= totalPages - 1 ? "not-allowed" : "pointer",
                                   fontSize: "0.9rem",
                                 }}
@@ -1104,7 +1130,18 @@ const Forum = () => {
                       onClick={() => setSelectedTopic(topic.id)}
                       type="button"
                     >
+                      <span className={styles.topicTitleWrap}>
                       <span className={styles.topicTitle}>{topic.title}</span>
+                      {topic.pinned && (
+                        <span className={styles.topicBadgePinned} title="Pinned to the top">
+                          📌 Pinned
+                        </span>
+                      )}
+                      {topic.locked && (
+                        <span className={styles.topicBadgeLocked} title="This topic is locked">
+                          🔒 Locked
+                        </span>
+                      )}
                       {topic.isPrivate && (
                         <span
                           style={{
@@ -1118,6 +1155,7 @@ const Forum = () => {
                           🔒 Private
                         </span>
                       )}
+                      </span>
                       <span className={styles.topicAuthor}>
                         by {users?.find((u) => u.uid === topic.uid)?.displayName ?? topic.author}
                       </span>
@@ -1196,7 +1234,19 @@ const Forum = () => {
         }
         return (
         <div className={styles.topicView}>
-          <h2 className={styles.topicViewTitle}>{currentTopic.title}</h2>
+          <h2 className={styles.topicViewTitle}>
+            {currentTopic.title}
+            {currentTopic.pinned && (
+              <span className={styles.topicBadgePinned} title="Pinned to the top">
+                📌 Pinned
+              </span>
+            )}
+            {currentTopic.locked && (
+              <span className={styles.topicBadgeLocked} title="This topic is locked">
+                🔒 Locked
+              </span>
+            )}
+          </h2>
           <div className={styles.topicViewActions}>
             <Button
               onClick={() => {
@@ -1207,12 +1257,14 @@ const Forum = () => {
             >
               Back to topics
             </Button>
-            {(() => {
-              const canModerateForum = roles?.some((r) =>
-                ["admin", "shadowpatrol", "professor", "teacher", "headmaster"].includes((r || "").toLowerCase())
-              );
-              return canModerateForum && (
+            {canModerateForum && (
                 <>
+                  <Button onClick={handleToggleTopicLock} className={styles.editButton}>
+                    {currentTopic.locked ? "Unlock Topic" : "Lock Topic"}
+                  </Button>
+                  <Button onClick={handleToggleTopicPin} className={styles.editButton}>
+                    {currentTopic.pinned ? "Unpin Topic" : "Pin Topic"}
+                  </Button>
                   <Button onClick={handleEditTopic} className={styles.editButton}>
                     Edit Topic
                   </Button>
@@ -1223,8 +1275,7 @@ const Forum = () => {
                     Delete Topic
                   </Button>
                 </>
-              );
-            })()}
+            )}
           </div>
           {currentTopic.isPrivate && (
             <div
@@ -1233,7 +1284,7 @@ const Forum = () => {
                 padding: "10px 14px",
                 background: "rgba(160, 132, 232, 0.15)",
                 border: "1px solid #a084e8",
-                borderRadius: 0,
+                borderRadius: 12,
                 fontSize: "0.9rem",
               }}
             >
@@ -1271,8 +1322,8 @@ const Forum = () => {
           {editingTopic && (
             <div
               style={{
-                background: "#23232b",
-                borderRadius: 0,
+                background: "#2c241c",
+                borderRadius: 12,
                 padding: 24,
                 marginBottom: 24,
               }}
@@ -1315,7 +1366,14 @@ const Forum = () => {
               </div>
             </div>
           )}
+          {currentTopic.locked && (
+            <div className={styles.topicLockedNotice}>
+              This topic is locked. New replies are not allowed
+              {canModerateForum ? " (staff can still reply)." : "."}
+            </div>
+          )}
           {/* Reply box at top – write without scrolling to bottom */}
+          {(!currentTopic.locked || canModerateForum) && (
           <div className={styles.replyBox} style={{ marginBottom: "1.5rem" }}>
             <ReactQuill
               id="forum-reply-content"
@@ -1346,7 +1404,7 @@ const Forum = () => {
               <div
                 style={{
                   fontSize: "0.8rem",
-                  color: "#8B7A6B",
+                  color: "#9a8060",
                   marginTop: "4px",
                 }}
               >
@@ -1361,6 +1419,7 @@ const Forum = () => {
               Reply
             </Button>
           </div>
+          )}
           <div className={styles.postsList}>
             {([...posts].reverse())
               .slice((postPage - 1) * POSTS_PER_PAGE, postPage * POSTS_PER_PAGE)
@@ -1393,10 +1452,7 @@ const Forum = () => {
                         #{replyNumber} · {postDateStr}
                       </span>
                     )}
-                    {(post.uid === user.uid ||
-                      roles?.some((r) =>
-                        ["admin", "shadowpatrol", "professor", "teacher", "headmaster"].includes((r || "").toLowerCase())
-                      )) && (
+                    {(post.uid === user.uid || canModerateForum) && (
                       <>
                         <Button
                           onClick={() => {
@@ -1466,7 +1522,7 @@ const Forum = () => {
               >
                 Previous
               </Button>
-              <span style={{ color: "#b0aac2", alignSelf: "center" }}>
+              <span style={{ color: "#c4b8a4", alignSelf: "center" }}>
                 Page {postPage} of {Math.ceil(posts.length / POSTS_PER_PAGE)}
               </span>
               <Button

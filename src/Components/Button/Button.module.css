@@ -1,0 +1,15 @@
+.button {
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.04em;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  line-height: 1.2;
+  vertical-align: middle;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

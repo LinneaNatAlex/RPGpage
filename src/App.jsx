@@ -267,7 +267,7 @@ function App() {
         style={{
           position: "fixed",
           inset: 0,
-          background: "#E8DDD4",
+          background: "#f4ead8",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -281,8 +281,8 @@ function App() {
           style={{
             width: 48,
             height: 48,
-            border: "4px solid rgba(123,104,87,0.3)",
-            borderTopColor: "#7B6857",
+            border: "4px solid rgba(201, 168, 108,0.3)",
+            borderTopColor: "#8b7355",
             borderRadius: "50%",
             animation: "appAuthSpin 0.9s linear infinite",
           }}

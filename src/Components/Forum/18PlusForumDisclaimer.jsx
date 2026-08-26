@@ -26,10 +26,10 @@ export default function Forum18PlusDisclaimer({ onConfirm }) {
     >
       <div
         style={{
-          background: "#23232b",
+          background: "#2c241c",
           color: "#fff",
           padding: 32,
-          borderRadius: 0,
+          borderRadius: 12,
           maxWidth: 480,
           textAlign: "center",
           boxShadow: "0 2px 16px #000",
@@ -50,10 +50,10 @@ export default function Forum18PlusDisclaimer({ onConfirm }) {
         <button
           style={{
             background: "#a084e8",
-            color: "#23232b",
+            color: "#2c241c",
             fontWeight: 700,
             border: 0,
-            borderRadius: 0,
+            borderRadius: 12,
             padding: "10px 32px",
             fontSize: 18,
             cursor: "pointer",

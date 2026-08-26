@@ -8,8 +8,8 @@
   line-height: 1.5;
   background: rgba(0, 0, 0, 0.25);
   color: #f5efe0;
-  border: 2px solid rgba(123, 104, 87, 0.5);
-  border-radius: 0;
+  border: 2px solid rgba(201, 168, 108, 0.5);
+  border-radius: 10px;
   resize: vertical;
   box-sizing: border-box;
 }
@@ -48,8 +48,8 @@
 
 /* Ensure toolbar and editor are usable */
 .quillWrapper .ql-toolbar {
-  background: rgba(123, 104, 87, 0.25);
-  border-color: rgba(123, 104, 87, 0.5);
+  background: rgba(201, 168, 108, 0.25);
+  border-color: rgba(201, 168, 108, 0.5);
 }
 
 .quillWrapper .ql-toolbar .ql-stroke {
@@ -65,5 +65,5 @@
 }
 
 .quillWrapper .ql-container {
-  border-color: rgba(123, 104, 87, 0.5);
+  border-color: rgba(201, 168, 108, 0.5);
 }

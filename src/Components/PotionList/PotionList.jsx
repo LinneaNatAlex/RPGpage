@@ -81,7 +81,7 @@ const PotionList = () => {
               <p
                 style={{
                   fontSize: "0.8rem",
-                  color: "#b0aac2",
+                  color: "#c4b8a4",
                 }}
               >
                 {potion.siteEffect}

@@ -76,6 +76,7 @@ const TopBar = () => {
     setNotifications,
     setRecentNews,
     markAllAsRead,
+    clearAllNotifications,
   } = useNotificationsContext();
   const { roles } = useUserRoles();
   const navigate = useNavigate();
@@ -789,16 +790,35 @@ const TopBar = () => {
                         style={{
                           fontSize: "0.85rem",
                           padding: "4px 10px",
-                          background: "rgba(123, 104, 87, 0.3)",
+                          background: "rgba(201, 168, 108, 0.3)",
                           color: "#D4C4A8",
                           border: "1px solid rgba(212, 196, 168, 0.3)",
-                          borderRadius: 0,
+                          borderRadius: 12,
                           cursor: "pointer",
                         }}
                         aria-label="Mark all as read"
                         title="Mark all as read"
                       >
                         Mark all read
+                      </button>
+                    )}
+                    {(notifications.length > 0 || recentNews.length > 0) && (
+                      <button
+                        type="button"
+                        onClick={clearAllNotifications}
+                        style={{
+                          fontSize: "0.85rem",
+                          padding: "4px 10px",
+                          background: "rgba(201, 168, 108, 0.3)",
+                          color: "#D4C4A8",
+                          border: "1px solid rgba(212, 196, 168, 0.3)",
+                          borderRadius: 12,
+                          cursor: "pointer",
+                        }}
+                        aria-label="Clear all notifications"
+                        title="Clear all notifications"
+                      >
+                        Clear all
                       </button>
                     )}
                     <button
@@ -1137,12 +1157,8 @@ const TopBar = () => {
             setCurrentPage(1); // Reset to first page when opening
           }}
           title="Followed Topics"
-          style={{
-            background: "#E8DDD4",
-            color: "#7B6857",
-            fontSize: "18px",
-            fontWeight: "bold",
-          }}
+          aria-label="Followed topics"
+          style={{ color: "#f5efe0", fontSize: 18, fontWeight: 700, lineHeight: 1 }}
         >
           ※
         </button>
@@ -1389,7 +1405,7 @@ const TopBar = () => {
                           background: "#ff6b6b",
                           color: "white",
                           border: "none",
-                          borderRadius: 0,
+                          borderRadius: 12,
                           padding: "4px 8px",
                           fontSize: "12px",
                           cursor: "pointer",

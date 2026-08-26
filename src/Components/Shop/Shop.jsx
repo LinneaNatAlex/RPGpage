@@ -288,26 +288,15 @@ const Shop = ({ open = true }) => {
 
   return (
     <div className={styles.shopWrapper}>
-      <h2
-        style={{
-          fontFamily: '"Cinzel", serif',
-          fontSize: "2.2rem",
-          fontWeight: 700,
-          letterSpacing: "1.5px",
-          textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-          marginBottom: "2rem",
-          textAlign: "center",
-          color: "#F5EFE0",
-        }}
-      >
-        School Shop
-      </h2>
-      <div className={styles.balance}>Balance: {balance} Nits</div>
+      <div className={styles.shopHeader}>
+        <h2 className={styles.shopTitle}>School Shop</h2>
+        <div className={styles.balance}>Balance: {balance} Nits</div>
+      </div>
       <div className={styles.tabs}>
         {shopCategories.map((cat) => (
           <button
             key={cat}
-            className={cat === activeCategory ? styles.activeTab : styles.tab}
+            className={`${styles.tab} ${cat === activeCategory ? styles.activeTab : ""}`}
             onClick={() => setActiveCategory(cat)}
             title={cat}
           >
@@ -323,7 +312,7 @@ const Shop = ({ open = true }) => {
             background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
             color: "#fff",
             padding: "15px 25px",
-            borderRadius: 0,
+            borderRadius: 12,
             marginBottom: "25px",
             marginTop: "20px",
             textAlign: "center",
@@ -346,7 +335,7 @@ const Shop = ({ open = true }) => {
             background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
             color: "#fff",
             padding: "15px 25px",
-            borderRadius: 0,
+            borderRadius: 12,
             marginBottom: "25px",
             marginTop: "20px",
             textAlign: "center",
@@ -419,10 +408,6 @@ const Shop = ({ open = true }) => {
                         className={styles.itemImage}
                         onLoad={() => {}}
                         onError={() => {}}
-                        style={{
-                          border: "2px solid #7B6857",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                        }}
                       />
                     </div>
                   )}
@@ -528,57 +513,34 @@ const Shop = ({ open = true }) => {
                         Delete
                       </button>
                     )}
+                    {itemWithImage.type === "book" && (
+                      <div className={styles.bookLikeRow}>
+                        <button
+                          type="button"
+                          className={styles.bookLikeButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBookLike(itemWithImage);
+                          }}
+                          title={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                          aria-label={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
+                        >
+                          {(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "❤️" : "🤍"}
+                        </button>
+                        {Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.length > 0 && (
+                          <span className={styles.bookLikeCount}>{itemWithImage.likedBy.length}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   {showPurchaseSuccess && (
-                    <div
-                      className={styles.inlineSuccess}
-                      style={{
-                        marginTop: "8px",
-                        padding: "8px 12px",
-                        background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
-                        color: "#fff",
-                        borderRadius: 0,
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        textAlign: "center",
-                      }}
-                    >
-                      ✓ Successfully bought for {itemWithImage.price} Nits!
+                    <div className={styles.inlineSuccess}>
+                      ✓ Bought for {itemWithImage.price} Nits
                     </div>
                   )}
                   {showPurchaseError && (
-                    <div
-                      className={styles.inlineError}
-                      style={{
-                        marginTop: "8px",
-                        padding: "8px 12px",
-                        background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
-                        color: "#fff",
-                        borderRadius: 0,
-                        fontSize: "0.9rem",
-                        textAlign: "center",
-                      }}
-                    >
-                      ❌ {lastPurchaseErrorMessage}
-                    </div>
-                  )}
-                  {itemWithImage.type === "book" && (
-                    <div className={styles.bookLikeRow}>
-                      <button
-                        type="button"
-                        className={styles.bookLikeButton}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBookLike(itemWithImage);
-                        }}
-                        title={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
-                        aria-label={(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "Unlike" : "Like"}
-                      >
-                        {(Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.includes(user?.uid)) ? "❤️" : "🤍"}
-                      </button>
-                      {Array.isArray(itemWithImage.likedBy) && itemWithImage.likedBy.length > 0 && (
-                        <span className={styles.bookLikeCount}>{itemWithImage.likedBy.length}</span>
-                      )}
+                    <div className={styles.inlineError}>
+                      {lastPurchaseErrorMessage}
                     </div>
                   )}
                 </div>

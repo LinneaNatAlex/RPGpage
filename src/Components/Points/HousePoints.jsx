@@ -18,10 +18,10 @@ export default function HousePoints() {
       style={{
         maxWidth: 600,
         margin: "2rem auto",
-        background: "#23232b",
+        background: "#2c241c",
         color: "#fff",
         padding: 24,
-        borderRadius: 0,
+        borderRadius: 12,
       }}
     >
       <h2>House Points</h2>

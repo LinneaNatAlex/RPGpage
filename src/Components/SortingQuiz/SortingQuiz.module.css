@@ -4,12 +4,12 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #F5EFE0;
-  border-radius: 0;
+  border-radius: 10px;
   padding: 2rem 1.5rem;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7B6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   position: relative;
   overflow: hidden;
   max-height: 85vh;
@@ -45,8 +45,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 0;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
+  border-radius: 10px;
 }
 .infoLink {
   color: #D4C4A8;
@@ -75,13 +75,13 @@
 
 .SortingQuizModalContent {
   position: relative;
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   max-width: 95vw;
   max-height: 90vh;
   width: 500px;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
-  border: 3px solid #7B6857;
+  border: 1px solid rgba(201, 168, 108, 0.32);
   overflow: hidden;
 }
 
@@ -92,8 +92,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 0;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
+  border-radius: 10px;
 }
 
 /* --------------QUIZ CONTENT-------------- */
@@ -133,7 +133,7 @@
   padding: 1rem;
   width: 100%;
   margin: 0.5rem 0;
-  border-radius: 0;
+  border-radius: 10px;
   background: rgba(245, 239, 224, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
   color: #F5EFE0;

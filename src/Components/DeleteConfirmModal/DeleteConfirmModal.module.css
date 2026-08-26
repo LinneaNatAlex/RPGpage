@@ -13,9 +13,9 @@
 }
 
 .modalContent {
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-  border: 3px solid #7b6857;
-  border-radius: 0;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  border-radius: 10px;
   box-shadow: 0 16px 64px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2);
   max-width: 450px;
   width: 90%;
@@ -31,7 +31,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #d4c4a8 0%, #7b6857 50%, #d4c4a8 100%);
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
 }
 
 .modalHeader {
@@ -88,11 +88,11 @@
 }
 
 .cancelButton {
-  background: linear-gradient(135deg, #6b5b47 0%, #7b6857 100%) !important;
+  background: linear-gradient(135deg, #3d3228 0%, #8b7355 100%) !important;
   border: 2px solid rgba(212, 196, 168, 0.3) !important;
   color: #f5efe0 !important;
   padding: 0.7rem 1.5rem !important;
-  border-radius: 0 !important;
+  border-radius: 10px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
@@ -100,7 +100,7 @@
 }
 
 .cancelButton:hover {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%) !important;
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%) !important;
   border-color: rgba(212, 196, 168, 0.5) !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
@@ -111,7 +111,7 @@
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
   padding: 0.7rem 1.5rem !important;
-  border-radius: 0 !important;
+  border-radius: 10px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;

@@ -27,6 +27,13 @@ import { playPing, preparePingSound } from "./ping_alt";
 import SiteModal from "./SiteModal";
 import { stripEmoji } from "../../utils/stripEmoji";
 
+function formatChatTime(ts) {
+  if (!ts) return "";
+  const date = typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 const Chat = () => {
   const { messages } = useChatMessages();
   const { users } = useUsers();
@@ -89,9 +96,19 @@ const Chat = () => {
     return () => clearInterval(interval);
   }, [rainbowUntil]);
 
-  // Oppdater localStorage når isCollapsed endres
+  const [isPc, setIsPc] = useState(
+    () => typeof window !== "undefined" && window.innerWidth > 768,
+  );
+  useEffect(() => {
+    const onResize = () => setIsPc(window.innerWidth > 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("mainChatCollapsed", isCollapsed);
+    window.dispatchEvent(new Event("main-chat-toggle"));
+    document.body.classList.remove("main-chat-open");
   }, [isCollapsed]);
 
   // Be om online-liste kun når chat er åpen (spar reads)
@@ -574,39 +591,30 @@ const Chat = () => {
     }
   };
 
-  const isPc = window.innerWidth > 768;
   return (
     <div
-      className={isPc && !isCollapsed ? styles.chatPanelSticky : undefined}
+      className={
+        isPc
+          ? `${styles.chatDockShell}${!isCollapsed ? ` ${styles.chatPanelSticky}` : ""}`
+          : undefined
+      }
       style={{
         position: isPc ? "fixed" : "relative",
-        top: isPc && !isCollapsed ? 0 : "auto",
+        top: isPc && !isCollapsed ? 68 : "auto",
         bottom: isPc ? 0 : "auto",
         right: isPc ? 0 : "auto",
-        width: isPc ? 350 : "100%",
-        height: isPc ? (isCollapsed ? "auto" : "100vh") : "100vh",
+        width: isPc ? 340 : "100%",
+        height: isPc ? (isCollapsed ? "auto" : "calc(100vh - 68px)") : "100%",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: isPc && isCollapsed ? "column-reverse" : "column",
         minHeight: 0,
         zIndex: isPc ? 10005 : 1,
+        pointerEvents: "auto",
       }}
     >
       {isPc && (
         <div
-          style={{
-            flexShrink: 0,
-            background: "#5D4E37",
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            padding: "0.5rem 1rem",
-            display: "flex",
-            alignItems: "center",
-            cursor: "pointer",
-            border: "1px solid #7B6857",
-            borderBottom: isCollapsed ? "1px solid #7B6857" : "none",
-          }}
+          className={styles.chatDockHeader}
           onClick={() => setIsCollapsed((prev) => !prev)}
         >
           <span style={{ flex: 1, color: "#F5EFE0", fontWeight: 600 }}>
@@ -646,7 +654,7 @@ const Chat = () => {
           style={{
             borderTopLeftRadius: !isPc ? 12 : 0,
             borderTopRightRadius: !isPc ? 12 : 0,
-            borderTop: !isPc ? "1px solid #7B6857" : "none",
+            borderTop: !isPc ? "1px solid #8b7355" : "none",
             flex: 1,
             minHeight: 0,
             display: "flex",
@@ -657,11 +665,11 @@ const Chat = () => {
           {!isPc && (
             <div
               style={{
-                background: "#5D4E37",
+                background: "#3d3228",
                 padding: "0.8rem 1rem",
                 borderTopLeftRadius: 12,
                 borderTopRightRadius: 12,
-                borderBottom: "1px solid #7B6857",
+                borderBottom: "1px solid #8b7355",
                 marginBottom: "1rem",
                 display: "flex",
                 alignItems: "center",
@@ -748,7 +756,30 @@ const Chat = () => {
                 nameColor = "#B85C4A";
               }
               return (
-                <div key={message.id} className={styles.message}>
+                <div
+                  key={message.id}
+                  className={`${styles.message}${
+                    message.text
+                      ?.toLowerCase()
+                      .includes(
+                        `@${auth.currentUser?.displayName?.toLowerCase()}`,
+                      ) || message.text?.toLowerCase().includes("@all")
+                      ? ` ${styles.messageMentioned}`
+                      : ""
+                  }`}
+                >
+                  {userObj?.profileImageUrl ? (
+                    <img
+                      className={styles.messageAvatar}
+                      src={userObj.profileImageUrl}
+                      alt=""
+                    />
+                  ) : (
+                    <span className={styles.messageAvatarFallback} aria-hidden>
+                      {(getDisplayName(message) || "?").trim().charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <div className={styles.messageBody}>
                   <span className={styles.senderNameWrapper}>
                     {canDelete && (
                       <span className={styles.gearMenuWrapper}>
@@ -762,28 +793,7 @@ const Chat = () => {
                           }}
                           aria-label="Options"
                         >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle
-                              cx="10"
-                              cy="10"
-                              r="8"
-                              stroke="#ff5e5e"
-                              strokeWidth="2"
-                              fill="#5D4E37"
-                            />
-                            <path
-                              d="M10 6v2m0 4v2m-4-4h2m4 0h2"
-                              stroke="#ff5e5e"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                            />
-                          </svg>
+                          <span aria-hidden>⋯</span>
                         </button>
                         {menuOpenId === message.id && (
                           <div className={styles.optionsMenu}>
@@ -841,94 +851,57 @@ const Chat = () => {
                         message.potionEffects.sparkle &&
                         " ✨"}
                     </strong>
+                    {formatChatTime(message.timestamp) && (
+                      <span className={styles.messageTime}>
+                        {formatChatTime(message.timestamp)}
+                      </span>
+                    )}
                   </span>
-                  {/* Uthev @mentions og @all i meldingen */}
                   <span
-                    className={
-                      styles.messageText +
-                      (message.text
-                        ?.toLowerCase()
-                        .includes(
-                          `@${auth.currentUser?.displayName?.toLowerCase()}`,
-                        )
-                        ? " " + styles.mentionHighlight
-                        : "") +
-                      (message.text?.toLowerCase().includes("@all")
-                        ? " " + styles.mentionAll
-                        : "")
-                    }
+                    className={styles.messageText}
                     style={getMessageStyle(message)}
                   >
-                    :{" "}
                     <span
                       dangerouslySetInnerHTML={{
                         __html: getDisplayText(message.text, message)
                           ?.replace(
-                            /@([^\s@]+(?:\s+[^\s@]+)*)/g,
-                            '<span class="' +
-                              styles.mentionHighlight +
-                              '">@$1</span>',
-                          )
-                          ?.replace(
-                            /@all/gi,
+                            /@all\b/gi,
                             '<span class="' +
                               styles.mentionAll +
                               '">@all</span>',
+                          )
+                          ?.replace(
+                            /@(?!all\b)([A-Za-zÆØÅæøå][\wÆØÅæøå'\-]*(?:\s+[A-Za-zÆØÅæøå][\wÆØÅæøå'\-]*)?)/g,
+                            '<span class="' +
+                              styles.mentionHighlight +
+                              '">@$1</span>',
                           ),
                       }}
                     />
                   </span>
+                  </div>
                 </div>
               );
             })}
           </div>
-          <div
-            className={styles.autoScrollRow}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              padding: "6px 10px",
-              fontSize: "0.85rem",
-              color: "var(--color-secondary-text, #7B6857)",
-              flexShrink: 0,
-              borderTop: "1px solid rgba(123, 104, 87, 0.3)",
-            }}
-            role="group"
-            aria-label="Auto-scroll to last message"
-          >
-            <span style={{ marginRight: 4 }}>Auto-scroll to last message:</span>
-            <label className={styles.autoScrollLabel}>
-              <input
-                type="radio"
-                name="mainChatAutoScroll"
-                className={styles.autoScrollRadio}
-                checked={autoScrollToBottom === true}
-                onChange={() => setAutoScrollToBottom(true)}
-              />
-              <span>On</span>
-            </label>
-            <label className={styles.autoScrollLabel}>
-              <input
-                type="radio"
-                name="mainChatAutoScroll"
-                className={styles.autoScrollRadio}
-                checked={autoScrollToBottom === false}
-                onChange={() => setAutoScrollToBottom(false)}
-              />
-              <span>Off</span>
-            </label>
+          <div className={styles.autoScrollRow}>
+            <button
+              type="button"
+              className={`${styles.autoScrollToggle}${
+                autoScrollToBottom ? ` ${styles.autoScrollToggleOn}` : ""
+              }`}
+              role="switch"
+              aria-checked={autoScrollToBottom}
+              aria-label="Auto-scroll to last message"
+              onClick={() => setAutoScrollToBottom((v) => !v)}
+            >
+              <span>Auto-scroll</span>
+              <span className={styles.autoScrollSwitch} aria-hidden />
+            </button>
           </div>
           <form className={styles.chatForm} onSubmit={sendtMessage}>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div
-                style={{
-                  position: "relative",
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+            <div className={styles.chatFormRow}>
+              <div className={styles.chatInputWrap}>
                 <input
                   id="chat-message-input"
                   name="chatMessage"
@@ -938,11 +911,10 @@ const Chat = () => {
                   onKeyDown={handleMentionKeyDown}
                   onFocus={preparePingSound}
                   type="text"
-                  placeholder="YOUR MESSAGES..."
+                  placeholder="Write a message…"
                   maxLength={200}
                   autoComplete="off"
                   className={`${styles.chatInput} ${styles.textArea}`}
-                  style={{ width: "100%", minWidth: 0 }}
                   spellCheck
                   lang="en"
                 />

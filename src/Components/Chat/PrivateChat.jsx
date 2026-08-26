@@ -145,6 +145,18 @@ const PrivateChat = ({ fullPage = false }) => {
     const stored = localStorage.getItem("privateChatCollapsed");
     return stored === null ? true : stored === "true";
   });
+  const [mainChatCollapsed, setMainChatCollapsed] = useState(() => {
+    const stored = localStorage.getItem("mainChatCollapsed");
+    return stored === null ? true : stored === "true";
+  });
+  useEffect(() => {
+    const sync = () => {
+      const stored = localStorage.getItem("mainChatCollapsed");
+      setMainChatCollapsed(stored === null ? true : stored === "true");
+    };
+    window.addEventListener("main-chat-toggle", sync);
+    return () => window.removeEventListener("main-chat-toggle", sync);
+  }, []);
   const isCollapsedRef = useRef(isCollapsed);
   useEffect(() => {
     isCollapsedRef.current = isCollapsed;
@@ -1810,20 +1822,16 @@ const PrivateChat = ({ fullPage = false }) => {
   return (
     <div
       className={
-        isPc && !isCollapsed
-          ? styles.chatPanelSticky
-          : !isPc
-            ? "private-chat-mobile"
-            : undefined
+        isPc ? styles.chatDockShell : !isPc ? "private-chat-mobile" : undefined
       }
       style={{
         position: isPc ? "fixed" : "relative",
-        top: isPc && !isCollapsed ? 0 : "auto",
-        bottom: isPc ? 0 : "auto",
-        right: isPc ? 370 : "auto",
-        width: isPc ? 350 : "100%",
+        top: isPc && !isCollapsed ? 68 : "auto",
+        bottom: isPc ? (isCollapsed && mainChatCollapsed ? 46 : 0) : "auto",
+        right: isPc ? (mainChatCollapsed ? 0 : 356) : "auto",
+        width: isPc ? 340 : "100%",
         maxWidth: isPc ? undefined : "100%",
-        height: isPc && !isCollapsed ? "100vh" : isPc ? "auto" : "100%",
+        height: isPc && !isCollapsed ? "calc(100vh - 68px)" : isPc ? "auto" : "100%",
         flex: isPc ? undefined : 1,
         minWidth: isPc ? undefined : 0,
         minHeight: isPc ? undefined : 0,
@@ -1838,19 +1846,11 @@ const PrivateChat = ({ fullPage = false }) => {
     >
       {isPc && (
         <div
+          className={styles.chatDockHeader}
           style={{
-            flexShrink: 0,
-            background: "#5D4E37",
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            padding: "0.5rem 1rem",
-            display: "flex",
-            alignItems: "center",
-            cursor: "pointer",
-            border: "1px solid #7B6857",
-            borderBottom: isCollapsed ? "1px solid #7B6857" : "none",
+            borderBottom: isCollapsed
+              ? "1px solid #8b7355"
+              : "1px solid rgba(201, 168, 108, 0.28)",
           }}
           onClick={() => {
             preparePrivateChatSound();
@@ -1934,7 +1934,7 @@ const PrivateChat = ({ fullPage = false }) => {
           style={{
             borderTopLeftRadius: !isPc ? 12 : 0,
             borderTopRightRadius: !isPc ? 12 : 0,
-            borderTop: !isPc ? "1px solid #7B6857" : "none",
+            borderTop: !isPc ? "1px solid #8b7355" : "none",
             ...(!isPc && {
               flex: 1,
               minHeight: 0,
@@ -1946,13 +1946,12 @@ const PrivateChat = ({ fullPage = false }) => {
         >
           {!isPc && (
             <div
+              className={`${styles.mobilePrivateHeader} private-chat-mobile-title`}
               style={{
-                background: "#5D4E37",
-                padding: "0.8rem 1rem",
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
-                borderBottom: "1px solid #7B6857",
-                marginBottom: "1rem",
+                background: "#3d3228",
+                padding: "0.55rem 0.9rem",
+                borderBottom: "1px solid #8b7355",
+                marginBottom: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -1978,7 +1977,7 @@ const PrivateChat = ({ fullPage = false }) => {
               width: "100%",
               boxSizing: "border-box",
               textAlign: "left",
-              borderBottom: "1px solid rgba(123, 104, 87, 0.3)",
+              borderBottom: "1px solid rgba(201, 168, 108, 0.3)",
               ...(!isPc && { flexShrink: 0 }),
             }}
           >
@@ -1994,27 +1993,27 @@ const PrivateChat = ({ fullPage = false }) => {
                 width: "100%",
                 boxSizing: "border-box",
                 padding: "10px 12px",
-                borderRadius: 0,
-                border: "1px solid #7B6857",
+                borderRadius: 12,
+                border: "1px solid rgba(201, 168, 108, 0.5)",
                 marginBottom: 10,
-                background: "#6B5B47",
-                color: "#F5EFE0",
+                background: isPc ? "#3d3228" : "#faf6ee",
+                color: isPc ? "#F5EFE0" : "#1a1410",
                 outline: "none",
                 transition: "border-color 0.2s ease",
                 fontSize: "1rem",
               }}
             />
             {searchLoading && search.trim() && (
-              <div style={{ padding: 8, color: "rgba(245,239,224,0.8)", fontSize: "0.9rem" }}>
+              <div style={{ padding: 8, color: isPc ? "rgba(245,239,224,0.8)" : "#5c4e3e", fontSize: "0.9rem" }}>
                 Searching...
               </div>
             )}
             {filteredUsers.length > 0 && (
               <div
                 style={{
-                  background: "rgba(93, 78, 55, 0.4)",
-                  border: "1px solid #7B6857",
-                  borderRadius: 0,
+                  background: isPc ? "rgba(93, 78, 55, 0.4)" : "#efe4d4",
+                  border: "1px solid rgba(201, 168, 108, 0.35)",
+                  borderRadius: 12,
                   maxHeight: 140,
                   overflowY: "auto",
                 }}
@@ -2022,7 +2021,7 @@ const PrivateChat = ({ fullPage = false }) => {
                 {filteredUsers.map((u) => (
                   <div
                     key={u.uid}
-                    style={{ padding: 8, cursor: "pointer", color: "#F5EFE0" }}
+                    style={{ padding: 8, cursor: "pointer", color: isPc ? "#F5EFE0" : "#1a1410" }}
                     onClick={() => {
                       // Hvis brukeren er skjult, fjern fra hiddenChats og vis igjen
                       setHiddenChats((prev) => {
@@ -2073,17 +2072,19 @@ const PrivateChat = ({ fullPage = false }) => {
                         <button
                           style={{
                             background: isSelected
-                              ? "#7B6857"
-                              : unread > 0
-                                ? "#6B5B47"
-                                : "#5D4E37",
+                              ? "#8b7355"
+                              : isPc
+                                ? "#3d3228"
+                                : "#efe4d4",
                             color: isSelected
                               ? "#F5EFE0"
                               : unread > 0
-                                ? "#ff4d4f"
-                                : "#F5EFE0",
-                            border: "1px solid #7B6857",
-                            borderRadius: 0,
+                                ? "#8b1a1a"
+                                : isPc
+                                  ? "#F5EFE0"
+                                  : "#1a1410",
+                            border: "1px solid rgba(201, 168, 108, 0.45)",
+                            borderRadius: 12,
                             padding: "4px 10px",
                             cursor: "pointer",
                             position: "relative",
@@ -2400,7 +2401,7 @@ const PrivateChat = ({ fullPage = false }) => {
                       border: "none",
                       fontSize: 22,
                       cursor: "pointer",
-                      color: "#F5EFE0",
+                      color: isPc ? "#F5EFE0" : "#3d3228",
                       opacity: isVip ? 1 : 0.7,
                     }}
                     onClick={() => {

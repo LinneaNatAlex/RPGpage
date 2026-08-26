@@ -31,6 +31,7 @@ import {
   getStatusOptionsForRace,
   getDefaultCharacterStatus,
 } from "../../utils/characterStatus";
+import { cacheHelpers } from "../../utils/firebaseCache";
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -47,21 +48,21 @@ export default function AdminPanel() {
 
   // Light theme colors to match the beige page design
   const theme = {
-    background: "#F5EFE0",
-    text: "#2C2C2C",
-    secondaryText: "#7B6857",
-    border: "#D4C4A8",
-    accent: "#ffd86b",
+    background: "#faf6ee",
+    text: "#2c241c",
+    secondaryText: "#5c4e3e",
+    border: "rgba(201, 168, 108, 0.35)",
+    accent: "#c9a86c",
   };
 
   // Section cards: one per block, stacked vertically
   const sectionBox = {
-    marginTop: 24,
-    padding: 24,
-    background: "#fff",
-    borderRadius: 10,
+    marginTop: 16,
+    padding: 18,
+    background: "#f3eadc",
+    borderRadius: 12,
     border: `1px solid ${theme.border}`,
-    boxShadow: "0 2px 8px rgba(123, 104, 87, 0.12)",
+    boxShadow: "none",
   };
   const sectionTitle = (title, subtitle) => (
     <div style={{ marginBottom: 16 }}>
@@ -107,8 +108,8 @@ export default function AdminPanel() {
   // Users section: inner card and form controls
   const userCard = {
     padding: 16,
-    background: "rgba(123, 104, 87, 0.06)",
-    borderRadius: 8,
+    background: "#fffdf8",
+    borderRadius: 10,
     border: `1px solid ${theme.border}`,
     marginBottom: 16,
   };
@@ -116,8 +117,8 @@ export default function AdminPanel() {
     width: "100%",
     padding: "10px 12px",
     border: `1px solid ${theme.border}`,
-    borderRadius: 8,
-    background: "#fff",
+    borderRadius: 10,
+    background: "#fffdf8",
     color: theme.text,
     fontSize: "0.95rem",
   };
@@ -129,14 +130,14 @@ export default function AdminPanel() {
     fontSize: "0.9rem",
   };
   const btnPrimary = {
-    padding: "10px 18px",
-    borderRadius: 8,
-    fontWeight: 600,
-    fontSize: "0.9rem",
+    padding: "9px 16px",
+    borderRadius: 10,
+    fontWeight: 700,
+    fontSize: "0.85rem",
     cursor: "pointer",
-    border: "none",
-    background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-    color: "#F5EFE0",
+    border: "1px solid rgba(201, 168, 108, 0.45)",
+    background: "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
+    color: "#1a1410",
     fontFamily: '"Cinzel", serif',
   };
   const btnDanger = {
@@ -371,6 +372,10 @@ export default function AdminPanel() {
         { dailyMusicUrl: starshadeMusicUrl.trim() || null },
         { merge: true },
       );
+      cacheHelpers.clearConfigStarshadeHall();
+      cacheHelpers.setConfigStarshadeHall({
+        dailyMusicUrl: starshadeMusicUrl.trim() || null,
+      });
       setStarshadeMusicStatus(
         "Saved. Music will play on the Starshade Hall page.",
       );
@@ -1131,42 +1136,27 @@ export default function AdminPanel() {
   return (
     <div
       style={{
-        maxWidth: 920,
-        margin: "2rem auto",
-        background: isDarkMode
-          ? "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)"
-          : "linear-gradient(135deg, #F5EFE0 0%, #E8DDD4 100%)",
+        maxWidth: 1100,
+        margin: "0 auto 2rem",
+        background: "#faf6ee",
         color: theme.text,
-        padding: 40,
-        borderRadius: 12,
-        boxShadow: isDarkMode
-          ? "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)"
-          : "0 12px 48px rgba(139, 69, 19, 0.12), 0 4px 16px rgba(139, 69, 19, 0.08)",
-        border: `2px solid ${theme.border}`,
+        padding: "1.35rem 1.5rem 1.75rem",
+        borderRadius: 16,
+        boxShadow: "0 10px 28px rgba(26, 20, 16, 0.08)",
+        border: `1px solid ${theme.border}`,
         position: "relative",
         overflow: "visible",
+        boxSizing: "border-box",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "4px",
-          background:
-            "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: "12px 12px 0 0",
-        }}
-      />
       <h2
         style={{
           fontFamily: '"Cinzel", serif',
-          fontSize: "2rem",
+          fontSize: "1.5rem",
           fontWeight: 700,
-          letterSpacing: "1px",
-          marginBottom: 8,
-          textAlign: "center",
+          letterSpacing: "0.04em",
+          marginBottom: 6,
+          textAlign: "left",
           color: theme.text,
         }}
       >
@@ -1174,13 +1164,13 @@ export default function AdminPanel() {
       </h2>
       <p
         style={{
-          textAlign: "center",
-          fontSize: "0.95rem",
+          textAlign: "left",
+          fontSize: "0.92rem",
           color: theme.secondaryText,
-          marginBottom: 28,
+          marginBottom: 8,
         }}
       >
-        Manage site settings, users, moderation, and chat below.
+        Manage site settings, users, moderation, and chat.
       </p>
 
       {/* 1. Site theme */}
@@ -1204,7 +1194,7 @@ export default function AdminPanel() {
                 onClick={() => handleToggleGlobalDarkMode(!globalDarkMode)}
                 style={{
                   background:
-                    "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                   color: "#F5EFE0",
                   border: "2px solid #D4C4A8",
                   borderRadius: 4,
@@ -1283,7 +1273,7 @@ export default function AdminPanel() {
             style={{
               marginTop: 10,
               padding: "10px 20px",
-              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              background: "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
               color: "#F5EFE0",
               border: `2px solid ${theme.border}`,
               borderRadius: 8,
@@ -1374,7 +1364,7 @@ export default function AdminPanel() {
               onClick={handleAddCharacterStatus}
               style={{
                 padding: "8px 16px",
-                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                background: "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                 color: "#F5EFE0",
                 border: `2px solid ${theme.border}`,
                 borderRadius: 8,
@@ -1427,7 +1417,7 @@ export default function AdminPanel() {
           <button
             onClick={() => setShowBanned((v) => !v)}
             style={{
-              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+              background: "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
               color: "#F5EFE0",
               border: `2px solid ${theme.border}`,
               borderRadius: 8,
@@ -1549,7 +1539,7 @@ export default function AdminPanel() {
                         "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)",
                       color: "#F5EFE0",
                       border: "2px solid rgba(255, 255, 255, 0.2)",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       padding: "6px 12px",
                       fontWeight: 600,
                       fontSize: "0.85rem",
@@ -1570,7 +1560,7 @@ export default function AdminPanel() {
                 background: "linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)",
                 color: "#F5EFE0",
                 border: "2px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: 0,
+                borderRadius: 12,
                 padding: "10px 20px",
                 fontWeight: 600,
                 fontSize: "0.95rem",
@@ -1627,7 +1617,7 @@ export default function AdminPanel() {
             listStyle: "none",
             border: `1px solid ${theme.border}`,
             borderRadius: 8,
-            background: "rgba(123, 104, 87, 0.04)",
+            background: "rgba(201, 168, 108, 0.04)",
           }}
         >
           {filtered.slice(0, 20).map(
@@ -1641,18 +1631,18 @@ export default function AdminPanel() {
                   background:
                     selected?.uid === u.uid
                       ? isDarkMode
-                        ? "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)"
+                        ? "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)"
                         : "linear-gradient(135deg, #D4C4A8 0%, #C4B49A 100%)"
                       : isDarkMode
                         ? "rgba(245, 239, 224, 0.1)"
-                        : "rgba(123, 104, 87, 0.1)",
+                        : "rgba(201, 168, 108, 0.1)",
                   color: theme.text,
                   padding: "10px 14px",
                   margin: "0 8px 4px",
                   borderRadius: 8,
                   background:
                     selected?.uid === u.uid
-                      ? "rgba(123, 104, 87, 0.2)"
+                      ? "rgba(201, 168, 108, 0.2)"
                       : "transparent",
                   border:
                     selected?.uid === u.uid
@@ -1838,7 +1828,7 @@ export default function AdminPanel() {
                     onChange={(e) => setRoleToRemove(e.target.value)}
                     style={{
                       padding: "6px 10px",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       background: theme.background,
                       color: theme.text,
                       border: "2px solid " + theme.border,
@@ -1902,7 +1892,7 @@ export default function AdminPanel() {
                     onChange={(e) => setEditLeadForRole(e.target.value)}
                     style={{
                       padding: "8px 12px",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       background: theme.background,
                       color: theme.text,
                       border: "2px solid " + theme.border,
@@ -2045,7 +2035,7 @@ export default function AdminPanel() {
                     marginTop: 10,
                     padding: "8px 12px",
                     background: "rgba(33, 150, 243, 0.15)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     border: "1px solid rgba(33, 150, 243, 0.3)",
                     fontSize: "0.9rem",
                     color: theme.text,
@@ -2093,7 +2083,7 @@ export default function AdminPanel() {
                     marginTop: 10,
                     padding: "8px 12px",
                     background: "rgba(156, 39, 176, 0.15)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     border: "1px solid rgba(156, 39, 176, 0.3)",
                     fontSize: "0.9rem",
                     color: theme.text,
@@ -2146,7 +2136,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2178,7 +2168,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2229,7 +2219,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #2196F3 0%, #1976D2 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2261,7 +2251,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #ff9800 0%, #e65100 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2352,7 +2342,7 @@ export default function AdminPanel() {
                   width: "100%",
                   margin: "8px 0",
                   padding: 4,
-                  borderRadius: 0,
+                  borderRadius: 12,
                 }}
               />
               <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
@@ -2363,7 +2353,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2400,7 +2390,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #D4C4A8 0%, #B8A082 100%)",
                     color: "#2C2C2C",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2434,7 +2424,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2466,7 +2456,7 @@ export default function AdminPanel() {
                       "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontWeight: 600,
                     fontSize: "0.9rem",
@@ -2539,7 +2529,7 @@ export default function AdminPanel() {
                           "linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)",
                         color: "#F5EFE0",
                         border: "2px solid rgba(255, 255, 255, 0.2)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 16px",
                         fontWeight: 600,
                         fontSize: "0.9rem",
@@ -2571,7 +2561,7 @@ export default function AdminPanel() {
                           "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)",
                         color: "#F5EFE0",
                         border: "2px solid rgba(255, 255, 255, 0.2)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 16px",
                         fontWeight: 600,
                         fontSize: "0.9rem",
@@ -2611,7 +2601,7 @@ export default function AdminPanel() {
                           "linear-gradient(135deg, #ff5722 0%, #d84315 100%)",
                         color: "#F5EFE0",
                         border: "2px solid rgba(255, 255, 255, 0.2)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 16px",
                         fontWeight: 600,
                         fontSize: "0.9rem",
@@ -2643,7 +2633,7 @@ export default function AdminPanel() {
                           "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
                         color: "#F5EFE0",
                         border: "2px solid rgba(255, 255, 255, 0.2)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 16px",
                         fontWeight: 600,
                         fontSize: "0.9rem",
@@ -2712,7 +2702,7 @@ export default function AdminPanel() {
                 style={{
                   width: "100%",
                   padding: "12px 16px",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -2722,8 +2712,8 @@ export default function AdminPanel() {
                   transition: "all 0.3s ease",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = "#7B6857";
-                  e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+                  e.target.style.borderColor = "#8b7355";
+                  e.target.style.boxShadow = "0 0 16px rgba(201, 168, 108, 0.4)";
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = "#D4C4A8";
@@ -2747,7 +2737,7 @@ export default function AdminPanel() {
                 style={{
                   width: "100%",
                   padding: "12px 16px",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -2757,8 +2747,8 @@ export default function AdminPanel() {
                   transition: "all 0.3s ease",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = "#7B6857";
-                  e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+                  e.target.style.borderColor = "#8b7355";
+                  e.target.style.boxShadow = "0 0 16px rgba(201, 168, 108, 0.4)";
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = "#D4C4A8";
@@ -2769,10 +2759,10 @@ export default function AdminPanel() {
                 onClick={handlePointsUpdate}
                 style={{
                   background:
-                    "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                    "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                   color: "#F5EFE0",
                   border: "2px solid rgba(255, 255, 255, 0.2)",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "12px 24px",
                   fontWeight: 600,
                   fontSize: "1rem",
@@ -2845,7 +2835,7 @@ export default function AdminPanel() {
               background: theme.accent,
               color: theme.text,
               border: "none",
-              borderRadius: 0,
+              borderRadius: 12,
               fontWeight: 600,
               cursor: "pointer",
             }}
@@ -2929,7 +2919,7 @@ export default function AdminPanel() {
                 background: theme.accent,
                 color: theme.text,
                 border: "none",
-                borderRadius: 0,
+                borderRadius: 12,
                 fontWeight: 600,
                 cursor: "pointer",
               }}

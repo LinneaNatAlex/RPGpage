@@ -37,7 +37,7 @@ export default function AnnouncementAdmin({ user }) {
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="WRITE A NEW ANNOUNCEMENT FOR THE BANNER..."
+        placeholder="Write a new announcement…"
         className={styles.announcementInput}
       />
       <button

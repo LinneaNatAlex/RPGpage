@@ -48,12 +48,12 @@ export default function AgeVerificationAdmin() {
         background: "#F5EFE0",
         color: "#2C2C2C",
         padding: 24,
-        borderRadius: 0,
+        borderRadius: 12,
         border: "2px solid #D4C4A8",
       }}
     >
       <h2>18+ Forum Access – Admin</h2>
-      <p style={{ color: "#7B6857", marginBottom: 24 }}>
+      <p style={{ color: "#8b7355", marginBottom: 24 }}>
         Approve or remove users for access to the 18+ forum. Only users who have
         been verified on Discord should be approved.
       </p>
@@ -76,7 +76,7 @@ export default function AgeVerificationAdmin() {
             style={{
               width: "100%",
               padding: 8,
-              borderRadius: 0,
+              borderRadius: 12,
               marginBottom: 16,
             }}
           >
@@ -99,10 +99,10 @@ export default function AgeVerificationAdmin() {
                   onClick={handleApprove}
                   style={{
                     background: "#a084e8",
-                    color: "#23232b",
+                    color: "#2c241c",
                     fontWeight: 700,
                     border: 0,
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "6px 18px",
                     cursor: "pointer",
                   }}
@@ -117,7 +117,7 @@ export default function AgeVerificationAdmin() {
                     color: "#fff",
                     fontWeight: 700,
                     border: 0,
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "6px 18px",
                     cursor: "pointer",
                   }}

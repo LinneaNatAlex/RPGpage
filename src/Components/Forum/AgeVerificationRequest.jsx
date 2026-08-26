@@ -7,10 +7,10 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const buttonStyle = {
   marginTop: 12,
   background: "#a084e8",
-  color: "#23232b",
+  color: "#2c241c",
   fontWeight: 700,
   border: 0,
-  borderRadius: 0,
+  borderRadius: 12,
   padding: "10px 24px",
   cursor: "pointer",
 };
@@ -91,9 +91,9 @@ export default function AgeVerificationRequest() {
         style={{
           maxWidth: 500,
           margin: "2rem auto",
-          background: "#23232b",
+          background: "#2c241c",
           padding: 32,
-          borderRadius: 0,
+          borderRadius: 12,
           color: "#fff",
           textAlign: "center",
         }}
@@ -122,9 +122,9 @@ export default function AgeVerificationRequest() {
         style={{
           maxWidth: 500,
           margin: "2rem auto",
-          background: "#23232b",
+          background: "#2c241c",
           padding: 32,
-          borderRadius: 0,
+          borderRadius: 12,
           color: "#fff",
           textAlign: "left",
         }}
@@ -140,7 +140,7 @@ export default function AgeVerificationRequest() {
             border: "1px solid #ffd86b",
             padding: 14,
             marginBottom: 16,
-            borderRadius: 0,
+            borderRadius: 12,
             color: "#ffd86b",
             fontSize: "0.95rem",
           }}
@@ -172,7 +172,7 @@ export default function AgeVerificationRequest() {
                 maxHeight: 240,
                 objectFit: "contain",
                 border: "1px solid #555",
-                borderRadius: 0,
+                borderRadius: 12,
               }}
             />
           </div>
@@ -222,9 +222,9 @@ export default function AgeVerificationRequest() {
       style={{
         maxWidth: 500,
         margin: "2rem auto",
-        background: "#23232b",
+        background: "#2c241c",
         padding: 32,
-        borderRadius: 0,
+        borderRadius: 12,
         color: "#fff",
         textAlign: "center",
       }}
@@ -256,7 +256,7 @@ export default function AgeVerificationRequest() {
           border: "1px solid #ffd86b",
           padding: 14,
           marginBottom: 16,
-          borderRadius: 0,
+          borderRadius: 12,
           color: "#ffd86b",
           fontSize: "0.95rem",
           textAlign: "left",
@@ -270,7 +270,7 @@ export default function AgeVerificationRequest() {
         style={{
           background: "#333",
           padding: 16,
-          borderRadius: 0,
+          borderRadius: 12,
           color: "#ffd86b",
           fontWeight: 500,
         }}

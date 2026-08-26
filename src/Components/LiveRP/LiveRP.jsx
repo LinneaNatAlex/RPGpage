@@ -40,7 +40,6 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
   const [newMess, setNewMess] = useState("");
   const [error, setError] = useState(null);
   const [isPrivilegedUser, setIsPrivilegedUser] = useState(false);
-  const [showRulesPopup, setShowRulesPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
   const [canUseRedText, setCanUseRedText] = useState(false);
   const [useRedText, setUseRedText] = useState(false);
@@ -92,13 +91,6 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    if (isMobile) {
-      const neverShow = localStorage.getItem("hideRulesPopup");
-      if (!neverShow) setShowRulesPopup(true);
-    }
-  }, [isMobile]);
 
   useEffect(() => {
     localStorage.setItem("starshadeHallAutoScroll", String(autoScrollToBottom));
@@ -204,441 +196,166 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
     }
   }
 
-  const handleCloseRulesPopup = () => setShowRulesPopup(false);
-  const handleNeverShowRulesPopup = () => {
-    localStorage.setItem("hideRulesPopup", "1");
-    setShowRulesPopup(false);
-  };
-
-  const RulesPopup = ({ onClose, onNeverShow }) => (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(44, 44, 44, 0.7)",
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backdropFilter: "blur(2px)",
-      }}
-    >
-      <div
-        style={{
-          background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-          borderRadius: 0,
-          border: "2px solid #7B6857",
-          color: "#F5EFE0",
-          maxWidth: "95vw",
-          width: "340px",
-          padding: "2rem 1.2rem 1.2rem 1.2rem",
-          boxShadow:
-            "0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-          textAlign: "center",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "4px",
-            background:
-              "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
-          }}
-        />
-        <h2
-          style={{
-            color: "#F5EFE0",
-            fontSize: "1.25rem",
-            marginBottom: "1rem",
-            fontWeight: "bold",
-            textAlign: "center",
-            textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
-            fontFamily: "'Cinzel', serif",
-          }}
-        >
-          Starshade Hall Rules
-        </h2>
-        <ul
-          style={{
-            fontSize: "1rem",
-            lineHeight: "1.7",
-            paddingLeft: 0,
-            textAlign: "center",
-            marginBottom: "2rem",
-            listStylePosition: "inside",
-            color: "#D4C4A8",
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-          }}
-        >
-          {hallRules.map((rule, idx) => (
-            <li key={idx} style={{ marginBottom: "0.7rem" }}>
-              {rule}
-            </li>
-          ))}
-        </ul>
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            justifyContent: "center",
-            marginTop: "0.5rem",
-          }}
-        >
-          <button
-            onClick={onClose}
-            style={{
-              background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-              color: "#F5EFE0",
-              border: "2px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: 0,
-              padding: "0.7rem 1.5rem",
-              fontWeight: "bold",
-              fontSize: "1rem",
-              cursor: "pointer",
-              boxShadow:
-                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-              transition: "all 0.3s ease",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            Show later
-          </button>
-          <button
-            onClick={onNeverShow}
-            style={{
-              background: "linear-gradient(135deg, #6B6B6B 0%, #7B7B7B 100%)",
-              color: "#F5EFE0",
-              border: "2px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: 0,
-              padding: "0.7rem 1.5rem",
-              fontWeight: "bold",
-              fontSize: "1rem",
-              cursor: "pointer",
-              boxShadow:
-                "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-              transition: "all 0.3s ease",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            Don't show again
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  // --------------------CHAT FORM AND MESSAGE COMONENT / RENDERING-------------------
   return (
-    <>
-      {/* Removed nitsReward popup - no more popup messages */}
-      {isMobile && showRulesPopup && (
-        <RulesPopup
-          onClose={handleCloseRulesPopup}
-          onNeverShow={handleNeverShowRulesPopup}
-        />
-      )}
-      {isMobile && descriptionText && (
-        <div
-          style={{
-            width: "100%",
-            background: "rgba(44, 43, 53, 0.9)",
-            border: "1px solid rgba(176, 170, 194, 0.4)",
-            borderRadius: 0,
-            padding: "1rem 1.25rem",
-            color: "rgba(212, 196, 168, 0.95)",
-            fontSize: "0.9rem",
-            lineHeight: 1.55,
-            whiteSpace: "pre-wrap",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-            marginBottom: "1rem",
-          }}
-        >
-          <span
-            style={{
-              display: "block",
-              fontFamily: "'Cinzel', serif",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              color: "rgba(176, 170, 194, 0.95)",
-              marginBottom: "0.5rem",
-              textTransform: "uppercase",
-            }}
-          >
-            About this place
-          </span>
-          {descriptionText}
-        </div>
-      )}
-      <div
-        style={{
-          display: "flex",
-          gap: "2rem",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          flexDirection: isMobile ? "column" : "row",
-        }}
-      >
-        {!isMobile && (
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
-              minWidth: "220px",
-              maxWidth: "300px",
-            }}
-          >
-            {slotAboveDescription}
-            {descriptionText && (
-              <div
-                style={{
-                  background: "rgba(44, 43, 53, 0.9)",
-                  border: "1px solid rgba(176, 170, 194, 0.4)",
-                  borderRadius: 0,
-                  padding: "1rem 1.25rem",
-                  color: "rgba(212, 196, 168, 0.95)",
-                  fontSize: "0.9rem",
-                  lineHeight: 1.55,
-                  whiteSpace: "pre-wrap",
-                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                <span
-                  style={{
-                    display: "block",
-                    fontFamily: "'Cinzel', serif",
-                    fontSize: "0.8rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.06em",
-                    color: "rgba(176, 170, 194, 0.95)",
-                    marginBottom: "0.5rem",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  About this place
-                </span>
-                {descriptionText}
+    <div className={styles.hallLayout}>
+      <section className={styles.hallChat} aria-label="Starshade Hall chat">
+          {isMobile && (
+            <details className={styles.infoDropdown}>
+              <summary className={styles.infoSummary}>About & rules</summary>
+              <div className={styles.infoDropdownBody}>
+                {descriptionText ? (
+                  <>
+                    <span className={styles.railLabel}>About this place</span>
+                    <p className={styles.aboutText}>{descriptionText}</p>
+                  </>
+                ) : null}
+                <h2 className={styles.rulesTitle}>Hall rules</h2>
+                <ul className={styles.rulesList}>
+                  {hallRules.map((rule, idx) => (
+                    <li key={idx}>{rule}</li>
+                  ))}
+                </ul>
               </div>
+            </details>
+          )}
+          <div className={styles.chatMessages} ref={chatBoxRef}>
+            {rpgGrateHall.length === 0 && (
+              <p className={styles.emptyLog}>
+                The hall is quiet. Write in character to begin the scene.
+              </p>
             )}
-            <div
-              style={{
-                background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-                border: "2px solid #7B6857",
-                borderRadius: 0,
-                color: "#F5EFE0",
-                padding: "1.5rem",
-                boxShadow:
-                  "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "4px",
-                  background:
-                    "linear-gradient(90deg, #D4C4A8 0%, #F5EFE0 50%, #D4C4A8 100%)",
-                }}
-              />
-              <h2
-                style={{
-                  color: "#F5EFE0",
-                  fontSize: "1.2rem",
-                  marginBottom: "1rem",
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                  fontFamily: "'Cinzel', serif",
-                  fontWeight: "600",
-                }}
-              >
-                Starshade Hall Rules
-              </h2>
-              <ul
-                style={{
-                  fontSize: "0.95rem",
-                  lineHeight: "1.6",
-                  paddingLeft: "1.2rem",
-                  color: "#D4C4A8",
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                }}
-              >
-                {hallRules.map((rule, idx) => (
-                  <li key={idx} style={{ marginBottom: "0.5rem" }}>
-                    {rule}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-        <div style={{ flex: 2 }}>
-          <div
-            className={styles.chatContainer}
-            style={isMobile ? { width: "100vw", overflowX: "auto" } : {}}
-          >
-            <div className={styles.chatMessages} ref={chatBoxRef}>
-              {/* MODULE STYLED CLASSNAME Making sure the style wont interfare or clash with other components */}
-              {rpgGrateHall.map((message) => {
-                const displayName = message.senderUid
-                  ? (users?.find((u) => u.uid === message.senderUid)?.displayName ?? message.sender)
-                  : message.sender;
-                // Finn brukerobjekt for å hente roller
-                const userObj = message.senderUid
-                  ? users?.find((u) => u.uid === message.senderUid)
-                  : users.find(
-                      (u) =>
-                        u.displayName &&
-                        u.displayName.toLowerCase() ===
-                          message.sender?.toLowerCase(),
-                    );
-                let nameClass = styles.messageSender;
-                if (
-                  userObj?.roles?.some((r) => r.toLowerCase() === "headmaster")
-                )
-                  nameClass += ` ${styles.headmasterName}`;
-                else if (
-                  userObj?.roles?.some((r) => (r || "").toLowerCase() === "professor" || (r || "").toLowerCase() === "teacher")
-                )
-                  nameClass += ` ${styles.professorName}`;
-                else if (
-                  userObj?.roles?.some(
-                    (r) => r.toLowerCase() === "shadowpatrol",
+            {rpgGrateHall.map((message) => {
+              const userObj = message.senderUid
+                ? users?.find(
+                    (u) =>
+                      u.uid === message.senderUid || u.id === message.senderUid,
                   )
+                : users?.find(
+                    (u) =>
+                      u.displayName &&
+                      u.displayName.toLowerCase() ===
+                        message.sender?.toLowerCase(),
+                  );
+              const displayName =
+                userObj?.displayName || message.sender || "Anonymous";
+              let nameClass = styles.messageSender;
+              if (userObj?.roles?.some((r) => r.toLowerCase() === "headmaster"))
+                nameClass += ` ${styles.headmasterName}`;
+              else if (
+                userObj?.roles?.some(
+                  (r) =>
+                    (r || "").toLowerCase() === "professor" ||
+                    (r || "").toLowerCase() === "teacher",
                 )
-                  nameClass += ` ${styles.shadowPatrolName}`;
-                else if (
-                  userObj?.roles?.some((r) => r.toLowerCase() === "admin")
-                )
-                  nameClass += ` ${styles.adminName}`;
-                else if (
-                  userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
-                )
-                  nameClass += ` ${styles.archivistName}`;
-                const messageUsesRed = Boolean(message.useRedText);
-                return (
-                  <div key={message.id} className={styles.message}>
-                    <div
-                      className={styles.messageNamecontainer}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.7rem",
-                      }}
-                    >
-                      <strong>
-                        <span className={nameClass} style={{ margin: 0 }}>
-                          {displayName}:
-                        </span>
-                      </strong>
+              )
+                nameClass += ` ${styles.professorName}`;
+              else if (
+                userObj?.roles?.some((r) => r.toLowerCase() === "shadowpatrol")
+              )
+                nameClass += ` ${styles.shadowPatrolName}`;
+              else if (userObj?.roles?.some((r) => r.toLowerCase() === "admin"))
+                nameClass += ` ${styles.adminName}`;
+              else if (
+                userObj?.roles?.some((r) => r.toLowerCase() === "archivist")
+              )
+                nameClass += ` ${styles.archivistName}`;
+              const messageUsesRed = Boolean(message.useRedText);
+              const initial = (displayName || "?").trim().charAt(0).toUpperCase();
+              return (
+                <div key={message.id} className={styles.message}>
+                  {userObj?.profileImageUrl ? (
+                    <img
+                      className={styles.messageAvatar}
+                      src={userObj.profileImageUrl}
+                      alt=""
+                    />
+                  ) : (
+                    <span className={styles.messageAvatarFallback} aria-hidden>
+                      {initial}
+                    </span>
+                  )}
+                  <div className={styles.messageMain}>
+                    <div className={styles.messageNamecontainer}>
+                      <strong className={nameClass}>{displayName}</strong>
                       {message.timestamp && (
-                        <span
-                          style={{
-                            fontSize: "0.9rem",
-                            color: "#D4C4A8",
-                            opacity: 0.8,
-                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                          }}
-                        >
+                        <span className={styles.messageTime}>
                           {formatTime(message.timestamp)}
                         </span>
                       )}
                       {isPrivilegedUser && (
                         <button
+                          type="button"
+                          className={styles.deleteBtn}
                           onClick={() => handleDeleteMessage(message.id)}
-                          style={{
-                            marginLeft: "1rem",
-                            color: "#F5EFE0",
-                            background:
-                              "linear-gradient(135deg, #8B4A4A 0%, #9B5A5A 100%)",
-                            border: "1px solid rgba(255, 255, 255, 0.2)",
-                            borderRadius: 0,
-                            padding: "0.2rem 0.5rem",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                            fontSize: "0.8rem",
-                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                            transition: "all 0.2s ease",
-                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                          }}
                         >
                           Delete
                         </button>
                       )}
                     </div>
                     <div
-                      style={{
-                        textAlign: "left",
-                        width: "100%",
-                        fontSize: "1.15rem",
-                        color: "#2c2c2c",
-                        ...(messageUsesRed
-                          ? {
-                              color: "#c62828",
-                              fontWeight: 500,
-                            }
-                          : {}),
-                      }}
+                      className={`${styles.messageBody}${
+                        messageUsesRed ? ` ${styles.messageBodyRed}` : ""
+                      }`}
                       dangerouslySetInnerHTML={{ __html: message.text }}
                     />
                   </div>
-                );
-              })}
-              <div ref={messagesEndRef} />
-            </div>
-            <div
-              className={styles.autoScrollRow}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "6px 10px",
-                fontSize: "0.85rem",
-                color: "#8B7A6B",
-                flexShrink: 0,
-                borderTop: "1px solid rgba(123, 104, 87, 0.3)",
-              }}
-              role="group"
-              aria-label="Auto-scroll to last message"
-            >
-              <span style={{ marginRight: 4 }}>Auto-scroll to last message:</span>
-              <label className={styles.autoScrollLabel}>
-                <input
-                  type="radio"
-                  name="starshadeHallAutoScroll"
-                  className={styles.autoScrollRadio}
-                  checked={autoScrollToBottom === true}
-                  onChange={() => setAutoScrollToBottom(true)}
-                />
-                <span>On</span>
-              </label>
-              <label className={styles.autoScrollLabel}>
-                <input
-                  type="radio"
-                  name="starshadeHallAutoScroll"
-                  className={styles.autoScrollRadio}
-                  checked={autoScrollToBottom === false}
-                  onChange={() => setAutoScrollToBottom(false)}
-                />
-                <span>Off</span>
-              </label>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className={styles.composer}>
+            <div className={styles.composerTools}>
+              <div className={styles.composerLeft}>
+                <div className={styles.formatBar}>
+                  <button
+                    type="button"
+                    onClick={() => execCmd("bold")}
+                    className={styles.formatBtn}
+                  >
+                    <b>B</b>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => execCmd("italic")}
+                    className={styles.formatBtn}
+                  >
+                    <i>I</i>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => execCmd("underline")}
+                    className={styles.formatBtn}
+                  >
+                    <u>U</u>
+                  </button>
+                </div>
+                {canUseRedText && (
+                  <label className={styles.redTextLabel}>
+                    <input
+                      type="checkbox"
+                      checked={useRedText}
+                      onChange={(e) => setUseRedText(e.target.checked)}
+                    />
+                    <span>Write in red</span>
+                  </label>
+                )}
+              </div>
+              <div className={styles.autoScrollRow}>
+                <button
+                  type="button"
+                  className={`${styles.autoScrollToggle}${
+                    autoScrollToBottom ? ` ${styles.autoScrollToggleOn}` : ""
+                  }`}
+                  role="switch"
+                  aria-checked={autoScrollToBottom}
+                  aria-label="Auto-scroll to last message"
+                  onClick={() => setAutoScrollToBottom((v) => !v)}
+                >
+                  <span>Auto-scroll</span>
+                  <span className={styles.autoScrollSwitch} aria-hidden />
+                </button>
+              </div>
             </div>
             <form className={styles.chatForm} onSubmit={sendtMessage}>
               <input
@@ -649,102 +366,53 @@ const LiveRP = ({ descriptionText, slotAboveDescription }) => {
                 readOnly
                 aria-hidden="true"
               />
-              {canUseRedText && (
-                <label className={styles.redTextLabel}>
-                  <input
-                    type="checkbox"
-                    checked={useRedText}
-                    onChange={(e) => setUseRedText(e.target.checked)}
-                  />
-                  <span>Write in red</span>
-                </label>
-              )}
-              <div className={styles.formatBar}>
-                <button
-                  type="button"
-                  onClick={() => execCmd("bold")}
-                  className={styles.formatBtn}
-                >
-                  <b>B</b>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => execCmd("italic")}
-                  className={styles.formatBtn}
-                >
-                  <i>I</i>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => execCmd("underline")}
-                  className={styles.formatBtn}
-                >
-                  <u>U</u>
-                </button>
+              <div className={styles.composerRow}>
+                <div
+                  id="live-rp-message-input"
+                  role="textbox"
+                  aria-label="Roleplay message"
+                  ref={inputRef}
+                  contentEditable
+                  onInput={handleInput}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Write in character…"
+                  className={styles.chatInput}
+                  suppressContentEditableWarning={true}
+                  data-name="liveRpMessage"
+                  spellCheck
+                  lang="en"
+                />
+                <Button type="submit" className={styles.RpchatBtn}>
+                  Send
+                </Button>
               </div>
-              <div
-                id="live-rp-message-input"
-                role="textbox"
-                aria-label="Roleplay message"
-                ref={inputRef}
-                contentEditable
-                onInput={handleInput}
-                onKeyDown={handleKeyDown}
-                placeholder="YOUR MESSAGES..."
-                className={styles.chatInput}
-                suppressContentEditableWarning={true}
-                data-name="liveRpMessage"
-                spellCheck
-                lang="en"
-              />
-              <div
-                style={{
-                  fontSize: "0.8rem",
-                  color: "#8B7A6B",
-                  marginTop: "4px",
-                  textAlign: "center",
-                }}
-              >
+              <div className={styles.nitsHint}>
                 Earn 50 nits for every 100 words written (minimum 200 words)!
               </div>
-              <Button
-                type="submit"
-                className={styles.RpchatBtn}
-                style={{ height: "40px", marginTop: "0.5rem" }}
-              >
-                Send
-              </Button>
               {error && <ErrorMessage message={error} />}
             </form>
-            {isMobile && (
-              <div style={{ textAlign: "center", marginTop: "0.7rem" }}>
-                <button
-                  type="button"
-                  onClick={() => setShowRulesPopup(true)}
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
-                    color: "#F5EFE0",
-                    border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
-                    padding: "0.5rem 1rem",
-                    cursor: "pointer",
-                    fontSize: "0.95rem",
-                    fontWeight: "600",
-                    boxShadow:
-                      "0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
-                    transition: "all 0.3s ease",
-                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-                  }}
-                >
-                  Show rules
-                </button>
-              </div>
-            )}
           </div>
-        </div>
-      </div>
-    </>
+        </section>
+        {!isMobile && (
+        <aside className={styles.hallRail}>
+          {slotAboveDescription}
+          {descriptionText ? (
+            <div className={styles.aboutCard}>
+              <span className={styles.railLabel}>About this place</span>
+              <p className={styles.aboutText}>{descriptionText}</p>
+            </div>
+          ) : null}
+          <div className={styles.rulesCard}>
+            <h2 className={styles.rulesTitle}>Hall rules</h2>
+            <ul className={styles.rulesList}>
+              {hallRules.map((rule, idx) => (
+                <li key={idx}>{rule}</li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+        )}
+    </div>
   );
 };
 

@@ -408,13 +408,13 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
         background: "#F5EFE0",
         color: "#2C2C2C",
         padding: "24px",
-        borderRadius: 0,
+        borderRadius: 12,
         marginTop: "32px",
         marginBottom: "24px",
         border: "2px solid #D4C4A8",
       }}
     >
-      <h3 style={{ marginBottom: "20px", color: "#5D4E37" }}>
+      <h3 style={{ marginBottom: "20px", color: "#3d3228" }}>
         {restrictToBooksOnly
           ? "Books only (Archivist – edit book text/details)"
           : editingProduct
@@ -437,7 +437,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
         {restrictToBooksOnly ? (
           <div>
             <label>Category</label>
-            <div style={{ padding: "8px 0", color: "#5D4E37" }}>Books</div>
+            <div style={{ padding: "8px 0", color: "#3d3228" }}>Books</div>
           </div>
         ) : (
           <>
@@ -547,8 +547,8 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                 style={{
                   maxWidth: "150px",
                   maxHeight: "150px",
-                  borderRadius: 0,
-                  border: "2px solid #7B6857",
+                  borderRadius: 12,
+                  border: "1px solid rgba(201, 168, 108, 0.32)",
                   objectFit: "cover",
                 }}
               />
@@ -560,7 +560,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                   color: "white",
                   border: "none",
                   padding: "0.5rem 1rem",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   cursor: "pointer",
                 }}
               >
@@ -591,10 +591,10 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                     display: "inline-block",
                     background: uploadingImage
                       ? "#666"
-                      : "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                      : "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                     color: "white",
                     padding: "0.75rem 1.5rem",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     cursor: uploadingImage ? "not-allowed" : "pointer",
                     fontWeight: "600",
                     transition: "all 0.3s ease",
@@ -603,7 +603,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                   {uploadingImage ? "Uploading..." : "Choose Image"}
                 </span>
               </label>
-              <p style={{ color: "#7B6857", fontSize: "0.9rem", margin: "0" }}>
+              <p style={{ color: "#8b7355", fontSize: "0.9rem", margin: "0" }}>
                 Max size: 2MB. Recommended: 300x300px
               </p>
             </div>
@@ -615,28 +615,28 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
             type="submit"
             style={{
               background: editingProduct
-                ? "linear-gradient(135deg, #8B7A6B 0%, #756357 100%)"
-                : "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+                ? "linear-gradient(135deg, #9a8060 0%, #756357 100%)"
+                : "linear-gradient(135deg, #8b7355 0%, #3d3228 100%)",
               color: "#FFFFFF",
               border: "none",
               padding: "8px 16px",
-              borderRadius: 0,
+              borderRadius: 12,
               fontSize: "14px",
               fontWeight: "500",
               cursor: "pointer",
               transition: "all 0.2s ease",
-              boxShadow: "0 2px 6px rgba(123, 104, 87, 0.3)",
+              boxShadow: "0 2px 6px rgba(201, 168, 108, 0.3)",
               textTransform: "capitalize",
               letterSpacing: "0.3px",
               minWidth: "120px",
             }}
             onMouseEnter={(e) => {
               e.target.style.transform = "translateY(-1px)";
-              e.target.style.boxShadow = "0 4px 12px rgba(123, 104, 87, 0.4)";
+              e.target.style.boxShadow = "0 4px 12px rgba(201, 168, 108, 0.4)";
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "0 2px 6px rgba(123, 104, 87, 0.3)";
+              e.target.style.boxShadow = "0 2px 6px rgba(201, 168, 108, 0.3)";
             }}
           >
             {editingProduct ? "Update Product" : "Add Product"}
@@ -646,11 +646,11 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
               type="button"
               onClick={cancelEdit}
               style={{
-                background: "linear-gradient(135deg, #A0927E 0%, #8B7A6B 100%)",
+                background: "linear-gradient(135deg, #A0927E 0%, #9a8060 100%)",
                 color: "#FFFFFF",
                 border: "none",
                 padding: "8px 16px",
-                borderRadius: 0,
+                borderRadius: 12,
                 fontSize: "14px",
                 fontWeight: "500",
                 cursor: "pointer",
@@ -680,9 +680,9 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
           style={{
             marginTop: "16px",
             padding: "12px",
-            background: "#E8DDD4",
-            borderRadius: 0,
-            color: "#5D4E37",
+            background: "#f4ead8",
+            borderRadius: 12,
+            color: "#3d3228",
           }}
         >
           {status}
@@ -695,14 +695,14 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
           marginTop: "48px",
           padding: "24px",
           background: "#FEFEFE",
-          borderRadius: 0,
-          border: "1px solid #E8DDD4",
+          borderRadius: 12,
+          border: "1px solid #f4ead8",
         }}
       >
         <h4
           style={{
             marginBottom: "24px",
-            color: "#5D4E37",
+            color: "#3d3228",
             borderBottom: "2px solid #D4C4A8",
             paddingBottom: "12px",
           }}
@@ -727,8 +727,8 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
             margin: "20px 0",
             padding: "16px",
             background: "#F9F6F1",
-            borderRadius: 0,
-            border: "1px solid #E8DDD4",
+            borderRadius: 12,
+            border: "1px solid #f4ead8",
           }}
         >
           <label
@@ -736,14 +736,14 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
             style={{
               display: "block",
               marginBottom: "8px",
-              color: "#5D4E37",
+              color: "#3d3228",
               fontWeight: "500",
             }}
           >
             Filter by category:
           </label>
           {restrictToBooksOnly ? (
-            <div style={{ padding: "8px 0", color: "#5D4E37" }}>Books only</div>
+            <div style={{ padding: "8px 0", color: "#3d3228" }}>Books only</div>
           ) : (
             <select
               id="shop-category-filter"
@@ -752,7 +752,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
               onChange={(e) => setCategoryFilter(e.target.value)}
               style={{
                 padding: "8px 12px",
-                borderRadius: 0,
+                borderRadius: 12,
                 border: "2px solid #D4C4A8",
                 background: "#FFFFFF",
                 color: "#2C2C2C",
@@ -771,7 +771,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
         </div>
 
         {/* Firestore products (editable) */}
-        <h5 style={{ color: "#7B6857", marginTop: "1rem" }}>
+        <h5 style={{ color: "#8b7355", marginTop: "1rem" }}>
           Firestore Products (Editable)
         </h5>
         {existingProducts.filter(
@@ -779,7 +779,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
               (restrictToBooksOnly ? product.category === "Books" : true) &&
               (categoryFilter === "All" || product.category === categoryFilter)
         ).length === 0 && (
-          <div style={{ color: "#8B7A6B", fontStyle: "italic" }}>
+          <div style={{ color: "#9a8060", fontStyle: "italic" }}>
             {restrictToBooksOnly
               ? "No books in the shop yet."
               : "No Firestore products found for this category."}
@@ -793,8 +793,8 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
             maxHeight: "400px",
             overflowY: "auto",
             padding: "0.5rem",
-            border: "1px solid #E8DDD4",
-            borderRadius: 0,
+            border: "1px solid #f4ead8",
+            borderRadius: 12,
             background: "#FEFEFE",
           }}
         >
@@ -810,7 +810,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                 style={{
                   background: "#FFFFFF",
                   padding: "1rem",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "1px solid #D4C4A8",
                   display: "flex",
                   justifyContent: "space-between",
@@ -827,7 +827,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                       style={{
                         width: "60px",
                         height: "60px",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         objectFit: "cover",
                       }}
                     />
@@ -836,11 +836,11 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                     <div style={{ fontWeight: "bold", color: "#2C2C2C" }}>
                       {product.name}
                     </div>
-                    <div style={{ color: "#7B6857", fontSize: "0.9rem" }}>
+                    <div style={{ color: "#8b7355", fontSize: "0.9rem" }}>
                       {product.category} - {product.price} Nits
                     </div>
                     {product.description && (
-                      <div style={{ color: "#8B7A6B", fontSize: "0.8rem" }}>
+                      <div style={{ color: "#9a8060", fontSize: "0.8rem" }}>
                         {product.description}
                       </div>
                     )}
@@ -857,7 +857,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                       color: "white",
                       border: "none",
                       padding: "8px 16px",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       cursor: "pointer",
                       fontSize: "14px",
                       fontWeight: "600",
@@ -889,7 +889,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                       color: "white",
                       border: "none",
                       padding: "8px 16px",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       cursor: "pointer",
                       fontSize: "14px",
                       fontWeight: "600",
@@ -928,7 +928,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
             borderBottom: "2px solid #D4C4A8",
           }}
         >
-          <h5 style={{ color: "#5D4E37", margin: 0, fontSize: "18px" }}>
+          <h5 style={{ color: "#3d3228", margin: 0, fontSize: "18px" }}>
             {restrictToBooksOnly
               ? "Static books (read-only)"
               : "Static products (read-only)"}
@@ -937,26 +937,26 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
           <button
             onClick={convertAllStaticProducts}
             style={{
-              background: "linear-gradient(135deg, #8B7A6B 0%, #756357 100%)",
+              background: "linear-gradient(135deg, #9a8060 0%, #756357 100%)",
               color: "white",
               border: "none",
               padding: "8px 16px",
-              borderRadius: 0,
+              borderRadius: 12,
               cursor: "pointer",
               fontSize: "13px",
               fontWeight: "500",
               transition: "all 0.2s ease",
-              boxShadow: "0 2px 6px rgba(123, 104, 87, 0.3)",
+              boxShadow: "0 2px 6px rgba(201, 168, 108, 0.3)",
               textTransform: "capitalize",
               letterSpacing: "0.2px",
             }}
             onMouseEnter={(e) => {
               e.target.style.transform = "translateY(-1px)";
-              e.target.style.boxShadow = "0 4px 12px rgba(123, 104, 87, 0.4)";
+              e.target.style.boxShadow = "0 4px 12px rgba(201, 168, 108, 0.4)";
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "0 2px 6px rgba(123, 104, 87, 0.3)";
+              e.target.style.boxShadow = "0 2px 6px rgba(201, 168, 108, 0.3)";
             }}
           >
             Convert all static products
@@ -971,8 +971,8 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
             maxHeight: "400px",
             overflowY: "auto",
             padding: "0.5rem",
-            border: "1px solid #E8DDD4",
-            borderRadius: 0,
+            border: "1px solid #f4ead8",
+            borderRadius: 12,
             background: "#FEFEFE",
           }}
         >
@@ -996,8 +996,8 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                 style={{
                   background: "#F9F6F1",
                   padding: "1rem",
-                  borderRadius: 0,
-                  border: "1px solid #E8DDD4",
+                  borderRadius: 12,
+                  border: "1px solid #f4ead8",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -1014,7 +1014,7 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                       style={{
                         width: "60px",
                         height: "60px",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         objectFit: "cover",
                       }}
                     />
@@ -1023,11 +1023,11 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                     <div style={{ fontWeight: "bold", color: "#2C2C2C" }}>
                       {product.name}
                     </div>
-                    <div style={{ color: "#7B6857", fontSize: "0.9rem" }}>
+                    <div style={{ color: "#8b7355", fontSize: "0.9rem" }}>
                       {product.category} - {product.price} Nits
                     </div>
                     {product.description && (
-                      <div style={{ color: "#8B7A6B", fontSize: "0.8rem" }}>
+                      <div style={{ color: "#9a8060", fontSize: "0.8rem" }}>
                         {product.description}
                       </div>
                     )}
@@ -1059,11 +1059,11 @@ export default function ShopProductAdmin({ restrictToBooksOnly = false }) {
                     <button
                       onClick={() => convertStaticToFirestore(product)}
                       style={{
-                        background: "#7B6857",
+                        background: "#8b7355",
                         color: "white",
                         border: "none",
                         padding: "0.5rem 1rem",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         cursor: "pointer",
                         fontSize: "0.9rem",
                       }}

@@ -65,19 +65,19 @@ export default function ForumRules() {
         style={{
           maxWidth: 900,
           margin: "40px auto",
-          background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+          background: "linear-gradient(180deg, #3d3228 0%, #322820 100%)",
           color: "#F5EFE0",
-          borderRadius: 0,
+          borderRadius: 12,
           padding: 40,
           boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-          border: "3px solid #7B6857",
+          border: "1px solid rgba(201, 168, 108, 0.32)",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)", borderRadius: 0 }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent)", borderRadius: 0 }} />
         <h1 style={{ textAlign: "center", color: "#F5EFE0", fontFamily: '"Cinzel", serif', fontSize: "2.5rem", fontWeight: 700, letterSpacing: "2px", textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)", marginBottom: "2rem" }}>{title}</h1>
-        <div style={{ background: "rgba(245, 239, 224, 0.1)", borderRadius: 0, padding: 24, border: "2px solid rgba(255, 255, 255, 0.2)", boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)" }}>
+        <div style={{ background: "rgba(245, 239, 224, 0.1)", borderRadius: 12, padding: 24, border: "2px solid rgba(255, 255, 255, 0.2)", boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)" }}>
           <ul style={{ marginLeft: 0, paddingLeft: 0, listStyle: "none", lineHeight: 1.6, fontSize: "1.1rem" }}>
             {firestoreItems.map((item, index) => (
               <li key={index} style={{ marginBottom: 12, color: "#F5EFE0" }}>{item}</li>
@@ -93,12 +93,12 @@ export default function ForumRules() {
       style={{
         maxWidth: 900,
         margin: "40px auto",
-        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+        background: "linear-gradient(180deg, #3d3228 0%, #322820 100%)",
         color: "#F5EFE0",
-        borderRadius: 0,
+        borderRadius: 12,
         padding: 40,
         boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-        border: "3px solid #7B6857",
+        border: "1px solid rgba(201, 168, 108, 0.32)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -110,8 +110,8 @@ export default function ForumRules() {
           left: 0,
           right: 0,
           height: "4px",
-          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: 0,
+          background: "linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent)",
+          borderRadius: 12,
         }}
       />
       <h1 style={{ 
@@ -127,7 +127,7 @@ export default function ForumRules() {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 0,
+          borderRadius: 12,
           padding: 24,
           marginBottom: 32,
           border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -172,7 +172,7 @@ export default function ForumRules() {
           fontSize: "1.1rem",
           background: "rgba(212, 196, 168, 0.1)",
           padding: 12,
-          borderRadius: 0,
+          borderRadius: 12,
           border: "1px solid rgba(212, 196, 168, 0.3)"
         }}>
           <b>Tip:</b> Describe actions, feelings, and surroundings to make the
@@ -205,13 +205,13 @@ export default function ForumRules() {
             onClick={() => setSelectedIdx(idx)}
             style={{
               background: selectedIdx === idx 
-                ? "linear-gradient(135deg, #D4C4A8 0%, #7B6857 100%)" 
+                ? "linear-gradient(135deg, #D4C4A8 0%, #8b7355 100%)" 
                 : "rgba(245, 239, 224, 0.1)",
               color: selectedIdx === idx ? "#2C2C2C" : "#D4C4A8",
               border: selectedIdx === idx 
-                ? "2px solid #7B6857" 
+                ? "2px solid #8b7355" 
                 : "2px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: 0,
+              borderRadius: 12,
               padding: "16px 20px",
               fontWeight: 600,
               fontSize: "0.9rem",
@@ -255,7 +255,7 @@ export default function ForumRules() {
           margin: "0 auto",
           maxWidth: 800,
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 0,
+          borderRadius: 12,
           padding: 24,
           minHeight: 120,
           border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -299,7 +299,7 @@ export default function ForumRules() {
         fontStyle: "italic",
         background: "rgba(212, 196, 168, 0.1)",
         padding: 16,
-        borderRadius: 0,
+        borderRadius: 12,
         border: "1px solid rgba(212, 196, 168, 0.3)",
         textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)"
       }}>

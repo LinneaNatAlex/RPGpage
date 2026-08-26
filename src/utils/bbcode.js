@@ -18,7 +18,7 @@ const BBCODE_TAGS = [
   ["\\[left\\]([\\s\\S]*?)\\[/left\\]", "<div style=\"text-align:left\">$1</div>"],
   ["\\[right\\]([\\s\\S]*?)\\[/right\\]", "<div style=\"text-align:right\">$1</div>"],
   ["\\[code\\]([\\s\\S]*?)\\[/code\\]", "<pre style=\"background:rgba(0,0,0,0.1);padding:0.5rem;overflow:auto\">$1</pre>"],
-  ["\\[quote\\]([\\s\\S]*?)\\[/quote\\]", "<blockquote style=\"margin:0.5rem 0;padding-left:1rem;border-left:3px solid #7b6857\">$1</blockquote>"],
+  ["\\[quote\\]([\\s\\S]*?)\\[/quote\\]", "<blockquote style=\"margin:0.5rem 0;padding-left:1rem;border-left:3px solid #8b7355\">$1</blockquote>"],
 ];
 
 const BBCODE_REGEXES = BBCODE_TAGS.map(([pattern]) => new RegExp(pattern, "gi"));

@@ -3,17 +3,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5rem;
-  background-color: #23232b;
-  border-radius: 0;
+  padding: 3rem 2rem;
+  background-color: transparent;
+  border-radius: 10px;
 }
 
 .RpgRules {
-  background-color: #23232b;
-  padding: 5rem;
-  border-radius: 0;
-  border: 2px solid #b0aac2;
-  color: #b0aac2;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  padding: 2.5rem 2.75rem;
+  border-radius: 16px;
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  color: #f3eadc;
+  box-shadow: 0 20px 50px rgba(26, 20, 16, 0.28);
 }
 /* ---------------RESPONSIVE---------------------- */
 @media screen and (max-width: 768px) {

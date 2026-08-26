@@ -27,6 +27,9 @@ td .userName[style*="color"] {
 }
 .headmasterName {
   color: #fff !important;
+  background: #2c241c;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .professorName {
@@ -56,42 +59,45 @@ td .userName[style*="color"] {
 :global(html[data-theme="dark"]) .archivistName { color: #a084e8 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
 .youBadge {
-  color: #5d4e37;
+  color: #3d3228;
   font-weight: 600;
   font-size: 0.9em;
 }
 
-.currentUserRow {
-  border-left: 4px solid #7b6857;
+.currentUserRow td {
+  background: rgba(201, 168, 108, 0.32) !important;
 }
 
 .youHere {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 /* -------------------------USER LIST WRAPPER------------------------- */
 .userListWrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border: 1;
-  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-  height: 200vh;
+  align-items: stretch;
+  padding: 0;
+  border: none;
+  background: transparent;
+  height: auto;
+  min-height: 0;
   width: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 /* -------------------------USER LIST CONTAINER------------------------- */
 .userListContainer {
   border-collapse: collapse;
   width: 100%;
   max-width: 100%;
-  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-  color: #2c2c2c;
+  background: #f3eadc;
+  color: #2c241c;
   border-radius: 0;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
-  border: 2px solid #d4c4a8;
+  box-shadow: none;
+  border: none;
   overflow: hidden;
   table-layout: fixed;
   box-sizing: border-box;
@@ -138,11 +144,13 @@ td .userName[style*="color"] {
 }
 /* ---------------TABLE HEADER STYLES--------------- */
 .tableHeader {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
-  font-weight: bold;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  font-weight: 700;
   text-align: left;
   width: 100%;
-  color: #f5efe0;
+  color: #e8d5a3;
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.03em;
 }
 
 .tableHeader th {
@@ -151,7 +159,7 @@ td .userName[style*="color"] {
   text-align: left;
 }
 .profileLink {
-  color: #7b6857;
+  color: #8b7355;
   text-decoration: underline;
   font-weight: bold;
   transition: color 0.2s;
@@ -161,7 +169,7 @@ td .userName[style*="color"] {
   position: relative;
 }
 .profileLink:hover {
-  color: #5d4e37;
+  color: #3d3228;
 }
 
 .pointsCell {
@@ -174,9 +182,14 @@ td .userName[style*="color"] {
 td {
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid rgba(123, 104, 87, 0.2);
-  color: #2c2c2c;
+  border-bottom: 1px solid rgba(201, 168, 108, 0.22);
+  color: #2c241c;
   vertical-align: middle;
+  background: #f3eadc;
+}
+
+.userListContainer tbody tr:nth-child(even) td {
+  background: #efe4d0;
 }
 
 /* Race-kolonne: individuelle farger per rase (overstyrer td-farge) */
@@ -241,63 +254,68 @@ td:first-child .archivistName {
 
 /* Race Championship Styles */
 .raceChampionship {
-  margin-top: 32px;
-  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
+  margin-top: 0;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   border-radius: 0;
-  padding: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  border: 2px solid #7b6857;
+  padding: 1.1rem 1.2rem 1.15rem;
+  box-shadow: none;
+  border: none;
+  border-bottom: 1px solid rgba(201, 168, 108, 0.35);
   width: 100%;
-  text-align: center;
+  text-align: left;
+  box-sizing: border-box;
 }
 
 .championshipTitle {
-  color: #7b6857;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
+  color: #e8d5a3;
+  font-size: 0.95rem;
+  margin: 0 0 0.75rem;
   font-family: "Cinzel", serif;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
   font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  text-transform: uppercase;
 }
 
 .leaderboard {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.65rem;
 }
 
 .leaderboardItem {
-  border-radius: 0;
-  padding: 12px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  box-shadow: none;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.2s ease;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  transition: border-color 0.2s ease, transform 0.15s ease;
 }
 
 .leaderboardItem:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .leaderboardItem.first {
-  background: linear-gradient(135deg, #e8ddd4 0%, #d4c4a8 100%);
-  border: 2px solid #b5a48e;
+  background: rgba(201, 168, 108, 0.22);
+  border: 1px solid #c9a86c;
 }
 
 .leaderboardItem.second {
-  background: linear-gradient(135deg, #d4c4a8 0%, #c4b29b 100%);
-  border: 2px solid #a59488;
+  background: rgba(250, 246, 238, 0.08);
+  border: 1px solid rgba(201, 168, 108, 0.32);
 }
 
 .leaderboardItem.third {
-  background: linear-gradient(135deg, #c4b29b 0%, #b5a48e 100%);
-  border: 2px solid #95847b;
+  background: rgba(250, 246, 238, 0.08);
+  border: 1px solid rgba(201, 168, 108, 0.28);
 }
 
 .leaderboardItem.other {
-  background: linear-gradient(135deg, #f5efe0 0%, #e8ddd4 100%);
-  border: 1px solid #7b6857;
+  background: rgba(250, 246, 238, 0.06);
+  border: 1px solid rgba(201, 168, 108, 0.22);
 }
 
 .raceInfo {
@@ -323,9 +341,9 @@ td:first-child .archivistName {
   font-family: "Cinzel", serif;
   letter-spacing: 0.5px;
   font-weight: 600;
-  color: #2c2c2c !important; /* Dark color for better visibility */
-  font-size: 1.1rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #e8d5a3 !important;
+  font-size: 0.92rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .leaderboardItem.first .raceName,
@@ -346,12 +364,16 @@ td:first-child .archivistName {
   font-size: 1.1rem;
 }
 
-.leaderboardItem.other .raceName,
+.leaderboardItem.other .raceName {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
 .leaderboardItem.other .points {
   font-weight: 500;
-  font-size: 1rem;
-  color: #2c2c2c !important; /* Dark color for better visibility */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 0.95rem;
+  color: #e8d5a3 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 /* Dark mode: Race Championship – ingen ekstra bokser/bakgrunner på tekst, bare ramme og rasefarger */
@@ -425,9 +447,69 @@ td:first-child .archivistName {
     padding: 0;
     margin: 0;
     height: auto;
-    min-height: 100vh;
-    width: 100vw;
-    max-width: 100vw;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 14px;
+  }
+
+  .raceChampionship {
+    padding: 0.7rem 0.75rem 0.8rem;
+  }
+
+  .championshipTitle {
+    font-size: 0.78rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .leaderboard {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .leaderboardItem {
+    padding: 0.4rem 0.5rem;
+    gap: 0.15rem;
+  }
+
+  .raceInfo {
+    gap: 6px;
+  }
+
+  .medal {
+    font-size: 13px;
+  }
+
+  .raceName,
+  .leaderboardItem.first .raceName,
+  .leaderboardItem.second .raceName,
+  .leaderboardItem.third .raceName,
+  .leaderboardItem.other .raceName {
+    font-size: 0.72rem !important;
+    letter-spacing: 0.02em;
+  }
+
+  .points,
+  .leaderboardItem.first .points,
+  .leaderboardItem.second .points,
+  .leaderboardItem.third .points,
+  .leaderboardItem.other .points {
+    font-size: 0.7rem !important;
+  }
+
+  .raceChampionship .raceName[data-race*="werewolf"],
+  .raceChampionship .raceName[data-race*="varulv"] {
+    color: #93c5fd !important;
+  }
+
+  .raceChampionship .raceName[data-race*="wizard"],
+  .raceChampionship .raceName[data-race*="trollmann"] {
+    color: #86efac !important;
+  }
+
+  .userListContainer .professorName {
+    color: #8a5a00 !important;
+    text-shadow: none !important;
   }
 
   .userListContainer {
@@ -487,28 +569,29 @@ td:first-child .archivistName {
   /* Make points column even smaller */
   .userListContainer th:nth-child(5),
   .userListContainer td:nth-child(5) {
-    font-size: 0.4rem;
-    padding: 1px;
+    font-size: 0.7rem;
+    padding: 4px 2px;
     text-align: center;
   }
 
   .profileLink {
     display: inline-block;
-    padding: 2px 4px;
-    background: #7b6857;
-    color: white !important;
+    padding: 0.35rem 0.55rem;
+    background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
+    color: #1a1410 !important;
     text-decoration: none;
-    border-radius: 0;
-    font-size: 0.4rem;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
     white-space: nowrap;
-    line-height: 0.8;
+    line-height: 1.2;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .profileLink:hover {
-    background: #5d4e37;
+    background: #3d3228;
   }
 
   /* Race points mobile styles */
@@ -516,7 +599,7 @@ td:first-child .archivistName {
     margin: 20px 10px !important;
     padding: 20px !important;
     max-width: 100% !important;
-    border-radius: 0 !important;
+    border-radius: 10px !important;
   }
 
   .racePointsContainer h3 {
@@ -530,7 +613,7 @@ td:first-child .archivistName {
 
   .racePointsContainer > div > div {
     padding: 12px 16px !important;
-    border-radius: 0 !important;
+    border-radius: 10px !important;
   }
 
   .racePointsContainer > div > div > div {
@@ -640,24 +723,24 @@ td:first-child .archivistName {
 
   .userListContainer {
     color: #8b7355 !important; /* Golden brown instead of dark gray */
-    background: linear-gradient(135deg, #f5efe0 0%, #e8ddd4 100%) !important;
+    background: linear-gradient(135deg, #f5efe0 0%, #f4ead8 100%) !important;
   }
 
   /* Ensure pagination buttons are visible on mobile */
   .pagination {
-    background: rgba(123, 104, 87, 0.9) !important;
+    background: rgba(201, 168, 108, 0.9) !important;
     border: 2px solid rgba(212, 196, 168, 0.5) !important;
   }
 
   .paginationButton {
-    background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%) !important;
+    background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%) !important;
     color: #f5efe0 !important;
     border: 2px solid rgba(212, 196, 168, 0.5) !important;
   }
 
   .paginationButton:disabled {
-    background: #6b5b47 !important;
-    color: #8b7a6b !important;
+    background: #3d3228 !important;
+    color: #9a8060 !important;
     opacity: 0.6 !important;
   }
 
@@ -666,7 +749,7 @@ td:first-child .archivistName {
   }
 
   .userCount {
-    color: #7b6857 !important;
+    color: #8b7355 !important;
   }
 
   .tableData {
@@ -707,13 +790,13 @@ td:first-child .archivistName {
 }
 
 .userLocation:has-text("Left the castle") {
-  color: #8b7a6b;
+  color: #9a8060;
   opacity: 0.7;
 }
 
 /* Alternative classes for different location states */
 .locationOffline {
-  color: #8b7a6b !important;
+  color: #9a8060 !important;
   opacity: 0.7 !important;
   font-style: italic;
 }
@@ -725,7 +808,7 @@ td:first-child .archivistName {
 }
 
 .locationHidden {
-  color: #8b7a6b;
+  color: #9a8060;
   font-weight: 500;
   opacity: 0.7;
 }
@@ -736,36 +819,37 @@ td:first-child .archivistName {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin: 2rem 0;
-  padding: 1rem;
-  background: rgba(245, 239, 224, 0.1);
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background: #f3eadc;
   border-radius: 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
+  border-top: 1px solid rgba(201, 168, 108, 0.28);
 }
 
 .paginationButton {
-  background: linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%);
-  color: #f5efe0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
+  color: #1a1410;
+  border: 1px solid rgba(255, 236, 190, 0.3);
+  border-radius: 8px;
   padding: 8px 16px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: filter 0.2s ease;
   font-family: "Cinzel", serif;
   letter-spacing: 0.5px;
 }
 
 .paginationButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8b7a6b 0%, #9b8a7b 100%);
+  background: linear-gradient(135deg, #9a8060 0%, #9b8a7b 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .paginationButton:disabled {
-  background: #6b5b47;
-  color: #8b7a6b;
+  background: #3d3228;
+  color: #9a8060;
   cursor: not-allowed;
   opacity: 0.6;
 }

@@ -22,7 +22,7 @@
   margin-bottom: 1rem;
 }
 .selectedRace {
-  color: #b0aac2; /* dus lilla */
+  color: #c4b8a4; /* dus lilla */
   font-weight: bold;
   margin-top: 0.5rem;
 }
@@ -33,7 +33,7 @@
   align-items: flex-start;
   min-height: 100vh;
   padding: 40px 20px 60px;
-  padding-top: 100px;
+  padding-top: 72px;
   position: relative;
   background-color: #120f0c;
   background-image: url("/login-bg.jpg"), url("/login-bg.png"), url("/login-bg.svg");
@@ -50,11 +50,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(8, 6, 4, 0.45) 0%,
-    rgba(22, 17, 12, 0.58) 100%
-  );
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 10%, rgba(201, 168, 108, 0.1), transparent 50%),
+    linear-gradient(180deg, rgba(8, 6, 4, 0.5) 0%, rgba(18, 14, 10, 0.72) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -64,15 +62,17 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 480px;
-  background: linear-gradient(180deg, #6b5d4d 0%, #5d4e3f 8%, #524536 100%);
-  border: 3px solid #8b7a6b;
+  max-width: 500px;
+  background: linear-gradient(165deg, rgba(58, 47, 38, 0.94) 0%, rgba(36, 28, 22, 0.96) 100%);
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  border-radius: 16px;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.25),
-    0 8px 24px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 28px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 rgba(232, 213, 163, 0.22) inset;
   padding: 2rem 2rem 2.5rem;
   margin: 0 auto;
+  backdrop-filter: blur(12px);
 }
 
 .signUpForm::before {
@@ -81,9 +81,9 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, transparent 0%, #d4c4a8 20%, #a08b6e 50%, #d4c4a8 80%, transparent 100%);
-  border-radius: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
+  border-radius: 16px 16px 0 0;
 }
 
 .signUpFormHeader {
@@ -91,21 +91,30 @@
   margin-bottom: 1.25rem;
 }
 
-.signUpFormHeader h1 {
-  font-family: "Cinzel", serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #f5efe0;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  letter-spacing: 0.15em;
-  margin: 0 0 0.75rem 0;
+.brandKicker {
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
+  color: #c9a86c;
+  margin: 0 0 0.5rem;
+}
+
+.signUpFormHeader h1 {
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #faf6ee;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.08em;
+  margin: 0 0 0.75rem 0;
+  text-transform: none;
 }
 
 .signUpFormHeader .headerDivider {
   width: 80px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #d4c4a8, transparent);
+  background: linear-gradient(90deg, transparent, #c9a86c, transparent);
   margin: 0 auto 1rem;
 }
 
@@ -113,13 +122,13 @@
   display: inline-block;
   text-align: center;
   padding: 0.5rem 1rem;
-  background: rgba(212, 196, 168, 0.15);
-  border: 1px solid rgba(212, 196, 168, 0.5);
+  background: rgba(201, 168, 108, 0.12);
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  border-radius: 999px;
   color: #ebe5d6;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.3px;
 }
 
 .errorBox {
@@ -136,27 +145,25 @@
 .signUpBtn,
 .sortingQuizButton,
 .removeImageBtn {
-  background: linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%);
-  color: #F5EFE0;
-  font-weight: 600;
-  font-family: "Cinzel", serif;
-  letter-spacing: 1px;
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
+  color: #1a1410;
+  font-weight: 700;
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.06em;
   padding: 12px 24px;
   margin: 0.5rem 0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 236, 190, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  font-size: 1.05rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   cursor: pointer;
 }
 .signUpBtn:hover,
 .sortingQuizButton:hover,
 .removeImageBtn:hover {
-  background: linear-gradient(135deg, #8B7A6B 0%, #9B8A7B 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
 .formGroup {
@@ -171,16 +178,15 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #F5EFE0;
-  text-transform: uppercase;
-  font-size: 1.25rem;
+  color: #f3eadc;
+  text-transform: none;
+  font-size: 1.1rem;
   font-weight: 700;
-  font-family: "Cinzel", serif;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  letter-spacing: 0.12em;
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.06em;
   margin-bottom: 1.25rem;
   padding-bottom: 0.6rem;
-  border-bottom: 1px solid rgba(212, 196, 168, 0.35);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.28);
   width: 100%;
 }
 
@@ -190,8 +196,9 @@
   display: flex;
   flex-direction: column;
   color: #F5EFE0;
-  margin: 0.5rem;
+  margin: 0 0 0.85rem;
   gap: 8px;
+  width: 100%;
 }
 
 .inputGroup label {
@@ -218,13 +225,13 @@
   width: 320px;
   height: 260px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%);
-  border: 3px solid #7B6857;
-  border-radius: 0;
+  background: rgba(26, 20, 16, 0.35);
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  border-radius: 12px;
   padding: 1rem 1rem 1.2rem 1rem;
   box-sizing: border-box;
   overflow: hidden;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
   position: relative;
 }
 
@@ -235,25 +242,25 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%);
-  border-radius: 0;
+  background: linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent);
+  border-radius: 10px;
 }
 .styleImagePreview {
   width: 180px;
   height: 220px;
   object-fit: cover;
-  border-radius: 0;
+  border-radius: 8px;
   margin: 0 auto 0.7rem auto;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  background: #F5EFE0;
+  background: #faf6ee;
   display: block;
-  border: 2px solid #D4C4A8;
+  border: 1px solid #d4c4a8;
 }
 
 /* ------------------IMAGE BUTTON (under profile preview)------------------ */
 
 .removeImageBtn {
-  background: linear-gradient(135deg, #8b7355 0%, #7b6857 100%);
+  background: linear-gradient(135deg, #8b7355 0%, #8b7355 100%);
   color: #F5EFE0;
   border: 2px solid rgba(212, 196, 168, 0.5);
   font-size: 0.95rem;
@@ -261,7 +268,7 @@
   margin-top: 1rem;
   align-self: center;
   padding: 10px 20px;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.15);
   transition: all 0.25s ease;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -339,7 +346,7 @@
   border-color: rgba(212, 196, 168, 0.8);
 }
 .terms input[type="checkbox"]:checked {
-  background-color: rgba(123, 104, 87, 0.4);
+  background-color: rgba(201, 168, 108, 0.4);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.5 7.5H22l-6 4.5 2.2 6.8L12 17.2l-6.2 4.6 2.2-6.8-6-4.5h7.5L12 2z' fill='%23e8dcc8' stroke='%238b7a6b' stroke-width='0.6' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-size: 85%;
   background-position: center;
@@ -385,24 +392,22 @@
 }
 
 .sortingQuizButton {
-  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
-  color: #F5EFE0;
+  background: linear-gradient(180deg, #5a9a62 0%, #3d7a45 100%);
+  color: #faf6ee;
   font-weight: 600;
-  font-family: "Cinzel", serif;
-  letter-spacing: 1px;
+  font-family: "Cinzel", Palatino, serif;
+  letter-spacing: 0.04em;
   padding: 12px 24px;
   margin: 0.5rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, filter 0.2s ease;
   cursor: pointer;
 }
 .sortingQuizButton:hover {
-  background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
 }
 
 .signUpBtn:hover:not(:disabled) {
@@ -415,20 +420,19 @@
 
 /* ------------------INPUT STYLES------------------ */
 input {
-  color: #2C2C2C;
-  border: 2px solid #D4C4A8;
-  border-radius: 0;
+  color: #2c241c;
+  border: 1px solid #c9b896;
+  border-radius: 8px;
   padding: 12px 16px;
-  background-color: #F5EFE0;
+  background-color: #faf6ee;
   font-size: 1rem;
-  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 input:focus {
-  border-color: #7B6857;
-  box-shadow: 0 0 16px rgba(123, 104, 87, 0.4);
-  transform: translateY(-1px);
+  border-color: #c9a86c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 108, 0.28);
 }
 
 .signUpForm input:-webkit-autofill,
@@ -441,7 +445,7 @@ input:focus {
 }
 
 input::placeholder {
-  color: #7B6857;
+  color: #8b7355;
   text-transform: none;
   font-style: italic;
 }
@@ -616,8 +620,8 @@ input::placeholder {
   color: #999 !important;
 }
 :global([data-theme="dark"]) .signUpContainer input:focus {
-  border-color: #7B6857 !important;
-  box-shadow: 0 0 16px rgba(123, 104, 87, 0.5) !important;
+  border-color: #8b7355 !important;
+  box-shadow: 0 0 16px rgba(201, 168, 108, 0.5) !important;
 }
 
 :global([data-theme="dark"]) .signUpContainer {
@@ -627,8 +631,8 @@ input::placeholder {
   background: linear-gradient(180deg, rgba(10, 8, 20, 0.5) 0%, rgba(20, 15, 35, 0.55) 100%);
 }
 :global([data-theme="dark"]) .signUpForm {
-  background: linear-gradient(180deg, #3d352d 0%, #322b25 100%);
-  border-color: #5c5044;
+  background: linear-gradient(165deg, #3d352d 0%, #2a241e 100%);
+  border-color: rgba(201, 168, 108, 0.28);
 }
 :global([data-theme="dark"]) .signUpForm::before {
   background: linear-gradient(90deg, transparent 0%, #6b5d4d 50%, transparent 100%);

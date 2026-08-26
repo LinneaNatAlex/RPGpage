@@ -1,7 +1,11 @@
 .error {
-  color: red;
-  background-color: transparent;
+  color: #ffd6d3;
+  background: rgba(180, 40, 40, 0.2);
+  border: 1px solid rgba(255, 138, 128, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.4;
   text-transform: initial;
 }
-
-/* Error message style */

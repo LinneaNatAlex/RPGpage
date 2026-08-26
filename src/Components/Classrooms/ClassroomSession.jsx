@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { db } from "../../firebaseConfig";
+import { db, storage } from "../../firebaseConfig";
 import {
   doc,
   getDoc,
@@ -16,6 +16,7 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/authContext";
 import useUserRoles from "../../hooks/useUserRoles";
 // getUserYear function will be defined locally
@@ -142,6 +143,7 @@ const ClassroomSession = () => {
     requirements: "Class for all races and backgrounds",
     activities: "Roleplay, ask questions, or just hang out!",
     teacherIds: [],
+    cardBackgroundUrl: "",
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -259,6 +261,7 @@ const ClassroomSession = () => {
               teacherIds: Array.isArray(data.classInfo.teacherIds)
                 ? data.classInfo.teacherIds
                 : [],
+              cardBackgroundUrl: data.classInfo.cardBackgroundUrl || "",
             });
           } else {
             setCustomClassInfo({
@@ -266,6 +269,7 @@ const ClassroomSession = () => {
               requirements: "Class for all races and backgrounds",
               activities: "Roleplay, ask questions, or just hang out!",
               teacherIds: [],
+              cardBackgroundUrl: "",
             });
           }
           // Load available quizzes
@@ -296,6 +300,7 @@ const ClassroomSession = () => {
             requirements: "Class for all races and backgrounds",
             activities: "Roleplay, ask questions, or just hang out!",
             teacherIds: [],
+            cardBackgroundUrl: "",
           });
         }
       } catch (error) {
@@ -305,6 +310,7 @@ const ClassroomSession = () => {
           requirements: "Class for all races and backgrounds",
           activities: "Roleplay, ask questions, or just hang out!",
           teacherIds: [],
+          cardBackgroundUrl: "",
         });
       }
     };
@@ -790,40 +796,28 @@ const ClassroomSession = () => {
   return (
     <div
       style={{
-        maxWidth: window.innerWidth <= 768 ? "95%" : 900,
-        margin: window.innerWidth <= 768 ? "1rem auto" : "2rem auto",
-        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
-        color: "#F5EFE0",
-        padding: window.innerWidth <= 768 ? 20 : 40,
-        borderRadius: 0,
-        boxShadow:
-          "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-        border: "3px solid #7B6857",
+        maxWidth: 980,
+        margin: "0 auto 2rem",
+        background: "linear-gradient(180deg, #3d3228 0%, #322820 100%)",
+        color: "#f3eadc",
+        padding: 24,
+        borderRadius: 16,
+        boxShadow: "0 10px 28px rgba(26, 20, 16, 0.22)",
+        border: "1px solid rgba(201, 168, 108, 0.32)",
         position: "relative",
         overflow: "hidden",
+        boxSizing: "border-box",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "4px",
-          background:
-            "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: 0,
-        }}
-      />
       <h2
         style={{
           fontFamily: '"Cinzel", serif',
-          fontSize: "2.2rem",
+          fontSize: "1.45rem",
           fontWeight: 700,
-          letterSpacing: "1.5px",
-          textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-          marginBottom: "1.5rem",
-          textAlign: "center",
+          letterSpacing: "0.04em",
+          margin: "0 0 1.15rem",
+          textAlign: "left",
+          color: "#e8d5a3",
         }}
       >
         {classInfo.name} (
@@ -837,7 +831,7 @@ const ClassroomSession = () => {
             background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
             color: "#fff",
             padding: "12px 20px",
-            borderRadius: 0,
+            borderRadius: 12,
             marginBottom: "20px",
             textAlign: "center",
             fontSize: "1.1rem",
@@ -856,7 +850,7 @@ const ClassroomSession = () => {
             background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
             color: "#fff",
             padding: "12px 20px",
-            borderRadius: 0,
+            borderRadius: 12,
             marginBottom: "20px",
             textAlign: "center",
             fontSize: "1.1rem",
@@ -875,7 +869,7 @@ const ClassroomSession = () => {
             marginBottom: 24,
             background: "rgba(245, 239, 224, 0.1)",
             padding: 16,
-            borderRadius: 0,
+            borderRadius: 12,
             border: "2px solid rgba(255, 255, 255, 0.2)",
           }}
         >
@@ -897,7 +891,7 @@ const ClassroomSession = () => {
             style={{
               marginLeft: 12,
               padding: "8px 12px",
-              borderRadius: 0,
+              borderRadius: 12,
               background: "#F5EFE0",
               color: "#2C2C2C",
               border: "2px solid #D4C4A8",
@@ -931,7 +925,7 @@ const ClassroomSession = () => {
                 width: "100%",
                 minHeight: "120px",
                 padding: "16px",
-                borderRadius: 0,
+                borderRadius: 12,
                 border: "2px solid #D4C4A8",
                 background: "#F5EFE0",
                 color: "#2C2C2C",
@@ -951,7 +945,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -970,7 +964,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -1003,10 +997,10 @@ const ClassroomSession = () => {
                   onClick={() => setEditingDescription(true)}
                   style={{
                     background:
-                      "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+                      "linear-gradient(135deg, #8b7355 0%, #3d3228 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     cursor: "pointer",
@@ -1053,17 +1047,16 @@ const ClassroomSession = () => {
           ref={chatRef}
           className="classroom-messages-container"
           style={{
-            background: "rgba(245, 239, 224, 0.1)",
-            minHeight: 300,
-            maxHeight: 600,
+            background: "rgba(250, 246, 238, 0.08)",
+            minHeight: 280,
+            maxHeight: 560,
             overflowY: "auto",
             overflowX: "hidden",
-            borderRadius: 0,
-            padding: window.innerWidth <= 768 ? 12 : 16,
+            borderRadius: 12,
+            padding: 14,
             marginBottom: 16,
-            border: "2px solid rgba(255, 255, 255, 0.2)",
-            boxShadow:
-              "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(201, 168, 108, 0.28)",
+            boxShadow: "none",
             width: "100%",
             boxSizing: "border-box",
           }}
@@ -1093,7 +1086,7 @@ const ClassroomSession = () => {
                   marginBottom: 16,
                   padding: "16px 20px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid rgba(255, 255, 255, 0.2)",
                   boxShadow:
                     "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
@@ -1164,7 +1157,7 @@ const ClassroomSession = () => {
                           "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                         color: "#F5EFE0",
                         border: "2px solid rgba(255, 255, 255, 0.2)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "6px 12px",
                         fontSize: "0.85rem",
                         cursor: "pointer",
@@ -1199,7 +1192,7 @@ const ClassroomSession = () => {
                     maxWidth: "100%",
                     padding: "8px 12px",
                     background: "rgba(245, 239, 224, 0.05)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                   }}
                 >
@@ -1220,7 +1213,7 @@ const ClassroomSession = () => {
             style={{
               width: "100%",
               boxSizing: "border-box",
-              borderRadius: 0,
+              borderRadius: 12,
               border: "2px solid #D4C4A8",
               padding: window.innerWidth <= 768 ? "14px 18px" : "12px 16px",
               background: "#F5EFE0",
@@ -1237,8 +1230,8 @@ const ClassroomSession = () => {
             placeholder="Type your message... (You can write long messages here)"
             maxLength={1000}
             onFocus={(e) => {
-              e.target.style.borderColor = "#7B6857";
-              e.target.style.boxShadow = "0 0 16px rgba(123, 104, 87, 0.4)";
+              e.target.style.borderColor = "#8b7355";
+              e.target.style.boxShadow = "0 0 16px rgba(201, 168, 108, 0.4)";
             }}
             onBlur={(e) => {
               e.target.style.borderColor = "#D4C4A8";
@@ -1249,10 +1242,10 @@ const ClassroomSession = () => {
             <button
               type="submit"
               style={{
-                background: "linear-gradient(135deg, #7B6857 0%, #8B7A6B 100%)",
+                background: "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                 color: "#F5EFE0",
                 border: "2px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: 0,
+                borderRadius: 12,
                 padding: "12px 32px",
                 fontWeight: 600,
                 fontSize: "1rem",
@@ -1284,7 +1277,7 @@ const ClassroomSession = () => {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 0,
+          borderRadius: 12,
           padding: 20,
           marginTop: 32,
           border: "2px solid rgba(255, 255, 255, 0.2)",
@@ -1332,7 +1325,7 @@ const ClassroomSession = () => {
                 style={{
                   width: "100px",
                   padding: "8px 12px",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -1366,7 +1359,7 @@ const ClassroomSession = () => {
                 style={{
                   width: "100%",
                   padding: "8px 12px",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -1401,7 +1394,7 @@ const ClassroomSession = () => {
                 style={{
                   width: "100%",
                   padding: "8px 12px",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "2px solid #D4C4A8",
                   background: "#F5EFE0",
                   color: "#2C2C2C",
@@ -1439,7 +1432,7 @@ const ClassroomSession = () => {
                     padding: "8px 12px",
                     border: "2px solid #D4C4A8",
                     background: "#F5EFE0",
-                    borderRadius: 0,
+                    borderRadius: 12,
                   }}
                 >
                   {teachersList.map((t) => {
@@ -1481,6 +1474,111 @@ const ClassroomSession = () => {
               )}
             </div>
 
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  color: "#D4C4A8",
+                  marginBottom: "8px",
+                  fontWeight: "600",
+                }}
+              >
+                Class card background image
+              </label>
+              <p
+                style={{
+                  color: "#D4C4A8",
+                  fontSize: "0.85rem",
+                  margin: "0 0 8px",
+                }}
+              >
+                Shown on the classroom list so your subject has its own vibe. Paste an image URL or upload a file.
+              </p>
+              <input
+                id="classroom-card-background-url"
+                name="cardBackgroundUrl"
+                type="url"
+                value={customClassInfo.cardBackgroundUrl || ""}
+                onChange={(e) =>
+                  setCustomClassInfo({
+                    ...customClassInfo,
+                    cardBackgroundUrl: e.target.value,
+                  })
+                }
+                placeholder="https://…"
+                style={{
+                  width: "100%",
+                  padding: "8px 12px",
+                  borderRadius: 12,
+                  border: "2px solid #D4C4A8",
+                  background: "#F5EFE0",
+                  color: "#2C2C2C",
+                  fontSize: "1rem",
+                  marginBottom: 8,
+                  boxSizing: "border-box",
+                }}
+              />
+              <input
+                id="classroom-card-background-file"
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file || !classId) return;
+                  try {
+                    const path = `classBackgrounds/${classId}/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
+                    const storageRef = ref(storage, path);
+                    await uploadBytes(storageRef, file);
+                    const url = await getDownloadURL(storageRef);
+                    setCustomClassInfo((prev) => ({
+                      ...prev,
+                      cardBackgroundUrl: url,
+                    }));
+                  } catch (err) {
+                    setErrorMessage(
+                      `Could not upload image: ${err.message || "try a URL instead"}`,
+                    );
+                  }
+                }}
+                style={{ color: "#D4C4A8", fontSize: "0.9rem" }}
+              />
+              {customClassInfo.cardBackgroundUrl ? (
+                <div style={{ marginTop: 8 }}>
+                  <div
+                    style={{
+                      height: 90,
+                      borderRadius: 10,
+                      backgroundImage: `url(${customClassInfo.cardBackgroundUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      border: "1px solid rgba(201, 168, 108, 0.4)",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomClassInfo({
+                        ...customClassInfo,
+                        cardBackgroundUrl: "",
+                      })
+                    }
+                    style={{
+                      marginTop: 8,
+                      background: "transparent",
+                      color: "#D4C4A8",
+                      border: "1px solid #D4C4A8",
+                      borderRadius: 8,
+                      padding: "6px 10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Remove image
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
             <div style={{ display: "flex", gap: "12px" }}>
               <button
                 onClick={saveClassInfo}
@@ -1489,7 +1587,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -1505,7 +1603,7 @@ const ClassroomSession = () => {
                     "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
                   color: "#fff",
                   border: "none",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "10px 20px",
                   fontSize: "1rem",
                   cursor: "pointer",
@@ -1531,7 +1629,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1549,7 +1647,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1562,7 +1660,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1575,7 +1673,7 @@ const ClassroomSession = () => {
                   marginBottom: 8,
                   padding: "8px 12px",
                   background: "rgba(245, 239, 224, 0.1)",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   color: "#F5EFE0",
                   fontSize: "1rem",
@@ -1615,10 +1713,10 @@ const ClassroomSession = () => {
                   onClick={() => setEditingClassInfo(true)}
                   style={{
                     background:
-                      "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+                      "linear-gradient(135deg, #8b7355 0%, #3d3228 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     cursor: "pointer",
@@ -1667,10 +1765,10 @@ const ClassroomSession = () => {
                   }}
                   style={{
                     background:
-                      "linear-gradient(135deg, #7B6857 0%, #6B5B47 100%)",
+                      "linear-gradient(135deg, #8b7355 0%, #3d3228 100%)",
                     color: "#F5EFE0",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     cursor: "pointer",
@@ -1703,7 +1801,7 @@ const ClassroomSession = () => {
                       "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
                     color: "#fff",
                     border: "2px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "8px 16px",
                     fontSize: "0.9rem",
                     cursor: "pointer",
@@ -1750,7 +1848,7 @@ const ClassroomSession = () => {
                   background:
                     "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
                   border: "2px solid #D4C4A8",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   maxWidth: "90vw",
                   width: 700,
                   maxHeight: "85vh",
@@ -1785,7 +1883,7 @@ const ClassroomSession = () => {
                       background: "transparent",
                       color: "#F5EFE0",
                       border: "2px solid #D4C4A8",
-                      borderRadius: 0,
+                      borderRadius: 12,
                       padding: "6px 14px",
                       fontSize: "1rem",
                       cursor: "pointer",
@@ -1956,7 +2054,7 @@ const ClassroomSession = () => {
                   background:
                     "linear-gradient(180deg, #2C2C2C 0%, #1a1a1a 100%)",
                   border: "2px solid #D4C4A8",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   maxWidth: "90vw",
                   width: 800,
                   maxHeight: "90vh",
@@ -2014,7 +2112,7 @@ const ClassroomSession = () => {
                           "linear-gradient(135deg, #4caf50 0%, #45a049 100%)",
                         color: "#fff",
                         border: "2px solid rgba(255,255,255,0.3)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 16px",
                         fontSize: "0.95rem",
                         cursor: "pointer",
@@ -2033,7 +2131,7 @@ const ClassroomSession = () => {
                           "linear-gradient(135deg, #c62828 0%, #b71c1c 100%)",
                         color: "#fff",
                         border: "2px solid rgba(255,255,255,0.3)",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "8px 16px",
                         fontSize: "0.95rem",
                         cursor: "pointer",
@@ -2048,7 +2146,7 @@ const ClassroomSession = () => {
                         background: "transparent",
                         color: "#F5EFE0",
                         border: "2px solid #D4C4A8",
-                        borderRadius: 0,
+                        borderRadius: 12,
                         padding: "6px 14px",
                         fontSize: "1rem",
                         cursor: "pointer",
@@ -2079,7 +2177,7 @@ const ClassroomSession = () => {
                           style={{
                             background: "rgba(245, 239, 224, 0.08)",
                             border: "1px solid rgba(232, 220, 200, 0.5)",
-                            borderRadius: 0,
+                            borderRadius: 12,
                             padding: 16,
                           }}
                         >
@@ -2171,7 +2269,7 @@ const ClassroomSession = () => {
                 fontStyle: "italic",
                 padding: "20px",
                 background: "rgba(245, 239, 224, 0.1)",
-                borderRadius: 0,
+                borderRadius: 12,
                 border: "2px solid rgba(255, 255, 255, 0.2)",
               }}
             >
@@ -2206,7 +2304,7 @@ const ClassroomSession = () => {
                     fontStyle: "italic",
                     padding: "20px",
                     background: "rgba(245, 239, 224, 0.1)",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     border: "2px solid rgba(255, 255, 255, 0.2)",
                   }}
                 >
@@ -2229,7 +2327,7 @@ const ClassroomSession = () => {
                         key={index}
                         style={{
                           background: "rgba(245, 239, 224, 0.1)",
-                          borderRadius: 0,
+                          borderRadius: 12,
                           padding: "16px 20px",
                           border: "2px solid rgba(255, 255, 255, 0.2)",
                           boxShadow:
@@ -2278,7 +2376,7 @@ const ClassroomSession = () => {
                               style={{
                                 background: "rgba(76, 175, 80, 0.2)",
                                 border: "1px solid #4caf50",
-                                borderRadius: 0,
+                                borderRadius: 12,
                                 padding: "8px 12px",
                                 marginTop: "8px",
                                 color: "#4caf50",
@@ -2304,10 +2402,10 @@ const ClassroomSession = () => {
                             onClick={() => handleStartQuiz(quiz)}
                             style={{
                               background:
-                                "linear-gradient(135deg, #7b6857 0%, #8b7a6b 100%)",
+                                "linear-gradient(180deg, #d4b978 0%, #b8944e 100%)",
                               color: "#F5EFE0",
                               border: "2px solid rgba(255, 255, 255, 0.2)",
-                              borderRadius: 0,
+                              borderRadius: 12,
                               padding: "10px 20px",
                               fontSize: "1rem",
                               cursor: "pointer",
@@ -2339,7 +2437,7 @@ const ClassroomSession = () => {
                                   "linear-gradient(135deg, #ff9800 0%, #f57c00 100%)",
                                 color: "#fff",
                                 border: "2px solid rgba(255, 255, 255, 0.2)",
-                                borderRadius: 0,
+                                borderRadius: 12,
                                 padding: "10px 16px",
                                 fontSize: "0.9rem",
                                 cursor: "pointer",
@@ -2380,7 +2478,7 @@ const ClassroomSession = () => {
                           fontStyle: "italic",
                           padding: "20px",
                           background: "rgba(245, 239, 224, 0.1)",
-                          borderRadius: 0,
+                          borderRadius: 12,
                           border: "2px solid rgba(255, 255, 255, 0.2)",
                         }}
                       >
@@ -2405,7 +2503,7 @@ const ClassroomSession = () => {
                 marginBottom: "16px",
                 padding: "16px",
                 background: "rgba(245, 239, 224, 0.1)",
-                borderRadius: 0,
+                borderRadius: 12,
                 border: "2px solid rgba(255, 255, 255, 0.2)",
               }}
             >
@@ -2427,7 +2525,7 @@ const ClassroomSession = () => {
                 style={{
                   background: "rgba(76, 175, 80, 0.1)",
                   border: "2px solid #4CAF50",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "20px",
                   textAlign: "center",
                 }}
@@ -2460,7 +2558,7 @@ const ClassroomSession = () => {
                       "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
                     color: "#000",
                     border: "2px solid #FFD700",
-                    borderRadius: 0,
+                    borderRadius: 12,
                     padding: "12px 24px",
                     fontSize: "1rem",
                     cursor: "pointer",
@@ -2479,7 +2577,7 @@ const ClassroomSession = () => {
                 style={{
                   background: "rgba(255, 193, 7, 0.1)",
                   border: "2px solid #FFC107",
-                  borderRadius: 0,
+                  borderRadius: 12,
                   padding: "20px",
                   textAlign: "center",
                 }}

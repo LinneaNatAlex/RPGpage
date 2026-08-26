@@ -70,6 +70,101 @@ const isRulesOrLibraryPage = (pathname) =>
   isRulesPage(pathname);
 
 import "./MobileLayout.css";
+import { forumList } from "../../data/forumList";
+import DetentionPopup from "../DetentionPopup/DetentionPopup";
+import AdminGlobalAgeVerificationModal from "../AdminGlobalAgeVerificationModal";
+
+function screenTitle(pathname) {
+  if (pathname === "/" || pathname === "") return "Home";
+  if (pathname.startsWith("/forum")) return "Forum";
+  if (pathname === "/starshade-hall" || pathname.startsWith("/Rpg")) return "Hall";
+  if (pathname === "/ClassRooms" || pathname.startsWith("/classrooms")) return "Classes";
+  if (pathname === "/Profile") return "Profile";
+  if (pathname === "/shop") return "Shop";
+  if (pathname === "/userMap") return "Map";
+  if (pathname === "/inventory") return "Inventory";
+  if (pathname === "/library") return "Library";
+  if (pathname === "/admin") return "Admin";
+  if (pathname === "/professor") return "Teacher";
+  if (pathname.includes("rules")) return "Rules";
+  if (pathname === "/messages") return "Messages";
+  return "Vayloria";
+}
+
+const MENU_ICON = {
+  home: "\u2302",
+  forum: "\u2630",
+  adult: "18+",
+  classes: "\u2726",
+  rules: "\u00A7",
+  library: "\u2767",
+  tasks: "\u2611",
+  shop: "\u2696",
+  profile: "\u263A",
+  map: "\u2295",
+  inventory: "\u25A3",
+  news: "\u270E",
+  admin: "\u2699",
+  teacher: "\u269C",
+  logout: "\u23FB",
+};
+
+function TabIcon({ name }) {
+  const common = {
+    width: 22,
+    height: 22,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    "aria-hidden": true,
+  };
+  if (name === "home") {
+    return (
+      <svg {...common}>
+        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z" />
+      </svg>
+    );
+  }
+  if (name === "forum") {
+    return (
+      <svg {...common}>
+        <path d="M5 5h14v14H5z" />
+        <path d="M8 9h8M8 12h8M8 15h5" />
+      </svg>
+    );
+  }
+  if (name === "hall") {
+    return (
+      <svg {...common}>
+        <path d="M4 20V10l8-6 8 6v10" />
+        <path d="M9 20v-6h6v6" />
+      </svg>
+    );
+  }
+  if (name === "chat") {
+    return (
+      <svg {...common}>
+        <path d="M5 18 4 21l4-2h9a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h1z" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <circle cx="6" cy="7" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="7" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="7" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="6" cy="13" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="13" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="13" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="6" cy="19" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="19" r="1.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const MobileLayout = ({ children }) => {
   const { roles, rolesLoading } = useUserRoles();
@@ -87,12 +182,18 @@ const MobileLayout = ({ children }) => {
   };
   const { user, loading: authLoading } = useAuth();
   const { userData } = useUserData();
-  const { notifications, recentNews, markAllAsRead, unreadCount } =
-    useNotificationsContext();
+  const {
+    notifications,
+    recentNews,
+    clearAllNotifications,
+    unreadCount,
+  } = useNotificationsContext();
   const { setOpenWithUid } = useOpenPrivateChat();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth <= 768,
+  );
   const [activeTab, setActiveTab] = useState("home");
   const [showChat, setShowChat] = useState(false);
   const [showPrivateChat, setShowPrivateChat] = useState(false);
@@ -124,6 +225,12 @@ const MobileLayout = ({ children }) => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  useEffect(() => {
+    if (isMobile) document.body.classList.add("mobile-app-shell");
+    else document.body.classList.remove("mobile-app-shell");
+    return () => document.body.classList.remove("mobile-app-shell");
+  }, [isMobile]);
+
   // Update active tab based on current route
   useEffect(() => {
     const path = location.pathname;
@@ -131,16 +238,18 @@ const MobileLayout = ({ children }) => {
       setActiveTab("home");
     } else if (path.startsWith("/forum")) {
       setActiveTab("forum");
-    } else if (path === "/ClassRooms") {
+    } else if (path === "/ClassRooms" || path.startsWith("/classrooms")) {
       setActiveTab("classes");
-    } else if (path === "/rpg") {
-      setActiveTab("rpg");
+    } else if (path === "/starshade-hall" || path.startsWith("/Rpg")) {
+      setActiveTab("hall");
     } else if (path === "/Profile") {
       setActiveTab("profile");
     } else if (path === "/userMap") {
       setActiveTab("map");
     } else if (path === "/shop") {
       setActiveTab("shop");
+    } else if (path === "/inventory") {
+      setActiveTab("inventory");
     }
   }, [location.pathname]);
 
@@ -159,8 +268,8 @@ const MobileLayout = ({ children }) => {
       case "classes":
         navigate("/ClassRooms");
         break;
-      case "rpg":
-        navigate("/rpg");
+      case "hall":
+        navigate("/starshade-hall");
         break;
       case "profile":
         navigate("/Profile");
@@ -211,27 +320,104 @@ const MobileLayout = ({ children }) => {
 
   return (
     <div className={user ? "mobile-app" : "mobile-app-light"}>
-      {/* Mobile Status Bar */}
-      <div className="mobile-status-bar">
-        <div className="mobile-status-left">
-          <span className="mobile-time">12:34</span>
+      <header className="app-topbar">
+        <div className="app-topbar-titles">
+          <p className="app-kicker">Vayloria</p>
+          <h1 className="app-title">{screenTitle(location.pathname)}</h1>
         </div>
-        <div className="mobile-status-right">
-          <RPGClock isMobile={true} />
-        </div>
-      </div>
-
-      {/* Mobile Header */}
-      <header className="mobile-header">
-        <div className="mobile-header-content">
-          <div className="mobile-logo-section">
-            <h1 className="mobile-logo-text">Vayloria</h1>
-          </div>
+        <div className="app-topbar-actions">
+          <Suspense fallback={null}>
+            <RPGClock isMobile={true} />
+          </Suspense>
+          {user && (
+            <div className="mobile-menu-notification-wrap" ref={notificationsPopupRef}>
+              <button
+                type="button"
+                className="app-icon-btn"
+                onClick={() => setShowNotificationsPopup((v) => !v)}
+                title="Notifications"
+                aria-label="Notifications"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                  <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="mobile-menu-notification-badge">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </button>
+              {showNotificationsPopup && (
+                <div className="mobile-menu-notification-popup">
+                  <div className="mobile-menu-notification-popup-header">
+                    <span>Notifications</span>
+                    {(notifications.length > 0 || recentNews.length > 0) && (
+                      <button
+                        type="button"
+                        className="mobile-menu-notification-mark-read"
+                        onClick={() => clearAllNotifications()}
+                      >
+                        Clear all
+                      </button>
+                    )}
+                  </div>
+                  <div className="mobile-menu-notification-popup-list">
+                    {recentNews.length > 0 &&
+                      recentNews.map((news) => (
+                        <div
+                          key={`news-${news.id}`}
+                          className="mobile-menu-notification-item"
+                        >
+                          <span className="mobile-menu-notification-icon">📰</span>
+                          <span>{news.title || "News"}</span>
+                        </div>
+                      ))}
+                    {notifications.slice(0, 12).map((n) => {
+                      const isReply = n.type === "forum_reply" || n.type === "reply";
+                      const label = n.text || n.message || n.type || "Notification";
+                      return (
+                        <div
+                          key={n.id}
+                          className="mobile-menu-notification-item"
+                          role="button"
+                          tabIndex={0}
+                          onClick={async () => {
+                            try {
+                              await updateDoc(doc(db, "notifications", n.id), { read: true });
+                            } catch (err) {}
+                            setShowNotificationsPopup(false);
+                            setShowDashboard(false);
+                            if (isReply && n.topicId) navigate(`/forum/commons?topic=${n.topicId}`);
+                            else if (n.type === "private_chat") {
+                              const fromUid = n.fromUid || n.from;
+                              if (fromUid) {
+                                setOpenWithUid(fromUid);
+                                setShowChat(true);
+                                setShowPrivateChat(true);
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
+                        >
+                          <span className="mobile-menu-notification-icon">
+                            {n.type === "private_chat" ? "💬" : isReply ? "📌" : "🎁"}
+                          </span>
+                          <span>{label}</span>
+                        </div>
+                      );
+                    })}
+                    {notifications.length === 0 && recentNews.length === 0 && (
+                      <p className="mobile-menu-notification-empty">No notifications</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Mobile Main Content - TopBar not shown on mobile per design */}
-      <main className="mobile-main">
+      <main className={`mobile-main${showChat ? " mobile-main-chat-open" : ""}`}>
         {/* Back to rules list when viewing a rule page or Library */}
         {isRulesOrLibraryPage(location.pathname) && location.pathname !== "/rules" && location.pathname !== "/rules/" && (
           <div className="mobile-rules-back-bar">
@@ -246,7 +432,7 @@ const MobileLayout = ({ children }) => {
         )}
         {/* Render actual page content - let React Router handle all routing */}
         <div className="mobile-page-content">
-          <Outlet />
+          <Outlet key={location.pathname} />
         </div>
 
         {/* Chat overlay when chat tab is active */}
@@ -263,11 +449,7 @@ const MobileLayout = ({ children }) => {
                 </button>
                 <button
                   className="mobile-chat-close"
-                  onClick={() => {
-                    setShowChat(false);
-                    navigate("/");
-                    setActiveTab("home");
-                  }}
+                  onClick={() => setShowChat(false)}
                 >
                   ✕
                 </button>
@@ -287,30 +469,49 @@ const MobileLayout = ({ children }) => {
         )}
       </main>
 
-      {/* Mobile Dashboard Button - Only when logged in, hide when chat is open */}
       {user && !showChat && (
-        <div className="mobile-dashboard-button">
+        <nav className="app-tabbar" aria-label="Main">
           <button
-            className="mobile-dashboard-btn"
+            type="button"
+            className={`app-tab${activeTab === "home" ? " active" : ""}`}
+            onClick={() => handleTabClick("home")}
+          >
+            <TabIcon name="home" />
+            <span>Home</span>
+          </button>
+          <button
+            type="button"
+            className={`app-tab${activeTab === "forum" ? " active" : ""}`}
+            onClick={() => handleTabClick("forum")}
+          >
+            <TabIcon name="forum" />
+            <span>Forum</span>
+          </button>
+          <button
+            type="button"
+            className={`app-tab${activeTab === "hall" ? " active" : ""}`}
+            onClick={() => handleTabClick("hall")}
+          >
+            <TabIcon name="hall" />
+            <span>Hall</span>
+          </button>
+          <button
+            type="button"
+            className={`app-tab${showChat ? " active" : ""}`}
+            onClick={() => handleTabClick("chat")}
+          >
+            <TabIcon name="chat" />
+            <span>Chat</span>
+          </button>
+          <button
+            type="button"
+            className={`app-tab${showDashboard ? " active" : ""}`}
             onClick={() => setShowDashboard(true)}
           >
-            <span className="mobile-dashboard-icon">☰</span>
-            <span className="mobile-dashboard-label">Menu</span>
+            <TabIcon name="more" />
+            <span>More</span>
           </button>
-        </div>
-      )}
-
-      {/* Mobile Floating Chat Button - Always visible */}
-      {user && (
-        <div className="mobile-floating-chat">
-          <button
-            className="mobile-chat-float-btn"
-            onClick={() => openOverlay(setShowChat)}
-            title="Chat"
-          >
-            💬
-          </button>
-        </div>
+        </nav>
       )}
 
       {/* Archivist / Shadow Patrol modal (opened from menu) */}
@@ -321,130 +522,19 @@ const MobileLayout = ({ children }) => {
 
       {/* Mobile Dashboard Overlay */}
       {showDashboard && (
-        <div className="mobile-dashboard-overlay">
+        <div className="mobile-dashboard-overlay" onClick={() => setShowDashboard(false)}>
+          <div className="mobile-dashboard-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="mobile-dashboard-header">
-            <h2>Navigation</h2>
-            <div className="mobile-dashboard-header-actions">
-              {user && (
-                <div className="mobile-menu-notification-wrap" ref={notificationsPopupRef}>
-                  <button
-                    type="button"
-                    className="mobile-menu-notification-bell"
-                    onClick={() => setShowNotificationsPopup((v) => !v)}
-                    title="Notifications"
-                    aria-label="Notifications"
-                  >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-                    </svg>
-                    {unreadCount > 0 && (
-                      <span className="mobile-menu-notification-badge">
-                        {unreadCount > 99 ? "99+" : unreadCount}
-                      </span>
-                    )}
-                  </button>
-                  {showNotificationsPopup && (
-                    <div className="mobile-menu-notification-popup">
-                      <div className="mobile-menu-notification-popup-header">
-                        <span>Notifications</span>
-                        {notifications.filter((n) => !n.read).length > 0 && (
-                          <button
-                            type="button"
-                            className="mobile-menu-notification-mark-read"
-                            onClick={() => markAllAsRead()}
-                          >
-                            Mark all read
-                          </button>
-                        )}
-                      </div>
-                      <div className="mobile-menu-notification-popup-list">
-                        {recentNews.length > 0 &&
-                          recentNews.map((news) => (
-                            <div
-                              key={`news-${news.id}`}
-                              className="mobile-menu-notification-item"
-                              role="button"
-                              tabIndex={0}
-                              onClick={async () => {
-                                const seenAt = news.createdAt?.toMillis?.() ?? news.createdAt ?? Date.now();
-                                try {
-                                  await updateDoc(doc(db, "users", user.uid), {
-                                    lastSeenNewsAt: typeof seenAt === "number" ? seenAt : Date.now(),
-                                  });
-                                  cacheHelpers.clearUserCache(user.uid);
-                                } catch (err) {}
-                                setShowNotificationsPopup(false);
-                                setShowDashboard(false);
-                                navigate("/");
-                              }}
-                              onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
-                            >
-                              <span className="mobile-menu-notification-icon">📰</span>
-                              <span>New news: {news.title || "Untitled"}</span>
-                            </div>
-                          ))}
-                        {notifications
-                          .filter((n) => !n.read)
-                          .slice(0, 15)
-                          .map((n) => {
-                            const isReply = n.type === "topic_reply" || n.type === "new_topic";
-                            const label =
-                              n.type === "private_chat"
-                                ? `Message from ${n.fromName || "Someone"}`
-                                : isReply
-                                  ? n.message || n.title || "New forum activity"
-                                  : n.message || n.title || "Notification";
-                            return (
-                              <div
-                                key={n.id}
-                                className="mobile-menu-notification-item"
-                                role="button"
-                                tabIndex={0}
-                                onClick={async () => {
-                                  try {
-                                    await updateDoc(doc(db, "notifications", n.id), { read: true });
-                                  } catch (err) {}
-                                  setShowNotificationsPopup(false);
-                                  setShowDashboard(false);
-                                  if (isReply && n.topicId) navigate(`/forum/commons?topic=${n.topicId}`);
-                                  else if (n.type === "private_chat") {
-                                    const fromUid = n.fromUid || n.from;
-                                    if (fromUid) {
-                                      setOpenWithUid(fromUid);
-                                      setShowChat(true);
-                                      setShowPrivateChat(true);
-                                    }
-                                  }
-                                }}
-                                onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
-                              >
-                                <span className="mobile-menu-notification-icon">
-                                  {n.type === "private_chat" ? "💬" : isReply ? "📌" : "🎁"}
-                                </span>
-                                <span>{label}</span>
-                              </div>
-                            );
-                          })}
-                        {unreadCount === 0 && (
-                          <p className="mobile-menu-notification-empty">No notifications</p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              <button
-                className="mobile-dashboard-close"
-                onClick={() => {
-                  setShowDashboard(false);
-                  setShowNotificationsPopup(false);
-                  navigate("/");
-                  setActiveTab("home");
-                }}
-              >
-                ✕
-              </button>
-            </div>
+            <h2>More</h2>
+            <button
+              className="mobile-dashboard-close"
+              onClick={() => {
+                setShowDashboard(false);
+                setShowNotificationsPopup(false);
+              }}
+            >
+              ✕
+            </button>
           </div>
           <div className="mobile-dashboard-grid">
             <button
@@ -456,7 +546,7 @@ const MobileLayout = ({ children }) => {
                 setShowDashboard(false);
               }}
             >
-              <span className="mobile-dashboard-item-icon">🏠</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.home}</span>
               <span className="mobile-dashboard-item-label">Home</span>
             </button>
 
@@ -468,8 +558,19 @@ const MobileLayout = ({ children }) => {
                 handleTabClick("forum");
               }}
             >
-              <span className="mobile-dashboard-item-icon">📖</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.forum}</span>
               <span className="mobile-dashboard-item-label">Forum</span>
+            </button>
+
+            <button
+              className="mobile-dashboard-item"
+              onClick={() => {
+                setShowDashboard(false);
+                navigate("/forum/18plus");
+              }}
+            >
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.adult}</span>
+              <span className="mobile-dashboard-item-label">18+ Forum</span>
             </button>
 
             <button
@@ -481,7 +582,7 @@ const MobileLayout = ({ children }) => {
                 setShowDashboard(false);
               }}
             >
-              <span className="mobile-dashboard-item-icon">📚</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.classes}</span>
               <span className="mobile-dashboard-item-label">Classes</span>
             </button>
 
@@ -494,7 +595,7 @@ const MobileLayout = ({ children }) => {
                 navigate("/rules");
               }}
             >
-              <span className="mobile-dashboard-item-icon">📋</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.rules}</span>
               <span className="mobile-dashboard-item-label">Page Rules</span>
             </button>
 
@@ -507,7 +608,7 @@ const MobileLayout = ({ children }) => {
                 navigate("/library");
               }}
             >
-              <span className="mobile-dashboard-item-icon">📚</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.library}</span>
               <span className="mobile-dashboard-item-label">Library (tips)</span>
             </button>
 
@@ -518,7 +619,7 @@ const MobileLayout = ({ children }) => {
                   setShowSegmentSchedule(true);
                 }}
               >
-                <span className="mobile-dashboard-item-icon">📋</span>
+                <span className="mobile-dashboard-item-icon">{MENU_ICON.tasks}</span>
                 <span className="mobile-dashboard-item-label">
                   {userData?.roles?.some((r) => String(r).toLowerCase() === "archivist")
                     ? "Archivist tasks"
@@ -536,7 +637,7 @@ const MobileLayout = ({ children }) => {
                 setShowDashboard(false);
               }}
             >
-              <span className="mobile-dashboard-item-icon">🏪</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.shop}</span>
               <span className="mobile-dashboard-item-label">Shop</span>
             </button>
 
@@ -549,7 +650,7 @@ const MobileLayout = ({ children }) => {
                 setShowDashboard(false);
               }}
             >
-              <span className="mobile-dashboard-item-icon">👤</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.profile}</span>
               <span className="mobile-dashboard-item-label">Profile</span>
             </button>
 
@@ -562,7 +663,7 @@ const MobileLayout = ({ children }) => {
                 setShowDashboard(false);
               }}
             >
-              <span className="mobile-dashboard-item-icon">🗺️</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.map}</span>
               <span className="mobile-dashboard-item-label">Map</span>
             </button>
 
@@ -574,7 +675,7 @@ const MobileLayout = ({ children }) => {
                 handleTabClick("inventory");
               }}
             >
-              <span className="mobile-dashboard-item-icon">🎒</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.inventory}</span>
               <span className="mobile-dashboard-item-label">Inventory</span>
             </button>
 
@@ -587,20 +688,48 @@ const MobileLayout = ({ children }) => {
                 navigate("/");
               }}
             >
-              <span className="mobile-dashboard-item-icon">📰</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.news}</span>
               <span className="mobile-dashboard-item-label">
                 News & Announcements
               </span>
             </button>
+
+            {roles.some((r) => String(r).toLowerCase() === "admin") && (
+              <button
+                className="mobile-dashboard-item"
+                onClick={() => {
+                  setShowDashboard(false);
+                  navigate("/admin");
+                }}
+              >
+                <span className="mobile-dashboard-item-icon">{MENU_ICON.admin}</span>
+                <span className="mobile-dashboard-item-label">Admin</span>
+              </button>
+            )}
+            {roles.some((r) =>
+              ["professor", "teacher"].includes(String(r).toLowerCase()),
+            ) && (
+              <button
+                className="mobile-dashboard-item"
+                onClick={() => {
+                  setShowDashboard(false);
+                  navigate("/professor");
+                }}
+              >
+                <span className="mobile-dashboard-item-icon">{MENU_ICON.teacher}</span>
+                <span className="mobile-dashboard-item-label">Teacher</span>
+              </button>
+            )}
 
             {/* Logout Button */}
             <button
               className="mobile-dashboard-item logout-btn"
               onClick={handleLogout}
             >
-              <span className="mobile-dashboard-item-icon">🚪</span>
+              <span className="mobile-dashboard-item-icon">{MENU_ICON.logout}</span>
               <span className="mobile-dashboard-item-label">Log Out</span>
             </button>
+          </div>
           </div>
         </div>
       )}
@@ -625,153 +754,34 @@ const MobileLayout = ({ children }) => {
               </button>
             </div>
             <div className="mobile-forum-selection-list">
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/commons");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">Commons</span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/ritualroom");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  Ritual Room
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/moongarden");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  Moon Garden
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/bloodbank");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">Blood Bank</span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/nightlibrary");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  Night Library
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/gymnasium");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  The Gymnasium
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/infirmary");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">Infirmary</span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/greenhouse");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  The Greenhouse
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/artstudio");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  The Art Studio
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/kitchen");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">Kitchen</span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/detentionclassroom");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">
-                  Detention Classroom
-                </span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/shortbutlong");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">Short, but long</span>
-              </button>
-
-              <button
-                className="mobile-forum-selection-item"
-                onClick={() => {
-                  navigate("/forum/18plus");
-                  setShowForumSelection(false);
-                }}
-              >
-                <span className="mobile-forum-selection-label">18+ Forum</span>
-              </button>
+              {forumList
+                .filter((f) => f.id !== "starshadehall")
+                .slice()
+                .sort((a, b) => {
+                  if (a.id === "18plus") return -1;
+                  if (b.id === "18plus") return 1;
+                  if (a.id === "commons") return -1;
+                  if (b.id === "commons") return 1;
+                  return 0;
+                })
+                .map((f) => (
+                  <button
+                    key={f.id}
+                    className={`mobile-forum-selection-item${f.id === "18plus" ? " mobile-forum-18plus" : ""}`}
+                    onClick={() => {
+                      navigate(`/forum/${f.id}`);
+                      setShowForumSelection(false);
+                    }}
+                  >
+                    <span className="mobile-forum-selection-label">{f.name}</span>
+                  </button>
+                ))}
             </div>
           </div>
         </div>
       )}
+      {user && <AdminGlobalAgeVerificationModal />}
+      {user && <DetentionPopup />}
     </div>
   );
 };

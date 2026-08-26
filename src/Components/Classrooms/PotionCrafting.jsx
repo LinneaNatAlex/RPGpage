@@ -4,10 +4,10 @@ export default function PotionCrafting({ user }) {
   return (
     <div style={{
       background: "linear-gradient(135deg, #2C2C2C 0%, #3A2F26 100%)",
-      borderRadius: 0,
+      borderRadius: 12,
       padding: 20,
       margin: "24px 0",
-      border: "2px solid #7B6857",
+      border: "1px solid rgba(201, 168, 108, 0.32)",
       boxShadow: "0 4px 16px rgba(0, 0, 0, 0.3)",
       color: "#F5EFE0"
     }}>

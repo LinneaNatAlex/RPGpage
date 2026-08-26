@@ -38,19 +38,19 @@
   border: 4px solid #fff !important;
   box-shadow:
     0 0 18px 4px #fff,
-    0 0 12px #b0aac2 !important;
+    0 0 12px #c4b8a4 !important;
 }
 .professorAvatar {
   border: 4px solid gold !important;
   box-shadow:
     0 0 18px 4px gold,
-    0 0 12px #b0aac2 !important;
+    0 0 12px #c4b8a4 !important;
 }
 .shadowPatrolAvatar {
   border: 4px solid #1ecb8c !important;
   box-shadow:
     0 0 18px 4px #1ecb8c,
-    0 0 12px #b0aac2 !important;
+    0 0 12px #c4b8a4 !important;
 }
 /* ---------- */
 .profileWrapper {
@@ -81,19 +81,18 @@
   justify-content: center;
   height: auto;
   min-height: auto;
-  border: 2px solid #7b6857;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   margin: 0 auto;
   padding: 1.5rem;
   overflow-x: hidden;
-  border-radius: 0;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(26, 20, 16, 0.22);
   position: relative;
   max-width: 1200px;
   width: 100%;
   gap: 2rem;
+  box-sizing: border-box;
 }
 
 /* -------------------------IMAGE CONTAINER------------------------- */
@@ -114,7 +113,7 @@
   height: 300px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #7b6857;
+  border: 4px solid #8b7355;
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.2),
     0 4px 12px rgba(0, 0, 0, 0.1);
@@ -134,7 +133,7 @@
   cursor: pointer;
   font-size: 1.25rem;
   line-height: 1;
-  border-radius: 0;
+  border-radius: 10px;
   transition:
     transform 0.15s ease,
     background 0.15s ease;
@@ -159,7 +158,7 @@
   padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(212, 196, 168, 0.35);
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .profileLikesOverviewIcon {
@@ -176,7 +175,7 @@
   border: 4px solid #ff2a2a;
   box-shadow:
     0 0 18px 4px #ff2a2a,
-    0 0 12px #b0aac2;
+    0 0 12px #c4b8a4;
 }
 
 /* -------------------------ARCHIVIST AVATAR ------------------------- */
@@ -184,7 +183,7 @@
   border: 4px solid #a084e8;
   box-shadow:
     0 0 18px 4px #a084e8,
-    0 0 12px #b0aac2;
+    0 0 12px #c4b8a4;
 }
 
 /* VIP: outer gold glow only; inner ring stays role color */
@@ -217,13 +216,13 @@
   align-items: flex-start;
   justify-content: center;
   height: auto;
-  border: 2px solid #7b6857;
-  background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
+  border: 1px solid rgba(201, 168, 108, 0.32);
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   color: #ffffff;
   gap: 2rem;
   max-width: 1000px;
   width: 100%;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05);
@@ -260,7 +259,7 @@
   overflow-y: visible;
   display: block;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   background: transparent;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
@@ -284,7 +283,7 @@
   margin: 2rem auto 0 auto;
   gap: 20px;
   background: transparent; /* Transparent background for all themes */
-  border-radius: 0;
+  border-radius: 10px;
   padding: 2rem;
   border: 2px solid rgba(212, 196, 168, 0.3); /* Semi-transparent border */
   box-shadow:
@@ -305,6 +304,15 @@
 .profileTextContainer iframe {
   background: transparent !important;
   background-color: transparent !important;
+  overflow: hidden !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.profileTextContainer iframe::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 :global([data-theme="dark"]) .profileTextContainer iframe {
@@ -318,7 +326,7 @@
 }
 
 .profileTextContainer h2 {
-  color: #7b6857;
+  color: #8b7355;
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 1.5rem 0;
@@ -346,7 +354,7 @@
 .profileTextContent h4,
 .profileTextContent h5,
 .profileTextContent h6 {
-  color: #7b6857;
+  color: #8b7355;
   margin: 1rem 0 0.5rem 0;
   font-weight: 700;
 }
@@ -368,10 +376,10 @@
 }
 
 .profileTextContent blockquote {
-  border-left: 3px solid #7b6857;
+  border-left: 3px solid #8b7355;
   padding-left: 1rem;
   margin: 0.5rem 0;
-  background: rgba(123, 104, 87, 0.05);
+  background: rgba(201, 168, 108, 0.05);
   border-radius: 0 4px 4px 0;
 }
 
@@ -385,18 +393,18 @@
 }
 
 .profileTextContent a {
-  color: #7b6857;
+  color: #8b7355;
   text-decoration: underline;
 }
 
 .profileTextContent a:hover {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 .profileTextContent img {
   max-width: 100%;
   height: auto;
-  border-radius: 0;
+  border-radius: 10px;
   display: block;
   margin: 0.5rem auto;
 }
@@ -409,10 +417,10 @@
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-  border-radius: 0;
+  background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+  border-radius: 10px;
   padding: 2rem;
-  border: 2px solid #d4c4a8;
+  border: 1px solid rgba(201, 168, 108, 0.4);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05);
@@ -461,15 +469,15 @@
 }
 
 .profileText blockquote {
-  border-left: 3px solid #7b6857;
+  border-left: 3px solid #8b7355;
   padding-left: 1rem;
   margin: 0.5rem 0;
 }
 
 .profileText pre {
-  background: rgba(123, 104, 87, 0.1);
+  background: rgba(201, 168, 108, 0.1);
   padding: 0.5rem;
-  border-radius: 0;
+  border-radius: 10px;
   font-family: monospace;
 }
 
@@ -483,18 +491,18 @@
 }
 
 .profileText a {
-  color: #7b6857;
+  color: #8b7355;
   text-decoration: underline;
 }
 
 .profileText a:hover {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 .profileText img {
   max-width: 100%;
   height: auto;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 /* Allow BBCode alignment to override - maximum specificity */
@@ -552,15 +560,15 @@
 }
 
 .profileText .bbcode-table th {
-  background-color: rgba(123, 104, 87, 0.1);
+  background-color: rgba(201, 168, 108, 0.1);
   font-weight: bold;
 }
 
 .profileText .bbcode-plain {
   font-family: monospace;
-  background-color: rgba(123, 104, 87, 0.1);
+  background-color: rgba(201, 168, 108, 0.1);
   padding: 0.2rem 0.4rem;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 /* Character Details Styling - matching Profile.jsx */
@@ -622,7 +630,7 @@
 @media screen and (max-width: 768px) {
   .profileWrapper {
     padding: 0.5rem;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
     min-height: 100vh;
     width: 100%;
     max-width: 100%;
@@ -637,9 +645,9 @@
     max-width: 100%;
     padding: 0.3rem;
     margin: 0 auto;
-    border-radius: 0;
-    background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-    border: 2px solid #7b6857;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+    border: 1px solid rgba(201, 168, 108, 0.32);
     color: #f5efe0;
   }
 
@@ -657,7 +665,7 @@
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #7b6857;
+    border: 1px solid rgba(201, 168, 108, 0.32);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     margin-bottom: 0.5rem;
   }
@@ -669,9 +677,9 @@
     flex-direction: column;
     gap: 0.2rem;
     padding: 0.5rem;
-    background: linear-gradient(135deg, #5d4e37 0%, #6b5b47 100%);
-    border: 2px solid #7b6857;
-    border-radius: 0;
+    background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+    border: 1px solid rgba(201, 168, 108, 0.32);
+    border-radius: 10px;
     /* Make it more compact on mobile */
     min-height: auto;
     height: auto;
@@ -711,7 +719,7 @@
     margin-bottom: 0.25rem !important;
     padding: 0.3rem !important;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 0;
+    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 0.85rem !important;
     line-height: 1.2 !important;
@@ -801,15 +809,15 @@
     width: 100%;
     max-width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border: 2px solid #d4c4a8;
-    border-radius: 0;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    border: 1px solid rgba(201, 168, 108, 0.4);
+    border-radius: 10px;
     margin: 0 auto;
   }
 
   .profileText h2 {
     font-size: 1.5rem;
-    color: #7b6857;
+    color: #8b7355;
     text-align: center;
     margin-bottom: 1rem;
   }
@@ -846,16 +854,16 @@
   .profileHtmlContainer {
     width: 100%;
     max-width: 100%;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border: 2px solid #d4c4a8;
-    border-radius: 0;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    border: 1px solid rgba(201, 168, 108, 0.4);
+    border-radius: 10px;
     padding: 1rem;
     margin: 0 auto;
   }
 
   .profileHtmlContainer h2 {
     font-size: 1.5rem;
-    color: #7b6857;
+    color: #8b7355;
     text-align: center;
     margin-bottom: 1rem;
   }
@@ -873,7 +881,7 @@
     margin-bottom: 0.3rem;
     padding: 0.3rem;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 0;
+    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
@@ -917,9 +925,9 @@
     width: 100%;
     max-width: 100%;
     padding: 0.3rem;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border: 2px solid #d4c4a8;
-    border-radius: 0;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    border: 1px solid rgba(201, 168, 108, 0.4);
+    border-radius: 10px;
     overflow-y: auto;
     max-height: 400px;
     margin: 0 auto;
@@ -927,7 +935,7 @@
 
   .profileText h2 {
     font-size: 1.2rem;
-    color: #7b6857;
+    color: #8b7355;
     text-align: center;
     margin-bottom: 0.3rem;
   }
@@ -945,9 +953,9 @@
   .profileHtmlContainer {
     width: 100%;
     max-width: 100%;
-    background: linear-gradient(135deg, #e8ddd4 0%, #f5efe0 100%);
-    border: 2px solid #d4c4a8;
-    border-radius: 0;
+    background: linear-gradient(180deg, #faf6ee 0%, #f4ead8 100%);
+    border: 1px solid rgba(201, 168, 108, 0.4);
+    border-radius: 10px;
     padding: 0.3rem;
     overflow-y: auto;
     max-height: 400px;
@@ -956,7 +964,7 @@
 
   .profileHtmlContainer h2 {
     font-size: 1.2rem;
-    color: #7b6857;
+    color: #8b7355;
     text-align: center;
     margin-bottom: 0.3rem;
   }
@@ -978,7 +986,7 @@
     overflow-y: visible;
     display: block;
     border: none;
-    border-radius: 0;
+    border-radius: 10px;
     background: transparent;
   }
 
@@ -991,7 +999,7 @@
   .caracterDetails input,
   .caracterDetails select {
     padding: 0.3rem;
-    border-radius: 0;
+    border-radius: 10px;
     border: 1px solid #cccccc;
     background: #f9f9f9;
     color: #333333;
@@ -1000,7 +1008,7 @@
 
   .caracterDetails button {
     padding: 0.3rem 0.6rem;
-    border-radius: 0;
+    border-radius: 10px;
     border: 1px solid #cccccc;
     background: #e0e0e0;
     color: #333333;
@@ -1025,8 +1033,8 @@
   margin-top: 0.5rem;
   padding: 1rem;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 0;
-  border: 1px solid #7b6857;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.35);
 }
 
 .petImageContainer {
@@ -1039,7 +1047,7 @@
 .petImage {
   width: 120px;
   height: 120px;
-  border-radius: 0;
+  border-radius: 10px;
   border: 3px solid #ffe4b5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   object-fit: cover;
@@ -1065,7 +1073,7 @@
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.4rem 0.6rem;
-  border-radius: 0;
+  border-radius: 10px;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
@@ -1114,8 +1122,8 @@
 
 .petInteractionModalContent {
   background: #f5efe0;
-  border: 2px solid #5d4e37;
-  border-radius: 0;
+  border: 2px solid #3d3228;
+  border-radius: 10px;
   padding: 20px;
   max-width: 300px;
   width: 90%;
@@ -1130,7 +1138,7 @@
 }
 
 .petInteractionHeader h3 {
-  color: #5d4e37;
+  color: #3d3228;
   margin: 0;
   font-size: 1.2rem;
 }
@@ -1140,7 +1148,7 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #5d4e37;
+  color: #3d3228;
   padding: 0;
   width: 24px;
   height: 24px;
@@ -1150,7 +1158,7 @@
 }
 
 .closeButton:hover {
-  color: #8b7a6b;
+  color: #9a8060;
 }
 
 .petModalPetDisplay {
@@ -1167,12 +1175,12 @@
   width: 100px;
   height: 100px;
   object-fit: contain;
-  border: 2px solid #5d4e37;
+  border: 2px solid #3d3228;
 }
 
 .petModalName {
   font-weight: 700;
-  color: #5d4e37;
+  color: #3d3228;
   font-size: 1rem;
 }
 
@@ -1188,20 +1196,20 @@
   flex: 1;
   height: 10px;
   background: rgba(93, 78, 55, 0.2);
-  border-radius: 0;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .petModalHpFill {
   height: 100%;
-  background: #7b6857;
-  border-radius: 0;
+  background: #8b7355;
+  border-radius: 10px;
   transition: width 0.2s ease;
 }
 
 .petModalHpText {
   font-size: 0.85rem;
-  color: #5d4e37;
+  color: #3d3228;
   flex-shrink: 0;
 }
 
@@ -1213,20 +1221,20 @@
 
 .petInteractionBtn {
   padding: 10px 20px;
-  border: 1px solid #5d4e37;
-  border-radius: 0;
+  border: 1px solid #3d3228;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
   transition: all 0.2s ease;
   background: #f5efe0;
-  color: #5d4e37;
+  color: #3d3228;
   font-family: "Cinzel", serif;
   min-width: 80px;
 }
 
 .petInteractionBtn:hover {
-  background: #5d4e37;
+  background: #3d3228;
   color: #f5efe0;
 }
 
@@ -1237,9 +1245,9 @@
   font-weight: bold;
   margin-top: 10px;
   padding: 6px 12px;
-  background: #5d4e37;
-  border-radius: 0;
-  border: 1px solid #8b7a6b;
+  background: #3d3228;
+  border-radius: 10px;
+  border: 1px solid #9a8060;
 }
 
 .petMoodDisplay {
@@ -1249,18 +1257,18 @@
   margin-top: 15px;
   padding: 8px 12px;
   background: rgba(93, 78, 55, 0.1);
-  border-radius: 0;
-  border: 1px solid #5d4e37;
+  border-radius: 10px;
+  border: 1px solid #3d3228;
 }
 
 .moodLabel {
-  color: #5d4e37;
+  color: #3d3228;
   font-weight: bold;
   font-size: 0.9rem;
 }
 
 .moodValue {
-  color: #8b7a6b;
+  color: #9a8060;
   font-weight: bold;
   font-size: 0.9rem;
 }
@@ -1277,8 +1285,8 @@
   margin-top: 15px;
   padding: 8px 12px;
   background: rgba(93, 78, 55, 0.1);
-  border-radius: 0;
-  border: 1px solid #5d4e37;
+  border-radius: 10px;
+  border: 1px solid #3d3228;
 }
 
 .petStatItem {
@@ -1288,13 +1296,13 @@
 }
 
 .statLabel {
-  color: #5d4e37;
+  color: #3d3228;
   font-weight: bold;
   font-size: 0.85rem;
 }
 
 .statValue {
-  color: #8b7a6b;
+  color: #9a8060;
   font-weight: bold;
   font-size: 0.85rem;
 }
@@ -1319,16 +1327,16 @@
   width: 100px;
   height: 8px;
   background: rgba(0, 0, 0, 0.4);
-  border-radius: 0;
+  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #7b6857;
+  border: 1px solid rgba(201, 168, 108, 0.35);
 }
 
 .petHpFill {
   height: 100%;
   background: linear-gradient(90deg, #ff4444 0%, #ffaa44 50%, #44ff44 100%);
   transition: width 0.3s ease;
-  border-radius: 0;
+  border-radius: 10px;
 }
 
 .petHpText {

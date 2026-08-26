@@ -191,28 +191,30 @@ const NewsFeed = () => {
     const isDark =
       typeof document !== "undefined" &&
       !!document.querySelector('[data-theme="dark"]');
-    const bg = isDark ? "#252525" : "#F5EFE0";
     const fg = isDark ? "#e0e0e0" : "#2c2c2c";
-    const scrollbarHide =
-      "scrollbar-width:none;-ms-overflow-style:none;} html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;}";
     const idEsc = JSON.stringify(String(itemId || ""));
     const reportHeight = itemId != null && itemId !== ""
       ? `<script>(function(){try{var h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);window.parent.postMessage({type:'newsIframeHeight',id:${idEsc},height:h},'*');}catch(e){}})();<\/script>`
       : "";
     return `<!DOCTYPE html>
-<html style="background:${bg}">
+<html style="background:transparent">
 <head><meta charset="utf-8"/>
-<style>html,body{margin:0;padding:0;background:${bg}!important;color:${fg};box-sizing:border-box;}*{box-sizing:inherit;} html,body{${scrollbarHide}}</style>
+<style>
+html,body{margin:0;padding:0;background:transparent!important;color:${fg};box-sizing:border-box;overflow:auto;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+*{box-sizing:inherit;scrollbar-width:none!important;-ms-overflow-style:none!important;}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}
+[style*="overflow-y: auto"],[style*="overflow-y:auto"],[style*="overflow: auto"],[style*="overflow:auto"],[style*="overflow-y: scroll"],[style*="overflow-y:scroll"]{background:transparent!important;background-color:transparent!important;}
+</style>
 </head>
-<body>${raw}${reportHeight}</body>
+<body style="background:transparent">${raw}${reportHeight}</body>
 </html>`;
   };
 
   return (
     <div className={styles.newsFeedWrapper}>
-      {/* Dropdown for posting news — tar lite plass når lukket */}
-      {isAdminOrTeacher && (
-        <div className={styles.newsAdminDropdown}>
+      <div className={styles.newsBoardHead}>
+        <h2 className={styles.newsBoardTitle}>News</h2>
+        {isAdminOrTeacher && (
           <button
             type="button"
             className={styles.newsAdminToggle}
@@ -221,47 +223,46 @@ const NewsFeed = () => {
             aria-controls="news-post-form"
             id="news-post-toggle"
           >
-            <span>{postFormOpen ? "Close" : "Post news"}</span>
-            <span className={styles.newsAdminToggleIcon} aria-hidden>
-              {postFormOpen ? " ▲" : " ▼"}
-            </span>
+            {postFormOpen ? "Close" : "Post"}
           </button>
-          <div
-            id="news-post-form"
-            className={postFormOpen ? styles.newsAdminFormOpen : styles.newsAdminFormClosed}
-            role="region"
-            aria-labelledby="news-post-toggle"
-          >
-            <div className={styles.newsAdminContainer}>
-              <input
-                id="news-post-title"
-                name="newsPostTitle"
-                type="text"
-                value={titles}
-                onChange={(e) => setTitles(e.target.value)}
-                placeholder="Title"
-                required
-                spellCheck
-                lang="en"
-              />
-              <textarea
-                id="news-post-content"
-                name="newsPostContent"
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder="news here"
-                className={styles.textArea}
-                required
-                spellCheck
-                lang="en"
-              />
-              <Button
-                onClick={handlePostSubmit}
-                className={styles.handlePostSubmit}
-              >
-                Post
-              </Button>
-            </div>
+        )}
+      </div>
+      {isAdminOrTeacher && (
+        <div
+          id="news-post-form"
+          className={postFormOpen ? styles.newsAdminFormOpen : styles.newsAdminFormClosed}
+          role="region"
+          aria-labelledby="news-post-toggle"
+        >
+          <div className={styles.newsAdminContainer}>
+            <input
+              id="news-post-title"
+              name="newsPostTitle"
+              type="text"
+              value={titles}
+              onChange={(e) => setTitles(e.target.value)}
+              placeholder="Title"
+              required
+              spellCheck
+              lang="en"
+            />
+            <textarea
+              id="news-post-content"
+              name="newsPostContent"
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+              placeholder="news here"
+              className={styles.textArea}
+              required
+              spellCheck
+              lang="en"
+            />
+            <Button
+              onClick={handlePostSubmit}
+              className={styles.handlePostSubmit}
+            >
+              Post
+            </Button>
           </div>
         </div>
       )}
@@ -297,7 +298,7 @@ const NewsFeed = () => {
             )
               nameClass += ` ${styles.archivistName}`;
             return (
-              <div key={item.id}>
+              <div key={item.id} className={styles.newsPost}>
                 <div className={styles.newsContent}>
                   <div className={styles.newsInfo}>
                     <h3>{item.title}</h3>
@@ -356,9 +357,10 @@ const NewsFeed = () => {
                       <iframe
                         title={`News: ${item.title || "content"}`}
                         className={styles.codePostIframe}
+                        scrolling="no"
                         style={{
                           minHeight: 200,
-                          height: codeIframeHeights[item.id] || 800,
+                          height: codeIframeHeights[item.id] || 480,
                         }}
                         srcDoc={getCodePostHtml(item.content, item.id)}
                       />
@@ -379,9 +381,6 @@ const NewsFeed = () => {
                     </div>
                   )}
                 </div>
-                <br />
-                <br />
-                {/* Theese buttons is only displayed for the admin role */}
                 {isAdminOrTeacher && (
                   <Button
                     onClick={() => handleDeletePost(item.id)}

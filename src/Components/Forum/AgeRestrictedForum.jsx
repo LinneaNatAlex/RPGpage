@@ -12,20 +12,44 @@ export default function AgeRestrictedForum({ children }) {
   const allowed = user ? (loading ? null : !!userData?.ageVerified) : false;
 
   const [showRequest, setShowRequest] = useState(false);
-  if (allowed === null) return <div>Checking access...</div>;
+  if (allowed === null)
+    return (
+      <div
+        style={{
+          margin: "12px 0",
+          padding: "1.25rem 1.1rem",
+          background: "#f3eadc",
+          color: "#1a1410",
+          borderRadius: 12,
+          border: "1px solid rgba(201, 168, 108, 0.35)",
+        }}
+      >
+        Checking 18+ access…
+      </div>
+    );
   if (!allowed)
     return (
-      <div style={{ marginTop: 32 }}>
+      <div
+        style={{
+          margin: "12px 0",
+          padding: "1.25rem 1.1rem",
+          background: "#f3eadc",
+          color: "#1a1410",
+          borderRadius: 12,
+          border: "1px solid rgba(201, 168, 108, 0.35)",
+        }}
+      >
+        <div style={{ fontWeight: 700, marginBottom: 8 }}>18+ Forum</div>
         <div>You must be age verified to access the 18+ forum.</div>
         {!showRequest ? (
           <button
             style={{
               marginTop: 18,
               background: "#a084e8",
-              color: "#23232b",
+              color: "#2c241c",
               fontWeight: 700,
               border: 0,
-              borderRadius: 0,
+              borderRadius: 12,
               padding: "10px 24px",
               cursor: "pointer",
             }}

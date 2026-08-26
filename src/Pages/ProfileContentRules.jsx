@@ -29,12 +29,12 @@ const ProfileContentRules = () => {
       style={{
         maxWidth: 900,
         margin: "40px auto",
-        background: "linear-gradient(135deg, #5D4E37 0%, #6B5B47 100%)",
+        background: "linear-gradient(180deg, #3d3228 0%, #322820 100%)",
         color: "#F5EFE0",
-        borderRadius: 0,
+        borderRadius: 12,
         padding: 40,
         boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)",
-        border: "3px solid #7B6857",
+        border: "1px solid rgba(201, 168, 108, 0.32)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -46,8 +46,8 @@ const ProfileContentRules = () => {
           left: 0,
           right: 0,
           height: "4px",
-          background: "linear-gradient(90deg, #D4C4A8 0%, #7B6857 50%, #D4C4A8 100%)",
-          borderRadius: 0,
+          background: "linear-gradient(90deg, transparent, #c9a86c, #e8d5a3, #c9a86c, transparent)",
+          borderRadius: 12,
         }}
       />
       <h1 style={{ 
@@ -64,7 +64,7 @@ const ProfileContentRules = () => {
       <div
         style={{
           background: "rgba(245, 239, 224, 0.1)",
-          borderRadius: 0,
+          borderRadius: 12,
           padding: 24,
           border: "2px solid rgba(255, 255, 255, 0.2)",
           boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.1)",
