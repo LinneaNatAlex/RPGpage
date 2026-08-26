@@ -1,7 +1,13 @@
-/* Mobile-specific styles - only applied on mobile devices */
+/* Mobile-specific styles — ignored inside the dedicated mobile app shell */
 
-/* Mobile Layout Container */
+/* Mobile-specific styles — ignored inside the dedicated mobile app shell */
+
 @media (max-width: 768px) {
+  body.mobile-app-shell .header,
+  body.mobile-app-shell .topBar {
+    display: none !important;
+  }
+
   .rootContainer {
     display: flex;
     flex-direction: column;

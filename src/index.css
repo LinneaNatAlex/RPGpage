@@ -85,14 +85,14 @@ html:has(.mobile-app),
 html:has(.mobile-app-light),
 body.mobile-app-shell {
   color-scheme: dark;
-  background: #1c1410 !important;
-  background-color: #1c1410 !important;
+  background: #221a16 !important;
+  background-color: #221a16 !important;
   background-image: none !important;
 }
 
 body.mobile-app-shell,
 body.mobile-app-shell #root {
-  background-color: #1c1410 !important;
+  background-color: #221a16 !important;
   background-image: none !important;
   overscroll-behavior: none;
 }
@@ -101,23 +101,23 @@ body.mobile-app-shell #root {
   html,
   body {
     height: 100%;
-    background-color: #1c1410 !important;
+    background-color: #221a16 !important;
     background-image: none !important;
     color-scheme: dark;
   }
 
   :root {
-    background: #1c1410 !important;
+    background: #221a16 !important;
     color-scheme: dark;
   }
 
   body.mobile-app-shell {
-    background-color: #1c1410 !important;
+    background-color: #221a16 !important;
     background-image: none !important;
   }
 
   #root {
-    background-color: #1c1410;
+    background-color: #221a16;
     min-height: 100%;
   }
 

@@ -230,7 +230,7 @@ const MobileLayout = ({ children }) => {
     if (isMobile) {
       document.body.classList.add("mobile-app-shell");
       html.style.colorScheme = "dark";
-      html.style.backgroundColor = "#1c1410";
+      html.style.backgroundColor = "#221a16";
     } else {
       document.body.classList.remove("mobile-app-shell");
       html.style.colorScheme = "";
@@ -332,7 +332,7 @@ const MobileLayout = ({ children }) => {
 
   return (
     <div className={user ? "mobile-app" : "mobile-app-light"}>
-      <header className="app-topbar">
+      <div className="app-topbar" role="banner">
         <div className="app-topbar-titles">
           <p className="app-kicker">Vayloria</p>
           <h1 className="app-title">{screenTitle(location.pathname)}</h1>
@@ -427,9 +427,9 @@ const MobileLayout = ({ children }) => {
             </div>
           )}
         </div>
-      </header>
+      </div>
 
-      <main className={`mobile-main${showChat ? " mobile-main-chat-open" : ""}`}>
+      <div className={`mobile-main${showChat ? " mobile-main-chat-open" : ""}`} role="main">
         {/* Back to rules list when viewing a rule page or Library */}
         {isRulesOrLibraryPage(location.pathname) && location.pathname !== "/rules" && location.pathname !== "/rules/" && (
           <div className="mobile-rules-back-bar">
@@ -479,7 +479,7 @@ const MobileLayout = ({ children }) => {
             </div>
           </Suspense>
         )}
-      </main>
+      </div>
 
       {user && !showChat && (
         <nav className="app-tabbar" aria-label="Main">

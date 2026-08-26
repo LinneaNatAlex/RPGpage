@@ -1,174 +1,41 @@
-.mobile-page-content .characterDetailsContainer,
-.mobile-page-content .characterDetailsContainer *,
-.mobile-page-content .characterDetailsContainer a,
-.mobile-page-content .characterDetailsContainer strong,
-.mobile-page-content .characterDetailsContainer em,
-.mobile-page-content .characterDetailsContainer span,
-.mobile-page-content .characterDetailsContainer pre {
-  font-family: "Segoe UI", "Roboto", "Arial", "sans-serif" !important;
-  color: #8b7355 !important;
-  font-size: 1.1rem !important;
-  font-weight: 500 !important;
-  text-shadow: none !important;
-  background: transparent !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
+/* =============================================================================
+   Vayloria mobile shell — isolated from desktop.
+   Only applies under .mobile-app / .mobile-app-light.
+   Canvas color is #221a16 everywhere so Chrome cannot paint a white gap.
+   ============================================================================= */
+
+:root {
+  --v-shell: #221a16;
+  --v-bar: #2c241c;
+  --v-gold: #c9a86c;
+  --v-gold-bright: #e8d5a3;
+  --v-cream: #f3eadc;
+  --v-ink: #1a1410;
+  --v-tab: 58px;
 }
 
-.mobile-page-content .characterDetailsContainer {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background: transparent;
-  border-radius: 10px;
-  padding: 1rem;
-  border: 2px solid rgba(212, 196, 168, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: none;
-  font-family: "Segoe UI", "Roboto", "Arial", "sans-serif";
-}
-.mobile-page-content .characterDetailsContainer h2 {
-  color: #8b7355;
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 1.5rem 0;
-  text-align: center;
-}
-.mobile-page-content .characterDetailsContainer p,
-.mobile-page-content .characterDetailsContainer span,
-.mobile-page-content .characterDetailsContainer strong,
-.mobile-page-content .characterDetailsContainer em,
-.mobile-page-content .characterDetailsContainer a {
-  color: #8b7355;
-  font-size: 1.1rem;
-  font-weight: 500;
-  font-family: inherit;
-  background: transparent;
-  text-shadow: none;
-}
-.mobile-page-content .characterDetailsContainer a {
-  text-decoration: underline;
-}
-.mobile-page-content .characterDetailsContainer a:hover {
-  color: #9a8060;
-}
-.mobile-page-content .characterDetailsContainer pre {
-  background: rgba(201, 168, 108, 0.1);
-  padding: 0.5rem;
-  font-family: monospace;
-}
-  background: rgba(201, 168, 108, 0.1) !important;
-  padding: 0.5rem !important;
-  font-family: monospace !important;
-}
-/* --- Make characterDetailsContainer on mobile match My Profile --- */
-/* Eksakt kopi av My Profile stil for characterDetailsContainer på mobil */
-.mobile-page-content .characterDetailsContainer {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background: transparent;
-  border-radius: 10px;
-  padding: 1rem;
-  border: 2px solid rgba(212, 196, 168, 0.3);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: none;
-  font-family: "Segoe UI", "Roboto", "Arial", "sans-serif";
-}
-
-.mobile-page-content .characterDetailsContainer h2 {
-  color: #8b7355 !important;
-  font-size: 2rem !important;
-  font-weight: 700 !important;
-  margin: 0 0 1.5rem 0 !important;
-  text-align: center !important;
-  text-shadow: none !important;
-  font-family: inherit !important;
-}
-
-.mobile-page-content .characterDetailsContainer p {
-  color: #8b7355 !important;
-  font-size: 1.1rem !important;
-  margin: 0.5rem 0 !important;
-  font-weight: 500 !important;
-  text-shadow: none !important;
-  font-family: inherit !important;
-}
-/* --- Make characterDetailsContainer on mobile match My Profile --- */
-.mobile-page-content .characterDetailsContainer {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background: transparent;
-  border-radius: 10px;
-  padding: 1rem;
-  border: 2px solid rgba(212, 196, 168, 0.3);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: none;
-}
-/* Mobile App - Dark Mode with Red Undertone */
-.mobile-app {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  max-height: 100dvh;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  background: #1c1410;
-  color: #f3eadc;
-  font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
-  cursor: default !important;
-  align-items: stretch;
-  justify-content: flex-start;
-  padding: 0;
-  margin: 0;
-}
-
-/* Force dark mode for all mobile content */
-
-/* Mobile App - Light Mode (when logged out) */
+.mobile-app,
 .mobile-app-light {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
-  max-height: 100dvh;
   width: 100%;
-  max-width: 100%;
+  height: 100svh;
+  max-height: 100svh;
   overflow: hidden;
-  background: #1c1410;
-  color: #f3eadc;
-  font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
-  cursor: default !important;
-  align-items: stretch;
-  justify-content: flex-start;
+  background: var(--v-shell);
+  color: var(--v-cream);
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   margin: 0;
   padding: 0;
+  isolation: isolate;
 }
 
-/* Ensure all mobile containers stretch to full width */
-.mobile-app > *,
-.mobile-app-light > * {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* Remove all cursor styling on mobile - use default touch interface */
 .mobile-app *,
 .mobile-app-light * {
-  cursor: auto !important;
+  box-sizing: border-box;
+  cursor: auto;
 }
 
-/* Disable any magical cursors or special cursor effects on mobile */
 .mobile-app .magical-cursor,
 .mobile-app .cursor-trail,
 .mobile-app .sparkle-cursor,
@@ -178,2549 +45,18 @@
   display: none !important;
 }
 
-/* Mobile Status Bar – leftover chrome, never show */
-.mobile-status-bar {
-  display: none !important;
-  height: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
-}
-
-.mobile-status-left {
-  color: #f5efe0;
-}
-
-.mobile-status-right {
-  display: flex;
-  gap: 8px;
-  color: #f5efe0;
-}
-
-/* Mobile Header */
-.mobile-header {
-  background: rgba(28, 20, 16, 0.96);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(201, 168, 108, 0.35);
-  padding: 14px 18px;
-}
-
-.mobile-logo-text {
-  font-size: 1.25rem;
-  font-weight: 700;
-  font-family: "Cinzel", Palatino, serif;
-  color: #faf6ee;
-  margin: 0;
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-}
-
-.mobile-header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.mobile-logo-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mobile-logo-icon {
-  font-size: 1.8rem;
-  background: linear-gradient(45deg, #ffd700, #ffed4e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Light Mode Overrides for logged out state */
-.mobile-app-light .mobile-status-bar {
-  background: rgba(232, 221, 212, 0.9);
-}
-
-.mobile-app-light .mobile-status-left,
-.mobile-app-light .mobile-status-right {
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-header {
-  background: rgba(232, 221, 212, 0.95);
-  border-bottom: 1px solid rgba(93, 78, 55, 0.3);
-}
-
-.mobile-app-light .mobile-logo-text {
-  color: #2c1810;
-  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
-}
-
-.mobile-user-section {
-  display: flex;
-  align-items: center;
-}
-
-.mobile-user-avatar {
-  position: relative;
-}
-
-.mobile-user-avatar img {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-user-level {
-  position: absolute;
-  bottom: -5px;
-  right: -5px;
-  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-  color: white;
-  font-size: 0.6rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 10px;
-  border: 2px solid white;
-}
-
-/* Mobile Main Content */
-.mobile-main {
-  flex: 1;
-  min-height: 0;
-  padding: 8px 8px calc(72px + env(safe-area-inset-bottom, 0px));
-  margin: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  box-sizing: border-box;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  background: #1c1410;
-}
-
-.mobile-main::-webkit-scrollbar {
-  display: none;
-}
-
-/* Mobile Home Page */
-.mobile-welcome-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 25px;
-  margin-bottom: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  text-align: center;
-}
-
-.mobile-welcome-card h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 10px 0;
-  color: #ffffff;
-}
-
-.mobile-welcome-card p {
-  font-size: 1rem;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.mobile-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.mobile-stat-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 20px 15px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.mobile-stat-icon {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
-}
-
-.mobile-stat-value {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 4px;
-}
-
-.mobile-stat-label {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 500;
-}
-
-.mobile-quick-actions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.mobile-action-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 25px 20px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  color: inherit;
-}
-
-.mobile-action-card:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.mobile-action-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.mobile-action-text {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-/* Mobile Chat Page */
-.mobile-chat-page {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 20px;
-  height: calc(100vh - 200px);
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.mobile-chat-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-}
-
-.mobile-chat-switch {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  padding: 8px 16px;
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.mobile-chat-switch:active {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.mobile-global-chat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-messages {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-
-.mobile-message {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 12px 15px;
-  margin-bottom: 10px;
-}
-
-.mobile-message-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.mobile-message-sender {
-  font-weight: 600;
-  color: #ffffff;
-  font-size: 0.9rem;
-}
-
-.mobile-message-time {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.mobile-message-text {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
-}
-
-.mobile-message-input {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.mobile-input {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  padding: 12px 18px;
-  color: #ffffff;
-  font-size: 1rem;
-  outline: none;
-}
-
-.mobile-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.mobile-send-btn {
-  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-  border: none;
-  border-radius: 10px;
-  padding: 12px 20px;
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.mobile-send-btn:active {
-  transform: scale(0.95);
-}
-
-/* Mobile Private Chat */
-.mobile-private-chat-page {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-user-search {
-  margin-bottom: 20px;
-}
-
-.mobile-search-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  padding: 12px 18px;
-  color: #ffffff;
-  font-size: 1rem;
-  outline: none;
-}
-
-.mobile-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.mobile-user-list {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.mobile-user-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.mobile-user-item:active {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.mobile-user-item img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.mobile-user-item span {
-  color: #ffffff;
-  font-weight: 500;
-  flex: 1;
-}
-
-.mobile-online-dot {
-  width: 12px;
-  height: 12px;
-  background: #4ade80;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-}
-
-/* Mobile Online Page */
-.mobile-online-page {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 20px;
-}
-
-.mobile-online-page h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 20px 0;
-}
-
-.mobile-online-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.mobile-online-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.mobile-online-item img {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.mobile-online-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.mobile-online-name {
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.mobile-online-status {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.8rem;
-}
-
-/* Mobile Profile Page */
-.mobile-profile-page {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 25px;
-  text-align: center;
-}
-
-.mobile-profile-header {
-  margin-bottom: 30px;
-}
-
-.mobile-profile-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 15px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-profile-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 8px 0;
-}
-
-.mobile-profile-header p {
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-}
-
-.mobile-profile-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.mobile-profile-stat {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.mobile-profile-stat-label {
-  color: #ffffff;
-  font-weight: 600;
-  min-width: 60px;
-  text-align: left;
-}
-
-.mobile-profile-bar {
-  flex: 1;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.mobile-profile-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
-  border-radius: 10px;
-  transition: width 0.3s ease;
-}
-
-.mobile-profile-stat-value {
-  color: #ffffff;
-  font-weight: 600;
-  min-width: 50px;
-  text-align: right;
-}
-
-/* Mobile Dashboard Button */
-.mobile-dashboard-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10000;
-}
-
-.mobile-dashboard-btn {
-  background: linear-gradient(135deg, #3d3228 0%, #9a8060 100%);
-  border: 1px solid rgba(201, 168, 108, 0.32);
-  border-radius: 10px;
-  padding: 15px 20px;
-  color: #f5efe0;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(93, 78, 55, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10000;
-}
-
-.mobile-dashboard-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 10px rgba(93, 78, 55, 0.6);
-}
-
-.mobile-dashboard-icon {
-  font-size: 1.2rem;
-}
-
-.mobile-dashboard-label {
-  font-size: 0.9rem;
-}
-
-/* Mobile Dashboard Overlay */
-.mobile-dashboard-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 11, 8, 0.95) 0%,
-    rgba(45, 26, 21, 0.95) 100%
-  );
-  backdrop-filter: blur(10px);
-  z-index: 10001;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  box-sizing: border-box;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  max-height: 100vh;
-  max-height: 100dvh; /* Dynamic viewport height for mobile browsers */
-}
-
-/* Hide scrollbars in mobile layout */
-.mobile-dashboard::-webkit-scrollbar,
-.mobile-messages::-webkit-scrollbar,
-.mobile-user-list::-webkit-scrollbar,
-.mobile-rules-list::-webkit-scrollbar,
-.mobile-announcements::-webkit-scrollbar {
-  display: none;
-}
-
-.mobile-dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding: 12px;
-  background: rgba(139, 69, 19, 0.3);
-  border-radius: 10px;
-  flex-shrink: 0;
-  min-height: 60px;
-}
-
-.mobile-dashboard-header h2 {
-  color: #ffffff;
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.mobile-dashboard-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mobile-menu-notification-wrap {
-  position: relative;
-}
-
-.mobile-menu-notification-bell {
-  background: transparent;
-  border: none;
-  color: #f5efe0;
-  padding: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border-radius: 10px;
-}
-
-.mobile-menu-notification-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: #ff5e5e;
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-menu-notification-popup {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 6px;
-  width: min(320px, 90vw);
-  max-height: 60vh;
-  background: #2e2e2e;
-  border: 1px solid #555;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  z-index: 10020;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.mobile-menu-notification-popup-header {
-  padding: 10px 12px;
-  border-bottom: 1px solid #444;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  font-weight: 600;
-  color: #f5f5f5;
-}
-
-.mobile-menu-notification-mark-read {
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
-  color: #1a1410;
-  border: 1px solid rgba(255, 236, 190, 0.35);
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.mobile-menu-notification-popup-list {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 6px 0;
-}
-
-.mobile-menu-notification-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  text-align: left;
-  width: 100%;
-  background: none;
-  border: none;
-  color: #e0e0e0;
-  font-size: 0.9rem;
-  cursor: pointer;
-  border-radius: 10px;
-}
-
-.mobile-menu-notification-item:active {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.mobile-menu-notification-icon {
-  flex-shrink: 0;
-  font-size: 1rem;
-}
-
-.mobile-menu-notification-empty {
-  margin: 0;
-  padding: 16px 12px;
-  color: #999;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.mobile-dashboard-close {
-  background: rgba(255, 107, 107, 0.3);
-  border: 1px solid rgba(255, 107, 107, 0.5);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  color: #ffffff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-dashboard-close:active {
-  background: rgba(255, 107, 107, 0.5);
-  transform: scale(0.95);
-}
-
-.mobile-dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  flex: 1;
-  align-content: start;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 10px;
-  box-sizing: border-box;
-  min-height: 0; /* Allow flex item to shrink */
-  padding-bottom: 20px; /* Extra space at bottom for scrolling */
-}
-
-.mobile-dashboard-item {
-  background: rgba(139, 69, 19, 0.2);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(139, 69, 19, 0.4);
-  border-radius: 10px;
-  padding: 15px 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: #f5efe0;
-  text-decoration: none;
-  -webkit-tap-highlight-color: rgba(139, 69, 19, 0.3);
-  min-height: 100px;
-  max-height: 120px;
-}
-
-.mobile-dashboard-item:active {
-  transform: scale(0.95);
-  background: rgba(139, 69, 19, 0.4);
-}
-
-.mobile-dashboard-item.active {
-  background: rgba(139, 69, 19, 0.5);
-  border: 1px solid rgba(205, 133, 63, 0.6);
-  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.4);
-}
-
-.mobile-dashboard-item-icon {
-  font-size: 1.45rem;
-  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", sans-serif;
-  color: #e8d5a3;
-  line-height: 1;
-}
-
-.mobile-dashboard-item-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.2;
-}
-
-/* Logout Button Special Styling */
-.mobile-dashboard-item.logout-btn {
-  background: rgba(205, 92, 92, 0.2);
-  border: 1px solid rgba(205, 92, 92, 0.4);
-}
-
-.mobile-dashboard-item.logout-btn:active {
-  background: rgba(205, 92, 92, 0.4);
-}
-
-.mobile-dashboard-item.logout-btn:hover {
-  background: rgba(205, 92, 92, 0.3);
-  border: 1px solid rgba(205, 92, 92, 0.6);
-}
-
-/* Light Mode Dashboard Styling - Only shown when logged in */
-.mobile-app-light .mobile-dashboard-overlay {
-  background: rgba(232, 221, 212, 0.95);
-}
-
-.mobile-app-light .mobile-dashboard-header {
-  background: rgba(139, 122, 107, 0.2);
-  border-bottom: 1px solid rgba(139, 122, 107, 0.3);
-}
-
-.mobile-app-light .mobile-dashboard-header h2 {
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-dashboard-close {
-  background: rgba(139, 122, 107, 0.2);
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-menu-notification-bell {
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-menu-notification-popup {
-  background: #f5efe0;
-  border-color: #d4c4a8;
-}
-
-.mobile-app-light .mobile-menu-notification-popup-header {
-  border-bottom-color: rgba(212, 196, 168, 0.5);
-  color: #2c2c2c;
-}
-
-.mobile-app-light .mobile-menu-notification-mark-read {
-  background: rgba(201, 168, 108, 0.2);
-  color: #3d3228;
-  border-color: rgba(201, 168, 108, 0.3);
-}
-
-.mobile-app-light .mobile-menu-notification-item {
-  color: #2c2c2c;
-}
-
-.mobile-app-light .mobile-menu-notification-item:active {
-  background: rgba(201, 168, 108, 0.15);
-}
-
-.mobile-app-light .mobile-menu-notification-empty {
-  color: #8b7355;
-}
-
-.mobile-app-light .mobile-dashboard-item {
-  background: rgba(139, 122, 107, 0.1);
-  border: 1px solid rgba(139, 122, 107, 0.2);
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-dashboard-item:active {
-  background: rgba(139, 122, 107, 0.2);
-}
-
-.mobile-app-light .mobile-dashboard-item.active {
-  background: rgba(139, 122, 107, 0.3);
-  border: 1px solid rgba(139, 122, 107, 0.5);
-}
-
-/* Samsung S25 Ultra and other tall screens optimization */
-@media (min-height: 1000px) {
-  .mobile-dashboard-overlay {
-    padding: 8px;
-  }
-
-  .mobile-dashboard-header {
-    margin-bottom: 10px;
-    padding: 10px;
-    min-height: 50px;
-  }
-
-  .mobile-dashboard-header h2 {
-    font-size: 1.6rem;
-  }
-
-  .mobile-dashboard-grid {
-    gap: 8px;
-    padding: 8px;
-    padding-bottom: 30px;
-  }
-
-  .mobile-dashboard-item {
-    padding: 12px 10px;
-    min-height: 90px;
-    max-height: 110px;
-  }
-
-  .mobile-dashboard-item-icon {
-    font-size: 2rem;
-  }
-
-  .mobile-dashboard-item-label {
-    font-size: 0.8rem;
-  }
-}
-
-/* Extra tall screens (like Samsung S25 Ultra) */
-@media (min-height: 1200px) {
-  .mobile-dashboard-grid {
-    padding-bottom: 40px;
-  }
-
-  .mobile-dashboard-item {
-    min-height: 85px;
-    max-height: 100px;
-  }
-
-  .mobile-rules-list {
-    gap: 15px;
-    padding-bottom: 120px; /* Extra space for menu button on tall screens */
-    max-height: calc(100vh - 150px);
-  }
-
-  .mobile-rules-grid {
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .mobile-rules-item {
-    padding: 10px 8px;
-    min-height: 80px;
-    max-height: 100px;
-  }
-
-  .mobile-rules-icon {
-    font-size: 1.6rem;
-  }
-
-  .mobile-rules-name {
-    font-size: 0.7rem;
-  }
-}
-
-/* Samsung S25 Ultra and similar ultra-tall screens */
-@media (min-height: 1400px) {
-  .mobile-rules-list {
-    padding-bottom: 180px; /* Maximum space for ultra-tall screens */
-    max-height: calc(100vh - 250px);
-  }
-
-  .mobile-dashboard-btn {
-    bottom: 30px;
-    right: 30px;
-  }
-}
-
-/* Mobile Forum List */
-.mobile-forum-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-bottom: 100px; /* More space for menu button */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  /* Fixed height to show ~5 items at once */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-}
-
-/* Mobile Rules List */
-.mobile-rules-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-bottom: 100px; /* More space for menu button */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* Fixed height to show ~5 items at once */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-}
-
-.mobile-rules-category h3 {
-  color: #ffffff;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-  text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.mobile-rules-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.mobile-rules-item {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 12px 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  color: #ffffff;
-  text-decoration: none;
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-  min-height: 90px;
-  max-height: 110px;
-}
-
-.mobile-rules-item:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.mobile-rules-item.special {
-  background: rgba(255, 107, 107, 0.2);
-  border: 1px solid rgba(255, 107, 107, 0.3);
-}
-
-.mobile-rules-item.special:active {
-  background: rgba(255, 107, 107, 0.3);
-}
-
-.mobile-rules-icon {
-  font-size: 1.8rem;
-}
-
-.mobile-rules-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.1;
-}
-
-/* Mobile Forum List */
-.mobile-forum-list {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  max-height: 60vh; /* Limit height */
-  overflow-y: auto; /* Add scroll */
-  padding-right: 10px; /* Space for scrollbar */
-}
-
-/* Mobile Rules List */
-.mobile-rules-list {
-  max-height: 60vh; /* Limit height */
-  overflow-y: auto; /* Add scroll */
-  padding-right: 10px; /* Space for scrollbar */
-}
-
-.mobile-forum-category h3 {
-  color: #ffffff;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0 0 15px 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.mobile-forum-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.mobile-forum-item {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 20px 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  color: #ffffff;
-  text-decoration: none;
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-}
-
-.mobile-forum-item:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.mobile-forum-item.special {
-  background: rgba(255, 107, 107, 0.2);
-  border: 1px solid rgba(255, 107, 107, 0.4);
-}
-
-.mobile-forum-item.special:active {
-  background: rgba(255, 107, 107, 0.3);
-}
-
-.mobile-forum-icon {
-  font-size: 2rem;
-}
-
-.mobile-forum-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.2;
-}
-
-/* Mobile Scrollbars */
-.mobile-main::-webkit-scrollbar,
-.mobile-messages::-webkit-scrollbar,
-.mobile-user-list::-webkit-scrollbar,
-.mobile-overlay-content::-webkit-scrollbar,
-.mobile-forum-list::-webkit-scrollbar,
-.mobile-rules-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.mobile-main::-webkit-scrollbar-track,
-.mobile-messages::-webkit-scrollbar-track,
-.mobile-user-list::-webkit-scrollbar-track,
-.mobile-overlay-content::-webkit-scrollbar-track,
-.mobile-forum-list::-webkit-scrollbar-track,
-.mobile-rules-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.mobile-main::-webkit-scrollbar-thumb,
-.mobile-messages::-webkit-scrollbar-thumb,
-.mobile-user-list::-webkit-scrollbar-thumb,
-.mobile-overlay-content::-webkit-scrollbar-thumb,
-.mobile-forum-list::-webkit-scrollbar-thumb,
-.mobile-rules-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-}
-
-/* Mobile Component Containers */
-
-.mobile-topbar-container {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.mobile-topbar-container::-webkit-scrollbar {
-  display: none;
-}
-
-.mobile-page-content {
-  background: transparent;
-  backdrop-filter: none;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-  border: none;
-  min-height: auto;
-  overflow-y: visible;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  display: block;
-  position: relative;
-  left: 0;
-  right: 0;
-  color: inherit;
-  box-shadow: none;
-}
-
-.mobile-page-content::-webkit-scrollbar {
-  display: none;
-}
-
-/* Light Mode Mobile Page Content */
-.mobile-app-light .mobile-page-content {
-  background: rgba(245, 239, 224, 0.9);
-  border: 1px solid rgba(139, 122, 107, 0.4);
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-section-card {
-  background: rgba(139, 122, 107, 0.15);
-  border: 1px solid rgba(139, 122, 107, 0.2);
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-section-card:active {
-  background: rgba(139, 122, 107, 0.25);
-}
-
-/* Mobile Home Sections */
-.mobile-home-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.mobile-section-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  border-radius: 12px;
-  padding: 18px;
-  border: 1px solid rgba(201, 168, 108, 0.28);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.mobile-welcome-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  border-radius: 14px;
-  padding: 28px 22px;
-  border: 1px solid rgba(201, 168, 108, 0.28);
-  text-align: center;
-  margin: 8px auto;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.mobile-section-card:active {
-  transform: scale(0.98);
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.mobile-section-icon {
-  font-size: 2rem;
-  min-width: 50px;
-  text-align: center;
-}
-
-.mobile-section-content {
-  flex: 1;
-}
-
-.mobile-welcome-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
-}
-
-.mobile-welcome-content h3 {
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 10px 0;
-}
-
-.mobile-welcome-content p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.mobile-section-content h3 {
-  color: #ffffff;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin: 0 0 5px 0;
-}
-
-.mobile-section-content p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.mobile-section-arrow {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-/* Mobile Overlays */
-.mobile-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  overflow: visible;
-  box-sizing: border-box;
-}
-
-.mobile-overlay-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 14px 16px;
-  background: rgba(44, 34, 28, 0.85);
-  border: 1px solid rgba(201, 168, 108, 0.28);
-  border-radius: 12px;
-}
-
-.mobile-overlay-header h2 {
-  color: #ffffff;
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.mobile-overlay-close {
-  background: rgba(255, 107, 107, 0.3);
-  border: 1px solid rgba(255, 107, 107, 0.5);
-  border-radius: 10px;
-  padding: 8px 12px;
-  color: #ffffff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.mobile-overlay-close:active {
-  background: rgba(255, 107, 107, 0.5);
-}
-
-.mobile-overlay-content {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 15px;
-  overflow: visible;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.mobile-chat-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.mobile-topbar-container::-webkit-scrollbar {
-  display: none;
-}
-
-.mobile-topbar-container::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.mobile-topbar-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-}
-
-.mobile-global-chat-container,
-.mobile-private-chat-container {
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 100%;
-  background: #f3eadc;
-  border-radius: 0;
-  overflow: hidden;
-  border: none;
-  box-sizing: border-box;
-}
-
-/* Private chat: constrain width so input row fits container */
-.mobile-private-chat-container .private-chat-mobile,
-.mobile-private-chat-container .privateChat {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  overflow-x: hidden !important;
-}
-
-.mobile-private-chat-container [class*="chatContainer"] {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-}
-
-/* Keep private chat input always visible at bottom; fit inside container */
-.mobile-private-chat-container .private-chat-form-mobile {
-  flex-shrink: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  min-width: 0 !important;
-  padding: 0.5rem 0.75rem !important;
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
-  overflow: hidden !important;
-}
-.mobile-private-chat-container .private-chat-form-mobile > div {
-  min-width: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  gap: 6px !important;
-  overflow: hidden !important;
-}
-.mobile-private-chat-container .private-chat-form-mobile input[type="text"] {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  flex: 1 1 0% !important;
-  width: 0 !important; /* allow flex shrink */
-}
-.mobile-private-chat-container .private-chat-form-mobile button[type="submit"] {
-  min-width: 48px !important;
-  flex-shrink: 0 !important;
-}
-.mobile-private-chat-container .private-chat-form-mobile button[type="button"] {
-  flex-shrink: 0 !important;
-}
-/* Brukertagger mer kompakt på mobil */
-.mobile-private-chat-container .activeChatsRow {
-  gap: 6px !important;
-  margin-top: 6px !important;
-}
-.mobile-private-chat-container .activeChatsRow button {
-  padding: 4px 8px !important;
-  font-size: 0.9rem !important;
-}
-
-/* Search and content area: stay within container width */
-.mobile-private-chat-container input#private-chat-search-user {
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-.mobile-private-chat-container #private-chat-message {
-  box-sizing: border-box !important;
-}
-
-.mobile-online-container {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
-  padding: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-/* Override desktop component styles for mobile */
-
-.mobile-topbar-container .topBar {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  max-width: none !important;
-}
-
-.mobile-topbar-container .topBar * {
-  color: #ffffff !important;
-}
-
-.mobile-topbar-container .topBar button {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
-}
-
-.mobile-topbar-container .topBar button:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
-}
-
-.mobile-chat-overlay .mobile-chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0;
-  padding: 10px 12px;
-  background: #322820;
-  border-bottom: 1px solid rgba(201, 168, 108, 0.28);
-  border-radius: 0;
-  flex-shrink: 0;
-}
-
-.mobile-chat-overlay .mobile-chat-header h2 {
-  color: #f3eadc;
-  margin: 0;
-  font-size: 1.15rem;
-  font-family: "Cinzel", Palatino, serif;
-}
-
-.mobile-chat-overlay .mobile-chat-switch,
-.mobile-chat-overlay .mobile-chat-close {
-  background: rgba(201, 168, 108, 0.22);
-  border: 1px solid rgba(201, 168, 108, 0.4);
-  border-radius: 10px;
-  padding: 8px 16px;
-  color: #f3eadc;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.mobile-chat-overlay .mobile-chat-close {
-  background: rgba(201, 168, 108, 0.22);
-  border: 1px solid rgba(201, 168, 108, 0.4);
-  padding: 8px 12px;
-  font-size: 1.2rem;
-}
-
-.mobile-global-chat-container .chat,
-.mobile-private-chat-container .privateChat,
-.mobile-private-chat-container .private-chat-mobile {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  height: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 0 !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-}
-
-/* Global chat: message input row fits container */
-.mobile-global-chat-container .chatForm {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-
-.mobile-global-chat-container .chatFormRow,
-.mobile-global-chat-container .chatInputWrap {
-  width: 100% !important;
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-}
-
-.mobile-global-chat-container .chatForm .chatInput,
-.mobile-global-chat-container .chatForm input[type="text"] {
-  min-width: 0 !important;
-  max-width: none !important;
-  width: auto !important;
-  flex: 1 1 auto !important;
-}
-.mobile-global-chat-container .chatForm .chatBtn,
-.mobile-global-chat-container .chatForm button[type="submit"] {
-  flex-shrink: 0 !important;
-}
-
-.mobile-global-chat-container .chat input,
-.mobile-private-chat-container .privateChat input,
-.mobile-private-chat-container .private-chat-mobile input {
-  background: #faf6ee !important;
-  border: 1px solid rgba(201, 168, 108, 0.5) !important;
-  color: #1a1410 !important;
-  border-radius: 10px !important;
-}
-
-.mobile-global-chat-container .chat input::placeholder,
-.mobile-private-chat-container .privateChat input::placeholder,
-.mobile-private-chat-container .private-chat-mobile input::placeholder {
-  color: #5c4e3e !important;
-  opacity: 1 !important;
-}
-
-.mobile-global-chat-container .chat button[type="submit"],
-.mobile-private-chat-container .private-chat-form-mobile button[type="submit"] {
-  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%) !important;
-  border: 1px solid rgba(255, 236, 190, 0.3) !important;
-  color: #1a1410 !important;
-  border-radius: 8px !important;
-}
-
-.mobile-private-chat-container .private-chat-mobile-title {
-  display: none;
-}
-
-.mobile-private-chat-container .activeChatsRow button > span {
-  background: #efe4d4 !important;
-  color: #1a1410 !important;
-}
-
-.mobile-online-container .onlineUsersContainer {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.mobile-online-container .onlineUsersContainer * {
-  color: #ffffff !important;
-}
-
-.mobile-online-container .onlineUsersList {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-}
-
-.mobile-online-container .onlineUserItem {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 10px !important;
-  padding: 12px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Override styles for overlay components */
-.mobile-overlay-content .newsFeedContainer,
-.mobile-overlay-content .onlineUsersContainer,
-.mobile-overlay-content .rpgCalendarSidebar {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.mobile-overlay-content .newsFeedContainer *,
-.mobile-overlay-content .onlineUsersContainer *,
-.mobile-overlay-content .rpgCalendarSidebar * {
-  color: #ffffff !important;
-}
-
-.mobile-overlay-content .newsFeedContainer button,
-.mobile-overlay-content .onlineUsersContainer button,
-.mobile-overlay-content .rpgCalendarSidebar button {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
-}
-
-.mobile-overlay-content .newsFeedContainer input,
-.mobile-overlay-content .onlineUsersContainer input,
-.mobile-overlay-content .rpgCalendarSidebar input {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
-}
-
-.mobile-overlay-content .newsFeedContainer input::placeholder,
-.mobile-overlay-content .onlineUsersContainer input::placeholder,
-.mobile-overlay-content .rpgCalendarSidebar input::placeholder {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Override styles for InventoryModal in overlay */
-.mobile-overlay-content .inventoryModal {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  max-width: none !important;
-}
-
-.mobile-overlay-content .inventoryModal * {
-  color: #ffffff !important;
-}
-
-.mobile-overlay-content .inventoryModal button {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
-}
-
-.mobile-overlay-content .inventoryModal button:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
-}
-
-.mobile-overlay-content .inventoryModal input {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-  border-radius: 10px !important;
-}
-
-.mobile-overlay-content .inventoryModal input::placeholder {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Let inner pages keep their own type colors; only restore role colors here */
-.mobile-page-content h1,
-.mobile-page-content h2,
-.mobile-page-content h3,
-.mobile-page-content h4,
-.mobile-page-content h5,
-.mobile-page-content h6,
-.mobile-page-content p,
-.mobile-page-content div {
-  text-shadow: none;
-}
-
-/* Override role-based name colors for mobile */
-.mobile-page-content .headmasterName {
-  color: #ffffff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-.mobile-page-content .professorName {
-  color: gold !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-.mobile-page-content .shadowPatrolName {
-  color: #1ecb8c !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-.mobile-page-content .adminName {
-  color: #ff5e5e !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-.mobile-page-content .archivistName {
-  color: #a084e8 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Override race-based name colors for mobile */
-.mobile-page-content [style*="color: #1e3a8a"] {
-  color: #1e3a8a !important;
-}
-.mobile-page-content [style*="color: #dc2626"] {
-  color: #dc2626 !important;
-}
-.mobile-page-content [style*="color: #166534"] {
-  color: #166534 !important;
-}
-.mobile-page-content [style*="color: #06b6d4"] {
-  color: #06b6d4 !important;
-}
-.mobile-page-content [style*="color: #7c3aed"] {
-  color: #7c3aed !important;
-}
-.mobile-page-content [style*="color: #d97706"] {
-  color: #d97706 !important;
-}
-
-/* Specific mobile forum content styling */
-@media (max-width: 768px) {
-  .mobile-page-content p,
-  .mobile-page-content div,
-  .mobile-page-content li,
-  .mobile-page-content h1,
-  .mobile-page-content h2,
-  .mobile-page-content h3,
-  .mobile-page-content h4,
-  .mobile-page-content h5,
-  .mobile-page-content h6 {
-    font-family: inherit;
-    word-break: normal;
-    overflow-wrap: anywhere;
-  }
-
-  .mobile-page-content .headmasterName {
-    color: #ffffff !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-  .mobile-page-content .professorName {
-    color: gold !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-  .mobile-page-content .shadowPatrolName {
-    color: #1ecb8c !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-  .mobile-page-content .adminName {
-    color: #ff5e5e !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-  .mobile-page-content .archivistName {
-    color: #a084e8 !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .mobile-page-content [style*="color: #1e3a8a"] {
-    color: #1e3a8a !important;
-  }
-  .mobile-page-content [style*="color: #dc2626"] {
-    color: #dc2626 !important;
-  }
-  .mobile-page-content [style*="color: #166534"] {
-    color: #166534 !important;
-  }
-  .mobile-page-content [style*="color: #06b6d4"] {
-    color: #06b6d4 !important;
-  }
-  .mobile-page-content [style*="color: #7c3aed"] {
-    color: #7c3aed !important;
-  }
-  .mobile-page-content [style*="color: #d97706"] {
-    color: #d97706 !important;
-  }
-}
-
-.mobile-page-content input,
-.mobile-page-content textarea {
-  font-size: 16px !important; /* Prevents zoom on iOS */
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-user-select: text !important;
-  user-select: text !important;
-}
-
-.mobile-page-content input::placeholder,
-.mobile-page-content textarea::placeholder {
-  color: rgba(44, 44, 44, 0.6) !important;
-}
-
-/* Mobile Responsive */
-@media (max-width: 480px) {
-  .mobile-main {
-    padding: 10px;
-  }
-
-  .mobile-page-content {
-    padding: 10px;
-  }
-
-  .mobile-dashboard-grid {
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .mobile-topbar-container {
-    padding: 10px;
-  }
-
-  .mobile-dashboard-btn {
-    padding: 12px 16px;
-  }
-
-  .mobile-dashboard-icon {
-    font-size: 1rem;
-  }
-
-  .mobile-dashboard-label {
-    font-size: 0.8rem;
-  }
-
-  .mobile-dashboard-grid {
-    gap: 15px;
-  }
-
-  .mobile-dashboard-item {
-    padding: 20px 15px;
-  }
-
-  .mobile-dashboard-item-icon {
-    font-size: 2rem;
-  }
-
-  .mobile-dashboard-item-label {
-    font-size: 0.9rem;
-  }
-
-  .mobile-forum-grid {
-    gap: 12px;
-  }
-
-  .mobile-forum-item {
-    padding: 15px 12px;
-  }
-
-  .mobile-forum-icon {
-    font-size: 1.8rem;
-  }
-
-  .mobile-forum-name {
-    font-size: 0.8rem;
-  }
-
-  .mobile-chat-overlay {
-    padding: 15px;
-  }
-}
-
-/* Floating Chat Button - Draggable */
-.mobile-floating-chat {
-  /* Position is now handled by inline styles */
-  user-select: none;
-}
-
-.mobile-chat-float-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #ad580d;
-  color: white;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-chat-float-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.6);
-}
-
-.mobile-chat-float-btn:active {
-  transform: scale(0.95);
-}
-
-/* UserProfile Character Details Mobile Styling - Match Profile.jsx */
-.mobile-page-content .characterDetailsContainer p {
-  color: #8b7355 !important;
-  font-size: 1.1rem !important;
-  margin: 0.5rem 0 !important;
-  font-weight: 500 !important;
-  text-shadow: none !important;
-}
-
-.mobile-page-content .characterDetailsContainer strong {
-  color: #8b7355 !important;
-  font-weight: 700 !important;
-  margin-right: 0.5rem !important;
-  text-shadow: none !important;
-  font-family: inherit !important;
-}
-
-.mobile-page-content .characterDetailsContainer h2 {
-  color: #8b7355 !important;
-  font-size: 2rem !important;
-  font-weight: 700 !important;
-  margin: 0 0 1.5rem 0 !important;
-  text-align: center !important;
-  text-shadow: none !important;
-}
-
-/* UserProfile inline style overrides - match Profile colors on mobile */
-.mobile-page-content p[style*="color: #FFFFFF"] {
-  color: #ffe4b5 !important;
-}
-
-.mobile-page-content strong[style*="color: #FFE4B5"] {
-  color: #ffe4b5 !important;
-}
-
-/* COMPREHENSIVE MOBILE CONTAINER CENTERING FIX */
-/* Fix all containers that may be shifted to the right */
-.mobile-app [class*="container"],
-.mobile-app [class*="wrapper"],
-.mobile-app [class*="content"],
-.mobile-app [class*="section"],
-.mobile-app [class*="card"],
-.mobile-app [class*="box"],
-.mobile-app div[style*="margin"],
-.mobile-app div[style*="padding"] {
-  box-sizing: border-box !important;
-}
-
-/* Specific fixes for common layout issues */
-.mobile-app .mobile-page-content,
-.mobile-app .mobile-welcome-card,
-.mobile-app .mobile-section-card {
-  position: relative !important;
-  left: 0 !important;
-  right: 0 !important;
-  transform: none !important;
-}
-
-/* ================================ */
-/* MOBILE INPUT FIXES */
-/* ================================ */
-
-/* Fix for mobile input issues */
-input,
-textarea,
-select {
-  font-size: 16px !important; /* Prevents zoom on iOS */
-  -webkit-appearance: none !important;
-
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  -webkit-touch-callout: default !important;
-}
-
-/* Ensure inputs are focusable on mobile */
-input:focus,
-textarea:focus,
-select:focus {
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  -webkit-touch-callout: default !important;
-}
-
-/* Fix for mobile Safari input zoom */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  input,
-  textarea,
-  select {
-    font-size: 16px !important;
-  }
-}
-
-/* ================================ */
-/* COMPREHENSIVE LIGHT MODE TEXT VISIBILITY */
-/* ================================ */
-
-/* Light mode text color overrides */
-.mobile-app-light * {
-  color: #2c1810 !important;
-}
-
-.mobile-app-light .mobile-page-content *,
-.mobile-app-light .mobile-section-card *,
-.mobile-app-light .mobile-welcome-card * {
-  color: #2c1810 !important;
-}
-
-/* Light mode button text */
-.mobile-app-light button {
-  color: #2c1810 !important;
-  background: rgba(139, 122, 107, 0.2) !important;
-  border: 1px solid rgba(139, 122, 107, 0.3) !important;
-}
-
-.mobile-app-light button:hover,
-.mobile-app-light button:active {
-  background: rgba(139, 122, 107, 0.3) !important;
-}
-
-/* Light mode input styling */
-.mobile-app-light input,
-.mobile-app-light textarea,
-.mobile-app-light select {
-  background: rgba(245, 239, 224, 0.8) !important;
-  color: #2c1810 !important;
-  border: 1px solid rgba(139, 122, 107, 0.3) !important;
-}
-
-/* Mobile Forum Selection Modal */
-.mobile-forum-selection-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  z-index: 10005;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.mobile-forum-selection-content {
-  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
-  border-radius: 10px;
-  padding: 20px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 85vh;
-  overflow: hidden;
-  border: 1px solid rgba(201, 168, 108, 0.32);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-forum-selection-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid rgba(212, 196, 168, 0.3);
-}
-
-.mobile-forum-selection-header h2 {
-  color: #f5efe0;
-  font-family: "Cinzel", serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.mobile-forum-selection-close {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  color: #f5efe0;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  font-weight: 700;
-}
-
-.mobile-forum-selection-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
-}
-
-.mobile-forum-selection-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: calc(85vh - 100px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(201, 168, 108, 0.55) transparent;
-}
-
-.mobile-forum-selection-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.mobile-forum-selection-list::-webkit-scrollbar-thumb {
-  background: rgba(201, 168, 108, 0.55);
-  border-radius: 999px;
-}
-
-.mobile-forum-18plus {
-  border-color: rgba(160, 132, 232, 0.7) !important;
-  background: rgba(160, 132, 232, 0.18) !important;
-}
-
-.mobile-forum-selection-item {
-  background: rgba(245, 239, 224, 0.15);
-  border: 2px solid rgba(212, 196, 168, 0.3);
-  border-radius: 10px;
-  padding: 16px 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
-  width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-forum-selection-item:hover {
-  background: rgba(245, 239, 224, 0.25);
-  border-color: rgba(212, 196, 168, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.mobile-forum-selection-item:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-forum-selection-label {
-  color: #f5efe0;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: "Cinzel", serif;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Light mode for forum selection */
-.mobile-app-light .mobile-forum-selection-content {
-  background: linear-gradient(
-    135deg,
-    rgba(232, 221, 212, 0.95) 0%,
-    rgba(245, 239, 224, 0.95) 100%
-  );
-  border: 3px solid rgba(139, 122, 107, 0.4);
-}
-
-.mobile-app-light .mobile-forum-selection-header h2 {
-  color: #2c1810;
-}
-
-.mobile-app-light .mobile-forum-selection-close {
-  color: #2c1810;
-  border-color: rgba(139, 122, 107, 0.3);
-}
-
-.mobile-app-light .mobile-forum-selection-item {
-  background: rgba(139, 122, 107, 0.15);
-  border-color: rgba(139, 122, 107, 0.3);
-}
-
-.mobile-app-light .mobile-forum-selection-item:hover {
-  background: rgba(139, 122, 107, 0.25);
-}
-
-.mobile-app-light .mobile-forum-selection-label {
-  color: #2c1810;
-}
-
-/* Back bar on rules pages - open rules list again */
-.mobile-rules-back-bar {
-  width: 100%;
-  padding: 10px 15px;
-  background: rgba(201, 168, 108, 0.2);
-  border-bottom: 1px solid rgba(201, 168, 108, 0.3);
-  flex-shrink: 0;
-}
-
-.mobile-rules-back-btn {
-  width: 100%;
-  padding: 12px 16px;
-  background: rgba(245, 239, 224, 0.9);
-  border: 1px solid rgba(201, 168, 108, 0.4);
-  border-radius: 10px;
-  color: #2c2c2c;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  transition: background 0.2s ease;
-}
-
-.mobile-rules-back-btn:hover,
-.mobile-rules-back-btn:active {
-  background: rgba(232, 221, 212, 0.95);
-}
-
-.mobile-app-light .mobile-rules-back-bar {
-  background: rgba(139, 122, 107, 0.15);
-  border-bottom-color: rgba(139, 122, 107, 0.25);
-}
-
-.mobile-app-light .mobile-rules-back-btn {
-  background: rgba(245, 239, 224, 0.95);
-  color: #2c2c2c;
-  border-color: rgba(139, 122, 107, 0.4);
-}
-
-.mobile-app-light .mobile-rules-back-btn:hover,
-.mobile-app-light .mobile-rules-back-btn:active {
-  background: rgba(219, 205, 195, 0.95);
-}
-
-/* Light mode container centering */
-
-/* Dark mode: keep app chrome readable, let inner pages keep their own colors */
-html[data-theme="dark"] .mobile-page-content {
-  background: transparent !important;
-  color: inherit !important;
-  border: none !important;
-}
-html[data-theme="dark"] .mobile-section-card {
-  background: #2e2e2e !important;
-  border-color: #444 !important;
-  color: #f5f5f5 !important;
-}
-html[data-theme="dark"] .mobile-section-card .mobile-dashboard-item-label,
-html[data-theme="dark"] .mobile-section-card span {
-  color: #f5f5f5 !important;
-}
-/* Unntak: rollefarger på navn i kort (map/online list osv.) – data-role treffer uavhengig av modul-klasser */
-html[data-theme="dark"] .mobile-section-card [data-role="headmaster"] { color: #fff !important; }
-html[data-theme="dark"] .mobile-section-card [data-role="professor"] { color: gold !important; }
-html[data-theme="dark"] .mobile-section-card [data-role="shadowpatrol"] { color: #1ecb8c !important; }
-html[data-theme="dark"] .mobile-section-card [data-role="admin"] { color: #ff5e5e !important; }
-html[data-theme="dark"] .mobile-section-card [data-role="archivist"] { color: #a084e8 !important; }
-html[data-theme="dark"] .mobile-section-card [data-race*="vampire"],
-html[data-theme="dark"] .mobile-section-card [data-race*="vampyr"] { color: #f87171 !important; }
-html[data-theme="dark"] .mobile-section-card [data-race*="werewolf"],
-html[data-theme="dark"] .mobile-section-card [data-race*="varulv"] { color: #60a5fa !important; }
-html[data-theme="dark"] .mobile-section-card [data-race*="elf"],
-html[data-theme="dark"] .mobile-section-card [data-race*="alv"] { color: #22d3ee !important; }
-html[data-theme="dark"] .mobile-section-card [data-race*="wizard"],
-html[data-theme="dark"] .mobile-section-card [data-race*="trollmann"],
-html[data-theme="dark"] .mobile-section-card [data-race*="witch"],
-html[data-theme="dark"] .mobile-section-card [data-race*="heks"] { color: #4ade80 !important; }
-html[data-theme="dark"] .mobile-section-card [data-race*="human"],
-html[data-theme="dark"] .mobile-section-card [data-race*="menneske"] { color: #fbbf24 !important; }
-html[data-theme="dark"] .mobile-welcome-card {
-  background: #2e2e2e !important;
-  border-color: #444 !important;
-  color: #f5f5f5 !important;
-}
-html[data-theme="dark"] .mobile-welcome-card h2,
-html[data-theme="dark"] .mobile-welcome-card p {
-  color: #f5f5f5 !important;
-}
-
-/* Dark mode: role name colors in mobile (override generic span color – bruk span.klass for å vinne over .mobile-page-content span) */
-html[data-theme="dark"] .mobile-page-content span.headmasterName,
-html[data-theme="dark"] .mobile-page-content .headmasterName {
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content span.professorName,
-html[data-theme="dark"] .mobile-page-content .professorName {
-  color: gold !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content span.shadowPatrolName,
-html[data-theme="dark"] .mobile-page-content .shadowPatrolName {
-  color: #1ecb8c !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content span.adminName,
-html[data-theme="dark"] .mobile-page-content .adminName {
-  color: #ff5e5e !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content span.archivistName,
-html[data-theme="dark"] .mobile-page-content .archivistName {
-  color: #a084e8 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Mobil: rolle- og rasefarger via data-role/data-race (uavhengig av CSS-modul-klasser) */
-html[data-theme="dark"] .mobile-page-content [data-role="headmaster"] {
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-role="professor"] {
-  color: gold !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-role="shadowpatrol"] {
-  color: #1ecb8c !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-role="admin"] {
-  color: #ff5e5e !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-role="archivist"] {
-  color: #a084e8 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-}
-/* Rasefarger på mobil (overskriver generisk span-farge) */
-html[data-theme="dark"] .mobile-page-content [data-race*="vampire"],
-html[data-theme="dark"] .mobile-page-content [data-race*="vampyr"] {
-  color: #f87171 !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-race*="werewolf"],
-html[data-theme="dark"] .mobile-page-content [data-race*="varulv"] {
-  color: #60a5fa !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-race*="elf"],
-html[data-theme="dark"] .mobile-page-content [data-race*="alv"] {
-  color: #22d3ee !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-race*="wizard"],
-html[data-theme="dark"] .mobile-page-content [data-race*="trollmann"],
-html[data-theme="dark"] .mobile-page-content [data-race*="witch"],
-html[data-theme="dark"] .mobile-page-content [data-race*="heks"] {
-  color: #4ade80 !important;
-}
-html[data-theme="dark"] .mobile-page-content [data-race*="human"],
-html[data-theme="dark"] .mobile-page-content [data-race*="menneske"] {
-  color: #fbbf24 !important;
-}
-
-/* Mobil fallback: rolle/rasefarger overalt (f.eks. overlays, sidebars) */
-@media (max-width: 768px) {
-  html[data-theme="dark"] [data-role="headmaster"] {
-    color: #fff !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-  }
-  html[data-theme="dark"] [data-role="professor"] {
-    color: gold !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-  }
-  html[data-theme="dark"] [data-role="shadowpatrol"] {
-    color: #1ecb8c !important;
-  }
-  html[data-theme="dark"] [data-role="admin"] {
-    color: #ff5e5e !important;
-  }
-  html[data-theme="dark"] [data-role="archivist"] {
-    color: #a084e8 !important;
-  }
-  html[data-theme="dark"] [data-race*="vampire"],
-  html[data-theme="dark"] [data-race*="vampyr"] { color: #f87171 !important; }
-  html[data-theme="dark"] [data-race*="werewolf"],
-  html[data-theme="dark"] [data-race*="varulv"] { color: #60a5fa !important; }
-  html[data-theme="dark"] [data-race*="elf"],
-  html[data-theme="dark"] [data-race*="alv"] { color: #22d3ee !important; }
-  html[data-theme="dark"] [data-race*="wizard"],
-  html[data-theme="dark"] [data-race*="trollmann"],
-  html[data-theme="dark"] [data-race*="witch"],
-  html[data-theme="dark"] [data-race*="heks"] { color: #4ade80 !important; }
-  html[data-theme="dark"] [data-race*="human"],
-  html[data-theme="dark"] [data-race*="menneske"] { color: #fbbf24 !important; }
-}
-
-/* Dark mode: fjern unødvendige tekst-/ikonbakgrunner (alt er allerede mørkt) */
-html[data-theme="dark"] .mobile-forum-selection-content {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: none !important;
-}
-html[data-theme="dark"] .mobile-forum-selection-close {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-}
-html[data-theme="dark"] .mobile-forum-selection-close:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-}
-html[data-theme="dark"] .mobile-forum-selection-item {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  box-shadow: none !important;
-}
-html[data-theme="dark"] .mobile-forum-selection-item:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-html[data-theme="dark"] .mobile-forum-selection-label {
-  color: #f5efe0 !important;
-}
-
-/* Dark mode: Menu-knapp og menypunkter uten ekstra svart boks */
-html[data-theme="dark"] .mobile-dashboard-btn {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  box-shadow: none !important;
-}
-html[data-theme="dark"] .mobile-dashboard-btn:active {
-  background: rgba(255, 255, 255, 0.08) !important;
-}
-html[data-theme="dark"] .mobile-dashboard-item {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-}
-html[data-theme="dark"] .mobile-dashboard-item:active,
-html[data-theme="dark"] .mobile-dashboard-item:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-html[data-theme="dark"] .mobile-dashboard-item.active {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: none !important;
-}
-html[data-theme="dark"] .mobile-dashboard-item.logout-btn {
-  background: transparent !important;
-  border-color: rgba(255, 92, 92, 0.4) !important;
-}
-html[data-theme="dark"] .mobile-dashboard-header {
-  background: transparent !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-html[data-theme="dark"] .mobile-dashboard-close {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-html[data-theme="dark"] .mobile-dashboard-close:hover,
-html[data-theme="dark"] .mobile-dashboard-close:active {
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* ——— Native-style app chrome ——— */
+/* --- Top bar --- */
 .app-topbar {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px 10px;
+  gap: 10px;
+  padding: 10px 12px;
   margin: 0;
-  background: #322820;
-  background-image: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  background: var(--v-bar);
   border-bottom: 1px solid rgba(201, 168, 108, 0.28);
-  z-index: 40;
+  z-index: 5;
 }
 
 .app-topbar-titles {
@@ -2733,17 +69,17 @@ html[data-theme="dark"] .mobile-dashboard-close:active {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(201, 168, 108, 0.9);
+  color: var(--v-gold);
   font-family: "Cinzel", Palatino, serif;
 }
 
 .app-title {
   margin: 0;
-  font-size: 1.28rem;
+  font-size: 1.22rem;
   font-weight: 700;
-  color: #f3eadc;
+  color: var(--v-cream);
   font-family: "Cinzel", Palatino, serif;
-  letter-spacing: 0.02em;
+  line-height: 1.15;
 }
 
 .app-topbar-actions {
@@ -2759,29 +95,113 @@ html[data-theme="dark"] .mobile-dashboard-close:active {
   height: 40px;
   border: none;
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.22);
-  color: #f3eadc;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--v-cream);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.app-tabbar {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
+/* --- Scrollable page --- */
+.mobile-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--v-shell);
+  position: relative;
+  scrollbar-width: none;
+}
+
+.mobile-main::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-main-chat-open {
+  overflow: hidden;
+}
+
+.mobile-page-content {
+  width: 100%;
+  padding: 10px 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--v-shell);
+}
+
+.mobile-page-content > * {
   max-width: 100% !important;
-  z-index: 50;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box;
+}
+
+.mobile-page-content img,
+.mobile-page-content video,
+.mobile-page-content iframe,
+.mobile-page-content canvas {
+  max-width: 100% !important;
+  height: auto;
+}
+
+.mobile-page-content table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-page-content .ql-toolbar.ql-snow {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.mobile-page-content .ql-container.ql-snow {
+  width: 100%;
+}
+
+/* Role colors stay readable */
+.mobile-page-content .headmasterName,
+.mobile-page-content [data-role="headmaster"] {
+  color: #ffffff !important;
+}
+.mobile-page-content .professorName,
+.mobile-page-content [data-role="professor"] {
+  color: gold !important;
+}
+.mobile-page-content .shadowPatrolName,
+.mobile-page-content [data-role="shadowpatrol"] {
+  color: #1ecb8c !important;
+}
+.mobile-page-content .adminName,
+.mobile-page-content [data-role="admin"] {
+  color: #ff5e5e !important;
+}
+.mobile-page-content .archivistName,
+.mobile-page-content [data-role="archivist"] {
+  color: #a084e8 !important;
+}
+
+/* --- Bottom tabs (in document flow — not fixed) --- */
+.app-tabbar {
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-around;
   align-items: stretch;
-  gap: 0;
-  padding: 6px 4px calc(8px + env(safe-area-inset-bottom));
-  background: rgba(28, 20, 16, 0.97);
+  width: 100%;
+  margin: 0;
+  padding: 4px 2px 6px;
+  background: var(--v-bar);
   border-top: 1px solid rgba(201, 168, 108, 0.28);
-  backdrop-filter: blur(16px);
+  z-index: 5;
 }
 
 .app-tab {
@@ -2789,141 +209,399 @@ html[data-theme="dark"] .mobile-dashboard-close:active {
   min-width: 0;
   border: none;
   background: none;
-  color: #a89880;
+  color: #b5a48c;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   padding: 6px 2px;
   font-size: 0.68rem;
   font-weight: 600;
 }
 
 .app-tab.active {
-  color: #e8d5a3;
+  color: var(--v-gold-bright);
 }
 
-.app-tabbar {
+.app-tab svg {
+  display: block;
+}
+
+/* --- Notifications --- */
+.mobile-menu-notification-wrap {
+  position: relative;
+}
+
+.mobile-menu-notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #c44;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-notification-popup {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(86vw, 320px);
+  max-height: 60vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #2c241c;
+  border: 1px solid rgba(201, 168, 108, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  z-index: 80;
+}
+
+.mobile-menu-notification-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(201, 168, 108, 0.25);
+  color: var(--v-cream);
+  font-weight: 700;
+}
+
+.mobile-menu-notification-mark-read {
+  border: none;
+  background: none;
+  color: var(--v-gold-bright);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.mobile-menu-notification-popup-list {
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.mobile-menu-notification-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 8px;
+  border-radius: 8px;
+  color: var(--v-cream);
+  font-size: 0.88rem;
+}
+
+.mobile-menu-notification-item:active {
+  background: rgba(201, 168, 108, 0.15);
+}
+
+.mobile-menu-notification-empty {
+  margin: 12px 8px;
+  color: #c4b8a4;
+  font-size: 0.88rem;
+}
+
+/* --- Rules back --- */
+.mobile-rules-back-bar {
+  padding: 8px 10px 0;
+  background: var(--v-shell);
+}
+
+.mobile-rules-back-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  background: var(--v-cream);
+  color: var(--v-ink);
+  font-weight: 600;
+}
+
+/* --- Chat overlay --- */
+.mobile-chat-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--v-shell);
+}
+
+.mobile-chat-overlay .mobile-chat-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--v-bar);
+  border-bottom: 1px solid rgba(201, 168, 108, 0.28);
+}
+
+.mobile-chat-overlay .mobile-chat-header h2 {
+  margin: 0;
+  flex: 1;
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 1.15rem;
+  color: var(--v-cream);
+}
+
+.mobile-chat-overlay .mobile-chat-switch,
+.mobile-chat-overlay .mobile-chat-close {
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  background: rgba(201, 168, 108, 0.18);
+  color: var(--v-cream);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.mobile-global-chat-container,
+.mobile-private-chat-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f3eadc;
+  overflow: hidden;
+}
+
+.mobile-global-chat-container .chat,
+.mobile-private-chat-container .privateChat,
+.mobile-private-chat-container .private-chat-mobile {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.mobile-global-chat-container .chatForm,
+.mobile-global-chat-container .chatFormRow,
+.mobile-global-chat-container .chatInputWrap {
   width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
+.mobile-global-chat-container .chatForm .chatInput,
+.mobile-global-chat-container .chatForm input[type="text"],
+.mobile-private-chat-container input[type="text"] {
+  min-width: 0 !important;
+  background: #faf6ee !important;
+  color: #1a1410 !important;
+}
+
+.mobile-global-chat-container .chat button[type="submit"],
+.mobile-private-chat-container button[type="submit"] {
+  background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%) !important;
+  color: #1a1410 !important;
+  border: none !important;
+}
+
+.mobile-private-chat-container .private-chat-mobile-title {
+  display: none;
+}
+
+.mobile-private-chat-container .private-chat-form-mobile {
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* --- More sheet --- */
 .mobile-dashboard-overlay {
-  align-items: stretch;
-  justify-content: flex-end;
-  background: rgba(10, 8, 6, 0.55) !important;
-  padding: 0 !important;
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(10, 8, 6, 0.58);
+  padding: 0;
 }
 
 .mobile-dashboard-sheet {
   width: 100%;
-  height: calc(100dvh - 8px);
-  max-height: none;
+  max-height: 92svh;
   overflow-y: auto;
   background: #241c16;
-  border-radius: 16px 16px 0 0;
+  border-radius: 18px 18px 0 0;
   border-top: 1px solid rgba(201, 168, 108, 0.32);
-  padding: 4px 10px calc(12px + env(safe-area-inset-bottom));
+  padding: 8px 12px 16px;
 }
 
 .mobile-dashboard-header {
-  min-height: 44px;
-  margin-bottom: 6px;
-  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px 12px;
 }
 
 .mobile-dashboard-header h2 {
+  margin: 0;
+  font-family: "Cinzel", Palatino, serif;
+  font-size: 1.25rem;
+  color: var(--v-cream);
+}
+
+.mobile-dashboard-close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--v-cream);
   font-size: 1.2rem;
 }
 
 .mobile-dashboard-grid {
-  gap: 12px;
-  padding: 8px 6px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-bottom: 8px;
 }
 
 .mobile-dashboard-item {
-  min-height: 112px;
-  max-height: none;
-  padding: 18px 12px;
-  gap: 10px;
+  min-height: 104px;
+  border: 1px solid rgba(201, 168, 108, 0.28);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--v-cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 8px;
+}
+
+.mobile-dashboard-item.active {
+  border-color: var(--v-gold);
+  background: rgba(201, 168, 108, 0.16);
 }
 
 .mobile-dashboard-item-icon {
-  font-size: 2rem;
-  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", sans-serif;
-  color: #e8d5a3;
+  font-size: 1.7rem;
+  color: var(--v-gold-bright);
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
 }
 
 .mobile-dashboard-item-label {
-  font-size: 1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
 }
 
-.mobile-app .mobile-page-content p,
-.mobile-app .mobile-page-content div,
-.mobile-app .mobile-page-content li {
-  word-break: normal;
-  overflow-wrap: anywhere;
+.mobile-dashboard-item.logout-btn {
+  grid-column: 1 / -1;
+  min-height: 56px;
+  flex-direction: row;
+  background: rgba(160, 50, 50, 0.22);
+  border-color: rgba(200, 80, 80, 0.4);
 }
 
-.mobile-app .mobile-page-content .headmasterName,
-.mobile-app .mobile-page-content [data-role="headmaster"] {
-  color: #ffffff !important;
-}
-.mobile-app .mobile-page-content .professorName,
-.mobile-app .mobile-page-content [data-role="professor"] {
-  color: gold !important;
-}
-.mobile-app .mobile-page-content .shadowPatrolName,
-.mobile-app .mobile-page-content [data-role="shadowpatrol"] {
-  color: #1ecb8c !important;
-}
-.mobile-app .mobile-page-content .adminName,
-.mobile-app .mobile-page-content [data-role="admin"] {
-  color: #ff5e5e !important;
-}
-.mobile-app .mobile-page-content .archivistName,
-.mobile-app .mobile-page-content [data-role="archivist"] {
-  color: #a084e8 !important;
-}
-
-.mobile-page-content {
-  width: 100%;
-  max-width: 100%;
-}
-
-.mobile-page-content > * {
-  max-width: 100% !important;
-  box-sizing: border-box;
-}
-
-.mobile-chat-overlay {
-  top: 0;
-  padding: 0 !important;
-  background: #1c1410 !important;
-  z-index: 60;
-}
-
-.mobile-main-chat-open {
-  overflow: hidden;
-}
-
-/* Edge-to-edge pages on phones (incl. wide flagships like S25 Ultra) */
-.mobile-app .ql-toolbar.ql-snow,
-.mobile-app-light .ql-toolbar.ql-snow {
+/* --- Forum picker --- */
+.mobile-forum-selection-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
   display: flex;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.mobile-forum-selection-content {
+  width: 100%;
+  max-height: 86svh;
+  background: #2c241c;
+  border-radius: 18px 18px 0 0;
+  border-top: 1px solid rgba(201, 168, 108, 0.32);
+  padding: 12px 14px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-forum-selection-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
-  width: 100%;
-  padding: 6px 8px;
+  padding: 4px 2px 12px;
 }
 
-.mobile-app .ql-toolbar.ql-snow .ql-formats,
-.mobile-app-light .ql-toolbar.ql-snow .ql-formats {
-  margin-right: 8px;
+.mobile-forum-selection-header h2 {
+  margin: 0;
+  font-family: "Cinzel", Palatino, serif;
+  color: var(--v-cream);
+  font-size: 1.2rem;
 }
 
-.mobile-app .ql-container.ql-snow,
-.mobile-app-light .ql-container.ql-snow {
+.mobile-forum-selection-close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--v-cream);
+  font-size: 1.2rem;
+}
+
+.mobile-forum-selection-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-forum-selection-item {
   width: 100%;
+  text-align: left;
+  padding: 14px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 168, 108, 0.25);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--v-cream);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mobile-forum-selection-item.mobile-forum-18plus {
+  border-color: #a084e8;
+  background: rgba(160, 132, 232, 0.18);
+}
+
+/* Hide leftover chrome from older layouts */
+.mobile-status-bar {
+  display: none !important;
+}
+
+.mobile-app [class*="rpgClockDesktop"] {
+  display: none !important;
+}
+
+.mobile-app [class*="rpgClockMobile"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  color: #f3eadc;
+  text-shadow: none;
+  line-height: 1.2;
+}
+
+.mobile-app [class*="rpgClockMobile"] [class*="rpgTime"],
+.mobile-app [class*="rpgClockMobile"] [class*="rpgDate"] {
+  font-size: 0.72rem;
+  color: #f3eadc;
 }
