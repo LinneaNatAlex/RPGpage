@@ -29,7 +29,6 @@ import MobileLayout from "./Components/MobileLayout/MobileLayout";
 import DetentionPopup from "./Components/DetentionPopup/DetentionPopup";
 import useLocationTracker from "./hooks/useLocationTracker";
 import useUserData from "./hooks/useUserData";
-import RotateDevicePopup from "./Components/RotateDevicePopup";
 import "./App.mobile.css";
 
 const AUTH_LOADING_MIN_MS = 500; // Minimum tid spinner vises, unngår blink/twitch ved rask reload
@@ -576,7 +575,6 @@ function App() {
         }
       `}</style>
 
-      <RotateDevicePopup />
       <OpenPrivateChatProvider>
         <OnlineListProvider>
         <MobileLayout>
