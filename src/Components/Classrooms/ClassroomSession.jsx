@@ -1910,10 +1910,13 @@ const ClassroomSession = () => {
                     </p>
                   ) : (
                     <table
+                      className={styles.examOverviewTable}
                       style={{
                         width: "100%",
                         borderCollapse: "collapse",
                         fontSize: "0.95rem",
+                        background: "transparent",
+                        color: "#F5EFE0",
                       }}
                     >
                       <thead>
@@ -1980,6 +1983,8 @@ const ClassroomSession = () => {
                                 "1px solid rgba(232, 220, 200, 0.4)",
                               cursor: "pointer",
                               transition: "background 0.2s",
+                              background: "transparent",
+                              color: "#F5EFE0",
                             }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.background =
@@ -1990,22 +1995,38 @@ const ClassroomSession = () => {
                             }}
                           >
                             <td
-                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                              style={{
+                                padding: "10px 8px",
+                                color: "#F5EFE0",
+                                background: "transparent",
+                              }}
                             >
                               {exam.classId || "—"}
                             </td>
                             <td
-                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                              style={{
+                                padding: "10px 8px",
+                                color: "#F5EFE0",
+                                background: "transparent",
+                              }}
                             >
                               {exam.title}
                             </td>
                             <td
-                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                              style={{
+                                padding: "10px 8px",
+                                color: "#F5EFE0",
+                                background: "transparent",
+                              }}
                             >
                               {exam.gradeLevel}
                             </td>
                             <td
-                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                              style={{
+                                padding: "10px 8px",
+                                color: "#F5EFE0",
+                                background: "transparent",
+                              }}
                             >
                               {exam.createdAt
                                 ? new Date(exam.createdAt).toLocaleDateString(
@@ -2019,7 +2040,11 @@ const ClassroomSession = () => {
                                 : "—"}
                             </td>
                             <td
-                              style={{ padding: "10px 8px", color: "#F5EFE0" }}
+                              style={{
+                                padding: "10px 8px",
+                                color: "#F5EFE0",
+                                background: "transparent",
+                              }}
                             >
                               {exam.createdByName || "—"}
                             </td>

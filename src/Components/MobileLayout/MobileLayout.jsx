@@ -173,6 +173,7 @@ const MobileLayout = ({ children }) => {
     setShowChat(false);
     setShowPrivateChat(false);
     setShowDashboard(false);
+    setShowForumSelection(false);
   };
 
   // Kun én overlay åpen om gangen på mobil
@@ -245,6 +246,7 @@ const MobileLayout = ({ children }) => {
 
   // Update active tab based on current route
   useEffect(() => {
+    if (showChat) return;
     const path = location.pathname;
     if (path === "/") {
       setActiveTab("home");
@@ -263,7 +265,7 @@ const MobileLayout = ({ children }) => {
     } else if (path === "/inventory") {
       setActiveTab("inventory");
     }
-  }, [location.pathname]);
+  }, [location.pathname, showChat]);
 
   const handleTabClick = (tab) => {
     closeAllOverlays();
@@ -331,7 +333,9 @@ const MobileLayout = ({ children }) => {
   }
 
   return (
-    <div className={user ? "mobile-app" : "mobile-app-light"}>
+    <div
+      className={`${user ? "mobile-app" : "mobile-app-light"}${showChat ? " mobile-app-chat-open" : ""}`}
+    >
       <div className="app-topbar" role="banner">
         <div className="app-topbar-titles">
           <p className="app-kicker">Vayloria</p>
@@ -404,6 +408,8 @@ const MobileLayout = ({ children }) => {
                               const fromUid = n.fromUid || n.from;
                               if (fromUid) {
                                 setOpenWithUid(fromUid);
+                                setShowDashboard(false);
+                                setShowForumSelection(false);
                                 setShowChat(true);
                                 setShowPrivateChat(true);
                               }
@@ -461,7 +467,10 @@ const MobileLayout = ({ children }) => {
                 </button>
                 <button
                   className="mobile-chat-close"
-                  onClick={() => setShowChat(false)}
+                  onClick={() => {
+                    setShowChat(false);
+                    setShowPrivateChat(false);
+                  }}
                 >
                   ✕
                 </button>

@@ -375,6 +375,16 @@ html body .mobile-app-light .app-tabbar {
   font-weight: 600;
 }
 
+/* Chat replaces the current screen (Hall, Profile, …) instead of stacking */
+html body .mobile-app.mobile-app-chat-open .app-topbar,
+html body .mobile-app-light.mobile-app-chat-open .app-topbar {
+  display: none !important;
+}
+
+.mobile-app-chat-open .mobile-page-content {
+  display: none !important;
+}
+
 /* --- Chat overlay --- */
 .mobile-chat-overlay {
   position: absolute;
@@ -562,36 +572,43 @@ html body .mobile-app-light .app-tabbar {
   border-color: rgba(200, 80, 80, 0.4);
 }
 
-/* --- Forum picker --- */
+/* --- Forum picker: full screen so it meets the top, no leftover page chrome --- */
 .mobile-forum-selection-overlay {
   position: fixed;
   inset: 0;
   z-index: 75;
   display: flex;
-  align-items: flex-end;
-  background: rgba(0, 0, 0, 0.62);
+  flex-direction: column;
+  background: #2c241c;
 }
 
 .mobile-forum-selection-content {
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
-  max-height: 86svh;
+  max-height: none;
   background: #2c241c;
-  border-radius: 18px 18px 0 0;
-  border-top: 1px solid rgba(201, 168, 108, 0.32);
-  padding: 12px 14px 18px;
+  border-radius: 0;
+  border-top: none;
+  padding: 10px 14px 12px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
 .mobile-forum-selection-header {
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 2px 12px;
+  padding: 0;
+  min-height: 44px;
 }
 
 .mobile-forum-selection-header h2 {
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.2;
   font-family: "Cinzel", Palatino, serif;
   color: var(--v-cream);
   font-size: 1.2rem;
@@ -608,10 +625,14 @@ html body .mobile-app-light .app-tabbar {
 }
 
 .mobile-forum-selection-list {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin: 0;
+  padding: 0;
 }
 
 .mobile-forum-selection-item {

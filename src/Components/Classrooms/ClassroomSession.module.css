@@ -46,3 +46,16 @@
     min-height: 44px;
   }
 }
+
+.examOverviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+  color: #f5efe0;
+}
+
+.examOverviewTable th,
+.examOverviewTable td {
+  background: transparent !important;
+  color: #f5efe0 !important;
+}
