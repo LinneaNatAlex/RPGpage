@@ -199,6 +199,20 @@ html body .mobile-app-light .mobile-main {
   aspect-ratio: 1 / 1 !important;
 }
 
+.mobile-app button[class*="closeBtn"],
+.mobile-app-light button[class*="closeBtn"] {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+  flex-shrink: 0 !important;
+}
+
 .mobile-page-content table {
   display: block;
   width: 100%;

@@ -157,6 +157,7 @@ const BookViewer = ({ open, book, onClose }) => {
 
           <div className={styles.pageText}>
             <div
+              className={styles.pageTextInner}
               dangerouslySetInnerHTML={{ __html: currentPageData.content }}
             />
           </div>

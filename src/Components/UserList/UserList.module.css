@@ -226,32 +226,32 @@ td .userName[style*="color"] {
 }
 
 /* First column (Name) - ensure userName gets its own color, not inherited from td */
-td:first-child {
+.userListContainer td:first-child {
   color: #2c2c2c; /* Keep td color for other content */
 }
 
-td:first-child .userName {
+.userListContainer td:first-child .userName {
   color: #b8860b !important; /* Force brown color for users without roles */
 }
 
 /* Role colors should still work */
-td:first-child .headmasterName {
+.userListContainer td:first-child .headmasterName {
   color: #fff !important;
 }
 
-td:first-child .professorName {
+.userListContainer td:first-child .professorName {
   color: gold !important;
 }
 
-td:first-child .shadowPatrolName {
+.userListContainer td:first-child .shadowPatrolName {
   color: #1ecb8c !important;
 }
 
-td:first-child .adminName {
+.userListContainer td:first-child .adminName {
   color: #ff5e5e !important;
 }
 
-td:first-child .archivistName {
+.userListContainer td:first-child .archivistName {
   color: #a084e8 !important;
 }
 
@@ -524,41 +524,40 @@ td:first-child .archivistName {
     border-collapse: collapse;
   }
 
-  /* Hide location column completely on mobile */
+  /* Hide location and race on mobile so names and View stay readable */
   .userListContainer th:nth-child(2),
-  .userListContainer td:nth-child(2) {
+  .userListContainer td:nth-child(2),
+  .userListContainer th:nth-child(3),
+  .userListContainer td:nth-child(3) {
     display: none;
   }
 
-  /* Mobile column widths - without location column */
+  /* Name / Class / Points / Profile */
   .userListContainer th:nth-child(1),
   .userListContainer td:nth-child(1) {
-    width: 35%;
-  } /* Student/Teacher - more space since no location */
-
-  .userListContainer th:nth-child(3),
-  .userListContainer td:nth-child(3) {
-    width: 15%;
-  } /* Race */
+    width: 42%;
+  }
 
   .userListContainer th:nth-child(4),
   .userListContainer td:nth-child(4) {
-    width: 15%;
-  } /* Class */
+    width: 20%;
+  }
 
   .userListContainer th:nth-child(5),
   .userListContainer td:nth-child(5) {
     width: 16%;
     font-size: 0.7rem;
-    padding: 4px 2px;
+    padding: 6px 4px;
     text-align: center;
     white-space: nowrap;
-  } /* Points */
+  }
 
   .userListContainer th:nth-child(6),
   .userListContainer td:nth-child(6) {
-    width: 18%;
-  } /* Profile */
+    width: 22%;
+    text-align: center;
+    vertical-align: middle;
+  }
 
   .userListContainer th {
     padding: 6px 4px;
@@ -581,16 +580,21 @@ td:first-child .archivistName {
   }
 
   .profileLink {
-    display: inline-block;
-    padding: 0.4rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    min-height: 32px;
+    padding: 4px 10px;
     background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%);
     color: #1a1410 !important;
     text-decoration: none;
-    border-radius: 8px;
-    font-size: 0.75rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
     font-weight: 700;
     white-space: nowrap;
-    line-height: 1.2;
+    line-height: 1;
     max-width: none;
     overflow: visible;
     text-overflow: clip;
@@ -653,9 +657,11 @@ td:first-child .archivistName {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
   }
 
+  .userListContainer .professorName,
+  .userListContainer td:first-child .professorName,
   .professorName {
-    color: #ffd700 !important; /* Brighter gold for mobile */
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+    color: #8a5a00 !important;
+    text-shadow: none !important;
   }
 
   .shadowPatrolName {
@@ -776,8 +782,16 @@ td:first-child .archivistName {
 
   /* Ensure profile links are visible */
   .profileLink {
-    background: #b8860b !important;
-    color: white !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: auto !important;
+    height: auto !important;
+    min-height: 32px;
+    padding: 4px 10px !important;
+    background: linear-gradient(180deg, #d4b978 0%, #b8944e 100%) !important;
+    color: #1a1410 !important;
+    border-radius: 999px !important;
   }
 
   .profileLink:hover {
@@ -887,18 +901,23 @@ td:first-child .archivistName {
 /* Mobile pagination */
 @media (max-width: 768px) {
   .pagination {
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 0.75rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.7rem;
   }
 
   .paginationButton {
-    width: 100%;
-    max-width: 200px;
-    padding: 10px 16px;
+    width: auto;
+    max-width: none;
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: #1a1410 !important;
   }
 
   .pageInfo {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 }
