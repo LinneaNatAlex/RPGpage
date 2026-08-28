@@ -221,6 +221,13 @@ html body .mobile-app-light .mobile-main {
   -webkit-overflow-scrolling: touch;
 }
 
+.mobile-page-content table[class*="userListContainer"] {
+  display: table;
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: auto;
+}
+
 .mobile-page-content .ql-toolbar.ql-snow {
   display: flex;
   flex-wrap: wrap;

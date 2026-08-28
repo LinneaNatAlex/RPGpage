@@ -451,13 +451,21 @@ td .userName[style*="color"] {
     margin: 0;
     height: auto;
     min-height: 0;
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     border-radius: 14px;
   }
 
   .raceChampionship {
     padding: 0.55rem 0.7rem 0.65rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .leaderboard {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    width: 100%;
   }
 
   .championshipTitle {
@@ -516,38 +524,42 @@ td .userName[style*="color"] {
   }
 
   .userListContainer {
-    width: 100%;
-    font-size: 0.6rem;
-    overflow-x: auto;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 0.72rem;
     display: table;
-    table-layout: fixed;
+    table-layout: auto;
     border-collapse: collapse;
   }
 
-  /* Hide location and race on mobile so names and View stay readable */
+  /* Hide location and race; zero their columns so they cannot leave a gutter */
   .userListContainer th:nth-child(2),
   .userListContainer td:nth-child(2),
   .userListContainer th:nth-child(3),
   .userListContainer td:nth-child(3) {
-    display: none;
+    display: none !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
   }
 
-  /* Name / Class / Points / Profile */
   .userListContainer th:nth-child(1),
   .userListContainer td:nth-child(1) {
-    width: 42%;
+    width: auto;
   }
 
   .userListContainer th:nth-child(4),
   .userListContainer td:nth-child(4) {
-    width: 20%;
+    width: 22%;
   }
 
   .userListContainer th:nth-child(5),
   .userListContainer td:nth-child(5) {
-    width: 16%;
-    font-size: 0.7rem;
-    padding: 6px 4px;
+    width: 18%;
+    font-size: 0.72rem;
+    padding: 8px 6px;
     text-align: center;
     white-space: nowrap;
   }
