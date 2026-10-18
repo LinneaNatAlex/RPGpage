@@ -14,6 +14,8 @@
 }
 
 .hallHeader {
+  position: relative;
+  isolation: isolate;
   flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
@@ -24,6 +26,11 @@
   background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
   border-bottom: 1px solid rgba(201, 168, 108, 0.28);
   overflow: hidden;
+}
+
+.hallHeaderMain {
+  position: relative;
+  z-index: 2;
 }
 
 .hallKicker {
@@ -47,22 +54,17 @@
 
 .musicWidget {
   position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  overflow: hidden;
-  background: #322820;
 }
 
 .musicWidgetBar {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 4px 2px 4px 8px;
-  background: #322820;
-  border-radius: 999px;
 }
 
 .musicWidgetLabel {
@@ -86,12 +88,36 @@
   background: rgba(201, 168, 108, 0.4);
 }
 
+.musicPlayerLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .musicPlayerHost {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   z-index: 0;
+  overflow: hidden;
+}
+
+.musicPlayerHost :global(iframe) {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
   pointer-events: none;
+}
+
+.musicPlayerMask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  transform: translateZ(0);
 }
 
 :global(html[data-theme="dark"]) .hallPage {

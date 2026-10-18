@@ -129,6 +129,8 @@ const GreatHall = () => {
         playerHostRef.current.innerHTML = "";
         const mount = document.createElement("div");
         playerHostRef.current.appendChild(mount);
+        const width = Math.max(playerHostRef.current.clientWidth || 0, 320);
+        const height = Math.max(playerHostRef.current.clientHeight || 0, 72);
         const playerVars = {
           autoplay: 1,
           mute: 1,
@@ -160,8 +162,8 @@ const GreatHall = () => {
           }
         };
         playerRef.current = new YT.Player(mount, {
-          width: 160,
-          height: 90,
+          width,
+          height,
           videoId: musicSource.videoId || undefined,
           playerVars,
           events: {
@@ -230,27 +232,35 @@ const GreatHall = () => {
   }, [musicSource?.videoId, musicSource?.playlistId]);
 
   const handlePlayPause = () => {
-    const player = playerRef.current;
-    if (!player?.playVideo) {
-      wantPlayRef.current = true;
-      return;
-    }
-    try {
-      const state = player.getPlayerState?.();
-      const muted = !!player.isMuted?.();
-      if (state === 1 && !muted) {
-        wantPlayRef.current = false;
-        player.pauseVideo();
-        setMusicPlaying(false);
-        return;
+    const tryToggle = () => {
+      const player = playerRef.current;
+      if (!player?.playVideo) return false;
+      try {
+        const state = player.getPlayerState?.();
+        const muted = !!player.isMuted?.();
+        if (state === 1 && !muted) {
+          wantPlayRef.current = false;
+          player.pauseVideo();
+          setMusicPlaying(false);
+          return true;
+        }
+        wantPlayRef.current = true;
+        player.unMute?.();
+        player.setVolume?.(80);
+        player.playVideo();
+        return true;
+      } catch {
+        return false;
       }
-      wantPlayRef.current = true;
-      player.unMute?.();
-      player.setVolume?.(80);
-      player.playVideo();
-    } catch {
-      wantPlayRef.current = true;
-    }
+    };
+
+    if (tryToggle()) return;
+    wantPlayRef.current = true;
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      if (tryToggle() || attempts > 25) window.clearInterval(timer);
+    }, 120);
   };
 
   const hasMusic = Boolean(musicSource?.videoId || musicSource?.playlistId);
@@ -258,7 +268,15 @@ const GreatHall = () => {
   return (
     <div className={styles.hallPage} ref={hallPageRef}>
       <header className={styles.hallHeader}>
-        <div>
+        {hasMusic ? (
+          <div className={styles.musicPlayerLayer} aria-hidden>
+            <div className={styles.musicPlayerHost}>
+              <div ref={playerHostRef} />
+            </div>
+            <div className={styles.musicPlayerMask} />
+          </div>
+        ) : null}
+        <div className={styles.hallHeaderMain}>
           <p className={styles.hallKicker}>Live roleplay</p>
           <h1 className={styles.title}>Starshade Hall</h1>
         </div>
@@ -269,9 +287,6 @@ const GreatHall = () => {
               <button type="button" className={styles.musicWidgetBtn} onClick={handlePlayPause}>
                 {musicPlaying ? "Stop" : "Play"}
               </button>
-            </div>
-            <div className={styles.musicPlayerHost} aria-hidden>
-              <div ref={playerHostRef} />
             </div>
           </div>
         ) : null}
