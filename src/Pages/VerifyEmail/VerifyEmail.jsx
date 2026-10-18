@@ -1,98 +1,121 @@
-// IMPORTS THE NECESSARY LIBRARIES AND COMPONENTS
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import style from "./VerifyEmail.module.css";
-import { sendEmailVerification } from "firebase/auth";
 import Button from "../../Components/Button/Button";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebaseConfig";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "../../context/authContext";
+import {
+  consumeEmailVerificationLink,
+  refreshAuthUser,
+  sendVerificationEmail,
+} from "../../utils/emailVerification";
 
 const VerifyEmail = () => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState(null);
-  const [userDataSaved, setUserDataSaved] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
+  const completingRef = useRef(false);
   const navigate = useNavigate();
-  const { refreshAuthState } = useAuth();
+  const { loading, refreshAuthState } = useAuth();
 
-  // Check verification and send user to main page when verified
   useEffect(() => {
-    if (!auth.currentUser) {
+    if (loading) return;
+
+    const finishVerifiedLogin = async () => {
+      const current = auth.currentUser;
+      if (!current?.emailVerified || completingRef.current) return;
+      completingRef.current = true;
+      setEmailVerified(true);
+
+      const currentUid = current.uid;
       const tempUserData = localStorage.getItem("tempUserData");
-      if (tempUserData) setError("Please sign in again to complete your registration.");
-      navigate("/sign-in");
-      return;
-    }
+      if (tempUserData) {
+        try {
+          const userData = JSON.parse(tempUserData);
+          if (userData.uid !== currentUid) {
+            localStorage.removeItem("tempUserData");
+          } else {
+            await setDoc(
+              doc(db, "users", currentUid),
+              {
+                ...userData,
+                createdAt: serverTimestamp(),
+                lastLogin: serverTimestamp(),
+                online: true,
+              },
+              { merge: true },
+            );
+            localStorage.removeItem("tempUserData");
+          }
+        } catch (err) {
+          console.error("Error saving user data:", err);
+          setError("Failed to complete registration. Please contact support.");
+          completingRef.current = false;
+          return;
+        }
+      }
+
+      await refreshAuthState();
+      navigate("/", { replace: true });
+    };
 
     const checkVerificationStatus = async () => {
-      await auth.currentUser.reload();
-      const verified = auth.currentUser.emailVerified;
-      setEmailVerified(verified);
-
-      if (verified && !redirecting) {
-        setRedirecting(true);
-        const currentUid = auth.currentUser.uid;
-        const tempUserData = localStorage.getItem("tempUserData");
-        if (tempUserData && !userDataSaved) {
-          try {
-            const userData = JSON.parse(tempUserData);
-            if (userData.uid !== currentUid) {
-              localStorage.removeItem("tempUserData");
-            } else {
-              await setDoc(
-                doc(db, "users", currentUid),
-                {
-                  ...userData,
-                  createdAt: serverTimestamp(),
-                  lastLogin: serverTimestamp(),
-                  online: true,
-                },
-                { merge: true }
-              );
-              localStorage.removeItem("tempUserData");
-              setUserDataSaved(true);
-            }
-          } catch (err) {
-            console.error("Error saving user data:", err);
-            setError("Failed to complete registration. Please contact support.");
-            setRedirecting(false);
-            return;
-          }
-        }
-        // Update auth context so main page shows logged-in state, then go to front page
-        await refreshAuthState();
-        navigate("/", { replace: true });
+      try {
+        await consumeEmailVerificationLink();
+      } catch {
+        /* already used / expired — still try reload */
       }
+
+      if (!auth.currentUser) {
+        if (localStorage.getItem("tempUserData")) {
+          setError("Please sign in again to complete your registration.");
+        }
+        navigate("/sign-in", { replace: true });
+        return;
+      }
+
+      const current = await refreshAuthUser();
+      const verified = !!current?.emailVerified;
+      setEmailVerified(verified);
+      if (verified) await finishVerifiedLogin();
     };
 
     checkVerificationStatus();
     const interval = setInterval(checkVerificationStatus, 2000);
-    return () => clearInterval(interval);
-  }, [userDataSaved, redirecting, navigate, refreshAuthState]);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") checkVerificationStatus();
+    };
+    window.addEventListener("focus", checkVerificationStatus);
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", checkVerificationStatus);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [loading, navigate, refreshAuthState]);
 
   const handleResendVerification = async () => {
     setError(null);
     try {
-      await sendEmailVerification(auth.currentUser);
+      await sendVerificationEmail(auth.currentUser);
       setEmailSent(true);
-    } catch (error) {
+    } catch (err) {
       setError("Failed to send verification email. Please try again.");
     }
   };
-  // ---------------------------VERIFY CONTAINER--------------------------
+
   return (
     <div className={style.verifyWrapper}>
       {emailVerified ? (
-        <h1>Email verified! Redirecting to the main page...</h1>
+        <h1>Email verified! Signing you in...</h1>
       ) : (
         <h1>Email not verified. Please check your inbox.</h1>
       )}
       <p>
-        Havent gotten the verification email? Click the link below to request
-        another one.
+        Open the link in the email — you will be signed in automatically. If you
+        have not received it, request another one below.
       </p>
       <Button className={style.verifyBtn} onClick={handleResendVerification}>
         Resend Verification Email

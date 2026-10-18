@@ -53,6 +53,7 @@ import SuspendedOverlay from "../Components/SuspendedOverlay";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { refreshAuthUser } from "../utils/emailVerification";
 
 const authContext = createContext({
   user: null,
@@ -75,12 +76,10 @@ export const AuthProvider = ({ children }) => {
   const lastOnlineWriteAtRef = useRef(0);
   const ONLINE_WRITE_THROTTLE_MS = 60 * 1000; // max én skriv per minutt ved focus
 
-  // Force refresh auth state (e.g. after email verification – reload() alone does not re-fire onAuthStateChanged)
+  // Force refresh auth state (e.g. after email verification – cached token stays unverified until reload)
   const refreshAuthState = async () => {
-    if (!auth.currentUser) return;
-    await auth.currentUser.reload();
-    const currentUser = auth.currentUser;
-    if (!currentUser.emailVerified) return;
+    const currentUser = await refreshAuthUser();
+    if (!currentUser?.emailVerified) return;
     try {
       const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       let userData = userDoc.exists()
@@ -125,7 +124,11 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
+    const onVisible = () => {
+      if (document.visibilityState === "visible") handleFocus();
+    };
     window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", onVisible);
 
     const authStart = Date.now();
     const MIN_LOAD_MS = 500; // Min tid loading vises ved reload (unngår blink når auth er cachet)
@@ -145,6 +148,18 @@ export const AuthProvider = ({ children }) => {
 
       try {
         if (currentUser) {
+          try {
+            await currentUser.reload();
+            await currentUser.getIdToken(true);
+          } catch {
+            /* stale token until reload is the usual first-login case */
+          }
+          currentUser = auth.currentUser;
+          if (!currentUser) {
+            setUser(null);
+            setEmailVerified(false);
+            return;
+          }
           // Get user data from Firestore with retry logic
           let userDoc;
           let retries = 2; // Reduce retries to prevent long loading times
@@ -334,6 +349,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       unsubscribe();
       window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", onVisible);
       if (beforeUnloadRef.current) {
         window.removeEventListener("beforeunload", beforeUnloadRef.current);
         beforeUnloadRef.current = null;

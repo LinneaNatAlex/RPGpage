@@ -52,11 +52,14 @@
 }
 
 .musicWidgetBar {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0;
-  background: transparent;
+  padding: 4px 2px 4px 8px;
+  background: linear-gradient(180deg, #3d3228 0%, #322820 100%);
+  border-radius: 999px;
 }
 
 .musicWidgetLabel {
@@ -82,12 +85,13 @@
 
 .musicPlayerHost {
   position: absolute;
-  width: 120px;
-  height: 68px;
+  width: 160px;
+  height: 90px;
   right: 0;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   overflow: hidden;
-  opacity: 0.02;
+  z-index: 0;
   pointer-events: none;
 }
 

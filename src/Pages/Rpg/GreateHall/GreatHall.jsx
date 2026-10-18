@@ -28,21 +28,35 @@ function parseYoutubeUrl(url) {
 }
 
 function loadYoutubeIframeApi() {
-  if (typeof window === "undefined") return Promise.reject(new Error("no window"));
+  if (typeof window === "undefined") {
+    return Promise.reject(new Error("no window"));
+  }
   if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
     const previous = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = () => {
       if (typeof previous === "function") previous();
-      resolve(window.YT);
+      if (window.YT) resolve(window.YT);
     };
-    if (!document.querySelector("script[src='https://www.youtube.com/iframe_api']")) {
+    if (!document.querySelector("script[src*='youtube.com/iframe_api']")) {
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
       tag.async = true;
       document.head.appendChild(tag);
     }
-    if (window.YT && window.YT.Player) resolve(window.YT);
+    const tick = () => {
+      if (window.YT && window.YT.Player) {
+        resolve(window.YT);
+        return;
+      }
+      if (Date.now() - started > 15000) {
+        reject(new Error("YouTube API timeout"));
+        return;
+      }
+      window.setTimeout(tick, 50);
+    };
+    tick();
   });
 }
 
@@ -53,6 +67,7 @@ const GreatHall = () => {
   const playerHostRef = useRef(null);
   const playerRef = useRef(null);
   const hallPageRef = useRef(null);
+  const wantPlayRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -116,11 +131,11 @@ const GreatHall = () => {
         playerHostRef.current.appendChild(mount);
         const playerVars = {
           autoplay: 1,
+          mute: 1,
           controls: 0,
           modestbranding: 1,
           playsinline: 1,
           rel: 0,
-          origin: window.location.origin,
         };
         if (musicSource.playlistId) {
           playerVars.listType = "playlist";
@@ -129,6 +144,21 @@ const GreatHall = () => {
           playerVars.loop = 1;
           playerVars.playlist = musicSource.videoId;
         }
+        const startPlayer = (target) => {
+          if (!target) return;
+          try {
+            target.setVolume?.(80);
+            if (wantPlayRef.current) {
+              target.unMute?.();
+              target.playVideo?.();
+            } else {
+              target.mute?.();
+              target.playVideo?.();
+            }
+          } catch {
+            setMusicPlaying(false);
+          }
+        };
         playerRef.current = new YT.Player(mount, {
           width: 160,
           height: 90,
@@ -137,15 +167,31 @@ const GreatHall = () => {
           events: {
             onReady: (e) => {
               if (cancelled) return;
-              try {
-                e.target.playVideo();
-              } catch {
-                setMusicPlaying(false);
-              }
+              playerRef.current = e.target;
+              startPlayer(e.target);
             },
             onStateChange: (e) => {
               if (cancelled) return;
-              setMusicPlaying(e.data === 1);
+              const playing = e.data === 1;
+              let muted = false;
+              try {
+                muted = !!e.target.isMuted?.();
+              } catch {
+                muted = false;
+              }
+              setMusicPlaying(playing && !muted);
+              if (playing && wantPlayRef.current) {
+                try {
+                  e.target.unMute?.();
+                  e.target.setVolume?.(80);
+                } catch {
+                  /* ignore */
+                }
+                wantPlayRef.current = false;
+              }
+            },
+            onError: () => {
+              if (!cancelled) setMusicPlaying(false);
             },
           },
         });
@@ -185,19 +231,25 @@ const GreatHall = () => {
 
   const handlePlayPause = () => {
     const player = playerRef.current;
-    if (!player?.playVideo) return;
+    if (!player?.playVideo) {
+      wantPlayRef.current = true;
+      return;
+    }
     try {
       const state = player.getPlayerState?.();
-      if (state === 1) {
+      const muted = !!player.isMuted?.();
+      if (state === 1 && !muted) {
+        wantPlayRef.current = false;
         player.pauseVideo();
         setMusicPlaying(false);
-      } else {
-        player.unMute?.();
-        player.playVideo();
-        setMusicPlaying(true);
+        return;
       }
+      wantPlayRef.current = true;
+      player.unMute?.();
+      player.setVolume?.(80);
+      player.playVideo();
     } catch {
-      /* ignore */
+      wantPlayRef.current = true;
     }
   };
 

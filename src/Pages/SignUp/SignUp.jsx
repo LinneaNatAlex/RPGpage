@@ -3,7 +3,6 @@ import styles from "./SignUp.module.css";
 import { useRef, useState } from "react";
 import {
   createUserWithEmailAndPassword,
-  sendEmailVerification,
 } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
@@ -18,6 +17,7 @@ import { useImageUpload } from "../../hooks/useImageUpload";
 import ErrorMessage from "../../Components/ErrorMessage/ErrorMessage";
 import SortingQuiz from "../../Components/SortingQuiz/SortingQuiz";
 import TermsModal from "../../Components/TermsModal/TermsModal";
+import { sendVerificationEmail } from "../../utils/emailVerification";
 
 // import  useAuth from '../../hooks/useAuth';
 // ------------------------------------------ SIGN UP ----------------------------------------------------
@@ -143,7 +143,7 @@ const SignUp = () => {
       const user = userCredential.user;
       
       try {
-        await sendEmailVerification(user);
+        await sendVerificationEmail(user);
       } catch (emailError) {
         setError("Account created but failed to send verification email. Please try to resend from the verify email page.");
       }
